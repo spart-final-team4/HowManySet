@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6615E9252DED443A00ECF8DB /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9242DED443A00ECF8DB /* Realm */; };
+		6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; };
 		668CB11D2DE9BE7000924340 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11C2DE9BE7000924340 /* WidgetKit.framework */; };
 		668CB11F2DE9BE7000924340 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11E2DE9BE7000924340 /* SwiftUI.framework */; };
 		668CB1302DE9BE7300924340 /* HowManySetLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 668CB11A2DE9BE7000924340 /* HowManySetLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -129,6 +131,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */,
+				6615E9252DED443A00ECF8DB /* Realm in Frameworks */,
 				668CB17C2DE9C30000924340 /* Then in Frameworks */,
 				668CB1862DE9C3C900924340 /* FirebaseAuth in Frameworks */,
 				668CB1762DE9C2E100924340 /* RxSwift in Frameworks */,
@@ -245,6 +249,8 @@
 				668CB18A2DE9C3E600924340 /* FSCalendar */,
 				668CB18D2DE9C52E00924340 /* Differentiator */,
 				668CB18F2DE9C52E00924340 /* RxDataSources */,
+				6615E9242DED443A00ECF8DB /* Realm */,
+				6615E9262DED443A00ECF8DB /* RealmSwift */,
 			);
 			productName = HowManySet;
 			productReference = 669358BB2DE9AA8C00956214 /* HowManySet.app */;
@@ -340,6 +346,7 @@
 				668CB1892DE9C3E600924340 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				668CB18C2DE9C52E00924340 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				66B3FEAB2DED31A4009D63F2 /* XCRemoteSwiftPackageReference "ReactorKit" */,
+				6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 669358BC2DE9AA8C00956214 /* Products */;
@@ -803,6 +810,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		668CB1702DE9C2E100924340 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactiveX/RxSwift";
@@ -862,6 +877,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6615E9242DED443A00ECF8DB /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		6615E9262DED443A00ECF8DB /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		668CB1712DE9C2E100924340 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 668CB1702DE9C2E100924340 /* XCRemoteSwiftPackageReference "RxSwift" */;
