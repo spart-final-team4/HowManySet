@@ -7,6 +7,6 @@
 
 import Foundation
 
-class EndWorkoutUseCase: EndWorkoutUseCaseProtocol {
+final class EndWorkoutUseCase: EndWorkoutUseCaseProtocol {
     
 }

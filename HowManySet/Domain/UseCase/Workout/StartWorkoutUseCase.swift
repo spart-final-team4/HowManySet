@@ -7,6 +7,6 @@
 
 import Foundation
 
-class StartWorkoutUseCase: StartWorkoutUseCaseProtocol {
+final class StartWorkoutUseCase: StartWorkoutUseCaseProtocol {
     
 }

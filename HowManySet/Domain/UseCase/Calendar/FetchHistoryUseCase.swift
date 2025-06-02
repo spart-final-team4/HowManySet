@@ -7,6 +7,6 @@
 
 import Foundation
 
-class FetchHistoryUseCase: FetchHistoryUseCaseProtocol {
+final class FetchHistoryUseCase: FetchHistoryUseCaseProtocol {
     
 }
