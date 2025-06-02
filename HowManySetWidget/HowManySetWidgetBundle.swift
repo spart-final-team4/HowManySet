@@ -11,8 +11,6 @@ import SwiftUI
 @main
 struct HowManySetLiveActivityBundle: WidgetBundle {
     var body: some Widget {
-        HowManySetWidget()
-        HowManySetWidgetControl()
         HowManySetWidgetLiveActivity()
     }
 }
