@@ -9,7 +9,8 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
-struct HowManySetLiveActivityControl: ControlWidget {
+@available(iOSApplicationExtension 18.0, *)
+struct HowManySetWidgetControl: ControlWidget {
     static let kind: String = "com.eightroutes.HowManySet.HowManySetLiveActivity"
 
     var body: some ControlWidgetConfiguration {
@@ -30,7 +31,8 @@ struct HowManySetLiveActivityControl: ControlWidget {
     }
 }
 
-extension HowManySetLiveActivityControl {
+@available(iOSApplicationExtension 18.0, *)
+extension HowManySetWidgetControl {
     struct Value {
         var isRunning: Bool
         var name: String
@@ -38,21 +40,24 @@ extension HowManySetLiveActivityControl {
 
     struct Provider: AppIntentControlValueProvider {
         func previewValue(configuration: TimerConfiguration) -> Value {
-            HowManySetLiveActivityControl.Value(isRunning: false, name: configuration.timerName)
+            HowManySetWidgetControl.Value(isRunning: false, name: configuration.timerName)
         }
 
         func currentValue(configuration: TimerConfiguration) async throws -> Value {
             let isRunning = true // Check if the timer is running
-            return HowManySetLiveActivityControl.Value(isRunning: isRunning, name: configuration.timerName)
+            return HowManySetWidgetControl.Value(isRunning: isRunning, name: configuration.timerName)
         }
     }
 }
 
+@available(iOSApplicationExtension 17.0, *)
 struct TimerConfiguration: ControlConfigurationIntent {
     static let title: LocalizedStringResource = "Timer Name Configuration"
 
     @Parameter(title: "Timer Name", default: "Timer")
     var timerName: String
+    
+    
 }
 
 struct StartTimerIntent: SetValueIntent {
