@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6615E9252DED443A00ECF8DB /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9242DED443A00ECF8DB /* Realm */; };
 		6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; };
 		668CB11D2DE9BE7000924340 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11C2DE9BE7000924340 /* WidgetKit.framework */; };
 		668CB11F2DE9BE7000924340 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11E2DE9BE7000924340 /* SwiftUI.framework */; };
@@ -132,7 +131,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */,
-				6615E9252DED443A00ECF8DB /* Realm in Frameworks */,
 				668CB17C2DE9C30000924340 /* Then in Frameworks */,
 				668CB1862DE9C3C900924340 /* FirebaseAuth in Frameworks */,
 				668CB1762DE9C2E100924340 /* RxSwift in Frameworks */,
@@ -249,7 +247,6 @@
 				668CB18A2DE9C3E600924340 /* FSCalendar */,
 				668CB18D2DE9C52E00924340 /* Differentiator */,
 				668CB18F2DE9C52E00924340 /* RxDataSources */,
-				6615E9242DED443A00ECF8DB /* Realm */,
 				6615E9262DED443A00ECF8DB /* RealmSwift */,
 			);
 			productName = HowManySet;
@@ -877,11 +874,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6615E9242DED443A00ECF8DB /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
-		};
 		6615E9262DED443A00ECF8DB /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
