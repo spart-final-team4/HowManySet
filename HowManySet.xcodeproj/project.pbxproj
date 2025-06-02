@@ -80,7 +80,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				668CB1302DE9BE7300924340 /* HowManySetLiveActivityExtension.appex in Embed Foundation Extensions */,
+				668CB1302DE9BE7300924340 /* HowManySetWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,7 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		668CB11A2DE9BE7000924340 /* HowManySetLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HowManySetLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HowManySetWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		668CB11C2DE9BE7000924340 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		668CB11E2DE9BE7000924340 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		669358BB2DE9AA8C00956214 /* HowManySet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HowManySet.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,12 +105,12 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
-		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetLiveActivityExtension" target */ = {
+		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 668CB1192DE9BE7000924340 /* HowManySetLiveActivityExtension */;
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
 		669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -136,7 +136,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */,
-				668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetLiveActivityExtension" target */,
+				668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */,
 			);
 			path = HowManySetWidget;
 			sourceTree = "<group>";
@@ -230,7 +230,7 @@
 				669358BB2DE9AA8C00956214 /* HowManySet.app */,
 				669358D12DE9AA8E00956214 /* HowManySetTests.xctest */,
 				669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */,
-				668CB11A2DE9BE7000924340 /* HowManySetLiveActivityExtension.appex */,
+				668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -238,9 +238,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		668CB1192DE9BE7000924340 /* HowManySetLiveActivityExtension */ = {
+		668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 668CB1312DE9BE7300924340 /* Build configuration list for PBXNativeTarget "HowManySetLiveActivityExtension" */;
+			buildConfigurationList = 668CB1312DE9BE7300924340 /* Build configuration list for PBXNativeTarget "HowManySetWidgetExtension" */;
 			buildPhases = (
 				668CB1162DE9BE7000924340 /* Sources */,
 				668CB1172DE9BE7000924340 /* Frameworks */,
@@ -254,11 +254,11 @@
 			fileSystemSynchronizedGroups = (
 				668CB1202DE9BE7000924340 /* HowManySetWidget */,
 			);
-			name = HowManySetLiveActivityExtension;
+			name = HowManySetWidgetExtension;
 			packageProductDependencies = (
 			);
 			productName = HowManySetLiveActivityExtension;
-			productReference = 668CB11A2DE9BE7000924340 /* HowManySetLiveActivityExtension.appex */;
+			productReference = 668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		669358BA2DE9AA8C00956214 /* HowManySet */ = {
@@ -395,7 +395,7 @@
 				669358BA2DE9AA8C00956214 /* HowManySet */,
 				669358D02DE9AA8E00956214 /* HowManySetTests */,
 				669358DA2DE9AA8E00956214 /* HowManySetUITests */,
-				668CB1192DE9BE7000924340 /* HowManySetLiveActivityExtension */,
+				668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -466,7 +466,7 @@
 /* Begin PBXTargetDependency section */
 		668CB12F2DE9BE7300924340 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 668CB1192DE9BE7000924340 /* HowManySetLiveActivityExtension */;
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 			targetProxy = 668CB12E2DE9BE7300924340 /* PBXContainerItemProxy */;
 		};
 		669358D32DE9AA8E00956214 /* PBXTargetDependency */ = {
@@ -491,8 +491,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HowManySetLiveActivity/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = HowManySetLiveActivity;
+				INFOPLIST_FILE = HowManySetWidgetInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -523,8 +523,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HowManySetLiveActivity/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = HowManySetLiveActivity;
+				INFOPLIST_FILE = HowManySetWidgetInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -822,7 +822,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		668CB1312DE9BE7300924340 /* Build configuration list for PBXNativeTarget "HowManySetLiveActivityExtension" */ = {
+		668CB1312DE9BE7300924340 /* Build configuration list for PBXNativeTarget "HowManySetWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				668CB1322DE9BE7300924340 /* Debug */,
