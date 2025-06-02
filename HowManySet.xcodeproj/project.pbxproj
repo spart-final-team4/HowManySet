@@ -62,6 +62,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6615E9F12DEDA7A000ECF8DB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6615E9F02DEDA7A000ECF8DB /* SwiftUI.framework in Embed Frameworks */,
+				6615E9F32DEDA7A200ECF8DB /* WidgetKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		668CB1352DE9BE7300924340 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -86,7 +98,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetLiveActivity" folder in "HowManySetLiveActivityExtension" target */ = {
+		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HowManySetWidgetLiveActivity.swift,
+			);
+			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetLiveActivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -113,12 +132,13 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		668CB1202DE9BE7000924340 /* HowManySetLiveActivity */ = {
+		668CB1202DE9BE7000924340 /* HowManySetWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				668CB1342DE9BE7300924340 /* Exceptions for "HowManySetLiveActivity" folder in "HowManySetLiveActivityExtension" target */,
+				6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */,
+				668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetLiveActivityExtension" target */,
 			);
-			path = HowManySetLiveActivity;
+			path = HowManySetWidget;
 			sourceTree = "<group>";
 		};
 		669358BD2DE9AA8C00956214 /* HowManySet */ = {
@@ -142,8 +162,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				668CB11F2DE9BE7000924340 /* SwiftUI.framework in Frameworks */,
-				668CB11D2DE9BE7000924340 /* WidgetKit.framework in Frameworks */,
+				6615E9EF2DEDA7A000ECF8DB /* SwiftUI.framework in Frameworks */,
+				6615E9F22DEDA7A200ECF8DB /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,13 +245,14 @@
 				668CB1162DE9BE7000924340 /* Sources */,
 				668CB1172DE9BE7000924340 /* Frameworks */,
 				668CB1182DE9BE7000924340 /* Resources */,
+				6615E9F12DEDA7A000ECF8DB /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				668CB1202DE9BE7000924340 /* HowManySetLiveActivity */,
+				668CB1202DE9BE7000924340 /* HowManySetWidget */,
 			);
 			name = HowManySetLiveActivityExtension;
 			packageProductDependencies = (
