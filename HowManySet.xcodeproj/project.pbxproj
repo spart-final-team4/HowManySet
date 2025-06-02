@@ -343,6 +343,7 @@
 				668CB1892DE9C3E600924340 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				668CB18C2DE9C52E00924340 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				668CB1912DE9C56F00924340 /* XCRemoteSwiftPackageReference "RxGesture" */,
+				66B3FEAB2DED31A4009D63F2 /* XCRemoteSwiftPackageReference "ReactorKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 669358BC2DE9AA8C00956214 /* Products */;
@@ -860,6 +861,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.0.4;
+			};
+		};
+		66B3FEAB2DED31A4009D63F2 /* XCRemoteSwiftPackageReference "ReactorKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactorKit/ReactorKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
