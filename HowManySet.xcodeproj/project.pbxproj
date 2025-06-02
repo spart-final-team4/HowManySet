@@ -101,9 +101,21 @@
 		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				AppIntent/PauseRoutineIntent.swift,
+				AppIntent/PlayRoutineIntent.swift,
+				AppIntent/SkipRestIntent.swift,
+				AppIntent/SkipSetIntent.swift,
 				HowManySetWidgetLiveActivity.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		6615EA622DEDBB3900ECF8DB /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Presentation/LiveActivity/LiveActivityRestView.swift,
+				Presentation/LiveActivity/LiveActivityWorkOutView.swift,
+			);
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
 		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
