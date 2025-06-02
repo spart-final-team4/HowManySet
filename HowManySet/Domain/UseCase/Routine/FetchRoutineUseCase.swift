@@ -7,6 +7,6 @@
 
 import Foundation
 
-class FetchRoutineUseCase: FetchRoutineUseCaseProtocol {
+final class FetchRoutineUseCase: FetchRoutineUseCaseProtocol {
     
 }

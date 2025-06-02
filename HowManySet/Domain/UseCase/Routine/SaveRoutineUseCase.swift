@@ -7,6 +7,6 @@
 
 import Foundation
 
-class SaveRoutineUseCase: SaveRoutineUseCaseProtocol {
+final class SaveRoutineUseCase: SaveRoutineUseCaseProtocol {
     
 }

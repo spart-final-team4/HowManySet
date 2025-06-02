@@ -7,6 +7,6 @@
 
 import Foundation
 
-class DeleteRoutineUseCase: DeleteRoutineUseCaseProtocol {
+final class DeleteRoutineUseCase: DeleteRoutineUseCaseProtocol {
     
 }
