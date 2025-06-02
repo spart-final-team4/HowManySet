@@ -9,7 +9,8 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct HowManySetLiveActivityAttributes: ActivityAttributes {
+struct HowManySetWidgetAttributes: ActivityAttributes {
+    
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         var emoji: String
@@ -19,9 +20,9 @@ struct HowManySetLiveActivityAttributes: ActivityAttributes {
     var name: String
 }
 
-struct HowManySetLiveActivityLiveActivity: Widget {
+struct HowManySetWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: HowManySetLiveActivityAttributes.self) { context in
+        ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
                 Text("Hello \(context.state.emoji)")
@@ -56,25 +57,26 @@ struct HowManySetLiveActivityLiveActivity: Widget {
     }
 }
 
-extension HowManySetLiveActivityAttributes {
-    fileprivate static var preview: HowManySetLiveActivityAttributes {
-        HowManySetLiveActivityAttributes(name: "World")
+extension HowManySetWidgetAttributes {
+    fileprivate static var preview: HowManySetWidgetAttributes {
+        HowManySetWidgetAttributes(name: "World")
     }
 }
 
-extension HowManySetLiveActivityAttributes.ContentState {
-    fileprivate static var smiley: HowManySetLiveActivityAttributes.ContentState {
-        HowManySetLiveActivityAttributes.ContentState(emoji: "😀")
+extension HowManySetWidgetAttributes.ContentState {
+    fileprivate static var smiley: HowManySetWidgetAttributes.ContentState {
+        HowManySetWidgetAttributes.ContentState(emoji: "😀")
      }
      
-     fileprivate static var starEyes: HowManySetLiveActivityAttributes.ContentState {
-         HowManySetLiveActivityAttributes.ContentState(emoji: "🤩")
+     fileprivate static var starEyes: HowManySetWidgetAttributes.ContentState {
+         HowManySetWidgetAttributes.ContentState(emoji: "🤩")
      }
 }
 
-#Preview("Notification", as: .content, using: HowManySetLiveActivityAttributes.preview) {
-   HowManySetLiveActivityLiveActivity()
+@available(iOS 17.0, *)
+#Preview("Notification", as: .content, using: HowManySetWidgetAttributes.preview) {
+    HowManySetWidgetLiveActivity()
 } contentStates: {
-    HowManySetLiveActivityAttributes.ContentState.smiley
-    HowManySetLiveActivityAttributes.ContentState.starEyes
+    HowManySetWidgetAttributes.ContentState.smiley
+    HowManySetWidgetAttributes.ContentState.starEyes
 }
