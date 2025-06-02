@@ -13,11 +13,18 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
     
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
-        var emoji: String
+        // state
+        var isWorkingout: Bool
+        var isResting: Bool
+        var secondsRemaining: Int
+        var currentSet: Int
+        var entireSet: Int
     }
 
     // Fixed non-changing properties about your activity go here!
-    var name: String
+    // attributes
+    var workoutName: String
+    var workoutInfo: String
 }
 
 struct HowManySetWidgetLiveActivity: Widget {
@@ -25,7 +32,7 @@ struct HowManySetWidgetLiveActivity: Widget {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
-                Text("Hello \(context.state.emoji)")
+                Text("Hello \(context.state.currentSet)")
             }
             .activityBackgroundTint(Color.cyan)
             .activitySystemActionForegroundColor(Color.black)
@@ -41,15 +48,15 @@ struct HowManySetWidgetLiveActivity: Widget {
                     Text("Trailing")
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
+                    Text("Bottom \(context.attributes.workoutName)")
                     // more content
                 }
             } compactLeading: {
                 Text("L")
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                Text("T \(context.attributes.workoutName)")
             } minimal: {
-                Text(context.state.emoji)
+                Text(context.attributes.workoutName)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.red)
@@ -59,17 +66,17 @@ struct HowManySetWidgetLiveActivity: Widget {
 
 extension HowManySetWidgetAttributes {
     fileprivate static var preview: HowManySetWidgetAttributes {
-        HowManySetWidgetAttributes(name: "World")
+        HowManySetWidgetAttributes(workoutName: "랫풀다운", workoutInfo: "60kg x 10회")
     }
 }
 
 extension HowManySetWidgetAttributes.ContentState {
-    fileprivate static var smiley: HowManySetWidgetAttributes.ContentState {
-        HowManySetWidgetAttributes.ContentState(emoji: "😀")
+    fileprivate static var workout: HowManySetWidgetAttributes.ContentState {
+        HowManySetWidgetAttributes.ContentState(isWorkingout: true, isResting: false, secondsRemaining: 30, currentSet: 2, entireSet: 5)
      }
      
-     fileprivate static var starEyes: HowManySetWidgetAttributes.ContentState {
-         HowManySetWidgetAttributes.ContentState(emoji: "🤩")
+     fileprivate static var rest: HowManySetWidgetAttributes.ContentState {
+         HowManySetWidgetAttributes.ContentState(isWorkingout: false, isResting: true, secondsRemaining: 30, currentSet: 2, entireSet: 5)
      }
 }
 
@@ -77,6 +84,6 @@ extension HowManySetWidgetAttributes.ContentState {
 #Preview("Notification", as: .content, using: HowManySetWidgetAttributes.preview) {
     HowManySetWidgetLiveActivity()
 } contentStates: {
-    HowManySetWidgetAttributes.ContentState.smiley
-    HowManySetWidgetAttributes.ContentState.starEyes
+    HowManySetWidgetAttributes.ContentState.workout
+    HowManySetWidgetAttributes.ContentState.rest
 }
