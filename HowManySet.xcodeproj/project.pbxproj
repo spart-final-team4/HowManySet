@@ -108,7 +108,7 @@
 		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				HowManySetWidgetInfo.plist,
 			);
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
@@ -491,7 +491,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HowManySetWidgetInfo.plist;
+				INFOPLIST_FILE = HowManySetWidget/HowManySetWidgetInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
@@ -523,7 +523,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HowManySetWidgetInfo.plist;
+				INFOPLIST_FILE = HowManySetWidget/HowManySetWidgetInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
