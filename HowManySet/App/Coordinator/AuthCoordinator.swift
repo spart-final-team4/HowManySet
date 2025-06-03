@@ -18,11 +18,16 @@ final class AuthCoordinator: Coordinator {
     }
     
     func start() {
-        <#code#>
+        let authVC = AuthViewController(reactor: AuthViewReactor())
+        
+        navigationController.pushViewController(authVC, animated: true)
     }
     
-    func finishFlow() {
+    func completeAuth() {
         
+        // 로그인 완료 시 필요한 비즈니스 로직들 추가
+        print(#function)
+        
+        finishFlow?()
     }
-
 }
