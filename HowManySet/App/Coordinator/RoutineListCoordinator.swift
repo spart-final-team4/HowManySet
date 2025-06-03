@@ -14,13 +14,15 @@ protocol RoutineListCoordinatorProtocol: Coordinator {
 final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     private let navigationController: UINavigationController
+    private let container: DIContainer
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: DIContainer) {
         self.navigationController = navigationController
+        self.container = container
     }
     
     func start() {
-        let routineListVC = RoutineListViewController(reactor: RoutineListReactor())
+        let routineListVC = container.makeRoutineListViewController(coordinator: self)
         
         navigationController.pushViewController(routineListVC, animated: true)
     }

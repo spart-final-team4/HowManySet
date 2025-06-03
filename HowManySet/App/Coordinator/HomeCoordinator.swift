@@ -14,13 +14,15 @@ protocol HomeCoordinatorProtocol: Coordinator {
 final class HomeCoordinator: HomeCoordinatorProtocol {
     
     private let navigationController: UINavigationController
+    private let container: DIContainer
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: DIContainer) {
         self.navigationController = navigationController
+        self.container = container
     }
     
     func start() {
-        let homeVC = HomeViewController(reactor: HomeViewReactor())
+        let homeVC = container.makeHomeViewController(coordinator: self)
         
         navigationController.pushViewController(homeVC, animated: true)
     }

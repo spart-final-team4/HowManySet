@@ -16,13 +16,15 @@ final class AuthCoordinator: AuthCoordinatorProtocol {
     /// 로그인 완료 시 호출될 클로저
     var finishFlow: (() -> Void)?
     let navigationController: UINavigationController
+    private let container: DIContainer
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: DIContainer) {
         self.navigationController = navigationController
+        self.container = container
     }
     
     func start() {
-        let authVC = AuthViewController(reactor: AuthViewReactor())
+        let authVC = container.makeAuthViewController(coordinator: self)
         
         navigationController.pushViewController(authVC, animated: true)
     }
