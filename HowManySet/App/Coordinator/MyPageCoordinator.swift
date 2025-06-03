@@ -16,6 +16,8 @@ final class MyPageCoordinator: Coordinator {
     }
 
     func start() {
+        let myPageVC = MyPageViewController(reactor: MyPageReactor())
         
+        navigationController.pushViewController(myPageVC, animated: true)
     }
 }
