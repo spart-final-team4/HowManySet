@@ -1,13 +1,13 @@
 //
-//  EndWorkoutUseCaseTests.swift
+//  SaveRecordUseCaseTests.swift
 //  HowManySetTests
 //
-//  Created by MJ Dev on 6/2/25.
+//  Created by MJ Dev on 6/4/25.
 //
 
 import XCTest
 
-final class EndWorkoutUseCaseTests: XCTestCase {
+final class SaveRecordUseCaseTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
