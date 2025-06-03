@@ -10,10 +10,14 @@ import SnapKit
 
 final class HomeViewController: UIViewController {
     
+    private weak var coordinator: HomeCoordinatorProtocol?
+
     private let reactor: HomeViewReactor
     
-    init(reactor: HomeViewReactor) {
+    init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
         self.reactor = reactor
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {

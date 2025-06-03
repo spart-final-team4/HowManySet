@@ -10,10 +10,13 @@ import SnapKit
 
 final class OnBoardingViewController: UIViewController {
     
+    private weak var coordinator: OnBoardingCoordinatorProtocol?
+    
     private var reactor: OnBoardingViewReactor
     
-    init(reactor: OnBoardingViewReactor) {
+    init(reactor: OnBoardingViewReactor, coordinator: OnBoardingCoordinatorProtocol) {
         self.reactor = reactor
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
     

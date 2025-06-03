@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class AuthCoordinator: Coordinator {
+protocol AuthCoordinatorProtocol: Coordinator {
+    
+}
+
+final class AuthCoordinator: AuthCoordinatorProtocol {
     
     /// 로그인 완료 시 호출될 클로저
     var finishFlow: (() -> Void)?

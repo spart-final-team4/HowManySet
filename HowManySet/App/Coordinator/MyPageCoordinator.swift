@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class MyPageCoordinator: Coordinator {
+protocol MyPageCoordinatorProtocol: Coordinator {
+    
+}
+
+final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     

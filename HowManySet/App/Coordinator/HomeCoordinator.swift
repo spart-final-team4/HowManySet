@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class HomeCoordinator: Coordinator {
+protocol HomeCoordinatorProtocol: Coordinator {
+    
+}
+
+final class HomeCoordinator: HomeCoordinatorProtocol {
     
     private let navigationController: UINavigationController
 
