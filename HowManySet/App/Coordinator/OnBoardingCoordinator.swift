@@ -5,4 +5,32 @@
 //  Created by 정근호 on 6/3/25.
 //
 
-import Foundation
+import UIKit
+
+final class OnBoardingCoordinator: Coordinator {
+    
+    /// 온보딩 완료 시 호출될 클로저
+    var finishFlow: (() -> Void)?
+    let navigationController: UINavigationController
+    
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
+    }
+    
+    func start() {
+        let onboardingVC = OnBoardingViewController(reactor: OnBoardingViewReactor())
+        
+        navigationController.pushViewController(onboardingVC, animated: true)
+    }
+    
+    /// 온보딩 종료 시 호출
+    func completeOnBoarding() {
+        
+        // 필요한 비즈니스 로직들 추가
+        // UserDefaults에 온보딩 완료 상태 저장
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        
+        finishFlow?()
+    }
+
+}
