@@ -23,6 +23,7 @@
 		668CB18E2DE9C52E00924340 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB18D2DE9C52E00924340 /* Differentiator */; };
 		668CB1902DE9C52E00924340 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB18F2DE9C52E00924340 /* RxDataSources */; };
 		AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */; };
+		A53AD8522DEF0CFD003E1FE8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD8512DEF0CFD003E1FE8 /* GoogleSignIn */; };
 		AAD440382DF690BB00B57C81 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; };
 		AAD4403A2DF690BB00B57C81 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -200,6 +201,7 @@
 				668CB1762DE9C2E100924340 /* RxSwift in Frameworks */,
 				66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */,
 				668CB1902DE9C52E00924340 /* RxDataSources in Frameworks */,
+				A53AD8522DEF0CFD003E1FE8 /* GoogleSignIn in Frameworks */,
 				668CB1792DE9C2F300924340 /* SnapKit in Frameworks */,
 				668CB1742DE9C2E100924340 /* RxRelay in Frameworks */,
 				668CB18B2DE9C3E600924340 /* FSCalendar in Frameworks */,
@@ -318,6 +320,7 @@
 				668CB18F2DE9C52E00924340 /* RxDataSources */,
 				6615E9262DED443A00ECF8DB /* RealmSwift */,
 				66189C5E2DEF0E770087F042 /* ReactorKit */,
+				A53AD8512DEF0CFD003E1FE8 /* GoogleSignIn */,
 			);
 			productName = HowManySet;
 			productReference = 669358BB2DE9AA8C00956214 /* HowManySet.app */;
@@ -413,6 +416,7 @@
 				668CB18C2DE9C52E00924340 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				66B3FEAB2DED31A4009D63F2 /* XCRemoteSwiftPackageReference "ReactorKit" */,
 				6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */,
+				A53AD8502DEF0CFD003E1FE8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 669358BC2DE9AA8C00956214 /* Products */;
@@ -584,7 +588,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U54KVZDT39;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HowManySet/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySet;
@@ -622,7 +626,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U54KVZDT39;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HowManySet/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySet;
@@ -963,6 +967,14 @@
 				minimumVersion = 3.2.0;
 			};
 		};
+		A53AD8502DEF0CFD003E1FE8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1035,6 +1047,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		A53AD8512DEF0CFD003E1FE8 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A53AD8502DEF0CFD003E1FE8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
