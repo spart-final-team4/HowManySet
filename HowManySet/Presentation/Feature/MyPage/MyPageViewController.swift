@@ -12,9 +12,9 @@ final class MyPageViewController: UIViewController {
     
     private weak var coordinator: MyPageCoordinatorProtocol?
 
-    private let reactor: MyPageReactor
+    private let reactor: MyPageViewReactor
     
-    init(reactor: MyPageReactor, coordinator: MyPageCoordinatorProtocol) {
+    init(reactor: MyPageViewReactor, coordinator: MyPageCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)

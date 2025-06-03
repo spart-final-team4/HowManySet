@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import ReactorKit
 
-final class MyPageReactor: Reactor {
+final class MyPageViewReactor: Reactor {
     
     // Action is an user interaction
     enum Action {
