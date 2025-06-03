@@ -14,13 +14,15 @@ protocol CalendarCoordinatorProtocol: Coordinator {
 final class CalendarCoordinator: CalendarCoordinatorProtocol {
     
     private let navigationController: UINavigationController
+    private let container: DIContainer
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: DIContainer) {
         self.navigationController = navigationController
+        self.container = container
     }
     
     func start() {
-        let calendarVC = CalendarViewController()
+        let calendarVC = container.makeCalendarViewController(coordinator: self)
         
         navigationController.pushViewController(calendarVC, animated: true)
     }

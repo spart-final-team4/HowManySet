@@ -10,6 +10,7 @@ import UIKit
 final class TabBarCoordinator: Coordinator {
     
     let tabBarController: UITabBarController
+    private let container: DIContainer
     
     // 각 탭에 대한 Coordinator
     private var homeCoordinator: HomeCoordinator?
@@ -17,8 +18,9 @@ final class TabBarCoordinator: Coordinator {
     private var calendarCoordinator: CalendarCoordinator?
     private var myPageCoordinator: MyPageCoordinator?
 
-    init(tabBarController: UITabBarController) {
+    init(tabBarController: UITabBarController, container: DIContainer) {
         self.tabBarController = tabBarController
+        self.container = container
     }
     
     func start() {
@@ -30,10 +32,10 @@ final class TabBarCoordinator: Coordinator {
         let myPageNav = UINavigationController()
         
         // 각 탭의 코디네이터 생성
-        homeCoordinator = HomeCoordinator(navigationController: homeNav)
-        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav)
-        calendarCoordinator = CalendarCoordinator(navigationController: calendarNav)
-        myPageCoordinator = MyPageCoordinator(navigationController: myPageNav)
+        homeCoordinator = HomeCoordinator(navigationController: homeNav, container: container)
+        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container)
+        calendarCoordinator = CalendarCoordinator(navigationController: calendarNav, container: container)
+        myPageCoordinator = MyPageCoordinator(navigationController: myPageNav, container: container)
         
         // 각 코디네이터 start()
         homeCoordinator?.start()
