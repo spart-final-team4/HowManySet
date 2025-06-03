@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; };
+		66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 66189C5E2DEF0E770087F042 /* ReactorKit */; };
+		66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		668CB11D2DE9BE7000924340 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11C2DE9BE7000924340 /* WidgetKit.framework */; };
 		668CB11F2DE9BE7000924340 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11E2DE9BE7000924340 /* SwiftUI.framework */; };
 		668CB1302DE9BE7300924340 /* HowManySetLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 668CB11A2DE9BE7000924340 /* HowManySetLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -49,6 +51,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		66189C612DEF0E860087F042 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		668CB1352DE9BE7300924340 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,6 +155,7 @@
 				668CB17C2DE9C30000924340 /* Then in Frameworks */,
 				668CB1862DE9C3C900924340 /* FirebaseAuth in Frameworks */,
 				668CB1762DE9C2E100924340 /* RxSwift in Frameworks */,
+				66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */,
 				668CB1902DE9C52E00924340 /* RxDataSources in Frameworks */,
 				668CB1792DE9C2F300924340 /* SnapKit in Frameworks */,
 				668CB1742DE9C2E100924340 /* RxRelay in Frameworks */,
@@ -234,6 +248,7 @@
 				669358B82DE9AA8C00956214 /* Frameworks */,
 				669358B92DE9AA8C00956214 /* Resources */,
 				668CB1352DE9BE7300924340 /* Embed Foundation Extensions */,
+				66189C612DEF0E860087F042 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -256,6 +271,7 @@
 				668CB18D2DE9C52E00924340 /* Differentiator */,
 				668CB18F2DE9C52E00924340 /* RxDataSources */,
 				6615E9262DED443A00ECF8DB /* RealmSwift */,
+				66189C5E2DEF0E770087F042 /* ReactorKit */,
 			);
 			productName = HowManySet;
 			productReference = 669358BB2DE9AA8C00956214 /* HowManySet.app */;
@@ -894,6 +910,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		66189C5E2DEF0E770087F042 /* ReactorKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 66B3FEAB2DED31A4009D63F2 /* XCRemoteSwiftPackageReference "ReactorKit" */;
+			productName = ReactorKit;
 		};
 		668CB1712DE9C2E100924340 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
