@@ -9,10 +9,13 @@ import UIKit
 
 final class AuthViewController: UIViewController {
     
+    private weak var coordinator: AuthCoordinatorProtocol?
+    
     private var reactor: AuthViewReactor
     
-    init(reactor: AuthViewReactor) {
+    init(reactor: AuthViewReactor, coordinator: AuthCoordinatorProtocol) {
         self.reactor = reactor
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
     

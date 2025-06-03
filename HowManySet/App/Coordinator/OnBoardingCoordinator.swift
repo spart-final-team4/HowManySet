@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class OnBoardingCoordinator: Coordinator {
+protocol OnBoardingCoordinatorProtocol: Coordinator {
+    
+}
+
+final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
     
     /// 온보딩 완료 시 호출될 클로저
     var finishFlow: (() -> Void)?

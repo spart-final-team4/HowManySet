@@ -10,10 +10,14 @@ import SnapKit
 
 final class RoutineListViewController: UIViewController {
     
+    private weak var coordinator: RoutineListCoordinatorProtocol?
+
     private let reactor: RoutineListReactor
     
-    init(reactor: RoutineListReactor) {
+    init(reactor: RoutineListReactor, coordinator: RoutineListCoordinatorProtocol) {
         self.reactor = reactor
+        self.coordinator = coordinator
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {

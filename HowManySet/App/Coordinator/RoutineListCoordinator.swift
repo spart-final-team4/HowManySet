@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class RoutineListCoordinator: Coordinator {
+protocol RoutineListCoordinatorProtocol: Coordinator {
+    
+}
+
+final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     private let navigationController: UINavigationController
 

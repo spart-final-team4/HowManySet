@@ -7,7 +7,11 @@
 
 import UIKit
 
-final class CalendarCoordinator: Coordinator {
+protocol CalendarCoordinatorProtocol: Coordinator {
+    
+}
+
+final class CalendarCoordinator: CalendarCoordinatorProtocol {
     
     private let navigationController: UINavigationController
 
