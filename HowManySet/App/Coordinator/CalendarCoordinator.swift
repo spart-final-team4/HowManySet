@@ -16,6 +16,8 @@ final class CalendarCoordinator: Coordinator {
     }
     
     func start() {
-        <#code#>
+        let calendarVC = CalendarViewController()
+        
+        navigationController.pushViewController(calendarVC, animated: true)
     }
 }
