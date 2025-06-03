@@ -6,9 +6,20 @@
 //
 
 import UIKit
+import SnapKit
 
-class HomeViewController: UIViewController {
-
+final class HomeViewController: UIViewController {
+    
+    private let reactor: HomeViewReactor
+    
+    init(reactor: HomeViewReactor) {
+        self.reactor = reactor
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print(#function)
