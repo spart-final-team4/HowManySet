@@ -16,6 +16,8 @@ final class RoutineListCoordinator: Coordinator {
     }
     
     func start() {
-        <#code#>
+        let routineListVC = RoutineListViewController(reactor: RoutineListReactor())
+        
+        navigationController.pushViewController(routineListVC, animated: true)
     }
 }
