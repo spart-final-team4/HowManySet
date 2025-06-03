@@ -7,6 +7,6 @@
 
 import UIKit
 
-final class LogInViewController: UIViewController {
+final class AuthViewController: UIViewController {
     
 }
