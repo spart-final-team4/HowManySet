@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import ReactorKit
 
-final class RoutineListReactor: Reactor {
+final class RoutineListViewReactor: Reactor {
     
     // Action is an user interaction
     enum Action {

@@ -12,9 +12,9 @@ final class RoutineListViewController: UIViewController {
     
     private weak var coordinator: RoutineListCoordinatorProtocol?
 
-    private let reactor: RoutineListReactor
+    private let reactor: RoutineListViewReactor
     
-    init(reactor: RoutineListReactor, coordinator: RoutineListCoordinatorProtocol) {
+    init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
