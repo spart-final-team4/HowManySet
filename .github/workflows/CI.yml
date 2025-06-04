@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Start xcode build 🛠
+      run: |
+        xcodebuild clean test \
+          -workspace HowManySet/HowManySet.xcworkspace \
+          -scheme HowManySet \
+          -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=latest' \
+          -only-testing:HowManySetTests
