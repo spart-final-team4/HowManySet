@@ -79,4 +79,14 @@ final class DIContainer {
         
         return MyPageViewController(reactor: reactor, coordinator: coordinator)
     }
+    
+    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator) -> UIViewController {
+        
+//        let repository
+//        let useCase
+        
+        let reactor = RoutineCompleteViewReactor()
+        
+        return RoutineCompleteViewController(reactor: reactor)
+    }
 }
