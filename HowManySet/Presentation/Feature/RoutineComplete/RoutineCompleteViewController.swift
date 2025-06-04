@@ -8,12 +8,12 @@
 import UIKit
 import SnapKit
 
-final class CompleteViewController: UIViewController {
+final class RoutineCompleteViewController: UIViewController {
     
     
-    private var reactor: CompleteViewReactor
+    private var reactor: RoutineCompleteViewReactor
     
-    init(reactor: CompleteViewReactor) {
+    init(reactor: RoutineCompleteViewReactor) {
         self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
     }

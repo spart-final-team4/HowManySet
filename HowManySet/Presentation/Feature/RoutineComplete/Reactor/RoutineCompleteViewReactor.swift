@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import ReactorKit
 
-final class CompleteViewReactor: Reactor {
+final class RoutineCompleteViewReactor: Reactor {
     
     // Action is an user interaction
     enum Action {
