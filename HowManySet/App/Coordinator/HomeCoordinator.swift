@@ -26,4 +26,16 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
         navigationController.pushViewController(homeVC, animated: true)
     }
+    
+    func presentWorkoutOptionView() {
+        
+    }
+    
+    func navigateToEditRoutineView() {
+        
+    }
+    
+    func navigateToRoutineCompleteView() {
+        
+    }
 }

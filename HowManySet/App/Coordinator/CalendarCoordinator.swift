@@ -26,4 +26,8 @@ final class CalendarCoordinator: CalendarCoordinatorProtocol {
         
         navigationController.pushViewController(calendarVC, animated: true)
     }
+    
+    func navigateToRecordDetailView() {
+        
+    }
 }
