@@ -26,23 +26,27 @@ final class DIContainer {
     }
     
     func makeHomeViewController(coordinator: HomeCoordinator) -> UIViewController {
-//        let repository
-//        let useCase
+        let recordRepository = RecordRepositoryImpl()
+        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         let reactor = HomeViewReactor()
         
         return HomeViewController(reactor: reactor, coordinator: coordinator)
     }
     
     func makeRoutineListViewController(coordinator: RoutineListCoordinator) -> UIViewController {
-//        let repository
-//        let useCase
+
+        let routineRepository = RoutineRepositoryImpl()
+        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
+        let saveRoutineUseCasse = SaveRoutineUseCase(repository: routineRepository)
         let reactor = RoutineListViewReactor()
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator)
     }
     
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
-//        let repository
+        let recordRepository = RecordRepositoryImpl()
+        let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
 //        let useCase
 //        let reactor = CalendarViewReactor()
         
