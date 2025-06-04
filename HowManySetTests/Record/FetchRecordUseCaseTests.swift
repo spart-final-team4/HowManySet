@@ -1,14 +1,13 @@
 //
-//  HowManySetTests.swift
+//  FetchRecordUseCaseTests.swift
 //  HowManySetTests
 //
-//  Created by 정근호 on 5/30/25.
+//  Created by MJ Dev on 6/4/25.
 //
 
 import XCTest
-@testable import HowManySet
 
-final class HowManySetTests: XCTestCase {
+final class FetchRecordUseCaseTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
