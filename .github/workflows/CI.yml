@@ -14,7 +14,7 @@ jobs:
     - name: Start xcode build 🛠
       run: |
         xcodebuild clean test \
-          -workspace HowManySet/HowManySet.xcworkspace \
+          -workspace HowManySet.xcworkspace \
           -scheme HowManySet \
           -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=latest' \
           -only-testing:HowManySetTests
