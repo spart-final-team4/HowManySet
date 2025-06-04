@@ -85,6 +85,20 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
+		AA25388C2DEFF9C400463BC6 /* Exceptions for "HowManySetTests" folder in "HowManySet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlan.xctestplan,
+			);
+			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		AA25388D2DEFF9C400463BC6 /* Exceptions for "HowManySetTests" folder in "HowManySetTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlan.xctestplan,
+			);
+			target = 669358D02DE9AA8E00956214 /* HowManySetTests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -106,6 +120,10 @@
 		};
 		669358D42DE9AA8E00956214 /* HowManySetTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA25388C2DEFF9C400463BC6 /* Exceptions for "HowManySetTests" folder in "HowManySet" target */,
+				AA25388D2DEFF9C400463BC6 /* Exceptions for "HowManySetTests" folder in "HowManySetTests" target */,
+			);
 			path = HowManySetTests;
 			sourceTree = "<group>";
 		};
