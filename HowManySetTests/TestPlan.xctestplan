@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "A6548FD7-028D-4794-BBD2-DF7DDAED9ABB",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:HowManySet.xcodeproj",
+        "identifier" : "669358D02DE9AA8E00956214",
+        "name" : "HowManySetTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "target" : {
+        "containerPath" : "container:HowManySet.xcodeproj",
+        "identifier" : "669358DA2DE9AA8E00956214",
+        "name" : "HowManySetUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
