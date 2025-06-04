@@ -1,8 +1,10 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop", "release" ]
 
 jobs:
   build:
@@ -14,7 +16,7 @@ jobs:
     - name: Start xcode build 🛠
       run: |
         xcodebuild clean test \
-          -workspace HowManySet.xcworkspace \
+          -workspace HowManySet\HowManySet.xcodeproj \
           -scheme HowManySet \
           -destination 'platform=iOS Simulator,name=iPhone 15 Pro,OS=latest' \
           -only-testing:HowManySetTests
