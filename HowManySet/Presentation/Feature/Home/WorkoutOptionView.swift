@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class EditOptionView: UIView {
+final class WorkoutOptionView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
