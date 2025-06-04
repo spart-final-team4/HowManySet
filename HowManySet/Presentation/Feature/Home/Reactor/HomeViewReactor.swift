@@ -11,6 +11,8 @@ import ReactorKit
 
 final class HomeViewReactor: Reactor {
     
+    private let saveRecordUseCase: SaveRecordUseCase
+    
     // Action is an user interaction
     enum Action {
         
@@ -28,7 +30,8 @@ final class HomeViewReactor: Reactor {
     
     let initialState: State
     
-    init() {
+    init(saveRecordUseCase: SaveRecordUseCase) {
+        self.saveRecordUseCase = saveRecordUseCase
         self.initialState = State()
     }
     

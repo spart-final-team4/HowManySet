@@ -11,6 +11,10 @@ import ReactorKit
 
 final class RoutineListViewReactor: Reactor {
     
+    private let deleteRoutineUseCase: DeleteRoutineUseCase
+    private let fetchRoutineUseCase: FetchRoutineUseCase
+    private let saveRoutineUseCase: SaveRoutineUseCase
+    
     // Action is an user interaction
     enum Action {
         
@@ -28,9 +32,14 @@ final class RoutineListViewReactor: Reactor {
     
     let initialState: State
     
-    init() {
+    init(deleteRoutineUseCase: DeleteRoutineUseCase, fetchRoutineUseCase: FetchRoutineUseCase, saveRoutineUseCase: SaveRoutineUseCase) {
+        
+        self.deleteRoutineUseCase = deleteRoutineUseCase
+        self.fetchRoutineUseCase = fetchRoutineUseCase
+        self.saveRoutineUseCase = saveRoutineUseCase
         self.initialState = State()
     }
+
     
     //    // Action -> Mutation
     //    func mutate(action: Action) -> Observable<Mutation> {
