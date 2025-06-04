@@ -12,11 +12,11 @@ import RxSwift
 final class UserSettingRepositoryImpl: UserSettingRepository {
     
     func fetchUserSetting(uid: String) -> RxSwift.Single<UserSetting> {
-        <#code#>
+
     }
     
     func saveUserSetting(uid: String, settings: UserSetting) {
-        <#code#>
+
     }
     
 }
