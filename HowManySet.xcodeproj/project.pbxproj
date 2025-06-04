@@ -21,6 +21,7 @@
 		668CB18B2DE9C3E600924340 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB18A2DE9C3E600924340 /* FSCalendar */; };
 		668CB18E2DE9C52E00924340 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB18D2DE9C52E00924340 /* Differentiator */; };
 		668CB1902DE9C52E00924340 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB18F2DE9C52E00924340 /* RxDataSources */; };
+		AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		669358BB2DE9AA8C00956214 /* HowManySet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HowManySet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		669358D12DE9AA8E00956214 /* HowManySetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -81,9 +83,19 @@
 		669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				HowManySetUITests/HowManySetUITests.swift,
+				HowManySetUITests/HowManySetUITestsLaunchTests.swift,
 				Resources/Info.plist,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		AA2538932DF012BE00463BC6 /* Exceptions for "HowManySet" folder in "HowManySetUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HowManySetUITests/HowManySetUITests.swift,
+				HowManySetUITests/HowManySetUITestsLaunchTests.swift,
+			);
+			target = 669358DA2DE9AA8E00956214 /* HowManySetUITests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -100,6 +112,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */,
+				AA2538932DF012BE00463BC6 /* Exceptions for "HowManySet" folder in "HowManySetUITests" target */,
 			);
 			path = HowManySet;
 			sourceTree = "<group>";
@@ -107,11 +120,6 @@
 		669358D42DE9AA8E00956214 /* HowManySetTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HowManySetTests;
-			sourceTree = "<group>";
-		};
-		669358DE2DE9AA8E00956214 /* HowManySetUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = HowManySetUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -175,10 +183,10 @@
 			children = (
 				669358BD2DE9AA8C00956214 /* HowManySet */,
 				669358D42DE9AA8E00956214 /* HowManySetTests */,
-				669358DE2DE9AA8E00956214 /* HowManySetUITests */,
 				668CB1202DE9BE7000924340 /* HowManySetLiveActivity */,
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
+				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
 			);
 			sourceTree = "<group>";
 		};
@@ -289,9 +297,6 @@
 			dependencies = (
 				669358DD2DE9AA8E00956214 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				669358DE2DE9AA8E00956214 /* HowManySetUITests */,
-			);
 			name = HowManySetUITests;
 			packageProductDependencies = (
 			);
@@ -370,6 +375,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -700,7 +706,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -719,7 +725,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -737,6 +743,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -754,6 +761,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
