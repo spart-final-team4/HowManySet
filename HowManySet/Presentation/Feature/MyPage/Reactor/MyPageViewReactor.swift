@@ -11,6 +11,9 @@ import ReactorKit
 
 final class MyPageViewReactor: Reactor {
     
+    private let fetchUserSettingUseCase: FetchUserSettingUseCase
+    private let saveUserSettingUseCase: SaveUserSettingUseCase
+    
     // Action is an user interaction
     enum Action {
         
@@ -28,8 +31,11 @@ final class MyPageViewReactor: Reactor {
     
     let initialState: State
     
-    init() {
+    init(fetchUserSettingUseCase: FetchUserSettingUseCase, saveUserSettingUseCase: SaveUserSettingUseCase) {
+        self.fetchUserSettingUseCase = fetchUserSettingUseCase
+        self.saveUserSettingUseCase = saveUserSettingUseCase
         self.initialState = State()
+        
     }
     
     //    // Action -> Mutation
