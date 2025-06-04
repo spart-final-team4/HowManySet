@@ -6,6 +6,7 @@ import FSCalendar
 final class CalendarView: UIView {
     private let titleLabel = UILabel()
     private let calendar = FSCalendar()
+    private let recordTableView = UITableView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -66,7 +67,8 @@ private extension CalendarView {
     func setViewHierarchy() {
         [
             titleLabel,
-            calendar
+            calendar,
+            recordTableView
         ].forEach { addSubviews($0) }
     }
 
@@ -79,7 +81,12 @@ private extension CalendarView {
         calendar.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
-            $0.height.equalTo(320)
+            $0.height.equalTo(350)
+        }
+
+        recordTableView.snp.makeConstraints {
+            $0.top.equalTo(calendar.snp.bottom).offset(16)
+            $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide).inset(20)
         }
     }
 }
