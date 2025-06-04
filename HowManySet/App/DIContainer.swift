@@ -50,9 +50,15 @@ final class DIContainer {
     }
     
     func makeMyPageViewController(coordinator: MyPageCoordinator) -> UIViewController {
-//        let repository
-//        let useCase
-        let reactor = MyPageViewReactor()
+        
+        let userSettingRepository = UserSettingRepositoryImpl()
+        let fetchUserSettingUseCase = FetchUserSettingUseCase(repository: userSettingRepository)
+        let saveUserSettingUseCase = SaveUserSettingUseCase(repository: userSettingRepository)
+        
+        let reactor = MyPageViewReactor(
+            fetchUserSettingUseCase: fetchUserSettingUseCase,
+            saveUserSettingUseCase: saveUserSettingUseCase
+        )
         
         return MyPageViewController(reactor: reactor, coordinator: coordinator)
     }
