@@ -26,4 +26,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         
         navigationController.pushViewController(routineListVC, animated: true)
     }
+    
+    func navigateToEditRoutineView() {
+        
+    }
+    
+    func presentEditExcerciseView() {
+        
+    }
 }
