@@ -27,7 +27,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         navigationController.pushViewController(myPageVC, animated: true)
     }
     /// 언어 변경 처리 (설정 앱 이동 알림)
-    func presentLanguageSettingAlert(from viewController: UIViewController) {
+    func presentLanguageSettingAlert() {
         let alert = UIAlertController(
             title: "언어 변경",
             message: "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?",
@@ -44,15 +44,15 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
 
         alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
 
-        viewController.present(alert, animated: true)
+        navigationController.present(alert, animated: true)
     }
     /// Alert로 버전 정보 표시
-    func showVersionInfo(from viewController: UIViewController) {
+    func showVersionInfo() {
         // 버전 정보 받아오기
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "알 수 없음"
         
         let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(version)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
-        viewController.present(alert, animated: true)
+        navigationController.present(alert, animated: true)
     }
 }
