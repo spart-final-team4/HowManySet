@@ -20,7 +20,6 @@ final class CalendarView: UIView {
 
 private extension CalendarView {
     func setupUI() {
-        self.backgroundColor = .black
         setAppearance()
         setViewHierarchy()
         setConstraints()
@@ -61,6 +60,11 @@ private extension CalendarView {
             $0.appearance.titleSelectionColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 선택된 날짜 텍스트 색상
             $0.appearance.eventDefaultColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 이벤트 점의 기본 색상
             $0.appearance.eventSelectionColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 선택된 날짜의 이벤트 점 색상
+        }
+
+        recordTableView.do {
+            $0.backgroundColor = .clear
+            $0.separatorStyle = .none
         }
     }
 
