@@ -21,17 +21,41 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         self.container = container
     }
     
+    /// 탭바에서 호출 시
     func start() {
         let routineListVC = container.makeRoutineListViewController(coordinator: self)
         
         navigationController.pushViewController(routineListVC, animated: true)
     }
     
-    func navigateToEditRoutineView() {
+    /// 초기 홈 화면 + 버튼으로 호출 시
+    func startModal() {
+        let routineListVC = container.makeRoutineListViewController(coordinator: self)
         
+        if let sheet = routineListVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        navigationController.present(routineListVC, animated: true)
+    }
+    
+    func pushEditRoutineView() {
+        let reactor = EditRoutinViewReactor()
+        let editRoutineVC = EditRoutineViewController(reactor: reactor)
+        
+        navigationController.pushViewController(editRoutineVC, animated: true)
     }
     
     func presentEditExcerciseView() {
+        let reactor = EditExcerciseViewReactor()
+        let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
         
+        if let sheet = editExcerciseVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        navigationController.present(editExcerciseVC, animated: true)
     }
 }

@@ -27,7 +27,15 @@ final class CalendarCoordinator: CalendarCoordinatorProtocol {
         navigationController.pushViewController(calendarVC, animated: true)
     }
     
-    func navigateToRecordDetailView() {
+    func presentRecordDetailView() {
+        let reactor = RecordDetailViewReactor()
+        let recordDetailVC = RecordDetailViewController(reactor: reactor)
         
+        if let sheet = recordDetailVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        navigationController.present(recordDetailVC, animated: true)
     }
 }
