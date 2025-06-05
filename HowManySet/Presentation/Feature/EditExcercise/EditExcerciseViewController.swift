@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ViewController: UIViewController {
+final class EditExcerciseViewController: UIViewController {
         
     // MARK: - Properties
     private let reactor: EditExcerciseViewReactor
@@ -34,6 +34,6 @@ final class ViewController: UIViewController {
 }
 
 // MARK: - UI Methods
-private extension ViewController {
+private extension EditExcerciseViewController {
     
 }
