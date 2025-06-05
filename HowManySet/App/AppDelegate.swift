@@ -16,14 +16,17 @@ import KakaoSDKAuth
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var coordinator: AppCoordinator?
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        
-        FirebaseApp.configure()
-        
-        // Kakao SDK 초기화 (앱 키는 info.plist 등에서 안전하게 관리) ->
-        KakaoSDK.initSDK(appKey: "NATIVE_APP_KEY")
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+            // Firebase 초기화
+            FirebaseApp.configure()
+            
+            if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
+                KakaoSDK.initSDK(appKey: kakaoAppKey)
+            } else {
+                fatalError("Check Your AppKey")
+            }
         
         return true
     }
