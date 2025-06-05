@@ -9,6 +9,7 @@ import UIKit
 
 final class DIContainer {
 
+    /// 온보딩 화면을 생성하여 반환
     func makeOnBoardingViewController(coordinator: OnBoardingCoordinator) -> UIViewController {
 //        let repository
 //        let useCase
@@ -17,6 +18,7 @@ final class DIContainer {
         return OnBoardingViewController(reactor: reactor, coordinator: coordinator)
     }
     
+    /// 인증 화면을 생성하여 반환
     func makeAuthViewController(coordinator: AuthCoordinator) -> UIViewController {
 //        let repository
 //        let useCase
@@ -25,6 +27,7 @@ final class DIContainer {
         return AuthViewController(reactor: reactor, coordinator: coordinator)
     }
     
+    /// 홈 화면을 생성하여 반환
     func makeHomeViewController(coordinator: HomeCoordinator) -> UIViewController {
         let recordRepository = RecordRepositoryImpl()
         
@@ -37,6 +40,7 @@ final class DIContainer {
         return HomeViewController(reactor: reactor, coordinator: coordinator)
     }
     
+    /// 루틴 리스트 화면을 생성하여 반환
     func makeRoutineListViewController(coordinator: RoutineListCoordinator) -> UIViewController {
 
         let routineRepository = RoutineRepositoryImpl()
@@ -53,7 +57,8 @@ final class DIContainer {
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator)
     }
-    
+
+    /// 캘린더 화면을 생성하여 반환
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
         
         let recordRepository = RecordRepositoryImpl()
@@ -65,6 +70,7 @@ final class DIContainer {
         return CalendarViewController()
     }
     
+    /// 마이페이지 화면을 생성하여 반환
     func makeMyPageViewController(coordinator: MyPageCoordinator) -> UIViewController {
         
         let userSettingRepository = UserSettingRepositoryImpl()
@@ -80,6 +86,7 @@ final class DIContainer {
         return MyPageViewController(reactor: reactor, coordinator: coordinator)
     }
     
+    /// 루틴 완료 화면을 생성하여 반환
     func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator) -> UIViewController {
         
 //        let repository

@@ -11,6 +11,8 @@ protocol RoutineListCoordinatorProtocol: Coordinator {
     
 }
 
+/// 루틴 리스트 화면 관련 coordinator
+/// 루틴 리스트 화면 진입 및 모달, 편집 화면 호출 담당
 final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     private let navigationController: UINavigationController
@@ -21,14 +23,16 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         self.container = container
     }
     
-    /// 탭바에서 호출 시
+    /// 루틴 리스트 화면 시작
+    /// 탭바에서 루틴 리스트 화면 진입 시 호출
     func start() {
         let routineListVC = container.makeRoutineListViewController(coordinator: self)
         
         navigationController.pushViewController(routineListVC, animated: true)
     }
     
-    /// 초기 홈 화면 + 버튼으로 호출 시
+    /// 루틴 리스트 화면 모달 시작
+    /// 홈 화면에서 버튼 눌러 모달로 루틴 리스트 화면 호출 시
     func startModal() {
         let routineListVC = container.makeRoutineListViewController(coordinator: self)
         
@@ -40,6 +44,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         navigationController.present(routineListVC, animated: true)
     }
     
+    /// 루틴 편집 화면으로 푸시
     func pushEditRoutineView() {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
@@ -47,6 +52,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         navigationController.pushViewController(editRoutineVC, animated: true)
     }
     
+    /// 운동 편집 화면 모달 표시
     func presentEditExcerciseView() {
         let reactor = EditExcerciseViewReactor()
         let editExcerciseVC = EditExcerciseViewController(reactor: reactor)

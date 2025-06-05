@@ -7,6 +7,8 @@
 
 import UIKit
 
+/// 앱의 탭바 관련 코디네이터
+/// 각 탭별 네비게이션 및 코디네이터 관리 담당
 final class TabBarCoordinator: Coordinator {
     
     let tabBarController: UITabBarController
@@ -23,6 +25,7 @@ final class TabBarCoordinator: Coordinator {
         self.container = container
     }
     
+    /// 탭바 초기화 및 각 탭의 네비게이션 및 코디네이터 시작
     func start() {
         
         // 각 탭에 대한 UINavigationController

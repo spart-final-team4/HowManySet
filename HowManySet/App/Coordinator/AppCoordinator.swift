@@ -7,22 +7,29 @@
 
 import UIKit
 
+/// 앱의 전체 흐름을 관리하는 Coordinator
+/// - 로그인 여부, 온보딩 여부를 체크하고 적절한 흐름으로 분기
 final class AppCoordinator: Coordinator {
     
+    /// 앱의 최상위 UIWindow
     var window: UIWindow
+
+    /// 현재 자식 Coordinator들을 보관
     private var childCoordinators: [Coordinator] = []
+
+    /// 의존성 주입 컨테이너
     private let container: DIContainer
     
+    /// 생성자 - 의존성 주입 및 윈도우 연결
     init(window: UIWindow, container: DIContainer) {
         self.window = window
         self.container = container
     }
 
+    /// 앱 시작 시 호출됨 - 로그인/온보딩 상태에 따라 적절한 플로우를 보여줌
     func start() {
-        // 앱 시작 시 로그인 여부, 온보딩 완료 여부 등을 확인
-        // 현재 테스트 위해 true값으로 고정 - 추후 수정 필요
-        let isLoggedIn = true // ... (Firebase Auth, UserDefaults 등 확인)
-        let hasCompletedOnboarding = true // ... (UserDefaults 등 확인)
+        let isLoggedIn = true // TODO: 로그인 상태 확인 로직 추가 필요
+        let hasCompletedOnboarding = true // TODO: 온보딩 완료 여부 확인 로직 추가 필요
 
         if !hasCompletedOnboarding {
             showOnboardingFlow()
@@ -33,6 +40,7 @@ final class AppCoordinator: Coordinator {
         }
     }
     
+    /// 온보딩 흐름 시작
     private func showOnboardingFlow() {
         let onBoardingCoordinator = OnBoardingCoordinator(navigationController: UINavigationController(), container: container)
         onBoardingCoordinator.finishFlow = { [weak self, weak onBoardingCoordinator] in
@@ -48,6 +56,7 @@ final class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
     }
 
+    /// 로그인/회원가입 흐름 시작
     private func showAuthFlow() {
         let authCoordinator = AuthCoordinator(navigationController: UINavigationController(), container: container)
         authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
@@ -62,6 +71,7 @@ final class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
     }
 
+    /// 메인 탭바 흐름 시작
     private func showTabBarFlow() {
         let tabBarCoordinator = TabBarCoordinator(tabBarController: UITabBarController(), container: container)
     
@@ -71,6 +81,8 @@ final class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
     }
     
+    /// 자식 Coordinator가 완료되었을 때 배열에서 제거
+    /// - 메모리 누수 방지 및 흐름 정리를 위함
     private func childDidFinish(_ child: Coordinator) {
         for (index, coordinator) in childCoordinators.enumerated() {
             if ObjectIdentifier(coordinator) == ObjectIdentifier(child) {

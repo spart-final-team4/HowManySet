@@ -12,16 +12,23 @@ protocol MyPageCoordinatorProtocol: Coordinator {
     
 }
 
+/// 마이페이지 흐름 담당 coordinator
+/// 각 세부 설정, 계정 관련 present/push 처리
 final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
     
+    /// coordinator 생성자
+    /// - Parameters:
+    ///   - navigationController: 네비게이션 컨트롤러
+    ///   - container: DI 컨테이너
     init(navigationController: UINavigationController, container: DIContainer) {
         self.navigationController = navigationController
         self.container = container
     }
 
+    /// 시작, 마이페이지 뷰 푸시
     func start() {
         let myPageVC = container.makeMyPageViewController(coordinator: self)
         
@@ -52,8 +59,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 회원전환 or 로그아웃 시 뷰 스택 초기화 후 로그인 화면으로
     func navigateToAuthView() {
-        // 회원전환 로직
-        // 로그아웃 로직
+        // TODO: 회원전환 로직
+        // TODO: 로그아웃 로직
         
         let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
         let authVC = container.makeAuthViewController(coordinator: authCoordinator)
@@ -132,6 +139,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 계정 삭제 시 단순 alert? or View?
     func pushAccountWithdrawalView() {
+        // TODO: 계정 삭제 로직
         
         let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
         let authVC = container.makeAuthViewController(coordinator: authCoordinator)

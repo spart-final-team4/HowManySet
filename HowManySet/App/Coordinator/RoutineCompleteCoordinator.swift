@@ -11,6 +11,7 @@ protocol RoutineCompleteCoordinatorProtocol: Coordinator {
     
 }
 
+/// 루틴 완료 흐름 담당 coordinator를 반환
 final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     
     private let navigationController: UINavigationController
@@ -30,8 +31,7 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     /// 메인 홈 화면으로 이동
     /// 초기화 하고 push or just pop?
     func navigateToHomeView() {
-        // 운동 상태 초기화 코드
-        // workoutStateManager.reset()
+        // TODO: 운동 상태 초기화 코드
         
         let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
         let homeVC = container.makeHomeViewController(coordinator: homeCoordinator)
