@@ -1,5 +1,5 @@
 //
-//  MyPageViewController.swift
+//  MainViewController.swift
 //  HowManySet
 //
 //  Created by 정근호 on 5/30/25.
@@ -8,13 +8,13 @@
 import UIKit
 import SnapKit
 
-final class MyPageViewController: UIViewController {
+final class HomeViewController: UIViewController {
     
-    private weak var coordinator: MyPageCoordinatorProtocol?
+    private weak var coordinator: HomeCoordinatorProtocol?
 
-    private let reactor: MyPageViewReactor
+    private let reactor: HomeViewReactor
     
-    init(reactor: MyPageViewReactor, coordinator: MyPageCoordinatorProtocol) {
+    init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -26,5 +26,9 @@ final class MyPageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(#function)
     }
+
+
 }
+
