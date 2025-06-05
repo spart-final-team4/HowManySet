@@ -27,6 +27,45 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         
         navigationController.pushViewController(myPageVC, animated: true)
     }
+    
+    /// 프로필 수정
+    /// 회원전환, 로그아웃
+    /// 무게 단위 설정
+    /// 언어 변경
+    /// 알림 설정
+    /// 앱 평가
+    /// 버전 정보
+    /// 개인정보처리방침
+    /// 문제제보
+    /// 계정탈퇴
+    /// -----------------
+    /// 팝업: 무게 단위 설정
+    /// 설정으로 이동: 언어 변경
+    /// View Push: 알림 설정
+    /// alert: 버전정보
+    
+    
+    /// 프로필 설정 창 push
+    func pushProfileSettingView() {
+        
+    }
+    
+    /// 회원전환 or 로그아웃 시 뷰 스택 초기화 후 로그인 화면으로
+    func navigateToAuthView() {
+        // 회원전환 로직
+        // 로그아웃 로직
+        
+        let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
+        let authVC = container.makeAuthViewController(coordinator: authCoordinator)
+        
+        navigationController.setViewControllers([authVC], animated: false)
+    }
+    
+    /// 무게 단위 설정 창 팝업 actionSheet? or View?
+    func presentWeightUnitSheet() {
+        
+    }
+    
     /// 언어 변경 처리 (설정 앱 이동 알림)
     func presentLanguageSettingAlert() {
         let alert = UIAlertController(
@@ -47,6 +86,12 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
 
         navigationController.present(alert, animated: true)
     }
+    
+    /// 알림 설정 창 or 커스텀 알림 설정 포함한 새로운 뷰로 이동
+    func pushAlarmSettingView() {
+        
+    }
+    
     /// Alert로 버전 정보 표시
     func showVersionInfo() {
         // 버전 정보 받아오기
@@ -73,5 +118,14 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         let safariVC = SFSafariViewController(url: url)
         
         navigationController.present(safariVC, animated: true)
+    }
+    
+    /// 계정 삭제 시 단순 alert? or View?
+    func pushAccountWithdrawalView() {
+        
+        let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
+        let authVC = container.makeAuthViewController(coordinator: authCoordinator)
+        
+        navigationController.setViewControllers([authVC], animated: false)
     }
 }
