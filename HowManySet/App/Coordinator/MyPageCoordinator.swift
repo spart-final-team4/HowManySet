@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 protocol MyPageCoordinatorProtocol: Coordinator {
     
@@ -54,5 +55,23 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(version)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         navigationController.present(alert, animated: true)
+    }
+    
+    /// 개인정보처리방침 링크로 이동
+    func pushPrivacyPolicyView() {
+        // 추후에 url 설정 필요
+        guard let url = URL(string: "개인정보처리방침 링크") else { return }
+        let safariVC = SFSafariViewController(url: url)
+        
+        navigationController.present(safariVC, animated: true)
+    }
+    
+    /// 문제제보 링크로 이동
+    func pushReportProblemView() {
+        // 추후에 url 설정 필요
+        guard let url = URL(string: "문제제보 링크") else { return }
+        let safariVC = SFSafariViewController(url: url)
+        
+        navigationController.present(safariVC, animated: true)
     }
 }
