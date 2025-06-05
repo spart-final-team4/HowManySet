@@ -10,9 +10,7 @@
 		6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; };
 		66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 66189C5E2DEF0E770087F042 /* ReactorKit */; };
 		66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		668CB11D2DE9BE7000924340 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11C2DE9BE7000924340 /* WidgetKit.framework */; };
-		668CB11F2DE9BE7000924340 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 668CB11E2DE9BE7000924340 /* SwiftUI.framework */; };
-		668CB1302DE9BE7300924340 /* HowManySetLiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 668CB11A2DE9BE7000924340 /* HowManySetLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		668CB1302DE9BE7300924340 /* HowManySetWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		668CB1722DE9C2E100924340 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1712DE9C2E100924340 /* RxCocoa */; };
 		668CB1742DE9C2E100924340 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1732DE9C2E100924340 /* RxRelay */; };
 		668CB1762DE9C2E100924340 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1752DE9C2E100924340 /* RxSwift */; };
@@ -51,6 +49,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6615E9F12DEDA7A000ECF8DB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		66189C612DEF0E860087F042 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -58,18 +66,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6615E9F12DEDA7A000ECF8DB /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				6615E9F02DEDA7A000ECF8DB /* SwiftUI.framework in Embed Frameworks */,
-				6615E9F32DEDA7A200ECF8DB /* WidgetKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,14 +104,6 @@
 				HowManySetWidgetLiveActivity.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
-		};
-		6615EA622DEDBB3900ECF8DB /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Presentation/LiveActivity/LiveActivityRestView.swift,
-				Presentation/LiveActivity/LiveActivityWorkOutView.swift,
-			);
-			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
 		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -174,8 +162,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6615E9EF2DEDA7A000ECF8DB /* SwiftUI.framework in Frameworks */,
-				6615E9F22DEDA7A200ECF8DB /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,7 +215,7 @@
 			children = (
 				669358BD2DE9AA8C00956214 /* HowManySet */,
 				669358D42DE9AA8E00956214 /* HowManySetTests */,
-				668CB1202DE9BE7000924340 /* HowManySetLiveActivity */,
+				668CB1202DE9BE7000924340 /* HowManySetWidget */,
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
 				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
