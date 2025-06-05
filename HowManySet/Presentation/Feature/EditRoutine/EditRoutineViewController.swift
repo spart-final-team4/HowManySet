@@ -1,5 +1,5 @@
 //
-//  MyPageViewController.swift
+//  AddRoutineViewController.swift
 //  HowManySet
 //
 //  Created by 정근호 on 5/30/25.
@@ -8,15 +8,12 @@
 import UIKit
 import SnapKit
 
-final class MyPageViewController: UIViewController {
+final class EditRoutineViewController: UIViewController {
     
-    private weak var coordinator: MyPageCoordinatorProtocol?
-
-    private let reactor: MyPageViewReactor
+    private let reactor: EditRoutinViewReactor
     
-    init(reactor: MyPageViewReactor, coordinator: MyPageCoordinatorProtocol) {
+    init(reactor: EditRoutinViewReactor) {
         self.reactor = reactor
-        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -27,4 +24,5 @@ final class MyPageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
 }
