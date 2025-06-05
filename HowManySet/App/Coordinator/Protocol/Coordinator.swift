@@ -7,6 +7,7 @@
 
 import Foundation
 
-protocol Coordinator: AnyObject {    
+protocol Coordinator: AnyObject {
+    /// 시작 메서드로, Coordinator의 흐름을 시작
     func start()
 }
