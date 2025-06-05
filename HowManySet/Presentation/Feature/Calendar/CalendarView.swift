@@ -7,6 +7,8 @@ final class CalendarView: UIView {
     private let titleLabel = UILabel()
     private let calendar = FSCalendar()
     private let recordTableView = UITableView()
+    private let previousMonthButton = UIButton()
+    private let nextMonthButton = UIButton()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -66,19 +68,31 @@ private extension CalendarView {
             $0.backgroundColor = .clear
             $0.separatorStyle = .none
         }
+
+        previousMonthButton.do {
+            $0.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
+            $0.tintColor = .white
+        }
+
+        nextMonthButton.do {
+            $0.setImage(UIImage(systemName: "arrowtriangle.right.fill"), for: .normal)
+            $0.tintColor = .white
+        }
     }
 
     func setViewHierarchy() {
         [
             titleLabel,
             calendar,
+            previousMonthButton,
+            nextMonthButton,
             recordTableView
         ].forEach { addSubviews($0) }
     }
 
     func setConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(10)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(safeAreaLayoutGuide).offset(20)
         }
 
@@ -91,6 +105,18 @@ private extension CalendarView {
         recordTableView.snp.makeConstraints {
             $0.top.equalTo(calendar.snp.bottom).offset(16)
             $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide).inset(20)
+        }
+
+        previousMonthButton.snp.makeConstraints {
+            $0.leading.equalTo(calendar.snp.leading).offset(20)
+            $0.centerY.equalTo(calendar.calendarHeaderView.snp.centerY)
+            $0.width.height.equalTo(24)
+        }
+
+        nextMonthButton.snp.makeConstraints {
+            $0.trailing.equalTo(calendar.snp.trailing).offset(-20)
+            $0.centerY.equalTo(calendar.calendarHeaderView.snp.centerY)
+            $0.width.height.equalTo(24)
         }
     }
 }
