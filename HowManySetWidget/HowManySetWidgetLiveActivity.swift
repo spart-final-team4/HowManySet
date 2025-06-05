@@ -10,21 +10,31 @@ import WidgetKit
 import SwiftUI
 
 struct HowManySetWidgetAttributes: ActivityAttributes {
-    
+        
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
+        
         // state
+        var workoutTime: TimeInterval
+        
+        // 운동 중 관련
         var isWorkingout: Bool
+        var exerciseName: String
+        var exerciseInfo: String
+        
+        // 휴식 중 관련
         var isResting: Bool
-        var secondsRemaining: Int
+        var restSecondsRemaining: Int
+        var isRestPaused: Bool
+       
+        // 세트 관련
         var currentSet: Int
         var entireSet: Int
     }
 
     // Fixed non-changing properties about your activity go here!
     // attributes
-    var workoutName: String
-    var workoutInfo: String
+    var restLabel = "휴식"
 }
 
 struct HowManySetWidgetLiveActivity: Widget {
@@ -32,10 +42,61 @@ struct HowManySetWidgetLiveActivity: Widget {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
-                Text("Hello \(context.state.currentSet)")
+                HStack {
+                    Image(systemName: "timer")
+                        .tint(.brand)
+                    Text(String(context.state.workoutTime))
+                }
+                
+                if context.state.isWorkingout {
+                    // 운동 중
+                    HStack {
+                        VStack {
+                            Text(context.state.exerciseName)
+                            Text(context.state.exerciseInfo)
+                        }
+                        
+                        HStack {
+                            Button("CheckButton", systemImage: "checkmark") {
+                                
+                            }
+                            .labelStyle(.iconOnly)
+                            .background(in: Circle())
+                            Button("XButton", systemImage: "xmark") {
+                                
+                            }
+                            .labelStyle(.iconOnly)
+                            .background(in: Circle())
+                        }
+                    }
+                }
+                else if context.state.isResting {
+                    // 휴식 중
+                    HStack {
+                        HStack {
+                            Text(context.attributes.restLabel)
+                            Text(String(context.state.restSecondsRemaining))
+                        }
+                        
+                        HStack {
+                            Button("CheckButton", systemImage: "checkmark") {
+                                
+                            }
+                            .labelStyle(.iconOnly)
+                            Button("XButton", systemImage: "xmark") {
+                                
+                            }
+                            .labelStyle(.iconOnly)
+                            .background(in: Circle())
+                        }
+                    }
+                }
+               
+                // progressBar
+                
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .activityBackgroundTint(.black)
+            .frame(height: 160)
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -48,15 +109,15 @@ struct HowManySetWidgetLiveActivity: Widget {
                     Text("Trailing")
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.attributes.workoutName)")
+                    Text("Bottom \(context.attributes.restLabel)")
                     // more content
                 }
             } compactLeading: {
                 Text("L")
             } compactTrailing: {
-                Text("T \(context.attributes.workoutName)")
+                Text("T \(context.attributes.restLabel)")
             } minimal: {
-                Text(context.attributes.workoutName)
+                Text(context.attributes.restLabel)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.red)
@@ -66,17 +127,37 @@ struct HowManySetWidgetLiveActivity: Widget {
 
 extension HowManySetWidgetAttributes {
     fileprivate static var preview: HowManySetWidgetAttributes {
-        HowManySetWidgetAttributes(workoutName: "랫풀다운", workoutInfo: "60kg x 10회")
+        HowManySetWidgetAttributes(restLabel: "휴식")
     }
 }
 
 extension HowManySetWidgetAttributes.ContentState {
     fileprivate static var workout: HowManySetWidgetAttributes.ContentState {
-        HowManySetWidgetAttributes.ContentState(isWorkingout: true, isResting: false, secondsRemaining: 30, currentSet: 2, entireSet: 5)
+        HowManySetWidgetAttributes.ContentState(
+            workoutTime: 1000,
+            isWorkingout: true,
+            exerciseName: "랫풀다운",
+            exerciseInfo: "60kg x 10회",
+            isResting: false,
+            restSecondsRemaining: 0,
+            isRestPaused: false,
+            currentSet: 2,
+            entireSet: 5
+        )
      }
      
      fileprivate static var rest: HowManySetWidgetAttributes.ContentState {
-         HowManySetWidgetAttributes.ContentState(isWorkingout: false, isResting: true, secondsRemaining: 30, currentSet: 2, entireSet: 5)
+         HowManySetWidgetAttributes.ContentState(
+             workoutTime: 1000,
+             isWorkingout: false,
+             exerciseName: "랫풀다운",
+             exerciseInfo: "60kg x 10회",
+             isResting: true,
+             restSecondsRemaining: 30,
+             isRestPaused: false,
+             currentSet: 2,
+             entireSet: 5
+         )
      }
 }
 
