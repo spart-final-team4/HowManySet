@@ -55,7 +55,7 @@ final class TabBarCoordinator: Coordinator {
         
         // 탭바 색 설정
         tabBarController.tabBar.backgroundColor = .secondarySystemBackground
-        tabBarController.tabBar.tintColor = .green
+        tabBarController.tabBar.tintColor = .brand
         tabBarController.tabBar.unselectedItemTintColor = .gray
         
         // 탭바 아이템 설정
