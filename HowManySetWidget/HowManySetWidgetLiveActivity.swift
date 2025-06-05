@@ -57,16 +57,24 @@ struct HowManySetWidgetLiveActivity: Widget {
                         }
                         
                         HStack {
-                            Button("CheckButton", systemImage: "checkmark") {
+                            Button(action: {
                                 
+                            }) {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.brand)
+                                    .frame(width: 44, height: 44)
+                                    .background(.brand).opacity(0.3)
+                                    .clipShape(Circle())
                             }
-                            .labelStyle(.iconOnly)
-                            .background(in: Circle())
-                            Button("XButton", systemImage: "xmark") {
+                            Button(action: {
                                 
+                            }) {
+                                Image(systemName: "xmark")
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                                    .background(.gray)
+                                    .clipShape(Circle())
                             }
-                            .labelStyle(.iconOnly)
-                            .background(in: Circle())
                         }
                     }
                 }
@@ -95,9 +103,9 @@ struct HowManySetWidgetLiveActivity: Widget {
                 // progressBar
                 
             }
-            .activityBackgroundTint(.black)
             .frame(height: 160)
-
+            .activityBackgroundTint(Color.black)
+            
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
