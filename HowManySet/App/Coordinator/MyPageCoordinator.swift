@@ -102,8 +102,18 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         navigationController.present(alert, animated: true)
     }
     
+    /// 앱스토어 리뷰 작성 페이지로 이동
+    func openAppStoreReviewPage() {
+        // 추후에 url 설정 필요
+        guard let url = URL(string: "itms-apps://itunes.apple.com/app/idYOUR_APP_ID?action=write-review"),
+              UIApplication.shared.canOpenURL(url) else {
+            return
+        }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+    
     /// 개인정보처리방침 링크로 이동
-    func pushPrivacyPolicyView() {
+    func presentPrivacyPolicyView() {
         // 추후에 url 설정 필요
         guard let url = URL(string: "개인정보처리방침 링크") else { return }
         let safariVC = SFSafariViewController(url: url)
@@ -112,7 +122,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     }
     
     /// 문제제보 링크로 이동
-    func pushReportProblemView() {
+    func presentReportProblemView() {
         // 추후에 url 설정 필요
         guard let url = URL(string: "문제제보 링크") else { return }
         let safariVC = SFSafariViewController(url: url)
