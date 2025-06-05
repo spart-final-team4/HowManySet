@@ -42,70 +42,99 @@ struct HowManySetWidgetLiveActivity: Widget {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
-                HStack {
-                    Image(systemName: "timer")
-                        .tint(.brand)
-                    Text(String(context.state.workoutTime))
-                }
-                
-                if context.state.isWorkingout {
-                    // 운동 중
+                VStack(alignment: .leading) {
                     HStack {
-                        VStack {
-                            Text(context.state.exerciseName)
-                            Text(context.state.exerciseInfo)
-                        }
-                        
+                        Image(systemName: "timer")
+                            .foregroundStyle(.brand)
+                        Text(String(context.state.workoutTime))
+                            .foregroundStyle(.white)
+                    }
+                    
+                    if context.state.isWorkingout {
+                        // 운동 중
                         HStack {
-                            Button(action: {
-                                
-                            }) {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.brand)
-                                    .frame(width: 44, height: 44)
-                                    .background(.brand).opacity(0.3)
-                                    .clipShape(Circle())
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(context.state.exerciseName)
+                                    .font(.title)
+                                Text(context.state.exerciseInfo)
+                                    .font(.subheadline)
                             }
-                            Button(action: {
+                            .foregroundStyle(.white)
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 10) {
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.brand)
+                                    
+                                }
+                                .frame(width: 44, height: 44)
+                                .background(.brand).opacity(0.3)
+                                .clipShape(Circle())
                                 
-                            }) {
-                                Image(systemName: "xmark")
-                                    .foregroundColor(.white)
-                                    .frame(width: 44, height: 44)
-                                    .background(.gray)
-                                    .clipShape(Circle())
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .foregroundStyle(.white)
+                                    
+                                }
+                                .frame(width: 44, height: 44)
+                                .background(.gray)
+                                .clipShape(Circle())
                             }
                         }
                     }
-                }
-                else if context.state.isResting {
-                    // 휴식 중
-                    HStack {
+                    else if context.state.isResting {
+                        // 휴식 중
                         HStack {
-                            Text(context.attributes.restLabel)
-                            Text(String(context.state.restSecondsRemaining))
-                        }
-                        
-                        HStack {
-                            Button("CheckButton", systemImage: "checkmark") {
-                                
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(context.state.exerciseName)
+                                    .font(.title)
+                                Text(context.state.exerciseInfo)
+                                    .font(.subheadline)
                             }
-                            .labelStyle(.iconOnly)
-                            Button("XButton", systemImage: "xmark") {
+                            .foregroundStyle(.white)
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 10) {
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "forward.end.fill")
+                                        .foregroundStyle(.brand)
+                                    
+                                }
+                                .frame(width: 44, height: 44)
+                                .background(.brand).opacity(0.3)
+                                .clipShape(Circle())
                                 
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "pause.fil")
+                                        .foregroundStyle(.white)
+                                    
+                                }
+                                .frame(width: 44, height: 44)
+                                .background(.gray)
+                                .clipShape(Circle())
                             }
-                            .labelStyle(.iconOnly)
-                            .background(in: Circle())
                         }
                     }
+                    
+                    // progressBar
+
                 }
-               
-                // progressBar
-                
             }
+            .padding(.all, 20)
             .frame(height: 160)
-            .activityBackgroundTint(Color.black)
-            
+            .background(.black)
+
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
