@@ -46,4 +46,13 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
 
         viewController.present(alert, animated: true)
     }
+    /// Alert로 버전 정보 표시
+    func showVersionInfo(from viewController: UIViewController) {
+        // 버전 정보 받아오기
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "알 수 없음"
+        
+        let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(version)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        viewController.present(alert, animated: true)
+    }
 }
