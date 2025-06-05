@@ -75,6 +75,7 @@ final class AppCoordinator: Coordinator {
         for (index, coordinator) in childCoordinators.enumerated() {
             if ObjectIdentifier(coordinator) == ObjectIdentifier(child) {
                 childCoordinators.remove(at: index)
+                break
             }
         }
     }
