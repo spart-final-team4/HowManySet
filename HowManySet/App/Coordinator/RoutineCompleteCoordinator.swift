@@ -37,7 +37,7 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
         let homeVC = container.makeHomeViewController(coordinator: homeCoordinator)
         
         // navigation 스택을 홈으로 초기화
-        navigationController.setViewControllers([homeVC], animated: true)
+        navigationController.setViewControllers([homeVC], animated: false)
     }
     
 }
