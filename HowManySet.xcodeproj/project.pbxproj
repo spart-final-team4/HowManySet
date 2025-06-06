@@ -109,6 +109,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Presentation/Common/Extension/Int+Extension.swift",
+				Presentation/Common/SetProgressBar.swift,
 			);
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
