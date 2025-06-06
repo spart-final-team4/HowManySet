@@ -38,7 +38,12 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 }
 
 struct HowManySetWidgetLiveActivity: Widget {
+    
+    private let buttonSize: CGFloat = 60
+    private let restSecondsRemainigLabelSize: CGFloat = 55
+    
     var body: some WidgetConfiguration {
+        
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
@@ -48,18 +53,23 @@ struct HowManySetWidgetLiveActivity: Widget {
                             .foregroundStyle(.brand)
                         Text(String(context.state.workoutTime))
                             .foregroundStyle(.white)
+                            .font(.body)
+                            .fontWeight(.bold)
                     }
                     
+                    // MARK: - 운동 중 contents
                     if context.state.isWorkingout {
-                        // 운동 중
                         HStack {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(context.state.exerciseName)
                                     .font(.title)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.white)
                                 Text(context.state.exerciseInfo)
-                                    .font(.subheadline)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.gray)
                             }
-                            .foregroundStyle(.white)
                             
                             Spacer()
                             
@@ -69,10 +79,11 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 }) {
                                     Image(systemName: "checkmark")
                                         .foregroundStyle(.brand)
-                                    
+                                        .fontWeight(.heavy)
+                                        .font(.title3)
                                 }
-                                .frame(width: 44, height: 44)
-                                .background(.brand).opacity(0.3)
+                                .frame(width: buttonSize, height: buttonSize)
+                                .background(.brandBackground)
                                 .clipShape(Circle())
                                 
                                 Button(action: {
@@ -80,24 +91,27 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 }) {
                                     Image(systemName: "xmark")
                                         .foregroundStyle(.white)
-                                    
+                                        .fontWeight(.heavy)
+                                        .font(.title3)
                                 }
-                                .frame(width: 44, height: 44)
+                                .frame(width: buttonSize, height: buttonSize)
                                 .background(.gray)
                                 .clipShape(Circle())
                             }
                         }
                     }
+                    // MARK: - 휴식 중 contents
                     else if context.state.isResting {
-                        // 휴식 중
                         HStack {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(context.state.exerciseName)
-                                    .font(.title)
-                                Text(context.state.exerciseInfo)
-                                    .font(.subheadline)
+                            HStack(alignment: .lastTextBaseline, spacing: 5) {
+                                Text(context.attributes.restLabel)
+                                    .font(.body)
+                                    .foregroundStyle(.brand)
+                                Text("00:\(context.state.restSecondsRemaining)")
+                                    .font(.system(size: restSecondsRemainigLabelSize))
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.white)
                             }
-                            .foregroundStyle(.white)
                             
                             Spacer()
                             
@@ -107,35 +121,38 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 }) {
                                     Image(systemName: "forward.end.fill")
                                         .foregroundStyle(.brand)
-                                    
+                                        .fontWeight(.semibold)
+                                        .font(.title3)
                                 }
-                                .frame(width: 44, height: 44)
-                                .background(.brand).opacity(0.3)
+                                .frame(width: buttonSize, height: buttonSize)
+                                .background(.brandBackground)
                                 .clipShape(Circle())
                                 
                                 Button(action: {
                                     
                                 }) {
-                                    Image(systemName: "pause.fil")
+                                    Image(systemName: "pause.fill")
                                         .foregroundStyle(.white)
-                                    
+                                        .fontWeight(.semibold)
+                                        .font(.title3)
                                 }
-                                .frame(width: 44, height: 44)
+                                .frame(width: buttonSize, height: buttonSize)
                                 .background(.gray)
                                 .clipShape(Circle())
                             }
                         }
                     }
                     
-                    // progressBar
+                    // MARK: - ProgressBar
 
                 }
             }
             .padding(.all, 20)
             .frame(height: 160)
             .background(.black)
-
+            
         } dynamicIsland: { context in
+            // MARK: - DynamicIsland
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
                 // various regions, like leading/trailing/center/bottom
