@@ -105,6 +105,13 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
+		667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Presentation/Common/Extension/Int+Extension.swift",
+			);
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
+		};
 		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -146,6 +153,7 @@
 			exceptions = (
 				669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */,
 				AA2538932DF012BE00463BC6 /* Exceptions for "HowManySet" folder in "HowManySetUITests" target */,
+				667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */,
 			);
 			path = HowManySet;
 			sourceTree = "<group>";

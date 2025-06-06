@@ -107,7 +107,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 Text(context.attributes.restLabel)
                                     .font(.body)
                                     .foregroundStyle(.brand)
-                                Text("00:\(context.state.restSecondsRemaining)")
+                                Text(context.state.restSecondsRemaining.toRestTimeLabel())
                                     .font(.system(size: restSecondsRemainigLabelSize))
                                     .fontWeight(.bold)
                                     .foregroundStyle(.white)
