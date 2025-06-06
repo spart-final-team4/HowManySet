@@ -13,9 +13,9 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
-        
         // state
-        var workoutTime: TimeInterval
+        /// 전체 운동 시간
+        var workoutTime: Int
         
         // 운동 중 관련
         var isWorkingout: Bool
@@ -51,7 +51,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                     HStack {
                         Image(systemName: "timer")
                             .foregroundStyle(.brand)
-                        Text(String(context.state.workoutTime))
+                        Text(String(context.state.workoutTime.toWorkOutTimeLabel()))
                             .foregroundStyle(.white)
                             .font(.body)
                             .fontWeight(.bold)
@@ -188,7 +188,7 @@ extension HowManySetWidgetAttributes {
 extension HowManySetWidgetAttributes.ContentState {
     fileprivate static var workout: HowManySetWidgetAttributes.ContentState {
         HowManySetWidgetAttributes.ContentState(
-            workoutTime: 1000,
+            workoutTime: 5000,
             isWorkingout: true,
             exerciseName: "랫풀다운",
             exerciseInfo: "60kg x 10회",
@@ -202,7 +202,7 @@ extension HowManySetWidgetAttributes.ContentState {
      
      fileprivate static var rest: HowManySetWidgetAttributes.ContentState {
          HowManySetWidgetAttributes.ContentState(
-             workoutTime: 1000,
+             workoutTime: 5000,
              isWorkingout: false,
              exerciseName: "랫풀다운",
              exerciseInfo: "60kg x 10회",
