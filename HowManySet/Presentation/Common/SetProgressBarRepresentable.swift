@@ -21,3 +21,12 @@ struct SetProgressBarRepresentable: UIViewRepresentable {
         view.setProgress(totalSets: totalSets, currentSet: currentSet)
     }
 }
+
+struct SetProgressBarPreview_Previews: PreviewProvider {
+    static var previews: some View {
+        SetProgressBarRepresentable(totalSets: 5, currentSet: 2)
+            .frame(height: 10)
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
