@@ -29,7 +29,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
        
         // 세트 관련
         var currentSet: Int
-        var entireSet: Int
+        var totalSet: Int
     }
 
     // Fixed non-changing properties about your activity go here!
@@ -39,15 +39,15 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 
 struct HowManySetWidgetLiveActivity: Widget {
     
-    private let buttonSize: CGFloat = 60
-    private let restSecondsRemainigLabelSize: CGFloat = 55
+    private let buttonSize: CGFloat = 50
+    private let restSecondsRemainigLabelSize: CGFloat = 50
     
     var body: some WidgetConfiguration {
         
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
-            VStack {
-                VStack(alignment: .leading) {
+            VStack() {
+                VStack(alignment: .leading, spacing: 20) {
                     HStack {
                         Image(systemName: "timer")
                             .foregroundStyle(.brand)
@@ -99,6 +99,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     .clipShape(Circle())
                                 }
                             }
+                            .frame(height: 50)
                         }
                         // MARK: - 휴식 중 contents
                         else if context.state.isResting {
@@ -141,13 +142,15 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     .clipShape(Circle())
                                 }
                             }
+                            .frame(height: 50)
                         } else {
                             EmptyView()
                         }
                     }//Group
+                    // MARK: - ProgressBar
+                    SetProgressBarRepresentable(totalSets: 5, currentSet: 2)
+                        .frame(maxWidth: .infinity, minHeight: 10, maxHeight: 10)
                 }//VStack
-                // MARK: - ProgressBar
-                SetProgressBarView()
             }//VStack
             .padding(.all, 20)
             .frame(height: 160)
@@ -198,7 +201,7 @@ extension HowManySetWidgetAttributes.ContentState {
             restSecondsRemaining: 0,
             isRestPaused: false,
             currentSet: 2,
-            entireSet: 5
+            totalSet: 5
         )
      }
      
@@ -212,7 +215,7 @@ extension HowManySetWidgetAttributes.ContentState {
              restSecondsRemaining: 30,
              isRestPaused: false,
              currentSet: 2,
-             entireSet: 5
+             totalSet: 5
          )
      }
 }
