@@ -56,97 +56,99 @@ struct HowManySetWidgetLiveActivity: Widget {
                             .font(.body)
                             .fontWeight(.bold)
                     }
-                    
-                    // MARK: - 운동 중 contents
-                    if context.state.isWorkingout {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(context.state.exerciseName)
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.white)
-                                Text(context.state.exerciseInfo)
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.gray)
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 10) {
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.brand)
-                                        .fontWeight(.heavy)
-                                        .font(.title3)
-                                }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(.brandBackground)
-                                .clipShape(Circle())
-                                
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "xmark")
+                    Group {
+                        // MARK: - 운동 중 contents
+                        if context.state.isWorkingout {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(context.state.exerciseName)
+                                        .font(.title)
+                                        .fontWeight(.bold)
                                         .foregroundStyle(.white)
-                                        .fontWeight(.heavy)
+                                    Text(context.state.exerciseInfo)
                                         .font(.title3)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.gray)
                                 }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(.gray)
-                                .clipShape(Circle())
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 10) {
+                                    Button(action: {
+                                        
+                                    }) {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(.brand)
+                                            .fontWeight(.heavy)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(.brandBackground)
+                                    .clipShape(Circle())
+                                    
+                                    Button(action: {
+                                        
+                                    }) {
+                                        Image(systemName: "xmark")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.heavy)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(.gray)
+                                    .clipShape(Circle())
+                                }
                             }
                         }
-                    }
-                    // MARK: - 휴식 중 contents
-                    else if context.state.isResting {
-                        HStack {
-                            HStack(alignment: .lastTextBaseline, spacing: 5) {
-                                Text(context.attributes.restLabel)
-                                    .font(.body)
-                                    .foregroundStyle(.brand)
-                                Text(context.state.restSecondsRemaining.toRestTimeLabel())
-                                    .font(.system(size: restSecondsRemainigLabelSize))
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.white)
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 10) {
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "forward.end.fill")
+                        // MARK: - 휴식 중 contents
+                        else if context.state.isResting {
+                            HStack {
+                                HStack(alignment: .lastTextBaseline, spacing: 5) {
+                                    Text(context.attributes.restLabel)
+                                        .font(.body)
                                         .foregroundStyle(.brand)
-                                        .fontWeight(.semibold)
-                                        .font(.title3)
-                                }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(.brandBackground)
-                                .clipShape(Circle())
-                                
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "pause.fill")
+                                    Text(context.state.restSecondsRemaining.toRestTimeLabel())
+                                        .font(.system(size: restSecondsRemainigLabelSize))
+                                        .fontWeight(.bold)
                                         .foregroundStyle(.white)
-                                        .fontWeight(.semibold)
-                                        .font(.title3)
                                 }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(.gray)
-                                .clipShape(Circle())
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 10) {
+                                    Button(action: {
+                                        
+                                    }) {
+                                        Image(systemName: "forward.end.fill")
+                                            .foregroundStyle(.brand)
+                                            .fontWeight(.semibold)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(.brandBackground)
+                                    .clipShape(Circle())
+                                    
+                                    Button(action: {
+                                        
+                                    }) {
+                                        Image(systemName: "pause.fill")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.semibold)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(.gray)
+                                    .clipShape(Circle())
+                                }
                             }
+                        } else {
+                            EmptyView()
                         }
-                    }
-                    
-                    // MARK: - ProgressBar
-
-                }
-            }
+                    }//Group
+                }//VStack
+                // MARK: - ProgressBar
+                SetProgressBarView()
+            }//VStack
             .padding(.all, 20)
             .frame(height: 160)
             .background(.black)
