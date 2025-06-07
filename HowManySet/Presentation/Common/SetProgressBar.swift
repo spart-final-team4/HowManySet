@@ -34,8 +34,9 @@ final class SetProgressBarView: UIView {
     /// 양 끝 부분만 round 처리하기 위한 View
     private let roundedContainerView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 10
+        view.layer.cornerRadius = 5
         view.backgroundColor = .clear
+        view.clipsToBounds = true
         return view
     }()
     
@@ -47,7 +48,6 @@ final class SetProgressBarView: UIView {
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
         stackView.spacing = progressBarSpacing
-        stackView.clipsToBounds = true
         return stackView
     }()
     
@@ -96,7 +96,6 @@ private extension SetProgressBarView {
             
             let segmentView = UIView()
             segmentView.backgroundColor = remainingColor
-            segmentView.clipsToBounds = true
             
             progressBarStackView.addArrangedSubview(segmentView)
             segmentView.snp.makeConstraints {
@@ -128,4 +127,3 @@ extension SetProgressBarView {
         updateProgress()
     }
 }
-
