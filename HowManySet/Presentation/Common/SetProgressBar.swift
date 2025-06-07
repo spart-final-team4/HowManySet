@@ -24,7 +24,7 @@ final class SetProgressBarView: UIView {
     }
     
     // 테스트 위해 임의로 지정
-    var currentSet = 1 {
+    var currentSet = 2 {
         didSet {
             updateProgress()
         }
@@ -54,6 +54,8 @@ final class SetProgressBarView: UIView {
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .black
+        
         setupUI()
     }
     
@@ -99,6 +101,7 @@ private extension SetProgressBarView {
             progressBarStackView.addArrangedSubview(segmentView)
             segmentView.snp.makeConstraints {
                 $0.width.equalTo(progressBarStackView.snp.width).multipliedBy(1/totalSets)
+                $0.height.equalToSuperview()
             }
         }
         updateProgress()
@@ -107,8 +110,11 @@ private extension SetProgressBarView {
     func updateProgress() {
         // currentSet에 따라 각 세그먼트 뷰의 색상 변경
         for (index, segmentView) in progressBarStackView.arrangedSubviews.enumerated() {
-           UIView.animate(withDuration: 0.3) {
-               segmentView.backgroundColor = (index < self.currentSet) ? self.completedColor : self.remainingColor
+       
+           if index < self.currentSet {
+                segmentView.backgroundColor = self.completedColor
+           } else {
+               break
            }
        }
     }
