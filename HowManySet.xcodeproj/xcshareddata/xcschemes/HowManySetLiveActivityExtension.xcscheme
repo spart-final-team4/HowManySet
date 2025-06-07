@@ -17,8 +17,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "668CB1192DE9BE7000924340"
-               BuildableName = "HowManySetLiveActivityExtension.appex"
-               BlueprintName = "HowManySetLiveActivityExtension"
+               BuildableName = "HowManySetWidgetExtension.appex"
+               BlueprintName = "HowManySetWidgetExtension"
                ReferencedContainer = "container:HowManySet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

@@ -43,7 +43,7 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
     func completeOnBoarding() {
         // TODO: 필요한 비즈니스 로직들 추가
         // UserDefaults에 온보딩 완료 상태 저장
-//        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
         print(#function)
         finishFlow?()
     }
