@@ -10,6 +10,7 @@
 		6615E9272DED443A00ECF8DB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; };
 		66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 66189C5E2DEF0E770087F042 /* ReactorKit */; };
 		66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		664F0ECE2DF40EA70086D6F6 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 664F0ECD2DF40EA70086D6F6 /* SnapKit */; };
 		668CB1302DE9BE7300924340 /* HowManySetWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		668CB1722DE9C2E100924340 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1712DE9C2E100924340 /* RxCocoa */; };
 		668CB1742DE9C2E100924340 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1732DE9C2E100924340 /* RxRelay */; };
@@ -171,6 +172,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				664F0ECE2DF40EA70086D6F6 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +265,7 @@
 			);
 			name = HowManySetWidgetExtension;
 			packageProductDependencies = (
+				664F0ECD2DF40EA70086D6F6 /* SnapKit */,
 			);
 			productName = HowManySetLiveActivityExtension;
 			productReference = 668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */;
@@ -501,6 +504,7 @@
 				INFOPLIST_FILE = HowManySetWidget/HowManySetWidgetInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -508,7 +512,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.howmanysetliveactivity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -533,6 +537,7 @@
 				INFOPLIST_FILE = HowManySetWidget/HowManySetWidgetInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -540,7 +545,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.howmanysetliveactivity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -953,6 +958,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 66B3FEAB2DED31A4009D63F2 /* XCRemoteSwiftPackageReference "ReactorKit" */;
 			productName = ReactorKit;
+		};
+		664F0ECD2DF40EA70086D6F6 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 668CB1772DE9C2F300924340 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 		668CB1712DE9C2E100924340 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
