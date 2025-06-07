@@ -1,7 +1,33 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Bottom %@" : {
 
+    },
+    "L" : {
+
+    },
+    "Leading" : {
+
+    },
+    "Pause Routine" : {
+
+    },
+    "Play Routine" : {
+
+    },
+    "Skip Rest" : {
+
+    },
+    "Skip Set" : {
+
+    },
+    "T %@" : {
+
+    },
+    "Trailing" : {
+
+    }
   },
   "version" : "1.0"
 }

@@ -68,11 +68,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         navigationController.setViewControllers([authVC], animated: false)
     }
     
-    /// 무게 단위 설정 창 팝업 actionSheet? or View?
-    func presentWeightUnitSheet() {
-        
-    }
-    
     /// 언어 변경 처리 (설정 앱 이동 알림)
     func presentLanguageSettingAlert() {
         let alert = UIAlertController(
@@ -96,7 +91,23 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 알림 설정 창 or 커스텀 알림 설정 포함한 새로운 뷰로 이동
     func pushAlarmSettingView() {
-        
+        let alert = UIAlertController(
+            title: "알림 설정",
+            message: "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "이동", style: .default) { _ in
+            // 앱 설정 화면으로 이동
+            if let url = URL(string: UIApplication.openSettingsURLString),
+               UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        })
+
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+
+        navigationController.present(alert, animated: true)
     }
     
     /// Alert로 버전 정보 표시
@@ -140,6 +151,9 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// 계정 삭제 시 단순 alert? or View?
     func pushAccountWithdrawalView() {
         // TODO: 계정 삭제 로직
+        let alert = UIAlertController(title: "계정 삭제", message: "정말로 계정을 삭제하시겠어요?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "네", style: .destructive))
+        alert.addAction(UIAlertAction(title: "아니오", style: .cancel))
         
         let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
         let authVC = container.makeAuthViewController(coordinator: authCoordinator)
