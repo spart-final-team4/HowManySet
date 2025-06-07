@@ -119,6 +119,7 @@ extension SetProgressBarView {
     func setProgress(totalSets: Int, currentSet: Int) {
         self.totalSets = totalSets
         self.currentSet = currentSet
+        updateProgress()
     }
 }
 
