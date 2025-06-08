@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 final class HomeViewController: UIViewController {
     
@@ -15,6 +17,8 @@ final class HomeViewController: UIViewController {
     private weak var coordinator: HomeCoordinatorProtocol?
 
     private let reactor: HomeViewReactor
+    
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
@@ -127,5 +131,15 @@ private extension HomeViewController {
 
 // MARK: - Rx Methods
 private extension HomeViewController {
-    
+    func setInteraction() {
+        stopButton.rx.tap
+            .bind(with: self) { _,_ in
+                
+            }.disposed(by: disposeBag)
+        
+        forwardButton.rx.tap
+            .bind(with: self) { _,_ in
+                
+            }.disposed(by: disposeBag)
+    }
 }
