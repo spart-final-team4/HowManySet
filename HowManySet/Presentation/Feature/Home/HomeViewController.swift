@@ -54,9 +54,9 @@ private extension HomeViewController {
     
     func setConstraints() {
         routineStartView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(32)
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            $0.height.equalToSuperview().multipliedBy(0.5)
+            $0.height.equalToSuperview().multipliedBy(0.47)
         }
     }
 }
