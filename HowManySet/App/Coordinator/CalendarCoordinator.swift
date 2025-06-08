@@ -34,6 +34,7 @@ final class CalendarCoordinator: CalendarCoordinatorProtocol {
     func start() {
         let calendarVC = container.makeCalendarViewController(coordinator: self)
         navigationController.pushViewController(calendarVC, animated: true)
+        navigationController.navigationBar.prefersLargeTitles = true
     }
 
     /// 기록 상세 화면 모달 present
