@@ -16,9 +16,7 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
-    
-    var reactor: HomeViewReactor?
-    
+        
     var disposeBag = DisposeBag()
     
     // MARK: - UI Components
@@ -64,8 +62,8 @@ final class HomeViewController: UIViewController, View {
     // MARK: - Initializer
     init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
         self.coordinator = coordinator
-        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
     }
     
     required init?(coder: NSCoder) {
