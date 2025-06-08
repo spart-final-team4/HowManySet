@@ -29,7 +29,6 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         let routineListVC = container.makeRoutineListViewController(coordinator: self)
         
         navigationController.pushViewController(routineListVC, animated: true)
-        navigationController.navigationBar.prefersLargeTitles = true
     }
     
     /// 루틴 리스트 화면 모달 시작
