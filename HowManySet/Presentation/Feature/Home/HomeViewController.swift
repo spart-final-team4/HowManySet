@@ -16,8 +16,8 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
-
-    private let reactor: HomeViewReactor
+    
+    var reactor: HomeViewReactor?
     
     var disposeBag = DisposeBag()
     
@@ -35,12 +35,14 @@ final class HomeViewController: UIViewController, View {
         $0.currentPage = 0
         $0.numberOfPages = 5
         $0.hidesForSinglePage = true
+        $0.alpha = 0
     }
     
     private lazy var buttonHStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .equalSpacing
         $0.alignment = .center
+        $0.alpha = 0
     }
     
     private lazy var stopButton = UIButton().then {
@@ -61,8 +63,8 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Initializer
     init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
-        self.reactor = reactor
         self.coordinator = coordinator
+        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -74,6 +76,11 @@ final class HomeViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         print(#function)
+        
+        if let reactor = reactor {
+            bind(reactor: reactor)
+        }
+        
         setupUI()
     }
 }
@@ -128,11 +135,32 @@ private extension HomeViewController {
             $0.width.height.equalTo(80)
         }
     }
+    
+    func setStartRoutineUI() {
+        [pageController, buttonHStackView].forEach {
+            $0.alpha = 1
+        }
+        
+        titleLabel.alpha = 0
+        
+        routineStartView.setStartRoutineUI()
+    }
 }
 
 // MARK: - Rx Methods
 extension HomeViewController {
     func bind(reactor: HomeViewReactor) {
+        
+        print(#function)
+        
+        // Action
+        routineStartView.routineSelectButton.rx.tap
+            .map { Reactor.Action.routineSelected }
+            .bind(with: self, onNext: { view, _ in
+                reactor.action.onNext(.routineSelected)
+            })
+            .disposed(by: disposeBag)
+                
         stopButton.rx.tap
             .bind(with: self) { _,_ in
                 
@@ -142,5 +170,15 @@ extension HomeViewController {
             .bind(with: self) { _,_ in
                 
             }.disposed(by: disposeBag)
+        
+        // State
+        reactor.state.map { $0.isWorkingout }
+            .bind(with: self) { view, isWorking in
+                if isWorking {
+                    view.setStartRoutineUI()
+                }
+            }
+            .disposed(by: disposeBag)
+
     }
 }

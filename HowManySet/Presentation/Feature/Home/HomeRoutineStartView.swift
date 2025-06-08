@@ -8,18 +8,21 @@
 import UIKit
 import SnapKit
 import Then
-import RxSwift
-import RxCocoa
-import ReactorKit
 
-final class HomeRoutineStartView: UIView, View {
+final class HomeRoutineStartView: UIView {
     
     // MARK: - Properties
     private let todayDate = "06.05"
     private let initialText = "오늘도 득근해요"
     private let selectButtonText = "운동 시작하기"
+    private let setCompleteText = "세트 완료"
     
-    var disposeBag = DisposeBag()
+//    var reactor: HomeViewReactor? {
+//        didSet {
+//            guard let reactor else { return }
+//            bind(reactor: reactor)
+//        }
+//    }
     
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
@@ -63,7 +66,7 @@ final class HomeRoutineStartView: UIView, View {
         $0.numberOfLines = 0
     }
     
-    private lazy var routineSelectButton = UIButton().then {
+    lazy var routineSelectButton = UIButton().then {
         $0.backgroundColor = .brand
         $0.setTitle(selectButtonText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
@@ -127,17 +130,39 @@ private extension HomeRoutineStartView {
     }
 }
 
-// MARK: - Rx Methods
+// MARK: Internal Methods
 extension HomeRoutineStartView {
-    func bind(reactor: HomeViewReactor) {
-        routineSelectButton.rx.tap
-            .bind(with: self) { _, _ in
-                
-            }.disposed(by: disposeBag)
-        
-        optionButton.rx.tap
-            .bind(with: self) { _, _ in
-                
-            }.disposed(by: disposeBag)
+    func setStartRoutineUI() {
+        [todayDateLabel, containerView, routineSelectButton].forEach {
+            $0.alpha = 0
+            $0.isUserInteractionEnabled = false
+        }
     }
 }
+
+//// MARK: - Rx Methods
+//extension HomeRoutineStartView {
+//    func bind(reactor: HomeViewReactor) {
+//        
+//        // Action
+//        routineSelectButton.rx.tap
+//            .map { Reactor.Action.routineSelected }
+//            .bind(with: self, onNext: { view, _ in
+//                reactor.action.onNext(.routineSelected)
+//            })
+//            .disposed(by: disposeBag)
+//        
+//        optionButton.rx.tap
+//            .bind(with: self) { _, _ in
+//                
+//            }.disposed(by: disposeBag)
+//        
+//        // State
+//        reactor.state.map { $0.isWorkingout }
+//            .bind(with: self) { view, isWorking in
+//                if isWorking {
+//                    view.setStartRoutineUI()
+//                }
+//            }.disposed(by: disposeBag)
+//    }
+//}
