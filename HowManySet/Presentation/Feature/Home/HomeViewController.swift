@@ -10,15 +10,16 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import ReactorKit
 
-final class HomeViewController: UIViewController {
+final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
 
     private let reactor: HomeViewReactor
     
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
@@ -130,8 +131,8 @@ private extension HomeViewController {
 }
 
 // MARK: - Rx Methods
-private extension HomeViewController {
-    func setInteraction() {
+extension HomeViewController {
+    func bind(reactor: HomeViewReactor) {
         stopButton.rx.tap
             .bind(with: self) { _,_ in
                 
