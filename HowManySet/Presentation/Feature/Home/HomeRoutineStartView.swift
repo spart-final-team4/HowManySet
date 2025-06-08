@@ -19,13 +19,11 @@ final class HomeRoutineStartView: UIView {
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 10
-        $0.distribution = .equalSpacing
+        $0.spacing = 20
     }
     
     private lazy var topContentsHStack = UIStackView().then {
         $0.axis = .horizontal
-        $0.distribution = .fill
     }
     
     private lazy var spacer = UIView().then {
@@ -34,7 +32,7 @@ final class HomeRoutineStartView: UIView {
     
     private lazy var todayDateLabel = UILabel().then {
         $0.text = todayDate
-        $0.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
     private lazy var optionButton = UIButton().then {
@@ -64,7 +62,7 @@ final class HomeRoutineStartView: UIView {
         $0.backgroundColor = .brand
         $0.setTitle(selectButtonText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         $0.titleLabel?.textColor = .black
         $0.layer.cornerRadius = 12
     }
@@ -99,30 +97,27 @@ private extension HomeRoutineStartView {
     
     func setConstraints() {
         mainVStack.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(20)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.verticalEdges.equalToSuperview().inset(28)
         }
         
         topContentsHStack.snp.makeConstraints {
             $0.top.equalToSuperview()
+            $0.height.equalTo(30)
         }
         
         containerView.snp.makeConstraints {
-            $0.height.equalTo(self.snp.height).multipliedBy(0.5)
+            $0.height.equalTo(self.snp.height).multipliedBy(0.55)
         }
         
         initialImageView.snp.makeConstraints {
-            $0.top.equalTo(containerView).inset(40)
+            $0.top.equalTo(containerView).inset(50)
             $0.centerX.equalToSuperview()
         }
         
         initialTextLabel.snp.makeConstraints {
             $0.top.equalTo(initialImageView.snp.bottom).offset(20)
             $0.centerX.equalToSuperview()
-        }
-        
-        routineSelectButton.snp.makeConstraints {
-            $0.width.equalToSuperview()
-            $0.height.equalTo(50)
         }
     }
 }
