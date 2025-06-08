@@ -75,10 +75,6 @@ final class HomeViewController: UIViewController, View {
         super.viewDidLoad()
         print(#function)
         
-        if let reactor = reactor {
-            bind(reactor: reactor)
-        }
-        
         setupUI()
     }
 }
