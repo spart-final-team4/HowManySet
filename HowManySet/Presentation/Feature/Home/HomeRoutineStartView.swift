@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 final class HomeRoutineStartView: UIView {
     
@@ -15,6 +17,8 @@ final class HomeRoutineStartView: UIView {
     private let todayDate = "06.05"
     private let initialText = "오늘도 득근해요"
     private let selectButtonText = "운동 시작하기"
+    
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
@@ -119,5 +123,20 @@ private extension HomeRoutineStartView {
             $0.top.equalTo(initialImageView.snp.bottom).offset(20)
             $0.centerX.equalToSuperview()
         }
+    }
+}
+
+// MARK: - Rx Methods
+private extension HomeRoutineStartView {
+    func setInteraction() {
+        routineSelectButton.rx.tap
+            .bind(with: self) { _, _ in
+                
+            }.disposed(by: disposeBag)
+        
+        optionButton.rx.tap
+            .bind(with: self) { _, _ in
+                
+            }.disposed(by: disposeBag)
     }
 }
