@@ -17,6 +17,11 @@ final class HomeViewController: UIViewController {
     private let reactor: HomeViewReactor
     
     // MARK: - UI Components
+    private lazy var titleLabel = UILabel().then {
+        $0.text = "홈"
+        $0.font = .systemFont(ofSize: 36, weight: .bold)
+    }
+    
     private lazy var routineStartView = HomeRoutineStartView().then {
         $0.layer.cornerRadius = 20
     }
@@ -43,19 +48,23 @@ final class HomeViewController: UIViewController {
 // MARK: - UI Methods
 private extension HomeViewController {
     func setupUI() {
-        navigationItem.title = "홈"
         setViewHiearchy()
         setConstraints()
     }
     
     func setViewHiearchy() {
-        view.addSubview(routineStartView)
+        view.addSubviews(titleLabel, routineStartView)
     }
     
     func setConstraints() {
+        
+        titleLabel.snp.makeConstraints {
+            $0.top.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
+        }
+        
         routineStartView.snp.makeConstraints {
-            // 시스템 inset = 16, navigationTitle과 맞추기 위함.
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.height.equalToSuperview().multipliedBy(0.47)
         }

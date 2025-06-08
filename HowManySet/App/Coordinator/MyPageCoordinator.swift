@@ -41,7 +41,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         let myPageVC = container.makeMyPageViewController(coordinator: self)
         
         navigationController.pushViewController(myPageVC, animated: true)
-        navigationController.navigationBar.prefersLargeTitles = true
     }
     
     /// 언어 변경

@@ -34,7 +34,6 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     func start() {
         let homeVC = container.makeHomeViewController(coordinator: self)
         navigationController.pushViewController(homeVC, animated: true)
-        navigationController.navigationBar.prefersLargeTitles = true
     }
 
     /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 present
