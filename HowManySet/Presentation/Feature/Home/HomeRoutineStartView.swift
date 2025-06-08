@@ -10,15 +10,16 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import ReactorKit
 
-final class HomeRoutineStartView: UIView {
+final class HomeRoutineStartView: UIView, View {
     
     // MARK: - Properties
     private let todayDate = "06.05"
     private let initialText = "오늘도 득근해요"
     private let selectButtonText = "운동 시작하기"
     
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
@@ -127,8 +128,8 @@ private extension HomeRoutineStartView {
 }
 
 // MARK: - Rx Methods
-private extension HomeRoutineStartView {
-    func setInteraction() {
+extension HomeRoutineStartView {
+    func bind(reactor: HomeViewReactor) {
         routineSelectButton.rx.tap
             .bind(with: self) { _, _ in
                 
