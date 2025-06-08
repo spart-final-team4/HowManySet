@@ -44,8 +44,8 @@ final class HomeRoutineStartView: UIView {
     }
 
     private lazy var containerView = UIView().then {
-        $0.backgroundColor = .systemGray5
-        $0.layer.cornerRadius = 20
+        $0.backgroundColor = .cardContentBG
+        $0.layer.cornerRadius = 12
     }
     
     private lazy var initialImageView = UIImageView().then {
@@ -64,9 +64,9 @@ final class HomeRoutineStartView: UIView {
         $0.backgroundColor = .brand
         $0.setTitle(selectButtonText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         $0.titleLabel?.textColor = .black
-        $0.layer.cornerRadius = 20
+        $0.layer.cornerRadius = 12
     }
         
     // MARK: - Initializer
@@ -85,7 +85,7 @@ final class HomeRoutineStartView: UIView {
 // MARK: UI Methods
 private extension HomeRoutineStartView {
     func setupUI() {
-        backgroundColor = .systemGray6
+        backgroundColor = .cardBackground
         setViewHiearchy()
         setConstraints()
     }
