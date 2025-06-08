@@ -26,6 +26,34 @@ final class HomeViewController: UIViewController {
         $0.layer.cornerRadius = 20
     }
     
+    private lazy var pageController = UIPageControl().then {
+        $0.currentPage = 0
+        $0.numberOfPages = 5
+        $0.hidesForSinglePage = true
+    }
+    
+    private lazy var buttonHStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .equalSpacing
+        $0.alignment = .center
+    }
+    
+    private lazy var stopButton = UIButton().then {
+        $0.layer.cornerRadius = 40
+        $0.backgroundColor = .roundButtonBG
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
+        $0.tintColor = .white
+    }
+    
+    private lazy var forwardButton = UIButton().then {
+        $0.layer.cornerRadius = 40
+        $0.backgroundColor = .roundButtonBG
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "forward.fill"), for: .normal)
+        $0.tintColor = .brand
+    }
+    
     // MARK: - Initializer
     init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
         self.reactor = reactor
@@ -53,21 +81,51 @@ private extension HomeViewController {
     }
     
     func setViewHiearchy() {
-        view.addSubviews(titleLabel, routineStartView)
+        view.addSubviews(
+            titleLabel,
+            routineStartView,
+            pageController,
+            buttonHStackView
+        )
+        
+        buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
     }
     
     func setConstraints() {
         
         titleLabel.snp.makeConstraints {
-            $0.top.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
         }
         
         routineStartView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.height.equalToSuperview().multipliedBy(0.47)
+        }
+        
+        pageController.snp.makeConstraints {
+            $0.top.equalTo(routineStartView.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+        }
+        
+        buttonHStackView.snp.makeConstraints {
+            $0.top.equalTo(pageController.snp.bottom).offset(32)
+            $0.horizontalEdges.equalToSuperview().inset(80)
+            $0.centerX.equalToSuperview()
+        }
+        
+        stopButton.snp.makeConstraints {
+            $0.width.height.equalTo(80)
+        }
+        
+        forwardButton.snp.makeConstraints {
+            $0.width.height.equalTo(80)
         }
     }
 }
 
+// MARK: - Rx Methods
+private extension HomeViewController {
+    
+}
