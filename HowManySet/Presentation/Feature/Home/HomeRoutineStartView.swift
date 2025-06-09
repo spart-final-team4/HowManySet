@@ -17,13 +17,6 @@ final class HomeRoutineStartView: UIView {
     private let selectButtonText = "운동 시작하기"
     private let setCompleteText = "세트 완료"
     
-//    var reactor: HomeViewReactor? {
-//        didSet {
-//            guard let reactor else { return }
-//            bind(reactor: reactor)
-//        }
-//    }
-    
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
         $0.axis = .vertical
@@ -139,30 +132,3 @@ extension HomeRoutineStartView {
         }
     }
 }
-
-//// MARK: - Rx Methods
-//extension HomeRoutineStartView {
-//    func bind(reactor: HomeViewReactor) {
-//        
-//        // Action
-//        routineSelectButton.rx.tap
-//            .map { Reactor.Action.routineSelected }
-//            .bind(with: self, onNext: { view, _ in
-//                reactor.action.onNext(.routineSelected)
-//            })
-//            .disposed(by: disposeBag)
-//        
-//        optionButton.rx.tap
-//            .bind(with: self) { _, _ in
-//                
-//            }.disposed(by: disposeBag)
-//        
-//        // State
-//        reactor.state.map { $0.isWorkingout }
-//            .bind(with: self) { view, isWorking in
-//                if isWorking {
-//                    view.setStartRoutineUI()
-//                }
-//            }.disposed(by: disposeBag)
-//    }
-//}
