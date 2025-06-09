@@ -29,7 +29,8 @@ final class DIContainer {
     
     /// 홈 화면을 생성하여 반환
     func makeHomeViewController(coordinator: HomeCoordinator) -> UIViewController {
-        let recordRepository = RecordRepositoryImpl()
+        let realmService: RealmServiceProtocol = RealmService()
+        let recordRepository = RecordRepositoryImpl(realmService: realmService)
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         
@@ -42,8 +43,8 @@ final class DIContainer {
     
     /// 루틴 리스트 화면을 생성하여 반환
     func makeRoutineListViewController(coordinator: RoutineListCoordinator) -> UIViewController {
-
-        let routineRepository = RoutineRepositoryImpl()
+        let realmService: RealmServiceProtocol = RealmService()
+        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
         
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
@@ -60,8 +61,8 @@ final class DIContainer {
 
     /// 캘린더 화면을 생성하여 반환
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
-        
-        let recordRepository = RecordRepositoryImpl()
+        let realmService: RealmServiceProtocol = RealmService()
+        let recordRepository = RecordRepositoryImpl(realmService: realmService)
         
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
 //        let useCase
