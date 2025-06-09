@@ -18,6 +18,7 @@ final class HomeViewReactor: Reactor {
     // Action is an user interaction
     enum Action {
         case routineSelected
+        case routineComplete
 //        case forward
 //        case stop
 //        case option
@@ -27,8 +28,10 @@ final class HomeViewReactor: Reactor {
     // Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
         case startRoutine(Bool)
+        case startRest(Bool)
+        case restTimeUpdating
+        case restTimeEnded
 //        case forwardToNextSet
-//        case stopRest(Bool)
 //        case presentOption(Bool)
 //        case pauseWorkout(Bool)
     }
@@ -83,8 +86,22 @@ final class HomeViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         
         switch action {
+            
         case .routineSelected:
             return Observable.just(Mutation.startRoutine(true))
+            
+        case .routineComplete:
+            let startRest = Observable.just(Mutation.startRest(true))
+            let restTime = currentState.restTime
+            let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                .take(restTime)
+                .map { _ in Mutation.restTimeUpdating }
+
+            let endRest = Observable.just(Mutation.restTimeEnded)
+            
+            // startRest는 바로 방출, timer가 다 되면 timer, endRest 방출
+            return Observable.concat([startRest, timer, endRest])
+             
 //        case .forward:
 //
 //        case .stop:
@@ -104,8 +121,15 @@ final class HomeViewReactor: Reactor {
         switch mutation {
         case let .startRoutine(isWorkingout):
             state.isWorkingout = isWorkingout
+        case let .startRest(isResting):
+            state.isResting = isResting
+        case .restTimeUpdating:
+            state.restTime = max(state.restTime - 1, 0)
+        case .restTimeEnded:
+            state.isResting = false
+            
 //        case .forwardToNextSet:
-//            
+//
 //        case .stopRest:
 //            
 //        case .presentOption:

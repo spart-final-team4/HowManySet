@@ -71,27 +71,31 @@ final class HomePagingCardView: UIView {
         $0.axis = .horizontal
         $0.distribution = .equalSpacing
         $0.isUserInteractionEnabled = false
-        $0.alpha = 0
+        $0.isHidden = true
     }
     
     private lazy var restButton1 = UIButton().then {
-        $0.backgroundColor = .systemGray5
+        $0.backgroundColor = .gray
         $0.setTitle(restButtonText1, for: .normal)
+        $0.layer.cornerRadius = 10
     }
     
     private lazy var restButton2 = UIButton().then {
-        $0.backgroundColor = .systemGray5
+        $0.backgroundColor = .gray
         $0.setTitle(restButtonText2, for: .normal)
+        $0.layer.cornerRadius = 10
     }
     
     private lazy var restButton3 = UIButton().then {
-        $0.backgroundColor = .systemGray5
+        $0.backgroundColor = .gray
         $0.setTitle(restButtonText3, for: .normal)
+        $0.layer.cornerRadius = 10
     }
     
     private lazy var restResetButton = UIButton().then {
         $0.backgroundColor = .background
         $0.setTitle(restResetButtonText, for: .normal)
+        $0.layer.cornerRadius = 10
     }
     
     private lazy var currentSetLabel = UILabel().then {
@@ -147,7 +151,7 @@ final class HomePagingCardView: UIView {
     
     private lazy var restVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
         $0.alpha = 0
     }
     
@@ -170,11 +174,18 @@ final class HomePagingCardView: UIView {
     
     lazy var setCompleteButton = UIButton().then {
         $0.backgroundColor = .brand
-        $0.setTitle(setCompleteText, for: .normal)
+        $0.setTitle(accessibilityElementsHidden ? "" : setCompleteText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         $0.titleLabel?.textColor = .black
         $0.layer.cornerRadius = 12
+    }
+    
+    private lazy var restProgressBar = UIProgressView().then {
+        $0.progress = .greatestFiniteMagnitude
+        $0.progressTintColor = .brand
+        $0.layer.cornerRadius = 12
+        $0.alpha = 0
     }
         
     // MARK: - Initializer
@@ -204,9 +215,12 @@ private extension HomePagingCardView {
         mainVStack.addArrangedSubviews(
             topInfoHStack,
             setProgressBar,
+            restButtonHStack,
             currentSetLabel,
             containerView,
-            setCompleteButton
+            setCompleteButton,
+            
+            restProgressBar
         )
 
         topInfoHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
@@ -220,9 +234,7 @@ private extension HomePagingCardView {
         restButtonHStack.addArrangedSubviews(restButton1, restButton2, restButton3, restResetButton)
         restVStack.addArrangedSubviews(restImageView, doRestLabel)
         
-        exerciseNameLabel.addSubview(restLabel)
-        setProgressBar.addSubview(restButtonHStack)
-        restButtonHStack.addSubview(remaingRestTimeLabel)
+        restProgressBar.addSubview(remaingRestTimeLabel)
     }
     
     func setConstraints() {
@@ -233,6 +245,7 @@ private extension HomePagingCardView {
                 
         setProgressBar.snp.makeConstraints {
             $0.height.equalTo(12)
+            $0.leading.trailing.equalToSuperview()
         }
         
         containerView.snp.makeConstraints {
@@ -248,16 +261,20 @@ private extension HomePagingCardView {
             $0.height.equalTo(60)
         }
         
-        restLabel.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        restButtonHStack.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
         }
         
-        restButtonHStack.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        restVStack.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
         }
 
         remaingRestTimeLabel.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview()
+            $0.centerX.centerY.equalToSuperview()
+        }
+        
+        restProgressBar.snp.makeConstraints {
+            $0.height.equalTo(60)
         }
     }
 }
@@ -266,24 +283,50 @@ private extension HomePagingCardView {
 extension HomePagingCardView {
     func setRestUI() {
         restButtonHStack.isUserInteractionEnabled = true
-        [restLabel, restButtonHStack, restVStack, remaingRestTimeLabel].forEach {
+        [restLabel, restVStack, remaingRestTimeLabel, restProgressBar].forEach {
             $0.alpha = 1
         }
         
+        exerciseNameLabel.text = restText
+        
         setCompleteButton.isUserInteractionEnabled = false
-        [exerciseNameLabel, setProgressBar, currentSetLabel, weightRepsHStack, setCompleteButton].forEach {
+        [setCompleteButton, setProgressBar].forEach {
+            $0.isHidden = true
+        }
+        
+        [restButtonHStack, restProgressBar].forEach {
+            $0.isHidden = false
+        }
+        
+        [currentSetLabel, weightRepsHStack].forEach {
             $0.alpha = 0
         }
     }
     
     func setExerciseUI() {
+        
+        print(#function)
+        
         restButtonHStack.isUserInteractionEnabled = false
-        [restLabel, restButtonHStack, restVStack, remaingRestTimeLabel].forEach {
+        [restLabel, restVStack, remaingRestTimeLabel].forEach {
             $0.alpha = 0
         }
         
+        exerciseNameLabel.text = "랫풀다운"
+        
         setCompleteButton.isUserInteractionEnabled = true
-        [exerciseNameLabel, setProgressBar, currentSetLabel, weightRepsHStack, setCompleteButton].forEach {
+        
+        restProgressBar.isUserInteractionEnabled = false
+        
+        [setCompleteButton, setProgressBar].forEach {
+            $0.isHidden = false
+        }
+        
+        [restButtonHStack, restProgressBar].forEach {
+            $0.isHidden = true
+        }
+        
+        [currentSetLabel, weightRepsHStack].forEach {
             $0.alpha = 1
         }
     }

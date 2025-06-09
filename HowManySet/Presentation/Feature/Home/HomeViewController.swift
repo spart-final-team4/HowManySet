@@ -215,15 +215,20 @@ extension HomeViewController {
     func bind(reactor: HomeViewReactor) {
         
         print(#function)
-        
+    
         // Action
+        // 루틴 선택 버튼 클릭 시
         routineStartCardView.routineSelectButton.rx.tap
             .map { Reactor.Action.routineSelected }
-            .bind(with: self, onNext: { view, _ in
-                reactor.action.onNext(.routineSelected)
-            })
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
-                
+        
+        // 세트 완료 버튼 클릭 시
+        pagingCardView.setCompleteButton.rx.tap
+            .map { Reactor.Action.routineComplete }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         stopButton.rx.tap
             .bind(with: self) { _,_ in
                 
@@ -236,12 +241,22 @@ extension HomeViewController {
         
         // State
         reactor.state.map { $0.isWorkingout }
+            .distinctUntilChanged()
             .bind(with: self) { view, isWorking in
                 if isWorking {
                     view.setStartRoutineUI()
                 }
-            }
-            .disposed(by: disposeBag)
-
+            }.disposed(by: disposeBag)
+        
+        reactor.state.map { $0.isResting }
+            .distinctUntilChanged()
+            .bind(with: self) { view, isResting in
+                if isResting {
+                    view.pagingCardView.setRestUI()
+                } else {
+                    view.pagingCardView.setExerciseUI()
+                }
+            }.disposed(by: disposeBag)
+        
     }
 }
