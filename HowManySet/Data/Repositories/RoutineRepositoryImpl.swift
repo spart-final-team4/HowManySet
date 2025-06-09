@@ -61,24 +61,17 @@ final class RoutineRepositoryImpl: RoutineRepository {
     ///
     /// - Parameters:
     ///   - uid: 운동 루틴을 수정할 사용자의 고유 식별자
-    ///   - item: 수정할 `WorkoutRoutine` 객체
+    ///   - item: 수정할 `WorkoutRoutine` 객체 덮어쓰기
     func updateRoutine(uid: String, item: WorkoutRoutine) {
-        // TODO: 운동 루틴 수정 구현
-        
+        // TODO: 운동 루틴 수정 구현 (테스트 필요)
         let routines = realmService.read(type: .workoutRoutine)
-        guard let array = routines as? [WorkoutRoutineDTO] else { return }
-        
-        var index = 0
-        for i in 0..<array.count {
-            if array[i].name == item.name {
-                index = i
-                break
+        routines?.forEach{ object in
+            realmService.update(item: object) { routine in
+                let data = routine as! WorkoutRoutineDTO
+                if data.name == item.name {
+                    data.workoutArray = item.workouts.map{ WorkoutDTO(entity: $0) }
+                }
             }
-        }
-        realmService.update(item: routines![index]) { routine in
-            let data = routine as! WorkoutRoutineDTO
-            data.name = item.name
-            data.workoutArray = item.workouts.map{ WorkoutDTO(entity: $0) }
         }
     }
 }
