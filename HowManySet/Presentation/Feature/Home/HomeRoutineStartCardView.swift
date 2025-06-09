@@ -15,12 +15,11 @@ final class HomeRoutineStartCardView: UIView {
     private let todayDate = "06.05"
     private let initialText = "오늘도 득근해요"
     private let selectButtonText = "운동 시작하기"
-    private let setCompleteText = "세트 완료"
     
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 20
+        $0.distribution = .equalSpacing
     }
     
     private lazy var topContentsHStack = UIStackView().then {
@@ -103,7 +102,6 @@ private extension HomeRoutineStartCardView {
         }
         
         topContentsHStack.snp.makeConstraints {
-            $0.top.equalToSuperview()
             $0.height.equalTo(30)
         }
         
@@ -119,6 +117,10 @@ private extension HomeRoutineStartCardView {
         initialTextLabel.snp.makeConstraints {
             $0.top.equalTo(initialImageView.snp.bottom).offset(20)
             $0.centerX.equalToSuperview()
+        }
+        
+        routineSelectButton.snp.makeConstraints {
+            $0.height.equalTo(60)
         }
     }
 }

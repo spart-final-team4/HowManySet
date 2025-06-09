@@ -52,16 +52,23 @@ final class HomeViewController: UIViewController, View {
     private lazy var routineNameLabel = UILabel().then {
         $0.text = "등 운동"
         $0.textColor = .textSecondary
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private lazy var routineNumberLabel = UILabel().then {
         $0.text = "1 / 5"
         $0.textColor = .textSecondary
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
-    private lazy var routineStartView = HomeRoutineStartCardView().then {
+    private lazy var routineStartCardView = HomeRoutineStartCardView().then {
         $0.layer.cornerRadius = 20
-        
+    }
+    
+    private lazy var pagingCardView = HomePagingCardView().then {
+        $0.layer.cornerRadius = 20
+        $0.isUserInteractionEnabled = false
+        $0.alpha = 0
     }
     
     private lazy var pageController = UIPageControl().then {
@@ -127,9 +134,10 @@ private extension HomeViewController {
             titleLabel,
             topTimerHStackView,
             topRoutineInfoVStackView,
-            routineStartView,
+            routineStartCardView,
             pageController,
-            buttonHStackView
+            buttonHStackView,
+            pagingCardView
         )
         
         topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton)
@@ -142,28 +150,32 @@ private extension HomeViewController {
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
+            $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
         }
         
         topTimerHStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
+            $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
         }
         
         topRoutineInfoVStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
+            $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
         }
         
-        routineStartView.snp.makeConstraints {
+        routineStartCardView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalToSuperview().multipliedBy(0.47)
         }
         
+        pagingCardView.snp.makeConstraints {
+            $0.edges.equalTo(routineStartCardView)
+        }
+        
         pageController.snp.makeConstraints {
-            $0.top.equalTo(routineStartView.snp.bottom).offset(16)
+            $0.top.equalTo(routineStartCardView.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
         }
         
@@ -183,9 +195,11 @@ private extension HomeViewController {
     }
     
     func setStartRoutineUI() {
+                
+        routineStartCardView.alpha = 0
         
-        routineStartView.isUserInteractionEnabled = false
-        routineStartView.alpha = 0
+        pagingCardView.isUserInteractionEnabled = true
+        pagingCardView.alpha = 1
         
         [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView].forEach {
             $0.alpha = 1
@@ -203,7 +217,7 @@ extension HomeViewController {
         print(#function)
         
         // Action
-        routineStartView.routineSelectButton.rx.tap
+        routineStartCardView.routineSelectButton.rx.tap
             .map { Reactor.Action.routineSelected }
             .bind(with: self, onNext: { view, _ in
                 reactor.action.onNext(.routineSelected)
