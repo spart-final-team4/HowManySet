@@ -13,7 +13,13 @@ final class HomePagingCardView: UIView {
     
     // MARK: - Properties
     private let setCompleteText = "세트 완료"
-    private let restText = "휴식도 운동이에요"
+    private let restText = "휴식 중"
+    private let doRestText = "휴식도 운동이에요"
+    private let restButtonText1 = "+1분"
+    private let restButtonText2 = "+30초"
+    private let restButtonText3 = "+10초"
+    private let restResetButtonText = "초기화"
+
     
     // MARK: - UI Components
     private lazy var mainVStack = UIStackView().then {
@@ -39,6 +45,12 @@ final class HomePagingCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
+    private lazy var restLabel = UILabel().then {
+        $0.text = restText
+        $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        $0.alpha = 0
+    }
+    
     private lazy var exerciseSetLabel = UILabel().then {
         $0.text = "1 / 5"
         $0.font = UIFont.systemFont(ofSize: 14)
@@ -53,6 +65,33 @@ final class HomePagingCardView: UIView {
     
     private lazy var setProgressBar = SetProgressBarView().then {
         $0.backgroundColor = .cardBackground
+    }
+    
+    private lazy var restButtonHStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .equalSpacing
+        $0.isUserInteractionEnabled = false
+        $0.alpha = 0
+    }
+    
+    private lazy var restButton1 = UIButton().then {
+        $0.backgroundColor = .systemGray5
+        $0.setTitle(restButtonText1, for: .normal)
+    }
+    
+    private lazy var restButton2 = UIButton().then {
+        $0.backgroundColor = .systemGray5
+        $0.setTitle(restButtonText2, for: .normal)
+    }
+    
+    private lazy var restButton3 = UIButton().then {
+        $0.backgroundColor = .systemGray5
+        $0.setTitle(restButtonText3, for: .normal)
+    }
+    
+    private lazy var restResetButton = UIButton().then {
+        $0.backgroundColor = .background
+        $0.setTitle(restResetButtonText, for: .normal)
     }
     
     private lazy var currentSetLabel = UILabel().then {
@@ -106,6 +145,29 @@ final class HomePagingCardView: UIView {
         $0.textColor = .white
     }
     
+    private lazy var restVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .equalSpacing
+        $0.alpha = 0
+    }
+    
+    private lazy var restImageView = UIImageView().then {
+        let config = UIImage.SymbolConfiguration(pointSize: 50)
+        $0.image = UIImage(systemName: "waterbottle", withConfiguration: config)
+        $0.tintColor = .white
+    }
+    
+    private lazy var doRestLabel = UILabel().then {
+        $0.text = doRestText
+        $0.font = .systemFont(ofSize: 20, weight: .regular)
+    }
+    
+    private lazy var remaingRestTimeLabel = UILabel().then {
+        $0.text = "01:30"
+        $0.font = .systemFont(ofSize: 28, weight: .medium)
+        $0.alpha = 0
+    }
+    
     lazy var setCompleteButton = UIButton().then {
         $0.backgroundColor = .brand
         $0.setTitle(setCompleteText, for: .normal)
@@ -149,10 +211,18 @@ private extension HomePagingCardView {
 
         topInfoHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
-        containerView.addSubview(weightRepsHStack)
+        containerView.addSubviews(weightRepsHStack,
+                                 restVStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack, repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
         repsInfoVStack.addArrangedSubviews(repsImageView, repsLabel)
+        
+        restButtonHStack.addArrangedSubviews(restButton1, restButton2, restButton3, restResetButton)
+        restVStack.addArrangedSubviews(restImageView, doRestLabel)
+        
+        exerciseNameLabel.addSubview(restLabel)
+        setProgressBar.addSubview(restButtonHStack)
+        restButtonHStack.addSubview(remaingRestTimeLabel)
     }
     
     func setConstraints() {
@@ -177,12 +247,46 @@ private extension HomePagingCardView {
         setCompleteButton.snp.makeConstraints {
             $0.height.equalTo(60)
         }
+        
+        restLabel.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        restButtonHStack.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        remaingRestTimeLabel.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview()
+        }
     }
 }
 
 // MARK: Internal Methods
-extension HomeRoutineStartCardView {
-
+extension HomePagingCardView {
+    func setRestUI() {
+        restButtonHStack.isUserInteractionEnabled = true
+        [restLabel, restButtonHStack, restVStack, remaingRestTimeLabel].forEach {
+            $0.alpha = 1
+        }
+        
+        setCompleteButton.isUserInteractionEnabled = false
+        [exerciseNameLabel, setProgressBar, currentSetLabel, weightRepsHStack, setCompleteButton].forEach {
+            $0.alpha = 0
+        }
+    }
+    
+    func setExerciseUI() {
+        restButtonHStack.isUserInteractionEnabled = false
+        [restLabel, restButtonHStack, restVStack, remaingRestTimeLabel].forEach {
+            $0.alpha = 0
+        }
+        
+        setCompleteButton.isUserInteractionEnabled = true
+        [exerciseNameLabel, setProgressBar, currentSetLabel, weightRepsHStack, setCompleteButton].forEach {
+            $0.alpha = 1
+        }
+    }
 }
 
 
