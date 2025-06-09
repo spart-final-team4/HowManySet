@@ -25,8 +25,43 @@ final class HomeViewController: UIViewController, View {
         $0.font = .systemFont(ofSize: 36, weight: .bold)
     }
     
+    private lazy var topTimerHStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 16
+        $0.alpha = 0
+    }
+    
+    private lazy var workoutTimeLabel = UILabel().then {
+        $0.text = "00:00"
+        $0.font = .systemFont(ofSize: 36, weight: .bold)
+    }
+    
+    private lazy var pauseButton = UIButton().then {
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        $0.tintColor = .white
+    }
+    
+    private lazy var topRoutineInfoVStackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 8
+        $0.alignment = .trailing
+        $0.alpha = 0
+    }
+    
+    private lazy var routineNameLabel = UILabel().then {
+        $0.text = "등 운동"
+        $0.textColor = .textSecondary
+    }
+    
+    private lazy var routineNumberLabel = UILabel().then {
+        $0.text = "1 / 5"
+        $0.textColor = .textSecondary
+    }
+    
     private lazy var routineStartView = HomeRoutineStartCardView().then {
         $0.layer.cornerRadius = 20
+        
     }
     
     private lazy var pageController = UIPageControl().then {
@@ -46,17 +81,17 @@ final class HomeViewController: UIViewController, View {
     private lazy var stopButton = UIButton().then {
         $0.layer.cornerRadius = 40
         $0.backgroundColor = .roundButtonBG
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
-        $0.tintColor = .white
+        $0.tintColor = .pauseButton
     }
     
     private lazy var forwardButton = UIButton().then {
         $0.layer.cornerRadius = 40
         $0.backgroundColor = .roundButtonBG
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
-        $0.setImage(UIImage(systemName: "forward.fill"), for: .normal)
-        $0.tintColor = .brand
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
+        $0.tintColor = .white
     }
     
     // MARK: - Initializer
@@ -90,11 +125,15 @@ private extension HomeViewController {
     func setViewHiearchy() {
         view.addSubviews(
             titleLabel,
+            topTimerHStackView,
+            topRoutineInfoVStackView,
             routineStartView,
             pageController,
             buttonHStackView
         )
         
+        topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton)
+        topRoutineInfoVStackView.addArrangedSubviews(routineNameLabel, routineNumberLabel)
         buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
     }
     
@@ -103,6 +142,18 @@ private extension HomeViewController {
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
+        }
+        
+        topTimerHStackView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
+        }
+        
+        topRoutineInfoVStackView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(routineStartView.snp.top).offset(-32)
         }
         
@@ -136,7 +187,7 @@ private extension HomeViewController {
         routineStartView.isUserInteractionEnabled = false
         routineStartView.alpha = 0
         
-        [pageController, buttonHStackView].forEach {
+        [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView].forEach {
             $0.alpha = 1
         }
         
