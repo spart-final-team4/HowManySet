@@ -98,10 +98,7 @@ private extension SetProgressBarView {
             segmentView.backgroundColor = remainingColor
             
             progressBarStackView.addArrangedSubview(segmentView)
-            segmentView.snp.makeConstraints {
-                $0.width.equalTo(progressBarStackView.snp.width).multipliedBy(1/totalSets)
-                $0.height.equalToSuperview()
-            }
+        
         }
         updateProgress()
     }
