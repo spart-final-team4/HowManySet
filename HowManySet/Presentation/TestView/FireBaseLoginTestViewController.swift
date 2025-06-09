@@ -10,6 +10,7 @@ import SnapKit
 import Then
 import FirebaseCore
 import FirebaseAuth
+import FirebaseFirestore
 import AuthenticationServices
 import GoogleSignIn
 import KakaoSDKAuth
@@ -18,17 +19,13 @@ import KakaoSDKUser
 class FireBaseLoginTestViewController: UIViewController {
 
     // MARK: - UI 요소
-    
-    // TODO: 아이콘 추가 예정
     private let logoView = UIImageView().then {
-        $0.backgroundColor = .systemGreen
+        $0.backgroundColor = UIColor(named: "AppColor")
         $0.layer.cornerRadius = 24
     }
 
-    // Apple 공식 버튼
     private let appleLoginButton = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
 
-    // Google 버튼 (공식 X 커스텀 O)
     private let googleLoginButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.baseBackgroundColor = .white
@@ -36,10 +33,9 @@ class FireBaseLoginTestViewController: UIViewController {
         config.cornerStyle = .large
         config.title = "Google로 로그인"
         config.titleAlignment = .center
-        config.image = UIImage(systemName: "g.circle") // Google 공식 아이콘 추가 필요
+        config.image = UIImage(named: "Google")
         config.imagePadding = 8
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
-
         let button = UIButton(configuration: config)
         button.layer.cornerRadius = 16
         button.clipsToBounds = true
@@ -47,26 +43,24 @@ class FireBaseLoginTestViewController: UIViewController {
         return button
     }()
 
-    // Kakao 공식 가이드 커스텀 버튼
     private let kakaoLoginButton = UIButton(type: .system).then {
         $0.setTitle("카카오로 시작하기", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         $0.backgroundColor = UIColor(red: 1.0, green: 0.9, blue: 0.0, alpha: 1.0)
         $0.layer.cornerRadius = 12
-        $0.setImage(UIImage(systemName: "bubble.fill"), for: .normal) // 공식 아이콘 필요
+        $0.setImage(UIImage(named: "Kakao"), for: .normal)
         $0.tintColor = .black
         $0.contentHorizontalAlignment = .center
     }
 
-    // 익명 로그인
     private let anonymousLoginButton: UIButton = {
         let button = UIButton(type: .system)
         let title = "비회원으로 시작하기"
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.lightGray,
             .font: UIFont.systemFont(ofSize: 16, weight: .regular),
-            .underlineStyle: NSUnderlineStyle.single.rawValue // underLine 커스텀
+            .underlineStyle: NSUnderlineStyle.single.rawValue
         ]
         let attributedTitle = NSAttributedString(string: title, attributes: attributes)
         button.setAttributedTitle(attributedTitle, for: .normal)
@@ -144,6 +138,7 @@ class FireBaseLoginTestViewController: UIViewController {
         }
     }
 
+    // TODO: 카카오 권한 부족(비즈 앱 전환 해야함)
     private func handleKakaoLoginResult(oauthToken: OAuthToken?, error: Error?) {
         if let error = error {
             showAlert(title: "카카오 로그인 실패", message: error.localizedDescription)
@@ -158,12 +153,52 @@ class FireBaseLoginTestViewController: UIViewController {
                 self?.showAlert(title: "카카오 로그인 실패", message: error.localizedDescription)
                 return
             }
-            let email = user?.kakaoAccount?.email ?? "이메일 없음"
-            let nickname = user?.kakaoAccount?.profile?.nickname ?? "닉네임 없음"
-            self?.showAlert(title: "카카오 로그인 성공", message: "이메일: \(email)\n닉네임: \(nickname)")
+            guard let nickname = user?.kakaoAccount?.profile?.nickname,
+                  let kakaoId = user?.id else {
+                self?.showAlert(title: "카카오 정보 누락", message: "닉네임/id를 받아오지 못했습니다.")
+                return
+            }
+            // 이메일 없이 Auth는 kakaoId 기반으로 진행
+            self?.firebaseLoginOrRegisterWithoutEmail(kakaoId: kakaoId, nickname: nickname)
         }
     }
 
+
+    // MARK: - Firebase Auth 연동 (이메일/비밀번호 방식)
+    private func firebaseLoginOrRegisterWithoutEmail(kakaoId: Int64, nickname: String) {
+        let email = "\(kakaoId)@kakao.com" // 임시 이메일 생성 (Firebase Auth는 이메일 필요)
+        let password = "\(kakaoId)"
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            if let result = result {
+                self?.saveUserToDB(uid: result.user.uid, nickname: nickname)
+            } else {
+                Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+                    if let result = result {
+                        self?.saveUserToDB(uid: result.user.uid, nickname: nickname)
+                    } else {
+                        self?.showAlert(title: "Firebase Auth 실패", message: error?.localizedDescription ?? "알 수 없는 오류")
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Firestore에 사용자 정보 저장
+    private func saveUserToDB(uid: String, nickname: String) {
+        let db = Firestore.firestore()
+        db.collection("uid").document(uid).setData([
+            "name": nickname,
+            "provider": "kakao"
+        ]) { [weak self] error in
+            if let error = error {
+                self?.showAlert(title: "Firestore 저장 실패", message: error.localizedDescription)
+            } else {
+                self?.showAlert(title: "로그인 성공", message: "Firestore에 저장되었습니다.")
+            }
+        }
+    }
+
+    // MARK: - 기타 로그인(구글/애플/익명) 및 알림
     @objc private func handleGoogleLogin() {
         guard let presentingVC = UIApplication.shared.windows.first?.rootViewController else { return }
         GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { [weak self] result, error in
@@ -176,7 +211,6 @@ class FireBaseLoginTestViewController: UIViewController {
                 return
             }
             let accessToken = user.accessToken.tokenString
-            // Firebase 인증 연동 코드 추가 필요
             self?.showAlert(title: "Google 로그인 성공", message: user.profile?.email ?? "이메일 없음")
         }
     }
@@ -191,7 +225,6 @@ class FireBaseLoginTestViewController: UIViewController {
     }
 
     @objc private func handleAnonymousLogin() {
-        // Firebase Auth 익명 로그인 연동 코드 추가 필요
         showAlert(title: "비회원 로그인", message: "비회원으로 로그인되었습니다.")
     }
 
@@ -213,7 +246,6 @@ extension FireBaseLoginTestViewController: ASAuthorizationControllerDelegate, AS
             let email = appleIDCredential.email ?? "이메일 없음"
             let fullName = appleIDCredential.fullName?.givenName ?? "이름 없음"
             showAlert(title: "Apple 로그인 성공", message: "이메일: \(email)\n이름: \(fullName)\nUID: \(userIdentifier)")
-            // Firebase Auth 연동 코드 추가 필요
         }
     }
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
