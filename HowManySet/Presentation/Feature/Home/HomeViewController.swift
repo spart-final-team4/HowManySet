@@ -61,9 +61,10 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Initializer
     init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
-        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
+        self.coordinator = coordinator
+        
     }
     
     required init?(coder: NSCoder) {
