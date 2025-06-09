@@ -25,7 +25,7 @@ final class HomeViewController: UIViewController, View {
         $0.font = .systemFont(ofSize: 36, weight: .bold)
     }
     
-    private lazy var routineStartView = HomeRoutineStartView().then {
+    private lazy var routineStartView = HomeRoutineStartCardView().then {
         $0.layer.cornerRadius = 20
     }
     
@@ -132,13 +132,16 @@ private extension HomeViewController {
     }
     
     func setStartRoutineUI() {
+        
+        routineStartView.isUserInteractionEnabled = false
+        routineStartView.alpha = 0
+        
         [pageController, buttonHStackView].forEach {
             $0.alpha = 1
         }
         
         titleLabel.alpha = 0
         
-        routineStartView.setStartRoutineUI()
     }
 }
 

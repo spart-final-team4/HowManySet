@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class HomePagingView: UIView {
+final class HomePagingCardView: UIView {
     
     // MARK: - Properties
     

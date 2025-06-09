@@ -1,5 +1,5 @@
 //
-//  HomeRoutineStartView.swift
+//  HomeRoutineStartCardView.swift
 //  HowManySet
 //
 //  Created by 정근호 on 6/7/25.
@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class HomeRoutineStartView: UIView {
+final class HomeRoutineStartCardView: UIView {
     
     // MARK: - Properties
     private let todayDate = "06.05"
@@ -82,7 +82,7 @@ final class HomeRoutineStartView: UIView {
 
 
 // MARK: UI Methods
-private extension HomeRoutineStartView {
+private extension HomeRoutineStartCardView {
     func setupUI() {
         backgroundColor = .cardBackground
         setViewHiearchy()
@@ -124,11 +124,6 @@ private extension HomeRoutineStartView {
 }
 
 // MARK: Internal Methods
-extension HomeRoutineStartView {
-    func setStartRoutineUI() {
-        [todayDateLabel, containerView, routineSelectButton].forEach {
-            $0.alpha = 0
-            $0.isUserInteractionEnabled = false
-        }
-    }
+extension HomeRoutineStartCardView {
+
 }
