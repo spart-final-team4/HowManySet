@@ -124,7 +124,8 @@ final class HomeViewReactor: Reactor {
         case let .startRest(isResting):
             state.isResting = isResting
         case .restTimeUpdating:
-            state.restTime = max(state.restTime - 1, 0)
+            var currentRestTime = state.restTime
+            currentRestTime = max(currentRestTime - 1, 0)
         case .restTimeEnded:
             state.isResting = false
             
