@@ -282,6 +282,9 @@ private extension HomePagingCardView {
 // MARK: Internal Methods
 extension HomePagingCardView {
     func setRestUI() {
+        
+        print(#function)
+
         restButtonHStack.isUserInteractionEnabled = true
         [restLabel, restVStack, remaingRestTimeLabel, restProgressBar].forEach {
             $0.alpha = 1
