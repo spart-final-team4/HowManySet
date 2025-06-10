@@ -16,23 +16,26 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
+    
+    private let setText = "세트"
+    private let repsText = "회"
+    private let homeText = "홈"
         
     var disposeBag = DisposeBag()
     
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
-        $0.text = "홈"
+        $0.text = homeText
         $0.font = .systemFont(ofSize: 36, weight: .bold)
     }
     
     private lazy var topTimerHStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
-        $0.alpha = 0
+        $0.isHidden = true
     }
     
     private lazy var workoutTimeLabel = UILabel().then {
-        $0.text = "00:00"
         $0.font = .systemFont(ofSize: 36, weight: .bold)
     }
     
@@ -49,13 +52,11 @@ final class HomeViewController: UIViewController, View {
     }
     
     private lazy var routineNameLabel = UILabel().then {
-        $0.text = "등 운동"
         $0.textColor = .textSecondary
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private lazy var routineNumberLabel = UILabel().then {
-        $0.text = "1 / 5"
         $0.textColor = .textSecondary
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
@@ -66,22 +67,21 @@ final class HomeViewController: UIViewController, View {
     
     private lazy var pagingCardView = HomePagingCardView().then {
         $0.layer.cornerRadius = 20
-        $0.isUserInteractionEnabled = false
-        $0.alpha = 0
+        $0.isHidden = true
     }
     
     private lazy var pageController = UIPageControl().then {
         $0.currentPage = 0
         $0.numberOfPages = 5
         $0.hidesForSinglePage = true
-        $0.alpha = 0
+        $0.isHidden = true
     }
     
     private lazy var buttonHStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .equalSpacing
         $0.alignment = .center
-        $0.alpha = 0
+        $0.isHidden = true
     }
     
     private lazy var stopButton = UIButton().then {
@@ -192,15 +192,13 @@ private extension HomeViewController {
         }
     }
     
-    func setStartRoutineUI() {
+    func showStartRoutineUI() {
                 
-        routineStartCardView.alpha = 0
-        
-        pagingCardView.isUserInteractionEnabled = true
-        pagingCardView.alpha = 1
+        routineStartCardView.isHidden = true
+        pagingCardView.isHidden = false
         
         [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView].forEach {
-            $0.alpha = 1
+            $0.isHidden = false
         }
         
         titleLabel.alpha = 0
@@ -238,25 +236,34 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // State
-        Observable.combineLatest(
-            reactor.state.map { $0.isWorkingout }.distinctUntilChanged(),
-            reactor.state.map { $0.totalSet }
-        )
-        .filter { $0.0 } // isWorkingout == true
-        .map { $0.1 }
-        .bind(with: self) { view, totalSets in
-            view.setStartRoutineUI()
-            view.pagingCardView.setProgressBar.setupSegments(totalSets: totalSets.count)
-        }
-        .disposed(by: disposeBag)
-        
+        reactor.state.map { $0 }
+            .filter { $0.isWorkingout == true }
+            .bind(with: self) { (view: HomeViewController, state) in
+                view.showStartRoutineUI()
+                
+                view.workoutTimeLabel.text = state.workoutTime.toWorkOutTimeLabel()
+                view.routineNameLabel.text = state.routineName
+                view.routineNumberLabel.text = "\(state.currentSet + 1)/\(state.exerciseCount)"
+                
+                view.pagingCardView.exerciseNameLabel.text = state.exerciseName
+                view.pagingCardView.exerciseSetLabel.text = "\(state.currentSet + 1)/\(state.totalSetsInfo.count)"
+                view.pagingCardView.currentSetLabel.text = "\(state.currentSet) \(view.setText)"
+                view.pagingCardView.weightLabel.text = "\(Int(state.weight))\(state.unit)"
+                view.pagingCardView.repsLabel.text = "\(state.reps)\(view.repsText)"
+                
+                view.pagingCardView.remaingRestTimeLabel.text = state.restSecondsRemaining.toRestTimeLabel()
+                
+                view.pagingCardView.setProgressBar.setupSegments(totalSets: state.totalSetsInfo.count)
+            }
+            .disposed(by: disposeBag)
+            
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
             .bind(with: self) { view, isResting in
                 if isResting {
-                    view.pagingCardView.setRestUI()
+                    view.pagingCardView.showRestUI()
                 } else {
-                    view.pagingCardView.setExerciseUI()
+                    view.pagingCardView.showExerciseUI()
                 }
             }.disposed(by: disposeBag)
         

@@ -12,21 +12,15 @@ import Then
 final class HomePagingCardView: UIView {
     
     // MARK: - Properties
-    private let setCompleteText = "세트 완료"
-    private let restText = "휴식 중"
     private let doRestText = "휴식도 운동이에요"
+    private let restText = "휴식 중"
     private let restButtonText1 = "+1분"
     private let restButtonText2 = "+30초"
     private let restButtonText3 = "+10초"
     private let restResetButtonText = "초기화"
-
+    private let setCompleteText = "세트 완료"
     
     // MARK: - UI Components
-//    private lazy var mainVStack = UIStackView().then {
-//        $0.axis = .vertical
-//        $0.distribution = .equalSpacing
-//    }
-    
     private lazy var topLineHStack = UIStackView().then {
         $0.axis = .horizontal
     }
@@ -45,19 +39,16 @@ final class HomePagingCardView: UIView {
         $0.spacing = 12
     }
     
-    private lazy var exerciseNameLabel = UILabel().then {
-        $0.text = "랫풀다운"
+    lazy var exerciseNameLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
     private lazy var restLabel = UILabel().then {
         $0.text = restText
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        $0.alpha = 0
     }
     
-    private lazy var exerciseSetLabel = UILabel().then {
-        $0.text = "1 / 5"
+    lazy var exerciseSetLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 14)
         $0.textColor = .textSecondary
     }
@@ -104,8 +95,7 @@ final class HomePagingCardView: UIView {
         $0.layer.cornerRadius = 10
     }
     
-    private lazy var currentSetLabel = UILabel().then {
-        $0.text = "1 세트"
+    lazy var currentSetLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.textAlignment = .left
     }
@@ -132,8 +122,7 @@ final class HomePagingCardView: UIView {
         $0.tintColor = .brand
     }
     
-    private lazy var weightLabel = UILabel().then {
-        $0.text = "60kg"
+    lazy var weightLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 24)
         $0.textColor = .white
     }
@@ -146,12 +135,11 @@ final class HomePagingCardView: UIView {
     
     private lazy var repsImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
-        $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
-        $0.tintColor = .brand
+        $0.image = UIImage(systemName: "repeat", withConfiguration: config)
+        $0.tintColor = .white
     }
     
-    private lazy var repsLabel = UILabel().then {
-        $0.text = "10회"
+    lazy var repsLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 24)
         $0.textColor = .white
     }
@@ -174,8 +162,7 @@ final class HomePagingCardView: UIView {
         $0.font = .systemFont(ofSize: 20, weight: .regular)
     }
     
-    private lazy var remaingRestTimeLabel = UILabel().then {
-        $0.text = "01:30"
+    lazy var remaingRestTimeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 28, weight: .medium)
     }
     
@@ -229,7 +216,7 @@ private extension HomePagingCardView {
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar, restButtonHStack, currentSetLabel)
         topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
         
-        exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
+        exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, restLabel, exerciseSetLabel)
         containerView.addSubviews(weightRepsHStack,
                                  restInfoVStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
@@ -263,7 +250,6 @@ private extension HomePagingCardView {
             $0.height.equalTo(containerView.snp.height).multipliedBy(0.5)
             $0.center.equalToSuperview()
         }
-        
        
         currentSetLabel.snp.makeConstraints {
             $0.height.equalTo(16)
@@ -306,32 +292,30 @@ private extension HomePagingCardView {
 // MARK: Internal Methods
 extension HomePagingCardView {
     
-    func setRestUI() {
+    func showExerciseUI() {
         print(#function)
-        exerciseNameLabel.text = restText
-        setCompleteButton.isUserInteractionEnabled = false
-        [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel].forEach {
+        setCompleteButton.isUserInteractionEnabled = true
+        restProgressBar.isUserInteractionEnabled = false
+        [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel, restLabel].forEach {
             $0.isHidden = true
         }
-        [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel, restProgressBar].forEach {
+        [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel, exerciseNameLabel].forEach {
             $0.isHidden = false
         }
         updateContainerViewConstraint()
     }
     
-    func setExerciseUI() {
+    func showRestUI() {
         print(#function)
-        exerciseNameLabel.text = "랫풀다운"
-        setCompleteButton.isUserInteractionEnabled = true
-        restProgressBar.isUserInteractionEnabled = false
-        [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel].forEach {
-            $0.isHidden = false
-        }
-        [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel].forEach {
+        exerciseNameLabel.text = restText
+        setCompleteButton.isUserInteractionEnabled = false
+        [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel, exerciseNameLabel].forEach {
             $0.isHidden = true
+        }
+        [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel, restProgressBar, restLabel].forEach {
+            $0.isHidden = false
         }
         updateContainerViewConstraint()
     }
+    
 }
-
-

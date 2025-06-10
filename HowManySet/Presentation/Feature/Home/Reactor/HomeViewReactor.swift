@@ -52,7 +52,8 @@ final class HomeViewReactor: Reactor {
         var reps: Int
         var currentSet: Int
         var currentExerciseIndex: Int
-        var totalSet: [WorkoutSet]
+        var exerciseCount: Int
+        var totalSetsInfo: [WorkoutSet]
         var date: Date
         var comment: String?
         
@@ -77,7 +78,8 @@ final class HomeViewReactor: Reactor {
             reps: routineMockData.workouts[0].sets[0].reps,
             currentSet: 0,
             currentExerciseIndex: 0,
-            totalSet: routineMockData.workouts[0].sets,
+            exerciseCount: routineMockData.workouts.count,
+            totalSetsInfo: routineMockData.workouts[0].sets,
             date: Date(),
             isResting: false,
             restSecondsRemaining: 0,
@@ -116,7 +118,6 @@ final class HomeViewReactor: Reactor {
 //        case .weightChanged:
 //                    
 //        case .repsChanged:
-            
 //
 //        case .stop:
 //            
@@ -144,8 +145,8 @@ final class HomeViewReactor: Reactor {
             state.isResting = false
         case .forwardToNextSet:
             state.currentSet += 1
-            if state.currentSet < state.totalSet.count {
-                let next = state.totalSet[state.currentSet]
+            if state.currentSet < state.totalSetsInfo.count {
+                let next = state.totalSetsInfo[state.currentSet]
                 state.weight = next.weight
                 state.reps = next.reps
                 state.unit = next.unit
