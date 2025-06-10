@@ -175,10 +175,10 @@ final class HomePagingCardView: UIView {
         $0.layer.cornerRadius = 12
     }
     
-    private lazy var restProgressBar = UIProgressView().then {
-        $0.progress = .greatestFiniteMagnitude
+    lazy var restProgressBar = UIProgressView().then {
         $0.progressTintColor = .brand
         $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
     }
         
     // MARK: - Initializer
@@ -210,7 +210,8 @@ private extension HomePagingCardView {
             containerView,
             setCompleteButton,
             
-            restProgressBar
+            restProgressBar,
+            remaingRestTimeLabel
         )
         
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar, restButtonHStack, currentSetLabel)
@@ -226,7 +227,6 @@ private extension HomePagingCardView {
         repsInfoVStack.addArrangedSubviews(repsImageView, repsLabel)
         restButtonHStack.addArrangedSubviews(restButton1, restButton2, restButton3, restResetButton)
         restInfoVStack.addArrangedSubviews(restImageView, doRestLabel)
-        restProgressBar.addSubview(remaingRestTimeLabel)
     }
     
     func setConstraints() {
@@ -258,10 +258,6 @@ private extension HomePagingCardView {
         restInfoVStack.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-
-        remaingRestTimeLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
         
         setCompleteButton.snp.makeConstraints {
             $0.top.equalTo(containerView.snp.bottom).offset(24)
@@ -273,6 +269,10 @@ private extension HomePagingCardView {
             $0.top.equalTo(containerView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
+        }
+        
+        remaingRestTimeLabel.snp.makeConstraints {
+            $0.center.equalTo(restProgressBar)
         }
     }
 }
@@ -295,7 +295,6 @@ extension HomePagingCardView {
     func showExerciseUI() {
         print(#function)
         setCompleteButton.isUserInteractionEnabled = true
-        restProgressBar.isUserInteractionEnabled = false
         restButtonHStack.isUserInteractionEnabled = false
         [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel, restLabel].forEach {
             $0.isHidden = true

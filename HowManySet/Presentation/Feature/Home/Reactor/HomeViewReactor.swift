@@ -259,17 +259,17 @@ final class HomeViewReactor: Reactor {
     }
     
     
-    /// 휴식 타이머 Observable을 생성하고 반환하는 함수
-    private func restartRestTimer(newRestTime: Int) -> Observable<Mutation> {
-        let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-            .take(newRestTime) // 새로운 휴식 시간을 기준으로 take
-            .map { _ in
-                return Mutation.restTimeUpdating
-            }
-            .concat(Observable.just(.restTimeEnded)) // 타이머 완료 후 restTimeEnded가 방출되도록 보장
-        
-        return timer
-    }
+//    /// 휴식 타이머 Observable을 생성하고 반환하는 함수
+//    private func restartRestTimer(newRestTime: Int) -> Observable<Mutation> {
+//        let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+//            .take(newRestTime) // 새로운 휴식 시간을 기준으로 take
+//            .map { _ in
+//                return Mutation.restTimeUpdating
+//            }
+//            .concat(Observable.just(.restTimeEnded)) // 타이머 완료 후 restTimeEnded가 방출되도록 보장
+//        
+//        return timer
+//    }
     
 }
 
