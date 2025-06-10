@@ -296,6 +296,7 @@ extension HomePagingCardView {
         print(#function)
         setCompleteButton.isUserInteractionEnabled = true
         restProgressBar.isUserInteractionEnabled = false
+        restButtonHStack.isUserInteractionEnabled = false
         [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel, restLabel].forEach {
             $0.isHidden = true
         }
@@ -307,8 +308,8 @@ extension HomePagingCardView {
     
     func showRestUI() {
         print(#function)
-        exerciseNameLabel.text = restText
         setCompleteButton.isUserInteractionEnabled = false
+        restButtonHStack.isUserInteractionEnabled = true
         [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel, exerciseNameLabel].forEach {
             $0.isHidden = true
         }
