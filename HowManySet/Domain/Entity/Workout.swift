@@ -36,6 +36,8 @@ extension Workout {
             sets: [
                 WorkoutSet(weight: 60, unit: "kg", reps: 10),
                 WorkoutSet(weight: 65, unit: "kg", reps: 8),
+                WorkoutSet(weight: 70, unit: "kg", reps: 6),
+                WorkoutSet(weight: 70, unit: "kg", reps: 6),
                 WorkoutSet(weight: 70, unit: "kg", reps: 6)
             ],
             comment: "팔꿈치 각도 유지"
