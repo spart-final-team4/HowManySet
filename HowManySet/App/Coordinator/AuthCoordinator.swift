@@ -8,7 +8,7 @@
 import UIKit
 
 protocol AuthCoordinatorProtocol: Coordinator {
-    
+    func completeAuth()
 }
 
 /// 인증 흐름 담당 coordinator
