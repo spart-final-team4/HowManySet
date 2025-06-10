@@ -222,7 +222,7 @@ extension HomeViewController {
         
         // 세트 완료 버튼 클릭 시
         pagingCardView.setCompleteButton.rx.tap
-            .map { Reactor.Action.routineComplete }
+            .map { Reactor.Action.routineCompleteButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -230,7 +230,7 @@ extension HomeViewController {
             .map { Reactor.Action.pauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+                
         stopButton.rx.tap
             .bind(with: self) { _,_ in
                 
