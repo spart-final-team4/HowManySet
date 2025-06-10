@@ -22,6 +22,7 @@ final class CalendarViewController: UIViewController, View {
         super.viewDidLoad()
         setDelegates()
         setRegisters()
+        setButtonTargets()
 
         if let reactor = reactor {
             bind(reactor: reactor)
@@ -67,6 +68,46 @@ private extension CalendarViewController {
 
     func setRegisters() {
         calendarView.publicRecordTableView.register(RecordCell.self, forCellReuseIdentifier: RecordCell.identifier)
+    }
+}
+
+// MARK: - Calendar buttons addTarget
+private extension CalendarViewController {
+    /// 버튼이 눌렸을 때 동작하는 메서드
+    func setButtonTargets() {
+        calendarView.publicPreviousMonthButton.addTarget(
+            self,
+            action: #selector(previousMonthButtonTapped),
+            for: .touchUpInside
+        )
+
+        calendarView.publicNextMonthButton.addTarget(
+            self,
+            action: #selector(nextMonthButtonTapped),
+            for: .touchUpInside
+        )
+    }
+
+    /// 캘린더의 현재 페이지로 이동하는 메서드
+    func moveCurrentPage(by value: Int) {
+        let currentPage = calendarView.publicCalendar.currentPage
+
+        var dateComponents = DateComponents()
+        dateComponents.month = value
+
+        if let newPage = Calendar.current.date(byAdding: dateComponents, to: currentPage) {
+            calendarView.publicCalendar.setCurrentPage(newPage, animated: true)
+        }
+    }
+
+    /// 현재 페이지에서 한달 전이 현재 페이지가 되는 메서드
+    @objc func previousMonthButtonTapped() {
+        moveCurrentPage(by: -1)
+    }
+
+    /// 현재 페이지에서 한달 후가 현재 페이지가 되는 메서드
+    @objc func nextMonthButtonTapped() {
+        moveCurrentPage(by: 1)
     }
 }
 
