@@ -21,6 +21,12 @@ struct WorkoutRoutine {
     ///
     /// 각 `Workout`은 루틴을 구성하는 개별 운동을 나타냅니다.
     let workouts: [Workout]
+    
+    /// 세트 간의 휴식 시간(초)입니다.
+    ///
+    /// 예: `60`이면 세트 간 휴식 시간이 60초입니다.
+    let restTime: Int
+    
 }
 
 extension WorkoutRoutine {
@@ -31,7 +37,7 @@ extension WorkoutRoutine {
                 Workout.mockData[0], // 벤치프레스
                 Workout.mockData[1], // 스쿼트
                 Workout.mockData[2]  // 데드리프트
-            ]
+            ], restTime: 5
         ),
         WorkoutRoutine(
             name: "상체 집중 루틴",
@@ -39,14 +45,14 @@ extension WorkoutRoutine {
                 Workout.mockData[0], // 벤치프레스
                 Workout.mockData[3], // 오버헤드 프레스
                 Workout.mockData[4]  // 랫풀다운
-            ]
+            ], restTime: 5
         ),
         WorkoutRoutine(
             name: "하체 강화 루틴",
             workouts: [
                 Workout.mockData[1], // 스쿼트
                 Workout.mockData[2]  // 데드리프트
-            ]
+            ], restTime: 5
         )
     ]
 }
