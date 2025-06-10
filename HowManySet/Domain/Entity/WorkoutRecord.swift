@@ -38,6 +38,7 @@ struct WorkoutRecord {
     let date: Date
 }
 
+// MARK: - WorkoutRecord mockData
 extension WorkoutRecord {
     static let mockData: [WorkoutRecord] = [
         WorkoutRecord(
