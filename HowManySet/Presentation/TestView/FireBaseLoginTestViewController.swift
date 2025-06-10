@@ -5,6 +5,13 @@
 //  Created by GO on 6/3/25.
 //
 
+//
+//  FireBaseLoginTestViewController.swift
+//  HowManySet
+//
+//  Created by GO on 6/3/25.
+//
+
 import UIKit
 import SnapKit
 import Then
@@ -15,10 +22,16 @@ import AuthenticationServices
 import GoogleSignIn
 import KakaoSDKAuth
 import KakaoSDKUser
+import CryptoKit
+import AuthenticationServices
 
 class FireBaseLoginTestViewController: UIViewController {
 
+    // 난수
+    private var currentNonce: String?
+    
     // MARK: - UI 요소
+
     private let logoView = UIImageView().then {
         $0.backgroundColor = UIColor(named: "AppColor")
         $0.layer.cornerRadius = 24
@@ -74,9 +87,7 @@ class FireBaseLoginTestViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
-        [logoView, kakaoLoginButton, googleLoginButton, appleLoginButton, anonymousLoginButton].forEach {
-            view.addSubview($0)
-        }
+        view.addSubviews(logoView, kakaoLoginButton, googleLoginButton, appleLoginButton, anonymousLoginButton)
 
         setupLayout()
         setupActions()
@@ -124,8 +135,11 @@ class FireBaseLoginTestViewController: UIViewController {
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
     }
+}
 
-    // MARK: - 로그인 핸들러
+// MARK: - 카카오 로그인
+
+extension FireBaseLoginTestViewController {
     @objc private func handleKakaoLogin() {
         if UserApi.isKakaoTalkLoginAvailable() {
             UserApi.shared.loginWithKakaoTalk { [weak self] oauthToken, error in
@@ -138,7 +152,6 @@ class FireBaseLoginTestViewController: UIViewController {
         }
     }
 
-    // TODO: 카카오 권한 부족(비즈 앱 전환 해야함)
     private func handleKakaoLoginResult(oauthToken: OAuthToken?, error: Error?) {
         if let error = error {
             showAlert(title: "카카오 로그인 실패", message: error.localizedDescription)
@@ -158,23 +171,20 @@ class FireBaseLoginTestViewController: UIViewController {
                 self?.showAlert(title: "카카오 정보 누락", message: "닉네임/id를 받아오지 못했습니다.")
                 return
             }
-            // 이메일 없이 Auth는 kakaoId 기반으로 진행
             self?.firebaseLoginOrRegisterWithoutEmail(kakaoId: kakaoId, nickname: nickname)
         }
     }
 
-
-    // MARK: - Firebase Auth 연동 (이메일/비밀번호 방식)
     private func firebaseLoginOrRegisterWithoutEmail(kakaoId: Int64, nickname: String) {
-        let email = "\(kakaoId)@kakao.com" // 임시 이메일 생성 (Firebase Auth는 이메일 필요)
+        let email = "\(kakaoId)@kakao.com"
         let password = "\(kakaoId)"
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
             if let result = result {
-                self?.saveUserToDB(uid: result.user.uid, nickname: nickname)
+                self?.saveUserToDB(uid: result.user.uid, nickname: nickname, provider: "kakao")
             } else {
                 Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
                     if let result = result {
-                        self?.saveUserToDB(uid: result.user.uid, nickname: nickname)
+                        self?.saveUserToDB(uid: result.user.uid, nickname: nickname, provider: "kakao")
                     } else {
                         self?.showAlert(title: "Firebase Auth 실패", message: error?.localizedDescription ?? "알 수 없는 오류")
                     }
@@ -182,13 +192,138 @@ class FireBaseLoginTestViewController: UIViewController {
             }
         }
     }
+}
 
-    // MARK: - Firestore에 사용자 정보 저장
-    private func saveUserToDB(uid: String, nickname: String) {
+// MARK: - 구글 로그인
+
+extension FireBaseLoginTestViewController {
+    @objc private func handleGoogleLogin() {
+        guard let presentingVC = UIApplication.shared.windows.first?.rootViewController else { return }
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { [weak self] result, error in
+            if let error = error {
+                self?.showAlert(title: "Google 로그인 실패", message: error.localizedDescription)
+                return
+            }
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString else {
+                self?.showAlert(title: "Google 로그인 실패", message: "토큰이 없습니다.")
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: user.accessToken.tokenString)
+
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    self?.showAlert(title: "Firebase 로그인 실패", message: error.localizedDescription)
+                    return
+                }
+
+                guard let authUser = authResult?.user else {
+                    self?.showAlert(title: "Firebase 로그인 실패", message: "유저 정보가 없습니다.")
+                    return
+                }
+
+                self?.saveUserToDB(uid: authUser.uid,
+                                   nickname: user.profile?.name ?? "이름 없음",
+                                   provider: "google")
+            }
+        }
+    }
+}
+
+// MARK: - 애플 로그인
+
+extension FireBaseLoginTestViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+
+    @objc private func handleAppleLogin() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+
+        request.nonce = sha256(nonce)
+
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.delegate = self
+        controller.presentationContextProvider = self
+        controller.performRequests()
+    }
+
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+            showAlert(title: "Apple 로그인 실패", message: "인증 정보 없음")
+            return
+        }
+
+        guard let nonce = currentNonce else {
+            fatalError("Nonce가 없어 Firebase 인증 불가")
+        }
+
+        guard let identityToken = credential.identityToken,
+              let idTokenString = String(data: identityToken, encoding: .utf8) else {
+            showAlert(title: "Apple 로그인 실패", message: "토큰 변환 실패")
+            return
+        }
+
+        let firebaseCredential = OAuthProvider.credential(
+            withProviderID: "apple.com",
+            idToken: idTokenString,
+            rawNonce: nonce
+        )
+
+        Auth.auth().signIn(with: firebaseCredential) { [weak self] authResult, error in
+            if let error = error {
+                self?.showAlert(title: "Firebase 로그인 실패", message: error.localizedDescription)
+                return
+            }
+
+            let uid = authResult?.user.uid ?? credential.user
+            let name = credential.fullName?.givenName ?? "이름 없음"
+
+            self?.saveUserToDB(uid: uid, nickname: name, provider: "apple")
+        }
+    }
+
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        showAlert(title: "Apple 로그인 실패", message: error.localizedDescription)
+    }
+    
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+// MARK: - 익명 로그인
+
+extension FireBaseLoginTestViewController {
+    @objc private func handleAnonymousLogin() {
+        Auth.auth().signInAnonymously { [weak self] result, error in
+            if let result = result {
+                self?.saveUserToDB(uid: result.user.uid, nickname: "익명 사용자", provider: "anonymous")
+            } else {
+                self?.showAlert(title: "익명 로그인 실패", message: error?.localizedDescription ?? "알 수 없는 오류")
+            }
+        }
+    }
+}
+
+// MARK: - Firestore 저장 및 공통 Alert
+
+extension FireBaseLoginTestViewController {
+    private func saveUserToDB(uid: String, nickname: String, provider: String) {
         let db = Firestore.firestore()
-        db.collection("uid").document(uid).setData([
+        db.collection("users").document(uid).setData([
             "name": nickname,
-            "provider": "kakao"
+            "provider": provider
         ]) { [weak self] error in
             if let error = error {
                 self?.showAlert(title: "Firestore 저장 실패", message: error.localizedDescription)
@@ -198,36 +333,6 @@ class FireBaseLoginTestViewController: UIViewController {
         }
     }
 
-    // MARK: - 기타 로그인(구글/애플/익명) 및 알림
-    @objc private func handleGoogleLogin() {
-        guard let presentingVC = UIApplication.shared.windows.first?.rootViewController else { return }
-        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { [weak self] result, error in
-            if let error = error {
-                self?.showAlert(title: "Google 로그인 실패", message: error.localizedDescription)
-                return
-            }
-            guard let user = result?.user, let idToken = user.idToken?.tokenString else {
-                self?.showAlert(title: "Google 로그인 실패", message: "토큰이 없습니다.")
-                return
-            }
-            let accessToken = user.accessToken.tokenString
-            self?.showAlert(title: "Google 로그인 성공", message: user.profile?.email ?? "이메일 없음")
-        }
-    }
-
-    @objc private func handleAppleLogin() {
-        let request = ASAuthorizationAppleIDProvider().createRequest()
-        request.requestedScopes = [.fullName, .email]
-        let controller = ASAuthorizationController(authorizationRequests: [request])
-        controller.delegate = self
-        controller.presentationContextProvider = self
-        controller.performRequests()
-    }
-
-    @objc private func handleAnonymousLogin() {
-        showAlert(title: "비회원 로그인", message: "비회원으로 로그인되었습니다.")
-    }
-
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
@@ -235,20 +340,26 @@ class FireBaseLoginTestViewController: UIViewController {
     }
 }
 
-// MARK: - Apple 로그인 델리게이트
-extension FireBaseLoginTestViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
-    }
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            let userIdentifier = appleIDCredential.user
-            let email = appleIDCredential.email ?? "이메일 없음"
-            let fullName = appleIDCredential.fullName?.givenName ?? "이름 없음"
-            showAlert(title: "Apple 로그인 성공", message: "이메일: \(email)\n이름: \(fullName)\nUID: \(userIdentifier)")
-        }
-    }
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        showAlert(title: "Apple 로그인 실패", message: error.localizedDescription)
+// MARK: - nonce
+extension FireBaseLoginTestViewController {
+    private func randomNonceString(length: Int = 32) -> String {
+      precondition(length > 0)
+      var randomBytes = [UInt8](repeating: 0, count: length)
+      let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+      if errorCode != errSecSuccess {
+        fatalError(
+          "Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)"
+        )
+      }
+
+      let charset: [Character] =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+
+      let nonce = randomBytes.map { byte in
+        // Pick a random character from the set, wrapping around if needed.
+        charset[Int(byte) % charset.count]
+      }
+
+      return String(nonce)
     }
 }
