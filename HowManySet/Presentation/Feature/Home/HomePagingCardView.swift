@@ -71,25 +71,25 @@ final class HomePagingCardView: UIView {
         $0.isHidden = true
     }
     
-    private lazy var restButton1 = UIButton().then {
+    lazy var restButton1 = UIButton().then {
         $0.backgroundColor = .gray
         $0.setTitle(restButtonText1, for: .normal)
         $0.layer.cornerRadius = 10
     }
     
-    private lazy var restButton2 = UIButton().then {
+    lazy var restButton2 = UIButton().then {
         $0.backgroundColor = .gray
         $0.setTitle(restButtonText2, for: .normal)
         $0.layer.cornerRadius = 10
     }
     
-    private lazy var restButton3 = UIButton().then {
+    lazy var restButton3 = UIButton().then {
         $0.backgroundColor = .gray
         $0.setTitle(restButtonText3, for: .normal)
         $0.layer.cornerRadius = 10
     }
     
-    private lazy var restResetButton = UIButton().then {
+    lazy var restResetButton = UIButton().then {
         $0.backgroundColor = .background
         $0.setTitle(restResetButtonText, for: .normal)
         $0.layer.cornerRadius = 10
