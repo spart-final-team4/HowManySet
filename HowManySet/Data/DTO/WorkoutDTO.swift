@@ -14,9 +14,6 @@ final class WorkoutDTO: Object {
     /// 운동 이름입니다. 예: "벤치 프레스"
     @Persisted var name: String
 
-    /// 세트 간 휴식 시간(초)입니다.
-    @Persisted var restTime: Int
-
     /// 운동에 대한 메모 또는 코멘트 (옵션)
     @Persisted var comment: String?
 
@@ -48,7 +45,6 @@ final class WorkoutDTO: Object {
     ) {
         self.init()
         self.name = name
-        self.restTime = restTime
         self.comment = comment
         self.setArray = sets
     }
@@ -60,7 +56,6 @@ extension WorkoutDTO {
     func toEntity() -> Workout {
         return Workout(name: self.name,
                        sets: self.sets.map { $0.toEntity() },
-                       restTime: self.restTime,
                        comment: self.comment)
     }
 }
@@ -71,7 +66,6 @@ extension WorkoutDTO {
     convenience init(entity: Workout) {
         self.init()
         self.name = entity.name
-        self.restTime = entity.restTime
         self.comment = entity.comment
         self.setArray = entity.sets.map { WorkoutSetDTO(entity: $0) }
     }
