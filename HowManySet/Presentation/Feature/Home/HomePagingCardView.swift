@@ -68,7 +68,7 @@ final class HomePagingCardView: UIView {
         $0.tintColor = .label
     }
     
-    private lazy var setProgressBar = SetProgressBarView().then {
+    lazy var setProgressBar = SetProgressBarView().then {
         $0.backgroundColor = .cardBackground
     }
     

@@ -19,7 +19,9 @@ final class HomeViewReactor: Reactor {
     enum Action {
         case routineSelected
         case routineComplete
-//        case forward
+        case forwardButtonClicked // 휴식 스킵? 다음 세트?
+//        case weightChanged
+//        case repsChanged
 //        case stop
 //        case option
 //        case pause
@@ -108,7 +110,13 @@ final class HomeViewReactor: Reactor {
                 .just(.restTimeEnded),
                 .just(.forwardToNextSet)])
              
-//        case .forward:
+        case .forwardButtonClicked:
+            return Observable.just(Mutation.startRest(false))
+            
+//        case .weightChanged:
+//                    
+//        case .repsChanged:
+            
 //
 //        case .stop:
 //            
@@ -142,6 +150,7 @@ final class HomeViewReactor: Reactor {
                 state.reps = next.reps
                 state.unit = next.unit
             } else {
+                
             }
             
 //        case .forwardToNextSet:
