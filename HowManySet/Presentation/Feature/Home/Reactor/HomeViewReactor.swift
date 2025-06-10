@@ -18,10 +18,9 @@ final class HomeViewReactor: Reactor {
     // Action is an user interaction
     enum Action {
         case routineSelected
-        case routineComplete
+        case routineCompleteButtonClicked // 운동 완료 버튼 클릭 시
         case forwardButtonClicked // 휴식 스킵? 다음 세트?
         case pauseButtonClicked // 운동 중지 버튼 클릭 시
-        
         //        case weightChanged
         //        case repsChanged
         //        case stop
@@ -115,7 +114,7 @@ final class HomeViewReactor: Reactor {
                 timer
             ])
             
-        case .routineComplete:
+        case .routineCompleteButtonClicked:
             let startRest = Observable.just(Mutation.startRest(true))
             let restTime = currentState.restTime
             let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
@@ -136,9 +135,7 @@ final class HomeViewReactor: Reactor {
             
         case .pauseButtonClicked:
             return Observable .just(Mutation.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
-            
-            //        case .weightChanged:
-            //
+                        
             //        case .repsChanged:
             //
             //        case .stop:
@@ -158,6 +155,7 @@ final class HomeViewReactor: Reactor {
             
         case let .startRoutine(isWorkingout):
             state.isWorkingout = isWorkingout
+            state.restSecondsRemaining = state.restTime
             
         case let .startRest(isResting):
             state.isResting = isResting
@@ -166,11 +164,11 @@ final class HomeViewReactor: Reactor {
             state.workoutTime += 1
             
         case .restTimeUpdating:
-            var currentRestTime = state.restTime
-            currentRestTime = max(currentRestTime - 1, 0)
+            state.restSecondsRemaining = max(state.restSecondsRemaining - 1, 0)
             
         case .restTimeEnded:
             state.isResting = false
+            state.restSecondsRemaining = state.restTime
             
         case .forwardToNextSet:
             if state.currentSet > state.setCount {
