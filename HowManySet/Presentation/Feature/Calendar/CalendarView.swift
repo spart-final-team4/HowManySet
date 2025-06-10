@@ -22,6 +22,8 @@ final class CalendarView: UIView {
     // MARK: - Computed Property
     var publicCalendar: FSCalendar { calendar }
     var publicRecordTableView: UITableView { recordTableView }
+    var publicPreviousMonthButton: UIButton { previousMonthButton }
+    var publicNextMonthButton: UIButton { nextMonthButton }
 }
 
 // MARK: - Calendar UI 관련 extension
