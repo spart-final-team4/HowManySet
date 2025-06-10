@@ -20,22 +20,23 @@ final class HomeViewReactor: Reactor {
         case routineSelected
         case routineComplete
         case forwardButtonClicked // 휴식 스킵? 다음 세트?
-//        case weightChanged
-//        case repsChanged
-//        case stop
-//        case option
-//        case pause
+        //        case weightChanged
+        //        case repsChanged
+        //        case stop
+        //        case option
+        //        case pause
     }
     
     // Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
         case startRoutine(Bool)
         case startRest(Bool)
+        case workoutTimeUpdating
         case restTimeUpdating
         case restTimeEnded
         case forwardToNextSet
-//        case presentOption(Bool)
-//        case pauseWorkout(Bool)
+        //        case presentOption(Bool)
+        //        case pauseWorkout(Bool)
     }
     
     // State is a current view state
@@ -43,7 +44,7 @@ final class HomeViewReactor: Reactor {
         
         var workoutTime: Int
         var isWorkingout: Bool
-                
+        
         // 운동 관련
         var routineName: String
         var exerciseName: String
@@ -51,7 +52,9 @@ final class HomeViewReactor: Reactor {
         var unit: String
         var reps: Int
         var currentSet: Int
-        var currentExerciseIndex: Int
+        var setProgress: Int
+        var setCount: Int
+        var currentExercise: Int
         var exerciseCount: Int
         var totalSetsInfo: [WorkoutSet]
         var date: Date
@@ -76,8 +79,10 @@ final class HomeViewReactor: Reactor {
             weight: routineMockData.workouts[0].sets[0].weight,
             unit: routineMockData.workouts[0].sets[0].unit,
             reps: routineMockData.workouts[0].sets[0].reps,
-            currentSet: 0,
-            currentExerciseIndex: 0,
+            currentSet: 1,
+            setProgress: 0,
+            setCount: routineMockData.workouts[0].sets.count,
+            currentExercise: 1,
             exerciseCount: routineMockData.workouts.count,
             totalSetsInfo: routineMockData.workouts[0].sets,
             date: Date(),
@@ -96,14 +101,23 @@ final class HomeViewReactor: Reactor {
         switch action {
             
         case .routineSelected:
-            return Observable.just(Mutation.startRoutine(true))
+            let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                .map { _ in
+                    return Mutation.workoutTimeUpdating
+                }
+            return Observable.concat([
+                .just(Mutation.startRoutine(true)),
+                timer
+            ])
             
         case .routineComplete:
             let startRest = Observable.just(Mutation.startRest(true))
             let restTime = currentState.restTime
             let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
                 .take(restTime)
-                .map { _ in Mutation.restTimeUpdating }
+                .map { _ in
+                    return Mutation.restTimeUpdating
+                }
             
             // startRest는 바로 방출, timer가 다 되면 timer, endRest 방출
             return Observable.concat([
@@ -111,23 +125,23 @@ final class HomeViewReactor: Reactor {
                 timer,
                 .just(.restTimeEnded),
                 .just(.forwardToNextSet)])
-             
+            
         case .forwardButtonClicked:
             return Observable.just(Mutation.startRest(false))
             
-//        case .weightChanged:
-//                    
-//        case .repsChanged:
-//
-//        case .stop:
-//            
-//        case .option:
-//            
-//        case .pause:
+            //        case .weightChanged:
+            //
+            //        case .repsChanged:
+            //
+            //        case .stop:
+            //
+            //        case .option:
+            //
+            //        case .pause:
             
         }
     }
-
+    
     // Mutation -> State
     func reduce(state: State, mutation: Mutation) -> State {
         
@@ -138,29 +152,33 @@ final class HomeViewReactor: Reactor {
             state.isWorkingout = isWorkingout
         case let .startRest(isResting):
             state.isResting = isResting
+        case .workoutTimeUpdating:
+            state.workoutTime += 1
         case .restTimeUpdating:
             var currentRestTime = state.restTime
             currentRestTime = max(currentRestTime - 1, 0)
         case .restTimeEnded:
             state.isResting = false
         case .forwardToNextSet:
-            state.currentSet += 1
-            if state.currentSet < state.totalSetsInfo.count {
-                let next = state.totalSetsInfo[state.currentSet]
-                state.weight = next.weight
-                state.reps = next.reps
-                state.unit = next.unit
+            if state.currentSet > state.setCount {
+                //                let next = state.totalSetsInfo[state.currentSet]
+                //                state.weight = next.weight
+                //                state.reps = next.reps
+                //                state.unit = next.unit
+            } else if state.currentSet == state.setCount {
+                state.setProgress += 1
             } else {
-                
+                state.currentSet += 1
+                state.setProgress += 1
             }
             
-//        case .forwardToNextSet:
-//
-//        case .stopRest:
-//            
-//        case .presentOption:
-//            
-//        case .pauseWorkout:
+            //        case .forwardToNextSet:
+            //
+            //        case .stopRest:
+            //
+            //        case .presentOption:
+            //
+            //        case .pauseWorkout:
             
         }
         

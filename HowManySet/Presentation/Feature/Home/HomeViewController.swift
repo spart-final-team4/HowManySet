@@ -196,6 +196,7 @@ private extension HomeViewController {
                 
         routineStartCardView.isHidden = true
         pagingCardView.isHidden = false
+        pagingCardView.setProgressBar.isHidden = false
         
         [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView].forEach {
             $0.isHidden = false
@@ -236,26 +237,41 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // State
-        reactor.state.map { $0 }
-            .filter { $0.isWorkingout == true }
-            .bind(with: self) { (view: HomeViewController, state) in
+        reactor.state.map { $0.isWorkingout }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .take(1) // 처음 true 된 시점에만 운동 초기 화면
+            .bind(with: self) { view, _ in
                 view.showStartRoutineUI()
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0 }
+            .bind(with: self) { (view: HomeViewController, state) in
                 
                 view.workoutTimeLabel.text = state.workoutTime.toWorkOutTimeLabel()
                 view.routineNameLabel.text = state.routineName
-                view.routineNumberLabel.text = "\(state.currentSet + 1)/\(state.exerciseCount)"
+                view.routineNumberLabel.text = "\(state.currentExercise) / \(state.exerciseCount)"
                 
                 view.pagingCardView.exerciseNameLabel.text = state.exerciseName
-                view.pagingCardView.exerciseSetLabel.text = "\(state.currentSet + 1)/\(state.totalSetsInfo.count)"
-                view.pagingCardView.currentSetLabel.text = "\(state.currentSet) \(view.setText)"
+                view.pagingCardView.exerciseSetLabel.text = "\(state.currentSet) / \(state.setCount)"
+                view.pagingCardView.currentSetLabel.text = "\(state.currentSet)\(view.setText)"
                 view.pagingCardView.weightLabel.text = "\(Int(state.weight))\(state.unit)"
                 view.pagingCardView.repsLabel.text = "\(state.reps)\(view.repsText)"
-                
                 view.pagingCardView.remaingRestTimeLabel.text = state.restSecondsRemaining.toRestTimeLabel()
-                
-                view.pagingCardView.setProgressBar.setupSegments(totalSets: state.totalSetsInfo.count)
             }
             .disposed(by: disposeBag)
+        
+        Observable.combineLatest(
+            reactor.state.map { $0.currentSet }.distinctUntilChanged(),
+            reactor.state.map { $0.setCount }.distinctUntilChanged()
+        )
+        .filter { currentSet, _ in currentSet == 1 } // 첫 세트일 때만
+        .bind(with: self) { view, sets in
+            let (_, totalSet) = sets
+            view.pagingCardView.setProgressBar.setupSegments(totalSets: totalSet)
+        }
+        .disposed(by: disposeBag)
             
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
@@ -267,10 +283,10 @@ extension HomeViewController {
                 }
             }.disposed(by: disposeBag)
         
-        reactor.state.map { $0.currentSet }
+        reactor.state.map { $0.setProgress }
             .distinctUntilChanged()
-            .bind(with: self) { view, currentSet in
-                view.pagingCardView.setProgressBar.updateProgress(currentSet: currentSet)
+            .bind(with: self) { view, setProgress in
+                view.pagingCardView.setProgressBar.updateProgress(currentSet: setProgress)
             }.disposed(by: disposeBag)
         
     }
