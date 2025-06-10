@@ -199,7 +199,6 @@ final class HomeViewReactor: Reactor {
             
         case .restTimeEnded:
             state.isResting = false
-            state.restSecondsRemaining = state.restTime
             
         case .forwardToNextSet:
             let currentExerciseWorkouts = state.workoutRoutine.workouts[state.exerciseIndex]
@@ -251,7 +250,6 @@ final class HomeViewReactor: Reactor {
             
         case let .mutateRestTime(restTimeIncrement):
             state.restTime += restTimeIncrement
-            state.restSecondsRemaining += restTimeIncrement
             
         case .resetRestTime:
             state.restTime = 0
