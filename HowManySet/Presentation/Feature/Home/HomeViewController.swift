@@ -36,7 +36,7 @@ final class HomeViewController: UIViewController, View {
     }
     
     private lazy var workoutTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 36, weight: .bold)
+        $0.font = .monospacedDigitSystemFont(ofSize: 36, weight: .bold)
     }
     
     private lazy var pauseButton = UIButton().then {
