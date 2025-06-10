@@ -46,7 +46,6 @@ final class HomeViewController: UIViewController, View {
         $0.axis = .vertical
         $0.spacing = 8
         $0.alignment = .trailing
-        $0.alpha = 0
     }
     
     private lazy var routineNameLabel = UILabel().then {
@@ -133,14 +132,13 @@ private extension HomeViewController {
         view.addSubviews(
             titleLabel,
             topTimerHStackView,
-            topRoutineInfoVStackView,
             routineStartCardView,
             pageController,
             buttonHStackView,
             pagingCardView
         )
         
-        topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton)
+        topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton, topRoutineInfoVStackView)
         topRoutineInfoVStackView.addArrangedSubviews(routineNameLabel, routineNumberLabel)
         buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
     }
