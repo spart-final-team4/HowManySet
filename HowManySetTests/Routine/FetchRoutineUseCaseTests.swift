@@ -6,30 +6,37 @@
 //
 
 import XCTest
+@testable import HowManySet
+@testable import RxSwift
 
 final class FetchRoutineUseCaseTests: XCTestCase {
-
+    
+    var repository: RoutineRepository!
+    var usecase: FetchRoutineUseCase!
+    var disposeBag: DisposeBag!
+    let realmServiceStub = RealmServiceStub()
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        repository = RoutineRepositoryImpl(realmService: realmServiceStub)
+        usecase = FetchRoutineUseCase(repository: repository)
+        disposeBag = DisposeBag()
     }
-
+    
+    func test_저장된루틴이_정상적으로불러와지는가() {
+        // given
+        let routine = WorkoutRoutine(name: "test", workouts: [])
+        realmServiceStub.create(item: WorkoutRoutineDTO(entity: routine))
+        
+        // when
+        let routines = realmServiceStub.read(type: .workoutRoutine)
+        
+        // then
+        XCTAssertTrue(!routines!.isEmpty)
+    }
+    
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        repository = nil
+        usecase = nil
+        realmServiceStub.deleteAll()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
