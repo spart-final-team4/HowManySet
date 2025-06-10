@@ -230,16 +230,26 @@ extension HomeViewController {
             .map { Reactor.Action.pauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-                
-        stopButton.rx.tap
-            .bind(with: self) { _,_ in
-                
-            }.disposed(by: disposeBag)
         
-        forwardButton.rx.tap
-            .bind(with: self) { _,_ in
-                
-            }.disposed(by: disposeBag)
+        pagingCardView.restButton1.rx.tap
+            .map { Reactor.Action.rest1ButtonClicked }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        pagingCardView.restButton2.rx.tap
+            .map { Reactor.Action.rest2ButtonClicked }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        pagingCardView.restButton3.rx.tap
+            .map { Reactor.Action.rest3ButtonClicked }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        pagingCardView.restResetButton.rx.tap
+            .map { Reactor.Action.restResetButtonClicked }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
         // MARK: - State
         reactor.state.map { $0.isWorkingout }
@@ -251,25 +261,28 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
+        // 텍스트 등 뷰 요소 바인딩
         reactor.state.map { $0 }
+            .filter { $0.isWorkingout == true }
             .bind(with: self) { (view: HomeViewController, state) in
                 
                 view.workoutTimeLabel.text = state.workoutTime.toWorkOutTimeLabel()
-                view.routineNameLabel.text = state.routineName
-                view.routineNumberLabel.text = "\(state.currentExercise) / \(state.exerciseCount)"
+                view.routineNameLabel.text = state.workoutRoutine.name
+                view.routineNumberLabel.text = "\(state.currentExerciseNumber) / \(state.totalExerciseCount)"
                 
-                view.pagingCardView.exerciseNameLabel.text = state.exerciseName
-                view.pagingCardView.exerciseSetLabel.text = "\(state.currentSet) / \(state.setCount)"
-                view.pagingCardView.currentSetLabel.text = "\(state.currentSet)\(view.setText)"
-                view.pagingCardView.weightLabel.text = "\(Int(state.weight))\(state.unit)"
-                view.pagingCardView.repsLabel.text = "\(state.reps)\(view.repsText)"
+                view.pagingCardView.exerciseNameLabel.text = state.currentExerciseName
+                view.pagingCardView.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
+                view.pagingCardView.currentSetLabel.text = "\(state.currentSetNumber)\(view.setText)"
+                view.pagingCardView.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
+                view.pagingCardView.repsLabel.text = "\(state.currentReps)\(view.repsText)"
                 view.pagingCardView.remaingRestTimeLabel.text = state.restSecondsRemaining.toRestTimeLabel()
             }
             .disposed(by: disposeBag)
         
+        // setProgressBar 바인딩
         Observable.combineLatest(
-            reactor.state.map { $0.currentSet }.distinctUntilChanged(),
-            reactor.state.map { $0.setCount }.distinctUntilChanged()
+            reactor.state.map { $0.currentSetNumber }.distinctUntilChanged(),
+            reactor.state.map { $0.totalSetCount }.distinctUntilChanged()
         )
         .filter { currentSet, _ in currentSet == 1 } // 첫 세트일 때만
         .bind(with: self) { view, sets in
@@ -277,7 +290,7 @@ extension HomeViewController {
             view.pagingCardView.setProgressBar.setupSegments(totalSets: totalSet)
         }
         .disposed(by: disposeBag)
-            
+        
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
             .bind(with: self) { view, isResting in
@@ -288,7 +301,7 @@ extension HomeViewController {
                 }
             }.disposed(by: disposeBag)
         
-        reactor.state.map { $0.setProgress }
+        reactor.state.map { $0.setProgressAmount }
             .distinctUntilChanged()
             .bind(with: self) { view, setProgress in
                 view.pagingCardView.setProgressBar.updateProgress(currentSet: setProgress)
@@ -300,6 +313,5 @@ extension HomeViewController {
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
-        
     }
 }
