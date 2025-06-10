@@ -213,7 +213,7 @@ extension HomeViewController {
         
         print(#function)
     
-        // Action
+        // MARK: - Action
         // 루틴 선택 버튼 클릭 시
         routineStartCardView.routineSelectButton.rx.tap
             .map { Reactor.Action.routineSelected }
@@ -223,6 +223,11 @@ extension HomeViewController {
         // 세트 완료 버튼 클릭 시
         pagingCardView.setCompleteButton.rx.tap
             .map { Reactor.Action.routineComplete }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        pauseButton.rx.tap
+            .map { Reactor.Action.pauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -236,7 +241,7 @@ extension HomeViewController {
                 
             }.disposed(by: disposeBag)
         
-        // State
+        // MARK: - State
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
             .filter { $0 }
@@ -287,6 +292,13 @@ extension HomeViewController {
             .distinctUntilChanged()
             .bind(with: self) { view, setProgress in
                 view.pagingCardView.setProgressBar.updateProgress(currentSet: setProgress)
+            }.disposed(by: disposeBag)
+        
+        
+        reactor.state.map { $0.isWorkoutPaused }
+            .bind(with: self) { view, isWorkoutPaused in
+                let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
+                view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
         
     }

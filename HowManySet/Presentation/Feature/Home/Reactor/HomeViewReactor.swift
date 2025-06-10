@@ -20,11 +20,12 @@ final class HomeViewReactor: Reactor {
         case routineSelected
         case routineComplete
         case forwardButtonClicked // 휴식 스킵? 다음 세트?
+        case pauseButtonClicked // 운동 중지 버튼 클릭 시
+        
         //        case weightChanged
         //        case repsChanged
         //        case stop
         //        case option
-        //        case pause
     }
     
     // Mutate is a state manipulator which is not exposed to a view
@@ -35,6 +36,7 @@ final class HomeViewReactor: Reactor {
         case restTimeUpdating
         case restTimeEnded
         case forwardToNextSet
+        case pauseAndPlayWorkout(Bool)
         //        case presentOption(Bool)
         //        case pauseWorkout(Bool)
     }
@@ -44,6 +46,7 @@ final class HomeViewReactor: Reactor {
         
         var workoutTime: Int
         var isWorkingout: Bool
+        var isWorkoutPaused: Bool
         
         // 운동 관련
         var routineName: String
@@ -74,6 +77,7 @@ final class HomeViewReactor: Reactor {
         self.initialState = State(
             workoutTime: 0,
             isWorkingout: false,
+            isWorkoutPaused: false,
             routineName: routineMockData.name,
             exerciseName: routineMockData.workouts[0].name,
             weight: routineMockData.workouts[0].sets[0].weight,
@@ -102,9 +106,10 @@ final class HomeViewReactor: Reactor {
             
         case .routineSelected:
             let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-                .map { _ in
-                    return Mutation.workoutTimeUpdating
-                }
+                .withLatestFrom(self.state.map{ $0.isWorkoutPaused }) { _, isPaused in return isPaused }
+                .filter { !$0 }
+                .map { _ in Mutation.workoutTimeUpdating }
+            
             return Observable.concat([
                 .just(Mutation.startRoutine(true)),
                 timer
@@ -129,6 +134,9 @@ final class HomeViewReactor: Reactor {
         case .forwardButtonClicked:
             return Observable.just(Mutation.startRest(false))
             
+        case .pauseButtonClicked:
+            return Observable .just(Mutation.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
+            
             //        case .weightChanged:
             //
             //        case .repsChanged:
@@ -137,7 +145,6 @@ final class HomeViewReactor: Reactor {
             //
             //        case .option:
             //
-            //        case .pause:
             
         }
     }
@@ -148,23 +155,26 @@ final class HomeViewReactor: Reactor {
         var state = state
         
         switch mutation {
+            
         case let .startRoutine(isWorkingout):
             state.isWorkingout = isWorkingout
+            
         case let .startRest(isResting):
             state.isResting = isResting
+            
         case .workoutTimeUpdating:
             state.workoutTime += 1
+            
         case .restTimeUpdating:
             var currentRestTime = state.restTime
             currentRestTime = max(currentRestTime - 1, 0)
+            
         case .restTimeEnded:
             state.isResting = false
+            
         case .forwardToNextSet:
             if state.currentSet > state.setCount {
-                //                let next = state.totalSetsInfo[state.currentSet]
-                //                state.weight = next.weight
-                //                state.reps = next.reps
-                //                state.unit = next.unit
+                // TODO: 다음 세트로 이동
             } else if state.currentSet == state.setCount {
                 state.setProgress += 1
             } else {
@@ -172,13 +182,9 @@ final class HomeViewReactor: Reactor {
                 state.setProgress += 1
             }
             
-            //        case .forwardToNextSet:
-            //
-            //        case .stopRest:
-            //
-            //        case .presentOption:
-            //
-            //        case .pauseWorkout:
+        case let .pauseAndPlayWorkout(isWorkoutPaused):
+            state.isWorkoutPaused = isWorkoutPaused
+            
             
         }
         
