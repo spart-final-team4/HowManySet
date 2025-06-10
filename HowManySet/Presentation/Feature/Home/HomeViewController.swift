@@ -240,13 +240,17 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // State
-        reactor.state.map { $0.isWorkingout }
-            .distinctUntilChanged()
-            .bind(with: self) { view, isWorking in
-                if isWorking {
-                    view.setStartRoutineUI()
-                }
-            }.disposed(by: disposeBag)
+        Observable.combineLatest(
+            reactor.state.map { $0.isWorkingout }.distinctUntilChanged(),
+            reactor.state.map { $0.totalSet }
+        )
+        .filter { $0.0 } // isWorkingout == true
+        .map { $0.1 }
+        .bind(with: self) { view, totalSets in
+            view.setStartRoutineUI()
+            view.pagingCardView.setProgressBar.setupSegments(totalSets: totalSets.count)
+        }
+        .disposed(by: disposeBag)
         
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
@@ -256,6 +260,12 @@ extension HomeViewController {
                 } else {
                     view.pagingCardView.setExerciseUI()
                 }
+            }.disposed(by: disposeBag)
+        
+        reactor.state.map { $0.currentSet }
+            .distinctUntilChanged()
+            .bind(with: self) { view, currentSet in
+                view.pagingCardView.setProgressBar.updateProgress(currentSet: currentSet)
             }.disposed(by: disposeBag)
         
     }
