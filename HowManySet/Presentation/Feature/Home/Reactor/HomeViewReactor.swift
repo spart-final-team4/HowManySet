@@ -31,7 +31,7 @@ final class HomeViewReactor: Reactor {
         case startRest(Bool)
         case restTimeUpdating
         case restTimeEnded
-//        case forwardToNextSet
+        case forwardToNextSet
 //        case presentOption(Bool)
 //        case pauseWorkout(Bool)
     }
@@ -49,6 +49,7 @@ final class HomeViewReactor: Reactor {
         var unit: String
         var reps: Int
         var currentSet: Int
+        var currentExerciseIndex: Int
         var totalSet: [WorkoutSet]
         var date: Date
         var comment: String?
@@ -73,17 +74,20 @@ final class HomeViewReactor: Reactor {
             unit: routineMockData.workouts[0].sets[0].unit,
             reps: routineMockData.workouts[0].sets[0].reps,
             currentSet: 0,
+            currentExerciseIndex: 0,
             totalSet: routineMockData.workouts[0].sets,
             date: Date(),
             isResting: false,
             restSecondsRemaining: 0,
             isRestPaused: false,
-            restTime: routineMockData.workouts[0].restTime
+            restTime: routineMockData.restTime
         )
     }
     
     // Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
+        
+        print(#function)
         
         switch action {
             
@@ -96,11 +100,13 @@ final class HomeViewReactor: Reactor {
             let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
                 .take(restTime)
                 .map { _ in Mutation.restTimeUpdating }
-
-            let endRest = Observable.just(Mutation.restTimeEnded)
             
             // startRest는 바로 방출, timer가 다 되면 timer, endRest 방출
-            return Observable.concat([startRest, timer, endRest])
+            return Observable.concat([
+                startRest,
+                timer,
+                .just(.restTimeEnded),
+                .just(.forwardToNextSet)])
              
 //        case .forward:
 //
@@ -128,6 +134,15 @@ final class HomeViewReactor: Reactor {
             currentRestTime = max(currentRestTime - 1, 0)
         case .restTimeEnded:
             state.isResting = false
+        case .forwardToNextSet:
+            state.currentSet += 1
+            if state.currentSet < state.totalSet.count {
+                let next = state.totalSet[state.currentSet]
+                state.weight = next.weight
+                state.reps = next.reps
+                state.unit = next.unit
+            } else {
+            }
             
 //        case .forwardToNextSet:
 //

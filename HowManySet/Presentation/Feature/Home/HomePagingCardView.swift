@@ -22,13 +22,18 @@ final class HomePagingCardView: UIView {
 
     
     // MARK: - UI Components
-    private lazy var mainVStack = UIStackView().then {
-        $0.axis = .vertical
-        $0.distribution = .equalSpacing
+//    private lazy var mainVStack = UIStackView().then {
+//        $0.axis = .vertical
+//        $0.distribution = .equalSpacing
+//    }
+    
+    private lazy var topLineHStack = UIStackView().then {
+        $0.axis = .horizontal
     }
     
-    private lazy var topInfoHStack = UIStackView().then {
-        $0.axis = .horizontal
+    private lazy var topConentsVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 16
     }
     
     private lazy var spacer = UIView().then {
@@ -69,7 +74,8 @@ final class HomePagingCardView: UIView {
     
     private lazy var restButtonHStack = UIStackView().then {
         $0.axis = .horizontal
-        $0.distribution = .equalSpacing
+        $0.distribution = .fillEqually
+        $0.spacing = 8
         $0.isUserInteractionEnabled = false
         $0.isHidden = true
     }
@@ -101,6 +107,7 @@ final class HomePagingCardView: UIView {
     private lazy var currentSetLabel = UILabel().then {
         $0.text = "1 세트"
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textAlignment = .left
     }
     
     private lazy var containerView = UIView().then {
@@ -149,14 +156,15 @@ final class HomePagingCardView: UIView {
         $0.textColor = .white
     }
     
-    private lazy var restVStack = UIStackView().then {
+    private lazy var restInfoVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.distribution = .fill
-        $0.alpha = 0
+        $0.distribution = .equalSpacing
+        $0.alignment = .center
+        $0.spacing = 20
     }
     
     private lazy var restImageView = UIImageView().then {
-        let config = UIImage.SymbolConfiguration(pointSize: 50)
+        let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "waterbottle", withConfiguration: config)
         $0.tintColor = .white
     }
@@ -169,7 +177,6 @@ final class HomePagingCardView: UIView {
     private lazy var remaingRestTimeLabel = UILabel().then {
         $0.text = "01:30"
         $0.font = .systemFont(ofSize: 28, weight: .medium)
-        $0.alpha = 0
     }
     
     lazy var setCompleteButton = UIButton().then {
@@ -185,7 +192,6 @@ final class HomePagingCardView: UIView {
         $0.progress = .greatestFiniteMagnitude
         $0.progressTintColor = .brand
         $0.layer.cornerRadius = 12
-        $0.alpha = 0
     }
         
     // MARK: - Initializer
@@ -210,128 +216,121 @@ private extension HomePagingCardView {
     }
     
     func setViewHiearchy() {
-        self.addSubview(mainVStack)
-        
-        mainVStack.addArrangedSubviews(
-            topInfoHStack,
-            setProgressBar,
-            restButtonHStack,
+        self.addSubviews(
+            topLineHStack,
+            topConentsVStack,
             currentSetLabel,
             containerView,
             setCompleteButton,
             
             restProgressBar
         )
-
-        topInfoHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
+        
+        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar, restButtonHStack, currentSetLabel)
+        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
+        
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
         containerView.addSubviews(weightRepsHStack,
-                                 restVStack)
-        weightRepsHStack.addArrangedSubviews(weightInfoVStack, repsInfoVStack)
+                                 restInfoVStack)
+        weightRepsHStack.addArrangedSubviews(weightInfoVStack,
+                                             repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
+        
         repsInfoVStack.addArrangedSubviews(repsImageView, repsLabel)
-        
         restButtonHStack.addArrangedSubviews(restButton1, restButton2, restButton3, restResetButton)
-        restVStack.addArrangedSubviews(restImageView, doRestLabel)
-        
+        restInfoVStack.addArrangedSubviews(restImageView, doRestLabel)
         restProgressBar.addSubview(remaingRestTimeLabel)
     }
     
     func setConstraints() {
-        mainVStack.snp.makeConstraints {
+        
+        topConentsVStack.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(28)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.verticalEdges.equalToSuperview().inset(28)
+        }
+
+        containerView.snp.makeConstraints {
+            $0.top.equalTo(topConentsVStack.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.height.equalToSuperview().multipliedBy(0.39)
         }
                 
         setProgressBar.snp.makeConstraints {
-            $0.height.equalTo(12)
-            $0.leading.trailing.equalToSuperview()
-        }
-        
-        containerView.snp.makeConstraints {
-            $0.height.equalTo(self.snp.height).multipliedBy(0.39)
+            $0.height.equalTo(16)
         }
     
         weightRepsHStack.snp.makeConstraints {
             $0.height.equalTo(containerView.snp.height).multipliedBy(0.5)
-            $0.centerX.centerY.equalToSuperview()
+            $0.center.equalToSuperview()
         }
         
-        setCompleteButton.snp.makeConstraints {
-            $0.height.equalTo(60)
+       
+        currentSetLabel.snp.makeConstraints {
+            $0.height.equalTo(16)
         }
         
-        restButtonHStack.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-        }
-        
-        restVStack.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
+        restInfoVStack.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
 
         remaingRestTimeLabel.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
+            $0.center.equalToSuperview()
         }
         
-        restProgressBar.snp.makeConstraints {
+        setCompleteButton.snp.makeConstraints {
+            $0.top.equalTo(containerView.snp.bottom).offset(24)
+            $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
+        }
+
+        restProgressBar.snp.makeConstraints {
+            $0.top.equalTo(containerView.snp.bottom).offset(24)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.height.equalTo(60)
+        }
+    }
+}
+
+// MARK: Private Methods
+private extension HomePagingCardView {
+    func updateContainerViewConstraint() {
+        containerView.snp.updateConstraints {
+            let offset: CGFloat = currentSetLabel.isHidden ? 38 : 24
+            $0.top.equalTo(topConentsVStack.snp.bottom).offset(offset)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.height.equalToSuperview().multipliedBy(0.39)
         }
     }
 }
 
 // MARK: Internal Methods
 extension HomePagingCardView {
+    
     func setRestUI() {
-        
         print(#function)
-
-        restButtonHStack.isUserInteractionEnabled = true
-        [restLabel, restVStack, remaingRestTimeLabel, restProgressBar].forEach {
-            $0.alpha = 1
-        }
-        
         exerciseNameLabel.text = restText
-        
         setCompleteButton.isUserInteractionEnabled = false
-        [setCompleteButton, setProgressBar].forEach {
+        [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel].forEach {
             $0.isHidden = true
         }
-        
-        [restButtonHStack, restProgressBar].forEach {
+        [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel, restProgressBar].forEach {
             $0.isHidden = false
         }
-        
-        [currentSetLabel, weightRepsHStack].forEach {
-            $0.alpha = 0
-        }
+        updateContainerViewConstraint()
     }
     
     func setExerciseUI() {
-        
         print(#function)
-        
-        restButtonHStack.isUserInteractionEnabled = false
-        [restLabel, restVStack, remaingRestTimeLabel].forEach {
-            $0.alpha = 0
-        }
-        
         exerciseNameLabel.text = "랫풀다운"
-        
         setCompleteButton.isUserInteractionEnabled = true
-        
         restProgressBar.isUserInteractionEnabled = false
-        
-        [setCompleteButton, setProgressBar].forEach {
+        [setCompleteButton, setProgressBar, weightRepsHStack, currentSetLabel].forEach {
             $0.isHidden = false
         }
-        
-        [restButtonHStack, restProgressBar].forEach {
+        [restButtonHStack, restProgressBar, restLabel, restInfoVStack, remaingRestTimeLabel].forEach {
             $0.isHidden = true
         }
-        
-        [currentSetLabel, weightRepsHStack].forEach {
-            $0.alpha = 1
-        }
+        updateContainerViewConstraint()
     }
 }
 
