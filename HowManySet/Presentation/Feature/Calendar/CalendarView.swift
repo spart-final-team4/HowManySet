@@ -18,8 +18,13 @@ final class CalendarView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Computed Property
+    var publicCalendar: FSCalendar { calendar }
+    var publicRecordTableView: UITableView { recordTableView }
 }
 
+// MARK: - Calendar UI 관련 extension
 private extension CalendarView {
     func setupUI() {
         setAppearance()
@@ -39,29 +44,29 @@ private extension CalendarView {
             $0.scrollDirection = .horizontal // 수평 방향 스크롤
             $0.locale = Locale(identifier: "ko_KR") // 달력 형식 한국어 설정
             $0.placeholderType = .none // 현재 달만 표시
-            $0.backgroundColor = UIColor(red: 78/255, green: 78/255, blue: 78/255, alpha: 1.0) // 달력의 배경 색상
+            $0.backgroundColor = .cardContentBG // 달력의 배경 색상
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
 
             // 달력 헤더
             $0.appearance.headerDateFormat = "yyyy.MM" // 달력 헤더 날짜 형식
-            $0.appearance.headerTitleColor = .white // 달력 헤더 텍스트 색상
+            $0.appearance.headerTitleColor = .textSecondary // 달력 헤더 텍스트 색상
             $0.appearance.headerTitleFont = .systemFont(ofSize: 16, weight: .regular) // 달력 헤더 텍스트 폰트
             $0.appearance.headerMinimumDissolvedAlpha = 0.0 // 달력 헤더 전 달 & 다음 달 글씨 투명도
 
             // 달력 요일
-            $0.appearance.weekdayTextColor = UIColor(red: 184/255, green: 184/255, blue: 184/255, alpha: 1.0) // 달력 요일 텍스트 색상
+            $0.appearance.weekdayTextColor = .textTertiary // 달력 요일 텍스트 색상
             $0.appearance.weekdayFont = .systemFont(ofSize: 12, weight: .regular) // 달력 요일 텍스트 폰트
 
             // 달력 일반 날짜
-            $0.appearance.titleDefaultColor = .white // 달력 일반 날짜 텍스트 색상
+            $0.appearance.titleDefaultColor = .textSecondary // 달력 일반 날짜 텍스트 색상
             $0.appearance.titleFont = .systemFont(ofSize: 16, weight: .regular) // 달력 일반 날짜 텍스트 폰트
-            $0.appearance.titleTodayColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 오늘 날짜 텍스트의 색상
+            $0.appearance.titleTodayColor = .brand // 오늘 날짜 텍스트의 색상
             $0.appearance.todayColor = .clear // 오늘 날짜의 배경 색상
-            $0.appearance.selectionColor = UIColor(red: 36/255, green: 79/255, blue: 48/255, alpha: 1.0) // 선택된 날짜의 배경 색상
-            $0.appearance.titleSelectionColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 선택된 날짜 텍스트 색상
-            $0.appearance.eventDefaultColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 이벤트 점의 기본 색상
-            $0.appearance.eventSelectionColor = UIColor(red: 42/255, green: 155/255, blue: 74/255, alpha: 1.0) // 선택된 날짜의 이벤트 점 색상
+            $0.appearance.selectionColor = .brand // 선택된 날짜의 배경 색상
+            $0.appearance.titleSelectionColor = .black // 선택된 날짜 텍스트 색상
+            $0.appearance.eventDefaultColor = .success // 이벤트 점의 기본 색상
+            $0.appearance.eventSelectionColor = .success // 선택된 날짜의 이벤트 점 색상
         }
 
         recordTableView.do {
@@ -70,13 +75,13 @@ private extension CalendarView {
         }
 
         previousMonthButton.do {
-            $0.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
-            $0.tintColor = .white
+            $0.setImage(UIImage(named: "calendarArrowLeft"), for: .normal)
+            $0.tintColor = .textSecondary
         }
 
         nextMonthButton.do {
-            $0.setImage(UIImage(systemName: "arrowtriangle.right.fill"), for: .normal)
-            $0.tintColor = .white
+            $0.setImage(UIImage(named: "calendarArrowRight"), for: .normal)
+            $0.tintColor = .textSecondary
         }
     }
 
@@ -93,11 +98,11 @@ private extension CalendarView {
     func setConstraints() {
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide)
-            $0.leading.equalTo(safeAreaLayoutGuide).offset(20)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
         }
 
         calendar.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(32)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(350)
         }
