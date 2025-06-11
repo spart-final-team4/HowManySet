@@ -189,8 +189,9 @@ final class HomePagingCardView: UIView, View {
     }
     
     // MARK: - Initializer
-    override init(frame: CGRect) {
+    init(frame: CGRect, reactor: HomePagingCardViewReactor) {
         super.init(frame: frame)
+        self.reactor = reactor
         
         setupUI()
     }

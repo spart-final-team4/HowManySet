@@ -256,7 +256,7 @@ private extension HomeViewController {
         
         for (i, cardState) in cardStates.enumerated() {
             
-            let cardView = HomePagingCardView().then {
+            let cardView = HomePagingCardView(frame: .zero, reactor: HomePagingCardViewReactor(initialCardState: cardState)).then {
                 $0.layer.cornerRadius = 20
             }
             
