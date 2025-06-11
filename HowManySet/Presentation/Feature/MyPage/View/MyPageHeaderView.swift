@@ -18,15 +18,6 @@ final class MyPageHeaderView: UIView {
         $0.textColor = .white
     }
     
-    private let userloginButton = UIButton().then {
-        $0.setTitle(" 회원전환 ", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
-        $0.clipsToBounds = true
-        $0.setTitleColor(.white, for: .normal)
-        $0.layer.cornerRadius = 12
-        $0.backgroundColor = .cardContentBG
-    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -51,17 +42,13 @@ private extension MyPageHeaderView {
     }
     
     func setViewHierarchy() {
-        self.addSubviews(usernameLabel, userloginButton)
+        self.addSubviews(usernameLabel)
     }
     
     func setConstraints() {
         usernameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(20)
-        }
-        userloginButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(10)
         }
     }
 }

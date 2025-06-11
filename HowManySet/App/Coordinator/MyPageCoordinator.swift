@@ -9,7 +9,14 @@ import UIKit
 import SafariServices
 
 protocol MyPageCoordinatorProtocol: Coordinator {
-    
+    func presentLanguageSettingAlert()
+    func pushAlarmSettingView()
+    func showVersionInfo()
+    func openAppStoreReviewPage()
+    func presentPrivacyPolicyView()
+    func presentReportProblemView()
+    func alertLogout()
+    func pushAccountWithdrawalView()
 }
 
 /// 마이페이지 흐름 담당 coordinator
@@ -35,9 +42,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         navigationController.pushViewController(myPageVC, animated: true)
     }
     
-    /// 프로필 수정
-    /// 회원전환, 로그아웃
-    /// 무게 단위 설정
     /// 언어 변경
     /// 알림 설정
     /// 앱 평가
@@ -148,6 +152,10 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         navigationController.present(safariVC, animated: true)
     }
     
+    func alertLogout() {
+        print(#function)
+    }
+    
     /// 계정 삭제 시 단순 alert? or View?
     func pushAccountWithdrawalView() {
         // TODO: 계정 삭제 로직
@@ -160,4 +168,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         
         navigationController.setViewControllers([authVC], animated: false)
     }
+    
+    
 }
