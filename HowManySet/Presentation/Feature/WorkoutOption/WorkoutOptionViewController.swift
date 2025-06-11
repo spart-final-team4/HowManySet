@@ -16,8 +16,34 @@ final class WorkoutOptionViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
     
+    private let editText = "편집"
+    private let editRoutineButtonText = "운동 목록 변경"
+    private let memoText = "메모"
+    private let memoPlaceHolderText = "메모를 입력해주세요."
     
     // MARK: - UI Components
+    private lazy var containerView = UIView()
+    
+    private lazy var editLabel = UILabel().then {
+        $0.text = editText
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+    }
+    
+    private lazy var editRoutineButton = UIButton().then {
+        $0.backgroundColor = .disabledButton
+        $0.layer.cornerRadius = 12
+        $0.setTitle(editRoutineButtonText, for: .normal)
+    }
+    
+    private lazy var memoLabel = UILabel().then {
+        $0.text = memoText
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+    }
+    
+    private lazy var memoTextView = UITextView().then {
+        $0.insertDictationResultPlaceholderText = memoPlaceHolderText
+        $0.backgroundColor = .bsInputFieldBG
+    }
     
     
     // MARK: - Initializer
