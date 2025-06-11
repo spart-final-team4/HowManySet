@@ -7,19 +7,24 @@
 
 import UIKit
 import SnapKit
+import Then
+import RxSwift
+import ReactorKit
 
-final class WorkoutOptionViewController: UIViewController {
+final class WorkoutOptionViewController: UIViewController, View {
     
     // MARK: - Properties
-    private let reactor: WorkoutOptionViewReactor
+    var disposeBag = DisposeBag()
+    
     
     // MARK: - UI Components
     
     
     // MARK: - Initializer
     init(reactor: WorkoutOptionViewReactor) {
-        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
+
     }
     
     required init?(coder: NSCoder) {
@@ -29,6 +34,8 @@ final class WorkoutOptionViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
     }
     
 }
@@ -36,4 +43,23 @@ final class WorkoutOptionViewController: UIViewController {
 // MARK: - UI Methods
 private extension WorkoutOptionViewController {
     
+    func setupUI() {
+        
+    }
+    
+    func setViewHiearchy() {
+        
+    }
+    
+    func setConstraints() {
+        
+    }
+}
+
+// MARK: - Reactor Binding
+extension WorkoutOptionViewController {
+    
+    func bind(reactor: WorkoutOptionViewReactor) {
+        
+    }
 }
