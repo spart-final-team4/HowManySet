@@ -23,3 +23,30 @@ struct WorkoutRoutine {
     let workouts: [Workout]
 }
 
+extension WorkoutRoutine {
+    static let mockData: [WorkoutRoutine] = [
+        WorkoutRoutine(
+            name: "전신 루틴",
+            workouts: [
+                Workout.mockData[0], // 벤치프레스
+                Workout.mockData[1], // 스쿼트
+                Workout.mockData[2]  // 데드리프트
+            ]
+        ),
+        WorkoutRoutine(
+            name: "상체 집중 루틴",
+            workouts: [
+                Workout.mockData[0], // 벤치프레스
+                Workout.mockData[3], // 오버헤드 프레스
+                Workout.mockData[4]  // 랫풀다운
+            ]
+        ),
+        WorkoutRoutine(
+            name: "하체 강화 루틴",
+            workouts: [
+                Workout.mockData[1], // 스쿼트
+                Workout.mockData[2]  // 데드리프트
+            ]
+        )
+    ]
+}

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CalendarCoordinatorProtocol: Coordinator {
-    
+    func presentRecordDetailView(record: WorkoutRecord)
 }
 
 /// 캘린더 흐름 담당 coordinator
@@ -38,8 +38,8 @@ final class CalendarCoordinator: CalendarCoordinatorProtocol {
 
     /// 기록 상세 화면 모달 present
     /// large sheet 스타일 + grabber 표시
-    func presentRecordDetailView() {
-        let reactor = RecordDetailViewReactor()
+    func presentRecordDetailView(record: WorkoutRecord) {
+        let reactor = RecordDetailViewReactor(record: record)
         let recordDetailVC = RecordDetailViewController(reactor: reactor)
         
         if let sheet = recordDetailVC.sheetPresentationController {

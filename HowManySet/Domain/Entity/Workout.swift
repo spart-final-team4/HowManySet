@@ -32,3 +32,59 @@ struct Workout {
     /// 예: `"폼에 집중하기"`, `"마지막 세트는 최대 중량"` 등
     let comment: String?
 }
+
+// MARK: - MOCK DATA
+extension Workout {
+    static let mockData: [Workout] = [
+        Workout(
+            name: "벤치프레스",
+            sets: [
+                WorkoutSet(weight: 60, unit: "kg", reps: 10),
+                WorkoutSet(weight: 65, unit: "kg", reps: 8),
+                WorkoutSet(weight: 70, unit: "kg", reps: 6)
+            ],
+            restTime: 90,
+            comment: "팔꿈치 각도 유지"
+        ),
+        Workout(
+            name: "스쿼트",
+            sets: [
+                WorkoutSet(weight: 80, unit: "kg", reps: 12),
+                WorkoutSet(weight: 90, unit: "kg", reps: 10),
+                WorkoutSet(weight: 100, unit: "kg", reps: 8)
+            ],
+            restTime: 120,
+            comment: "무릎이 앞으로 나가지 않도록"
+        ),
+        Workout(
+            name: "데드리프트",
+            sets: [
+                WorkoutSet(weight: 100, unit: "kg", reps: 5),
+                WorkoutSet(weight: 110, unit: "kg", reps: 5),
+                WorkoutSet(weight: 120, unit: "kg", reps: 5)
+            ],
+            restTime: 150,
+            comment: "허리 고정에 집중"
+        ),
+        Workout(
+            name: "오버헤드 프레스",
+            sets: [
+                WorkoutSet(weight: 30, unit: "kg", reps: 10),
+                WorkoutSet(weight: 35, unit: "kg", reps: 8),
+                WorkoutSet(weight: 40, unit: "kg", reps: 6)
+            ],
+            restTime: 90,
+            comment: "코어에 힘 주기"
+        ),
+        Workout(
+            name: "랫풀다운",
+            sets: [
+                WorkoutSet(weight: 45, unit: "kg", reps: 12),
+                WorkoutSet(weight: 50, unit: "kg", reps: 12),
+                WorkoutSet(weight: 55, unit: "kg", reps: 10)
+            ],
+            restTime: 60,
+            comment: "광배근 수축에 집중"
+        )
+    ]
+}

@@ -64,11 +64,15 @@ final class DIContainer {
         let realmService: RealmServiceProtocol = RealmService()
         let recordRepository = RecordRepositoryImpl(realmService: realmService)
         
+        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
-//        let useCase
-//        let reactor = CalendarViewReactor()
+
+        let reactor = CalendarViewReactor(
+            saveRecordUseCase: saveRecordUseCase,
+            fetchRecordUseCase: fetchRecordUseCase
+        )
         
-        return CalendarViewController()
+        return CalendarViewController(reactor: reactor, coordinator: coordinator)
     }
     
     /// 마이페이지 화면을 생성하여 반환
