@@ -22,7 +22,15 @@ final class HomeViewController: UIViewController, View {
     private let homeText = "홈"
     
     var disposeBag = DisposeBag()
-        
+    
+    /// HomePagingCardView들을 저장하는 List
+    private var pagingCardViewContainer = [HomePagingCardView]()
+    /// 페이징 뷰가 들어갈 콘텐트 뷰의 너비 제약조건
+    private var contentViewWidthConstraint: Constraint?
+    
+    private var currentPage = 0
+    private var previousPage = 0
+    
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
         $0.text = homeText
@@ -65,23 +73,6 @@ final class HomeViewController: UIViewController, View {
         $0.layer.cornerRadius = 20
     }
     
-    private lazy var pagingScrollView = UIScrollView().then {
-        $0.showsHorizontalScrollIndicator = false
-        $0.isHidden = true
-    }
-    
-    private lazy var pagingCardView = HomePagingCardView().then {
-        $0.layer.cornerRadius = 20
-        $0.isHidden = true
-    }
-    
-    private lazy var pageController = UIPageControl().then {
-        $0.currentPage = 0
-        $0.numberOfPages = 5
-        $0.hidesForSinglePage = true
-        $0.isHidden = true
-    }
-    
     private lazy var buttonHStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .equalSpacing
@@ -104,6 +95,23 @@ final class HomeViewController: UIViewController, View {
         $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
         $0.tintColor = .white
     }
+    
+    // MARK: - 페이징 스크롤 뷰 관련
+    private lazy var pagingScrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.isPagingEnabled = true
+        $0.isHidden = true
+    }
+    
+    private lazy var pageController = UIPageControl().then {
+        $0.currentPage = 0
+        $0.numberOfPages = 5
+        $0.hidesForSinglePage = true
+        $0.isHidden = true
+    }
+    
+    private lazy var pagingScrollContentView = UIView()
+    
     
     // MARK: - Initializer
     init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
@@ -380,5 +388,47 @@ extension HomeViewController {
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Rx Cocoa
+private extension HomeViewController {
+    
+    func bindUIEvents() {
+        
+        // 스크롤의 감속이 끝났을 때 페이징
+        pagingScrollView.rx.didEndDecelerating
+            .observe(on: MainScheduler.instance)
+            .map { [weak self] _ -> Int in
+                guard let self else { return 0 }
+                // scrollView 내부 콘첸트가 수평으로 얼마나 스크롤 됐는지 / scrollView가 화면에 차지하는 너비
+                let newPage = Int(round(pagingScrollView.contentOffset.x / pagingScrollView.frame.width))
+                return newPage
+            }
+            .do(onNext: { [weak self] newPage in
+                guard let self else { return }
+                
+                // 페이지가 변경 되었을 때만 조정
+                if newPage != previousPage {
+                    handlePageChanged(to: newPage)
+                }
+            })
+            .bind(to: pageController.rx.currentPage)
+            .disposed(by: disposeBag)
+        
+        
+        // 페이징이 되었을 시 동작 (페이지 컨트롤 클릭 시 대응)
+        // 기본적으로 페이지 컨트롤 클릭 시 페이지 값이 변경되어 .valueChaned로 구현
+        pageController.rx.controlEvent(.valueChanged)
+            .observe(on: MainScheduler.instance)
+            .map { [weak self] _ -> Int in
+                guard let self else { return 0 }
+                let currentPage = self.pageController.currentPage
+                return currentPage
+            }
+            .bind(with: self) { view, currentPage in
+                view.handlePageChanged(to: currentPage)
+            }
+            .disposed(by: disposeBag)
     }
 }
