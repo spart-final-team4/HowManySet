@@ -23,13 +23,13 @@ final class RecordDetailViewReactor: Reactor {
     
     // State is a current view state
     struct State {
-        
+        let record: WorkoutRecord
     }
     
     let initialState: State
     
-    init() {
-        self.initialState = State()
+    init(record: WorkoutRecord) {
+        self.initialState = State(record: record)
     }
     
     //    // Action -> Mutation

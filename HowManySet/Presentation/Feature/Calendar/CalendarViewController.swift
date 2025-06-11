@@ -8,10 +8,8 @@ final class CalendarViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
 
-    private let calendarView = CalendarView()
-    private weak var coordinator: CalendarCoordinatorProtocol?
-    // ReactorKit.View는 내부적으로 reactor 프로퍼티에 didSet이 필요하기 때문에 Reactor? {get set}을 요구함
-    var reactor: CalendarViewReactor?
+    let calendarView = CalendarView()
+    private var coordinator: CalendarCoordinatorProtocol? // 이유는 모르겠지만 weak를 쓰면 인스턴스가 메모리에서 해제됨. 따라서 일단 strong으로 구현하자
 
     // MARK: - Life Cycle
     override func loadView() {
@@ -23,17 +21,13 @@ final class CalendarViewController: UIViewController, View {
         setDelegates()
         setRegisters()
         setButtonTargets()
-
-        if let reactor = reactor {
-            bind(reactor: reactor)
-        }
     }
 
     // MARK: - Init
     init(reactor: CalendarViewReactor, coordinator: CalendarCoordinatorProtocol) {
+        super.init(nibName: nil, bundle: nil) // super.init을 먼저 오게하면 reactor를 따로 선언하지 않아도 된다. ReactorKit.View 안에 reactor가 있다.
         self.reactor = reactor
         self.coordinator = coordinator
-        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -116,6 +110,17 @@ extension CalendarViewController: UITableViewDelegate {
     /// TableView Cell의 높이를 설정하는 메서드
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
+    }
+
+    /// TableView Cell이 선택되었을 때 실행하는 메서드
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // 셀 클릭 시 배경색 남는 것을 방지하기 위한 선택 해지
+        calendarView.publicRecordTableView.deselectRow(at: indexPath, animated: true)
+
+        // 해당 record 가져오기
+        guard let record = reactor?.currentState.records[indexPath.row] else { return }
+
+        coordinator?.presentRecordDetailView(record: record)
     }
 }
 
