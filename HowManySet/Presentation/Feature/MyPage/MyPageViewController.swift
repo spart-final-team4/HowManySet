@@ -13,6 +13,7 @@ final class MyPageViewController: UIViewController {
     private weak var coordinator: MyPageCoordinatorProtocol?
 
     private let reactor: MyPageViewReactor
+    private let mypageView = MyPageView()
     
     init(reactor: MyPageViewReactor, coordinator: MyPageCoordinatorProtocol) {
         self.reactor = reactor
@@ -26,5 +27,23 @@ final class MyPageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+}
+
+private extension MyPageViewController {
+    func setupUI() {
+        setViewHierarchy()
+        setConstraints()
+    }
+    
+    func setViewHierarchy() {
+        view.addSubviews(mypageView)
+    }
+    
+    func setConstraints() {
+        mypageView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
