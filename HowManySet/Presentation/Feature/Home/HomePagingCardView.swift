@@ -292,6 +292,7 @@ private extension HomePagingCardView {
 // MARK: Internal Methods
 extension HomePagingCardView {
     
+    // TODO: 추후에 통합하여 리팩토링
     func showExerciseUI() {
         print(#function)
         setCompleteButton.isUserInteractionEnabled = true

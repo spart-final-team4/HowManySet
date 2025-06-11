@@ -22,7 +22,7 @@ final class HomeViewController: UIViewController, View {
     private let homeText = "홈"
     
     var disposeBag = DisposeBag()
-    
+        
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
         $0.text = homeText
@@ -63,6 +63,11 @@ final class HomeViewController: UIViewController, View {
     
     private lazy var routineStartCardView = HomeRoutineStartCardView().then {
         $0.layer.cornerRadius = 20
+    }
+    
+    private lazy var pagingScrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.isHidden = true
     }
     
     private lazy var pagingCardView = HomePagingCardView().then {
@@ -119,6 +124,7 @@ final class HomeViewController: UIViewController, View {
         
         setupUI()
     }
+    
 }
 
 // MARK: - UI Methods
@@ -133,9 +139,9 @@ private extension HomeViewController {
             titleLabel,
             topTimerHStackView,
             routineStartCardView,
+            pagingScrollView,
             pageController,
-            buttonHStackView,
-            pagingCardView
+            buttonHStackView
         )
         
         topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton, topRoutineInfoVStackView)
@@ -168,10 +174,11 @@ private extension HomeViewController {
             $0.height.equalToSuperview().multipliedBy(0.47)
         }
         
-        pagingCardView.snp.makeConstraints {
-            $0.edges.equalTo(routineStartCardView)
+        pagingScrollView.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.height.equalToSuperview().multipliedBy(0.47)
         }
-        
+
         pageController.snp.makeConstraints {
             $0.top.equalTo(routineStartCardView.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
@@ -195,14 +202,48 @@ private extension HomeViewController {
     func showStartRoutineUI() {
         
         routineStartCardView.isHidden = true
-        pagingCardView.isHidden = false
-        pagingCardView.setProgressBar.isHidden = false
         
-        [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView].forEach {
+        [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView,
+         pagingCardView, pagingCardView.setProgressBar, pagingScrollView].forEach {
             $0.isHidden = false
         }
         
         titleLabel.alpha = 0
+        
+        configureRoutineCardViews()
+    }
+    
+    func configureRoutineCardViews() {
+        pagingScrollView.addSubview(pagingCardView)
+        
+        pagingCardView.snp.makeConstraints {
+            $0.edges.equalTo(pagingScrollView)
+            $0.width.height.equalTo(pagingScrollView.frameLayoutGuide)
+        }
+        
+        titleLabel.snp.remakeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(pagingScrollView.snp.top).offset(-32)
+        }
+        
+        topTimerHStackView.snp.remakeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(pagingScrollView.snp.top).offset(-32)
+        }
+        
+        topRoutineInfoVStackView.snp.remakeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(pagingScrollView.snp.top).offset(-32)
+        }
+        
+        pageController.snp.remakeConstraints {
+            $0.top.equalTo(pagingScrollView.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+        }
+        
         
     }
 }
@@ -252,12 +293,14 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         // MARK: - State
+        // 운동 시작 시 동작
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
             .filter { $0 }
             .observe(on: MainScheduler.instance)
             .take(1) // 처음 true 된 시점에만 운동 초기 화면
             .bind(with: self) { view, _ in
+                print("--- 운동시작 ---")
                 view.showStartRoutineUI()
             }
             .disposed(by: disposeBag)
@@ -328,12 +371,8 @@ extension HomeViewController {
             .bind(with: self) { view, isResting in
                 if isResting {
                     view.pagingCardView.showRestUI()
-                    
-                    // 남은 시간 텍스트 업데이트 (시작 시점에 맞춰서)
-                    view.pagingCardView.remaingRestTimeLabel.text = Int(reactor.currentState.restSecondsRemaining).toRestTimeLabel()
                 } else {
                     view.pagingCardView.showExerciseUI()
-                    
                     view.pagingCardView.restProgressBar.setProgress(0, animated: false)
                 }
             }.disposed(by: disposeBag)
