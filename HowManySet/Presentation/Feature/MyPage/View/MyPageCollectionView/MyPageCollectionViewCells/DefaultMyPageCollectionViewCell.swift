@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import Then
 
-final class MyPageCollectionViewCell: UICollectionViewCell {
+final class DefaultMyPageCollectionViewCell: UICollectionViewCell {
     
     static var identifier: String {
         return String(describing: self)
@@ -35,7 +36,7 @@ final class MyPageCollectionViewCell: UICollectionViewCell {
     
 }
 
-private extension MyPageCollectionViewCell {
+private extension DefaultMyPageCollectionViewCell {
     func setupUI() {
         setAppearance()
         setViewHierarchy()
