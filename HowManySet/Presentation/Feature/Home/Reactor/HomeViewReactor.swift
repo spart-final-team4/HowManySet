@@ -112,7 +112,6 @@ final class HomeViewReactor: Reactor {
         self.saveRecordUseCase = saveRecordUseCase
         // 루틴 선택 시 초기 값 설정 (그 후 변동)
         let initialRoutine = routineMockData
-        let initialWorkout = initialRoutine.workouts[0]
         
         var workoutCardStates: [WorkoutCardState] = []
         // 현재 루틴의 모든 정보를 workoutCardStates에 저장
