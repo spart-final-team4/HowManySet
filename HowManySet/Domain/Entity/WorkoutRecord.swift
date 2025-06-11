@@ -37,3 +37,30 @@ struct WorkoutRecord {
     /// 기록이 저장된 날짜 및 시간 정보를 포함합니다.
     let date: Date
 }
+
+// MARK: - WorkoutRecord mockData
+extension WorkoutRecord {
+    static let mockData: [WorkoutRecord] = [
+        WorkoutRecord(
+            workoutRoutine: WorkoutRoutine.mockData[0], // 전신 루틴
+            totalTime: 3600, // 1시간
+            workoutTime: 3000, // 50분
+            comment: "컨디션 좋았음",
+            date: Date() // 오늘
+        ),
+        WorkoutRecord(
+            workoutRoutine: WorkoutRoutine.mockData[1], // 상체 루틴
+            totalTime: 2700, // 45분
+            workoutTime: 2400, // 40분
+            comment: nil,
+            date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date() // 어제
+        ),
+        WorkoutRecord(
+            workoutRoutine: WorkoutRoutine.mockData[2], // 하체 루틴
+            totalTime: 1800, // 30분
+            workoutTime: 1500, // 25분
+            comment: "폼 개선 필요",
+            date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date() // 그제
+        )
+    ]
+}
