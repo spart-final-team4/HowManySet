@@ -306,34 +306,59 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         // 텍스트 등 뷰 요소 바인딩
-        reactor.state.map { $0 }
-            .filter { $0.isWorkingout == true }
+        reactor.state.map { ($0.isWorkingout, $0.isResting, $0.workoutCardStates) }
+            .filter { $0.0 }
             .observe(on: MainScheduler.instance)
-            .bind(with: self) { (view: HomeViewController, state) in
+            .bind(with: self) { (view: HomeViewController, workoutInfo: (Bool, Bool, [WorkoutCardState])) in
                 
-                view.workoutTimeLabel.text = state.workoutTime.toWorkOutTimeLabel()
-                view.routineNameLabel.text = state.workoutRoutine.name
-                view.routineNumberLabel.text = "\(state.currentExerciseNumber) / \(state.totalExerciseCount)"
+                let (isWorkingout, isResting, cardState) = workoutInfo
                 
-                view.pagingCardView.exerciseNameLabel.text = state.currentExerciseName
-                view.pagingCardView.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
-                view.pagingCardView.currentSetLabel.text = "\(state.currentSetNumber)\(view.setText)"
-                view.pagingCardView.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
-                view.pagingCardView.repsLabel.text = "\(state.currentReps)\(view.repsText)"
+                // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
+                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
+                let restStartTime = reactor.currentState.restStartTime
+
+                if reactor.currentState.isWorkingout {
+                    guard let firstState = cardState.first else { return }
+                    view.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
+                    view.routineNameLabel.text = reactor.currentState.workoutRoutine.workouts.first?.name
+                    view.routineNumberLabel.text = "\(reactor.currentState.exerciseIndex + 1) / \(reactor.currentState.workoutRoutine.workouts.count)"
+                    
+                    view.pagingCardView.exerciseNameLabel.text = firstState.currentExerciseName
+                    view.pagingCardView.exerciseSetLabel.text = "\(firstState.currentSetNumber) / \(firstState.totalSetCount)"
+                    view.pagingCardView.currentSetLabel.text = "\(firstState.currentSetNumber)\(view.setText)"
+                    view.pagingCardView.weightLabel.text = "\(Int(firstState.currentWeight))\(firstState.currentUnit)"
+                    view.pagingCardView.repsLabel.text = "\(firstState.currentReps)\(view.repsText)"
+                    
+                    view.pagingCardView.setProgressBar.updateProgress(currentSet: firstState.setProgressAmount)
+
+                    
+                    if firstState.currentSetNumber == 1 {
+                        view.pagingCardView.setProgressBar.setupSegments(totalSets: firstState.totalSetCount)
+                    }
+                    
+                    if Int(restSecondsRemaining) != restStartTime {
+                        
+                        view.pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
+                        
+                        guard let totalRestTime = restStartTime, totalRestTime > 0 else {
+                            view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                            return
+                        }
+                        
+                        if isResting {
+                            // 휴식 중 일때만 휴식 프로그레스바 조정
+                            let elapsed = Float(totalRestTime) - Float(restSecondsRemaining)
+                            let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
+                            view.pagingCardView.restProgressBar.setProgress(progress, animated: true)
+                        } else {
+                            view.pagingCardView.showExerciseUI()
+                            
+                            view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                        }
+                    }
+                }
             }
             .disposed(by: disposeBag)
-        
-        // setProgressBar 바인딩
-        Observable.combineLatest(
-            reactor.state.map { $0.currentSetNumber }.distinctUntilChanged(),
-            reactor.state.map { $0.totalSetCount }.distinctUntilChanged()
-        )
-        .filter { currentSet, _ in currentSet == 1 } // 첫 세트일 때만
-        .bind(with: self) { view, sets in
-            let (_, totalSet) = sets
-            view.pagingCardView.setProgressBar.setupSegments(totalSets: totalSet)
-        }
-        .disposed(by: disposeBag)
         
         // 휴식 시간 프로그레스바 바인딩
         reactor.state
@@ -375,13 +400,6 @@ extension HomeViewController {
                     view.pagingCardView.showExerciseUI()
                     view.pagingCardView.restProgressBar.setProgress(0, animated: false)
                 }
-            }.disposed(by: disposeBag)
-        
-        reactor.state.map { $0.setProgressAmount }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .bind(with: self) { view, setProgress in
-                view.pagingCardView.setProgressBar.updateProgress(currentSet: setProgress)
             }.disposed(by: disposeBag)
         
         reactor.state.map { $0.isWorkoutPaused }
