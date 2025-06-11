@@ -79,7 +79,7 @@ final class HomeViewReactor: Reactor {
         var comment: String?
         
         var isResting: Bool
-        var restSecondsRemaining: Int
+        var restSecondsRemaining: Float
         var isRestPaused: Bool
         var restTime: Int // 기본 휴식 시간
     }
@@ -143,8 +143,10 @@ final class HomeViewReactor: Reactor {
         case .routineCompleteButtonClicked:
             let startRest = Observable.just(Mutation.startRest(true))
             let restTime = currentState.restTime
-            let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-                .take(restTime)
+            let interval = 0.01
+            let tickCount = Int(Double(restTime) / interval)
+            let timer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
+                .take(tickCount)
                 .map { _ in
                     return Mutation.restTimeUpdating
                 }
@@ -182,19 +184,18 @@ final class HomeViewReactor: Reactor {
             
         case let .startRoutine(isWorkingout):
             state.isWorkingout = isWorkingout
-            state.restSecondsRemaining = state.restTime // 초기 휴식 시간 설정
+//            state.restSecondsRemaining = Float(state.restTime) // 초기 휴식 시간 설정
             
         case let .startRest(isResting):
             state.isResting = isResting
-            state.restSecondsRemaining = state.restTime
+            state.restSecondsRemaining = Float(state.restTime)
             
         case .workoutTimeUpdating:
             state.workoutTime += 1
             
         case .restTimeUpdating:
-            // 휴식 중일 때 1초씩 감소
             if state.isResting {
-                state.restSecondsRemaining = max(state.restSecondsRemaining - 1, 0)
+                state.restSecondsRemaining = max(state.restSecondsRemaining - 0.01, 0)
             }
             
         case .restTimeEnded:
@@ -257,20 +258,6 @@ final class HomeViewReactor: Reactor {
         
         return state
     }
-    
-    
-//    /// 휴식 타이머 Observable을 생성하고 반환하는 함수
-//    private func restartRestTimer(newRestTime: Int) -> Observable<Mutation> {
-//        let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-//            .take(newRestTime) // 새로운 휴식 시간을 기준으로 take
-//            .map { _ in
-//                return Mutation.restTimeUpdating
-//            }
-//            .concat(Observable.just(.restTimeEnded)) // 타이머 완료 후 restTimeEnded가 방출되도록 보장
-//        
-//        return timer
-//    }
-    
 }
 
 
