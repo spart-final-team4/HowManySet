@@ -222,7 +222,7 @@ extension HomeViewController {
         
         // 세트 완료 버튼 클릭 시
         pagingCardView.setCompleteButton.rx.tap
-            .map { Reactor.Action.routineCompleteButtonClicked }
+            .map { Reactor.Action.setCompleteButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -255,6 +255,7 @@ extension HomeViewController {
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
             .filter { $0 }
+            .observe(on: MainScheduler.instance)
             .take(1) // 처음 true 된 시점에만 운동 초기 화면
             .bind(with: self) { view, _ in
                 view.showStartRoutineUI()
@@ -264,6 +265,7 @@ extension HomeViewController {
         // 텍스트 등 뷰 요소 바인딩
         reactor.state.map { $0 }
             .filter { $0.isWorkingout == true }
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { (view: HomeViewController, state) in
                 
                 view.workoutTimeLabel.text = state.workoutTime.toWorkOutTimeLabel()
@@ -290,14 +292,44 @@ extension HomeViewController {
         }
         .disposed(by: disposeBag)
         
+        // 휴식 시간 프로그레스바 바인딩
+        reactor.state
+            .map { ($0.restSecondsRemaining, $0.restStartTime, $0.isResting) }
+            .distinctUntilChanged { $0.0 == $1.0 } // 남은 시간만 바뀔 때 업데이트!
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { view, values in
+                // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
+                let (restSecondsRemaining, restStartTime, isResting) = values
+                
+                view.pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
+                
+                guard let totalRestTime = restStartTime, totalRestTime > 0 else {
+                    view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                    return
+                }
+                
+                if isResting {
+                    // 휴식 중 일때만 휴식 프로그레스바 조정
+                    let elapsed = Float(totalRestTime) - Float(restSecondsRemaining)
+                    let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
+                    view.pagingCardView.restProgressBar.setProgress(progress, animated: true)
+                } else {
+                    view.pagingCardView.showExerciseUI()
+
+                    view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                }
+            }
+            .disposed(by: disposeBag)
+        
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { view, isResting in
                 if isResting {
                     view.pagingCardView.showRestUI()
-                                        
-                    // 남은 시간 텍스트 업데이트 (시작 시점에 맞춰)
+                    
+                    // 남은 시간 텍스트 업데이트 (시작 시점에 맞춰서)
                     view.pagingCardView.remaingRestTimeLabel.text = Int(reactor.currentState.restSecondsRemaining).toRestTimeLabel()
                 } else {
                     view.pagingCardView.showExerciseUI()
@@ -306,41 +338,16 @@ extension HomeViewController {
                 }
             }.disposed(by: disposeBag)
         
-        // 남은 휴식 시간에 따라 휴식 프로그레스바 바인딩
-        reactor.state.map { $0.restSecondsRemaining }
-            .distinctUntilChanged()
-            .bind(with: self) { view, restSecondsRemaining in
-                if reactor.currentState.isResting {
-                    let totalRestTime = reactor.currentState.restTime // 현재 전체 휴식 시간
-                    
-                    // restSecondsRemaining이 0보다 크고, totalRestTime이 0보다 클 때만 계산
-                    if totalRestTime > 0 {
-                        // 경과된 시간 = 전체 시간 - 남은 시간
-                        let elapsedTime = Float(totalRestTime) - restSecondsRemaining
-                        // 진행률 계산: (경과된 시간) / (전체 시간)
-                        let progress = elapsedTime / Float(totalRestTime)
-                        
-                        // 프로그레스 바 업데이트
-                        view.pagingCardView.restProgressBar.setProgress(Float(progress), animated: true)
-                        
-                    } else {
-                        // totalRestTime이 0이거나 유효하지 않은 경우, 프로그레스 바를 0으로 설정
-                        view.pagingCardView.restProgressBar.setProgress(0, animated: false)
-                    }
-                    
-                    // 남은 시간 텍스트 업데이트
-                    view.pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
-                }
-            }
-            .disposed(by: disposeBag)
-        
         reactor.state.map { $0.setProgressAmount }
             .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { view, setProgress in
                 view.pagingCardView.setProgressBar.updateProgress(currentSet: setProgress)
             }.disposed(by: disposeBag)
         
         reactor.state.map { $0.isWorkoutPaused }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { view, isWorkoutPaused in
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)

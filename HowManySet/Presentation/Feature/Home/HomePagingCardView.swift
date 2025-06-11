@@ -179,7 +179,6 @@ final class HomePagingCardView: UIView {
         $0.progressTintColor = .brand
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
-        $0.setProgress(0, animated: false)
     }
         
     // MARK: - Initializer
