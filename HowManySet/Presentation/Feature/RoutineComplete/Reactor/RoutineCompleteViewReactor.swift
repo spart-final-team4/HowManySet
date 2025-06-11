@@ -11,6 +11,8 @@ import ReactorKit
 
 final class RoutineCompleteViewReactor: Reactor {
     
+    private let saveRecordUseCase: SaveRecordUseCase
+    
     // Action is an user interaction
     enum Action {
         
@@ -28,7 +30,9 @@ final class RoutineCompleteViewReactor: Reactor {
     
     let initialState: State
     
-    init() {
+    init(saveRecordUseCase: SaveRecordUseCase) {
+        self.saveRecordUseCase = saveRecordUseCase
+
         self.initialState = State()
     }
     
