@@ -41,8 +41,8 @@ final class WorkoutOptionViewController: UIViewController, View {
     }
     
     private lazy var memoTextView = UITextView().then {
-        $0.insertDictationResultPlaceholderText = memoPlaceHolderText
         $0.backgroundColor = .bsInputFieldBG
+        $0.text = memoPlaceHolderText
     }
     
     
