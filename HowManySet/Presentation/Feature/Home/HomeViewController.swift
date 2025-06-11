@@ -155,6 +155,8 @@ private extension HomeViewController {
         topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton, topRoutineInfoVStackView)
         topRoutineInfoVStackView.addArrangedSubviews(routineNameLabel, routineNumberLabel)
         buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
+        
+        pagingScrollView.addSubview(pagingScrollContentView)
     }
     
     func setConstraints() {
@@ -185,8 +187,14 @@ private extension HomeViewController {
         pagingScrollView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalToSuperview().multipliedBy(0.47)
+            self.contentViewWidthConstraint = $0.width.equalTo(view.snp.width).multipliedBy(CGFloat(pagingCardViewContainer.count)).constraint
         }
-
+        
+        pagingScrollContentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
+        }
+        
         pageController.snp.makeConstraints {
             $0.top.equalTo(routineStartCardView.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
@@ -207,24 +215,22 @@ private extension HomeViewController {
         }
     }
     
+    /// 운동 시작 시 표현되는 뷰 설정
     func showStartRoutineUI() {
         
         routineStartCardView.isHidden = true
         
-        [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView,
-         pagingCardView, pagingCardView.setProgressBar, pagingScrollView].forEach {
+        [topTimerHStackView, topRoutineInfoVStackView, pageController, buttonHStackView, pagingScrollView].forEach {
             $0.isHidden = false
         }
         
         titleLabel.alpha = 0
-        
-        configureRoutineCardViews()
     }
     
-    func configureRoutineCardViews() {
-        pagingScrollView.addSubview(pagingCardView)
+    /// 스크롤 뷰 안의 운동 정보 카드 뷰 레이아웃 설정
+    func setPagingCardViewsConstraints(cardView: HomePagingCardView) {
         
-        pagingCardView.snp.makeConstraints {
+        cardView.snp.makeConstraints {
             $0.edges.equalTo(pagingScrollView)
             $0.width.height.equalTo(pagingScrollView.frameLayoutGuide)
         }
@@ -251,12 +257,49 @@ private extension HomeViewController {
             $0.top.equalTo(pagingScrollView.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
         }
+    }
+    
+    func configureRoutineCardViews(cardStates: [WorkoutCardState]) {
         
+        for (i, cardState) in cardStates.enumerated() {
+            
+            let cardView = HomePagingCardView().then {
+                $0.layer.cornerRadius = 20
+                $0.isHidden = true
+            }
+            
+            pagingCardViewContainer.append(cardView)
+            pagingScrollContentView.addSubview(cardView)
+            
+            cardView.snp.makeConstraints {
+                $0.verticalEdges.equalToSuperview()
+                $0.width.equalToSuperview()
+                $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen().bounds.width)
+                
+            }
+            
+            setPagingCardViewsConstraints(cardView: cardView)
+            
+            contentViewWidthConstraint?.update(offset: UIScreen().bounds.width * CGFloat(cardStates.count))
+     
+        }
+    }
+    
+    /// 페이징 후 스크롤 이동, 배경 처리, 레이아웃 조정
+    func handlePageChanged(to currentPage: Int) {
+                
+        let offsetX = Int(pagingScrollView.frame.width) * currentPage
+        pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
         
+        // 이전 페이지 업데이트
+        self.previousPage = currentPage
+        // 현재 페이지 업데이트
+        self.currentPage = currentPage
+        print("currentPage: \(self.currentPage)")
     }
 }
 
-// MARK: - Rx Methods
+// MARK: - Reactor Binding
 extension HomeViewController {
     func bind(reactor: HomeViewReactor) {
         
@@ -269,34 +312,8 @@ extension HomeViewController {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        // 세트 완료 버튼 클릭 시
-        pagingCardView.setCompleteButton.rx.tap
-            .map { Reactor.Action.setCompleteButtonClicked }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
         pauseButton.rx.tap
             .map { Reactor.Action.pauseButtonClicked }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        pagingCardView.restButton1.rx.tap
-            .map { Reactor.Action.rest1ButtonClicked }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        pagingCardView.restButton2.rx.tap
-            .map { Reactor.Action.rest2ButtonClicked }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        pagingCardView.restButton3.rx.tap
-            .map { Reactor.Action.rest3ButtonClicked }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        pagingCardView.restResetButton.rx.tap
-            .map { Reactor.Action.restResetButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -314,12 +331,13 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         // 텍스트 등 뷰 요소 바인딩
-        reactor.state.map { ($0.isWorkingout, $0.isResting, $0.workoutCardStates) }
+        reactor.state.map { ($0.isWorkingout, $0.isResting) }
             .filter { $0.0 }
             .observe(on: MainScheduler.instance)
-            .bind(with: self) { (view: HomeViewController, workoutInfo: (Bool, Bool, [WorkoutCardState])) in
+            .bind(with: self) {
+                (view: HomeViewController, workoutInfo: (Bool, Bool)) in
                 
-                let (isWorkingout, isResting, cardStates) = workoutInfo
+                let (isWorkingout, isResting) = workoutInfo
                 
                 // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
                 let restSecondsRemaining = reactor.currentState.restSecondsRemaining
@@ -331,25 +349,17 @@ extension HomeViewController {
                     view.routineNameLabel.text = reactor.currentState.workoutRoutine.workouts.first?.name
                     view.routineNumberLabel.text = "\(reactor.currentState.exerciseIndex + 1) / \(reactor.currentState.workoutRoutine.workouts.count)"
                     
-                    view.pagingCardView.exerciseNameLabel.text = firstState.currentExerciseName
-                    view.pagingCardView.exerciseSetLabel.text = "\(firstState.currentSetNumber) / \(firstState.totalSetCount)"
-                    view.pagingCardView.currentSetLabel.text = "\(firstState.currentSetNumber)\(view.setText)"
-                    view.pagingCardView.weightLabel.text = "\(Int(firstState.currentWeight))\(firstState.currentUnit)"
-                    view.pagingCardView.repsLabel.text = "\(firstState.currentReps)\(view.repsText)"
+                    let pagingCardView = view.pagingCardViewContainer[reactor.currentState.exerciseIndex]
                     
-                    view.pagingCardView.setProgressBar.updateProgress(currentSet: firstState.setProgressAmount)
-
-                    
-                    if firstState.currentSetNumber == 1 {
-                        view.pagingCardView.setProgressBar.setupSegments(totalSets: firstState.totalSetCount)
-                    }
+                    // 내부 카드 뷰들 세팅
+                    self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
                     
                     if Int(restSecondsRemaining) != restStartTime {
                         
-                        view.pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
+                        pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
                         
                         guard let totalRestTime = restStartTime, totalRestTime > 0 else {
-                            view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                            pagingCardView.restProgressBar.setProgress(0, animated: false)
                             return
                         }
                         
@@ -357,11 +367,11 @@ extension HomeViewController {
                             // 휴식 중 일때만 휴식 프로그레스바 조정
                             let elapsed = Float(totalRestTime) - Float(restSecondsRemaining)
                             let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
-                            view.pagingCardView.restProgressBar.setProgress(progress, animated: true)
+                            pagingCardView.restProgressBar.setProgress(progress, animated: true)
                         } else {
-                            view.pagingCardView.showExerciseUI()
+                            pagingCardView.showExerciseUI()
                             
-                            view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                            pagingCardView.restProgressBar.setProgress(0, animated: false)
                         }
                     }
                 }
@@ -370,14 +380,15 @@ extension HomeViewController {
 
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         reactor.state.map { $0.isResting }
-            .distinctUntilChanged()
+            .filter { $0 == true}
             .observe(on: MainScheduler.instance)
             .bind(with: self) { view, isResting in
+                let pagingCardView = view.pagingCardViewContainer[reactor.currentState.exerciseIndex]
                 if isResting {
-                    view.pagingCardView.showRestUI()
+                    pagingCardView.showRestUI()
                 } else {
-                    view.pagingCardView.showExerciseUI()
-                    view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                    pagingCardView.showExerciseUI()
+                    pagingCardView.restProgressBar.setProgress(0, animated: false)
                 }
             }.disposed(by: disposeBag)
         

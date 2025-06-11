@@ -38,7 +38,7 @@ struct WorkoutCardState: Equatable {
     var commentInExercise: String?
 }
 
-final class HomePagingCardView: UIView {
+final class HomePagingCardView: UIView, View {
     
     // MARK: - Properties
     private let doRestText = "휴식도 운동이에요"
@@ -49,21 +49,23 @@ final class HomePagingCardView: UIView {
     private let restResetButtonText = "초기화"
     private let setCompleteText = "세트 완료"
     
+    var disposeBag = DisposeBag()
+    
     // MARK: - UI Components
-    private lazy var topLineHStack = UIStackView().then {
+    lazy var topLineHStack = UIStackView().then {
         $0.axis = .horizontal
     }
     
-    private lazy var topConentsVStack = UIStackView().then {
+    lazy var topConentsVStack = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 16
     }
     
-    private lazy var spacer = UIView().then {
+    lazy var spacer = UIView().then {
         $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
     
-    private lazy var exerciseInfoHStack = UIStackView().then {
+    lazy var exerciseInfoHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 12
     }
@@ -72,7 +74,7 @@ final class HomePagingCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
-    private lazy var restLabel = UILabel().then {
+    lazy var restLabel = UILabel().then {
         $0.text = restText
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
@@ -81,8 +83,8 @@ final class HomePagingCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 14)
         $0.textColor = .textSecondary
     }
-
-    private lazy var optionButton = UIButton().then {
+    
+    lazy var optionButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.tintColor = .label
@@ -92,7 +94,7 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .cardBackground
     }
     
-    private lazy var restButtonHStack = UIStackView().then {
+    lazy var restButtonHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .fillEqually
         $0.spacing = 8
@@ -129,23 +131,23 @@ final class HomePagingCardView: UIView {
         $0.textAlignment = .left
     }
     
-    private lazy var containerView = UIView().then {
+    lazy var containerView = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
     
-    private lazy var weightRepsHStack = UIStackView().then {
+    lazy var weightRepsHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 70
     }
     
-    private lazy var weightInfoVStack = UIStackView().then {
+    lazy var weightInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
-    private lazy var weightImageView = UIImageView().then {
+    lazy var weightImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
         $0.tintColor = .brand
@@ -156,13 +158,13 @@ final class HomePagingCardView: UIView {
         $0.textColor = .white
     }
     
-    private lazy var repsInfoVStack = UIStackView().then {
+    lazy var repsInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
-    private lazy var repsImageView = UIImageView().then {
+    lazy var repsImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "repeat", withConfiguration: config)
         $0.tintColor = .white
@@ -173,20 +175,20 @@ final class HomePagingCardView: UIView {
         $0.textColor = .white
     }
     
-    private lazy var restInfoVStack = UIStackView().then {
+    lazy var restInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
         $0.spacing = 20
     }
     
-    private lazy var restImageView = UIImageView().then {
+    lazy var restImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "waterbottle", withConfiguration: config)
         $0.tintColor = .white
     }
     
-    private lazy var doRestLabel = UILabel().then {
+    lazy var doRestLabel = UILabel().then {
         $0.text = doRestText
         $0.font = .systemFont(ofSize: 20, weight: .regular)
     }
@@ -209,7 +211,7 @@ final class HomePagingCardView: UIView {
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
     }
-        
+    
     // MARK: - Initializer
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -248,7 +250,7 @@ private extension HomePagingCardView {
         
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, restLabel, exerciseSetLabel)
         containerView.addSubviews(weightRepsHStack,
-                                 restInfoVStack)
+                                  restInfoVStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
                                              repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
@@ -264,22 +266,22 @@ private extension HomePagingCardView {
             $0.top.equalToSuperview().inset(28)
             $0.horizontalEdges.equalToSuperview().inset(20)
         }
-
+        
         containerView.snp.makeConstraints {
             $0.top.equalTo(topConentsVStack.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalToSuperview().multipliedBy(0.39)
         }
-                
+        
         setProgressBar.snp.makeConstraints {
             $0.height.equalTo(16)
         }
-    
+        
         weightRepsHStack.snp.makeConstraints {
             $0.height.equalTo(containerView.snp.height).multipliedBy(0.5)
             $0.center.equalToSuperview()
         }
-       
+        
         currentSetLabel.snp.makeConstraints {
             $0.height.equalTo(16)
         }
@@ -293,7 +295,7 @@ private extension HomePagingCardView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
         }
-
+        
         restProgressBar.snp.makeConstraints {
             $0.top.equalTo(containerView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
@@ -306,7 +308,7 @@ private extension HomePagingCardView {
     }
 }
 
-// MARK: Private Methods
+// MARK: UI Methods
 private extension HomePagingCardView {
     func updateContainerViewConstraint() {
         containerView.snp.updateConstraints {
@@ -349,3 +351,58 @@ extension HomePagingCardView {
     }
     
 }
+
+// MARK: - Reactor Binding
+extension HomePagingCardView {
+    
+    func bind(reactor: HomePagingCardViewReactor) {
+        
+        // MARK: - State
+        reactor.state.map { $0.cardState }
+            .distinctUntilChanged { $0.currentSetNumber == $1.currentSetNumber && $0.setProgressAmount == $1.setProgressAmount }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { view, state in
+                view.exerciseNameLabel.text = cardState.currentExerciseName
+                view.exerciseSetLabel.text = "\(cardState.currentSetNumber) / \(cardState.totalSetCount)"
+                view.currentSetLabel.text = "\(cardState.currentSetNumber)\(self.setText)"
+                view.weightLabel.text = "\(Int(cardState.currentWeight))\(cardState.currentUnit)"
+                view.repsLabel.text = "\(cardState.currentReps)\(self.repsText)"
+                
+                view.setProgressBar.updateProgress(currentSet: cardState.setProgressAmount)
+                
+                if cardState.currentSetNumber == 1 {
+                    view.setProgressBar.setupSegments(totalSets: cardState.totalSetCount)
+                }
+            }.disposed(by: disposeBag)
+        
+        
+        // MARK: Action
+        // HomeViewReactor로부터 전달되는 updateCardState 액션의 파라미터 구독
+        reactor.action.ofType(HomePagingCardViewReactor.Action.updateCardState.self)
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] _, isResting, restRemaining, restStart in
+                guard let self = self else { return }
+                
+                if isResting {
+                    self.showRestUI()
+                    if let remaining = restRemaining {
+                        self.remaingRestTimeLabel.text = remaining.toRestTimeLabel()
+                    }
+                    if let totalTime = restStart, totalTime > 0, let remaining = restRemaining {
+                        let elapsed = Float(totalTime) - Float(remaining)
+                        self.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
+                    } else {
+                        self.restProgressBar.setProgress(0, animated: false)
+                    }
+                } else {
+                    self.showExerciseUI()
+                    self.restProgressBar.setProgress(0, animated: false)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+    }
+}
+
+
+
