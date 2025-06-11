@@ -296,10 +296,7 @@ extension HomeViewController {
             .bind(with: self) { view, isResting in
                 if isResting {
                     view.pagingCardView.showRestUI()
-                    
-                    // 휴식 시작 시, 프로그레스 바를 0으로 초기화 (빈 상태)
-                    view.pagingCardView.restProgressBar.setProgress(0, animated: false)
-                    
+                                        
                     // 남은 시간 텍스트 업데이트 (시작 시점에 맞춰)
                     view.pagingCardView.remaingRestTimeLabel.text = Int(reactor.currentState.restSecondsRemaining).toRestTimeLabel()
                 } else {
@@ -313,25 +310,27 @@ extension HomeViewController {
         reactor.state.map { $0.restSecondsRemaining }
             .distinctUntilChanged()
             .bind(with: self) { view, restSecondsRemaining in
-                let totalRestTime = reactor.currentState.restTime // 현재 전체 휴식 시간
-                
-                // restSecondsRemaining이 0보다 크고, totalRestTime이 0보다 클 때만 계산
-                if totalRestTime > 0 {
-                    // 경과된 시간 = 전체 시간 - 남은 시간
-                    let elapsedTime = Float(totalRestTime) - restSecondsRemaining
-                    // 진행률 계산: (경과된 시간) / (전체 시간)
-                    let progress = elapsedTime / Float(totalRestTime)
+                if reactor.currentState.isResting {
+                    let totalRestTime = reactor.currentState.restTime // 현재 전체 휴식 시간
                     
-                    // 프로그레스 바 업데이트
-                    view.pagingCardView.restProgressBar.setProgress(Float(progress), animated: true)
+                    // restSecondsRemaining이 0보다 크고, totalRestTime이 0보다 클 때만 계산
+                    if totalRestTime > 0 {
+                        // 경과된 시간 = 전체 시간 - 남은 시간
+                        let elapsedTime = Float(totalRestTime) - restSecondsRemaining
+                        // 진행률 계산: (경과된 시간) / (전체 시간)
+                        let progress = elapsedTime / Float(totalRestTime)
+                        
+                        // 프로그레스 바 업데이트
+                        view.pagingCardView.restProgressBar.setProgress(Float(progress), animated: true)
+                        
+                    } else {
+                        // totalRestTime이 0이거나 유효하지 않은 경우, 프로그레스 바를 0으로 설정
+                        view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                    }
                     
-                } else {
-                    // totalRestTime이 0이거나 유효하지 않은 경우, 프로그레스 바를 0으로 설정
-                    view.pagingCardView.restProgressBar.setProgress(0, animated: false)
+                    // 남은 시간 텍스트 업데이트
+                    view.pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
                 }
-                
-                // 남은 시간 텍스트 업데이트
-                view.pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
             }
             .disposed(by: disposeBag)
         

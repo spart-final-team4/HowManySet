@@ -79,9 +79,9 @@ final class HomeViewReactor: Reactor {
         var comment: String?
         
         var isResting: Bool
-        var restSecondsRemaining: Float
         var isRestPaused: Bool
-        var restTime: Int // 기본 휴식 시간
+        var restSecondsRemaining: Float // 프로그레스바에 사용될 현재 휴식 시간 (사용자가 버튼으로 변경 시 즉시 변경 안됨)
+        var restTime: Int // 기본 휴식 시간 (사용자가 버튼으로 변경 시 즉시 변경)
     }
     
     let initialState: State
@@ -116,8 +116,8 @@ final class HomeViewReactor: Reactor {
             date: Date(),
             comment: nil,
             isResting: false,
-            restSecondsRemaining: 0,
             isRestPaused: false,
+            restSecondsRemaining: 0,
             restTime: initialRoutine.restTime
         )
     }
@@ -184,11 +184,10 @@ final class HomeViewReactor: Reactor {
             
         case let .startRoutine(isWorkingout):
             state.isWorkingout = isWorkingout
-//            state.restSecondsRemaining = Float(state.restTime) // 초기 휴식 시간 설정
+            state.restSecondsRemaining = Float(state.restTime)
             
         case let .startRest(isResting):
             state.isResting = isResting
-            state.restSecondsRemaining = Float(state.restTime)
             
         case .workoutTimeUpdating:
             state.workoutTime += 1
@@ -200,6 +199,7 @@ final class HomeViewReactor: Reactor {
             
         case .restTimeEnded:
             state.isResting = false
+            state.restSecondsRemaining = Float(state.restTime)
             
         case .forwardToNextSet:
             let currentExerciseWorkouts = state.workoutRoutine.workouts[state.exerciseIndex]
