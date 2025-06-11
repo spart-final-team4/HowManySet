@@ -16,17 +16,17 @@ final class MyPageViewReactor: Reactor {
     
     // Action is an user interaction
     enum Action {
-        
+        case cellTapped(MyPageCellType)
     }
     
     // Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
-        
+        case presentTo(MyPageCellType)
     }
     
     // State is a current view state
     struct State {
-        
+        var presentTarget: MyPageCellType?
     }
     
     let initialState: State
@@ -34,17 +34,25 @@ final class MyPageViewReactor: Reactor {
     init(fetchUserSettingUseCase: FetchUserSettingUseCase, saveUserSettingUseCase: SaveUserSettingUseCase) {
         self.fetchUserSettingUseCase = fetchUserSettingUseCase
         self.saveUserSettingUseCase = saveUserSettingUseCase
-        self.initialState = State()
+        self.initialState = State(presentTarget: nil)
         
     }
     
-    //    // Action -> Mutation
-    //    func mutate(action: Action) -> Observable<Mutation> {
-    //
-    //    }
-    //
-    //    // Mutation -> State
-    //    func reduce(state: State, mutation: Mutation) -> State {
-    //
-    //    }
+    // Action -> Mutation
+    func mutate(action: Action) -> Observable<Mutation> {
+        switch action {
+        case .cellTapped(let cell):
+            return .just(.presentTo(cell))
+        }
+    }
+    
+    // Mutation -> State
+    func reduce(state: State, mutation: Mutation) -> State {
+        var newState = state
+        switch mutation {
+        case .presentTo(let myPageCellType):
+            newState.presentTarget = myPageCellType
+        }
+        return newState
+    }
 }

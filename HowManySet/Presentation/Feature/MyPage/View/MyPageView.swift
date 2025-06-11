@@ -12,7 +12,7 @@ import Then
 final class MyPageView: UIView {
     
     private let headerView = MyPageHeaderView()
-    private let collectionView = MyPageCollectionView()
+    let collectionView = MyPageCollectionView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
