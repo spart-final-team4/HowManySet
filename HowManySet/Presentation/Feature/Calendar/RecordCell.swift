@@ -6,6 +6,7 @@ final class RecordCell: UITableViewCell {
     // MARK: - Properties
     static let identifier = "RecordCell"
 
+    private let labelStackView = UIStackView()
     private let routineLabel = UILabel()
     private let setsLabel = UILabel()
     private let timeLabel = UILabel()
@@ -49,16 +50,21 @@ private extension RecordCell {
         setAppearance()
         setViewHierarchy()
         setConstraints()
+        setTableViewCellClearSetting()
     }
 
     func setAppearance() {
-        // 셀 선택 시 배경색 변화 없음
-        selectionStyle = .none
-
         contentView.do {
             $0.backgroundColor = .cardBackground
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
+        }
+
+        labelStackView.do {
+            $0.axis = .vertical
+            $0.alignment = .fill
+            $0.distribution = .fillEqually
+            $0.spacing = 12
         }
 
         routineLabel.do {
@@ -78,28 +84,34 @@ private extension RecordCell {
     }
 
     func setViewHierarchy() {
+        contentView.addSubview(labelStackView)
+
         [
             routineLabel,
             setsLabel,
             timeLabel
-        ].forEach { addSubviews($0) }
+        ].forEach { labelStackView.addArrangedSubview($0) }
     }
 
     func setConstraints() {
-        routineLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
+        labelStackView.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(16)
             $0.horizontalEdges.equalToSuperview().inset(20)
         }
 
-        setsLabel.snp.makeConstraints {
-            $0.top.equalTo(routineLabel.snp.bottom).offset(12)
-            $0.horizontalEdges.equalToSuperview().inset(20)
-        }
+    }
 
-        timeLabel.snp.makeConstraints {
-            $0.top.equalTo(setsLabel.snp.bottom).offset(12)
-            $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview().inset(16)
+    ///UITableViewCell에서 clear하게 setting하여 깔끔하게 보여주는 UI
+    func setTableViewCellClearSetting() {
+        // 셀 선택 시 배경색 변화 없음
+        selectionStyle = .none
+
+        // 셀 전체 배경을 clear하게 만듦
+        backgroundColor = .clear
+
+        // 셀 클릭 시 선택되었다고 셀 전체가 덮이는 것을 방지
+        selectedBackgroundView = UIView().then {
+            $0.backgroundColor = .clear
         }
     }
 }

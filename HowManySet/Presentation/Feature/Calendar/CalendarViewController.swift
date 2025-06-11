@@ -109,7 +109,7 @@ private extension CalendarViewController {
 extension CalendarViewController: UITableViewDelegate {
     /// TableView Cell의 높이를 설정하는 메서드
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120
+        UIScreen.main.bounds.height * 0.15
     }
 
     /// TableView Cell이 선택되었을 때 실행하는 메서드

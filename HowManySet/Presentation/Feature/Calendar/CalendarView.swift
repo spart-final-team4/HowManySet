@@ -5,6 +5,7 @@ import FSCalendar
 
 final class CalendarView: UIView {
     private let titleLabel = UILabel()
+    private let calendarContainerView = UIView()
     private let calendar = FSCalendar()
     private let recordTableView = UITableView()
     private let previousMonthButton = UIButton()
@@ -29,6 +30,7 @@ final class CalendarView: UIView {
 // MARK: - Calendar UI 관련 extension
 private extension CalendarView {
     func setupUI() {
+        self.backgroundColor = .background
         setAppearance()
         setViewHierarchy()
         setConstraints()
@@ -41,24 +43,28 @@ private extension CalendarView {
             $0.textColor = .white
         }
 
+        calendarContainerView.do {
+            $0.backgroundColor = .cardContentBG // 달력의 배경 색상 /* 추후 색상 변경 예정‼️ */
+            $0.layer.cornerRadius = 20
+            $0.clipsToBounds = true
+        }
+
         calendar.do {
             $0.scrollEnabled = true // 스크롤 가능
             $0.scrollDirection = .horizontal // 수평 방향 스크롤
             $0.locale = Locale(identifier: "ko_KR") // 달력 형식 한국어 설정
             $0.placeholderType = .none // 현재 달만 표시
-            $0.backgroundColor = .cardContentBG // 달력의 배경 색상
-            $0.layer.cornerRadius = 20
-            $0.clipsToBounds = true
 
             // 달력 헤더
             $0.appearance.headerDateFormat = "yyyy.MM" // 달력 헤더 날짜 형식
             $0.appearance.headerTitleColor = .textSecondary // 달력 헤더 텍스트 색상
             $0.appearance.headerTitleFont = .systemFont(ofSize: 16, weight: .regular) // 달력 헤더 텍스트 폰트
             $0.appearance.headerMinimumDissolvedAlpha = 0.0 // 달력 헤더 전 달 & 다음 달 글씨 투명도
+            $0.appearance.headerTitleOffset = CGPoint(x: 0, y: -3) // 캘린더 헤더 위치 조정
 
             // 달력 요일
-            $0.appearance.weekdayTextColor = .textTertiary // 달력 요일 텍스트 색상
-            $0.appearance.weekdayFont = .systemFont(ofSize: 12, weight: .regular) // 달력 요일 텍스트 폰트
+            $0.appearance.weekdayTextColor = .textTertiary // 달력 요일 텍스트 색상 /* 추후 색상 변경 예정‼️ */
+            $0.appearance.weekdayFont = .systemFont(ofSize: 16, weight: .regular) // 달력 요일 텍스트 폰트
 
             // 달력 일반 날짜
             $0.appearance.titleDefaultColor = .textSecondary // 달력 일반 날짜 텍스트 색상
@@ -90,11 +96,13 @@ private extension CalendarView {
     func setViewHierarchy() {
         [
             titleLabel,
-            calendar,
+            calendarContainerView,
             previousMonthButton,
             nextMonthButton,
             recordTableView
         ].forEach { addSubviews($0) }
+
+        calendarContainerView.addSubview(calendar)
     }
 
     func setConstraints() {
@@ -103,25 +111,31 @@ private extension CalendarView {
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
         }
 
-        calendar.snp.makeConstraints {
+        calendarContainerView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(32)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
-            $0.height.equalTo(350)
+            $0.height.equalToSuperview().multipliedBy(0.37)
+        }
+
+        calendar.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(14)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(12)
         }
 
         recordTableView.snp.makeConstraints {
-            $0.top.equalTo(calendar.snp.bottom).offset(16)
+            $0.top.equalTo(calendarContainerView.snp.bottom).offset(16)
             $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide).inset(20)
         }
 
         previousMonthButton.snp.makeConstraints {
-            $0.leading.equalTo(calendar.snp.leading).offset(20)
+            $0.leading.equalTo(calendar.snp.leading).offset(8)
             $0.centerY.equalTo(calendar.calendarHeaderView.snp.centerY)
             $0.width.height.equalTo(24)
         }
 
         nextMonthButton.snp.makeConstraints {
-            $0.trailing.equalTo(calendar.snp.trailing).offset(-20)
+            $0.trailing.equalTo(calendar.snp.trailing).offset(-8)
             $0.centerY.equalTo(calendar.calendarHeaderView.snp.centerY)
             $0.width.height.equalTo(24)
         }
