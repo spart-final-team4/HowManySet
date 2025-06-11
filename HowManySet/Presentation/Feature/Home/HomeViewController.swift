@@ -17,8 +17,6 @@ final class HomeViewController: UIViewController, View {
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
     
-    private let setText = "세트"
-    private let repsText = "회"
     private let homeText = "홈"
     
     var disposeBag = DisposeBag()
@@ -187,7 +185,7 @@ private extension HomeViewController {
         pagingScrollView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalToSuperview().multipliedBy(0.47)
-            self.contentViewWidthConstraint = $0.width.equalTo(view.snp.width).multipliedBy(CGFloat(pagingCardViewContainer.count)).constraint
+            self.contentViewWidthConstraint = $0.width.equalTo(view.snp.width).multipliedBy(1).constraint
         }
         
         pagingScrollContentView.snp.makeConstraints {
@@ -230,11 +228,6 @@ private extension HomeViewController {
     /// 스크롤 뷰 안의 운동 정보 카드 뷰 레이아웃 설정
     func setPagingCardViewsConstraints(cardView: HomePagingCardView) {
         
-        cardView.snp.makeConstraints {
-            $0.edges.equalTo(pagingScrollView)
-            $0.width.height.equalTo(pagingScrollView.frameLayoutGuide)
-        }
-        
         titleLabel.snp.remakeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
@@ -265,7 +258,6 @@ private extension HomeViewController {
             
             let cardView = HomePagingCardView().then {
                 $0.layer.cornerRadius = 20
-                $0.isHidden = true
             }
             
             pagingCardViewContainer.append(cardView)
@@ -273,16 +265,21 @@ private extension HomeViewController {
             
             cardView.snp.makeConstraints {
                 $0.verticalEdges.equalToSuperview()
-                $0.width.equalToSuperview()
                 $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen().bounds.width)
-                
             }
             
-            setPagingCardViewsConstraints(cardView: cardView)
+            cardView.showExerciseUI()
             
-            contentViewWidthConstraint?.update(offset: UIScreen().bounds.width * CGFloat(cardStates.count))
-     
+            setPagingCardViewsConstraints(cardView: cardView)
         }
+        
+        pagingScrollContentView.snp.makeConstraints {
+            $0.width.equalTo(UIScreen.main.bounds.width * CGFloat(cardStates.count))
+        }
+        
+        contentViewWidthConstraint?.update(offset: UIScreen().bounds.width * CGFloat(cardStates.count))
+        
+        print(pagingCardViewContainer.count)
     }
     
     /// 페이징 후 스크롤 이동, 배경 처리, 레이아웃 조정
@@ -306,13 +303,15 @@ extension HomeViewController {
         print(#function)
         
         // MARK: - Action
-        // 루틴 선택 버튼 클릭 시
+        // 루틴 시작 버튼 클릭 시
         routineStartCardView.routineSelectButton.rx.tap
+            .observe(on: MainScheduler.instance)
             .map { Reactor.Action.routineSelected }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
+            .observe(on: MainScheduler.instance)
             .map { Reactor.Action.pauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -330,57 +329,42 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
-        // 텍스트 등 뷰 요소 바인딩
-        reactor.state.map { ($0.isWorkingout, $0.isResting) }
-            .filter { $0.0 }
+        reactor.state.map { $0.isWorkingout }
             .observe(on: MainScheduler.instance)
-            .bind(with: self) {
-                (view: HomeViewController, workoutInfo: (Bool, Bool)) in
+            .bind(onNext: { [weak self] isWorkingout in
+                guard let self else { return }
                 
-                let (isWorkingout, isResting) = workoutInfo
+                if isWorkingout {
+                    self.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
+                }
+                
+            })
+            .disposed(by: disposeBag)
+        
+        // 텍스트 등 뷰 요소 바인딩
+        reactor.state.map { $0.isWorkingout }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] isWorkingout in
+                guard let self else { return }
                 
                 // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
-                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
-                let restStartTime = reactor.currentState.restStartTime
+//                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
+//                let restStartTime = reactor.currentState.restStartTime
                 
-                if reactor.currentState.isWorkingout {
-                    
-                    view.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
-                    view.routineNameLabel.text = reactor.currentState.workoutRoutine.workouts.first?.name
-                    view.routineNumberLabel.text = "\(reactor.currentState.exerciseIndex + 1) / \(reactor.currentState.workoutRoutine.workouts.count)"
-                    
-                    let pagingCardView = view.pagingCardViewContainer[reactor.currentState.exerciseIndex]
+                if isWorkingout {
+                    self.routineNameLabel.text = reactor.currentState.workoutRoutine.workouts.first?.name
+                    self.routineNumberLabel.text = "\(reactor.currentState.exerciseIndex + 1) / \(reactor.currentState.workoutRoutine.workouts.count)"
                     
                     // 내부 카드 뷰들 세팅
                     self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
-                    
-                    if Int(restSecondsRemaining) != restStartTime {
-                        
-                        pagingCardView.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
-                        
-                        guard let totalRestTime = restStartTime, totalRestTime > 0 else {
-                            pagingCardView.restProgressBar.setProgress(0, animated: false)
-                            return
-                        }
-                        
-                        if isResting {
-                            // 휴식 중 일때만 휴식 프로그레스바 조정
-                            let elapsed = Float(totalRestTime) - Float(restSecondsRemaining)
-                            let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
-                            pagingCardView.restProgressBar.setProgress(progress, animated: true)
-                        } else {
-                            pagingCardView.showExerciseUI()
-                            
-                            pagingCardView.restProgressBar.setProgress(0, animated: false)
-                        }
-                    }
                 }
-            }
+            })
             .disposed(by: disposeBag)
 
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         reactor.state.map { $0.isResting }
-            .filter { $0 == true}
+            .filter { $0 == true }
             .observe(on: MainScheduler.instance)
             .bind(with: self) { view, isResting in
                 let pagingCardView = view.pagingCardViewContainer[reactor.currentState.exerciseIndex]

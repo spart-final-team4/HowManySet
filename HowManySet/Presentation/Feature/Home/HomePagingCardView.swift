@@ -12,32 +12,6 @@ import RxSwift
 import RxCocoa
 import ReactorKit
 
-/// 사용자에게 보여지는 운동 종목 카드 뷰의 정보를 담은 구조체
-struct WorkoutCardState: Equatable {
-    
-    // UI에 직접 표시될 값들 (Reactor에서 미리 계산하여 제공)
-    var currentExerciseName: String
-    var currentWeight: Double
-    var currentUnit: String
-    var currentReps: Int
-    /// 현재 진행 중인 세트 인덱스
-    var setIndex: Int
-    
-    /// 전체 운동 개수
-    var totalExerciseCount: Int
-    /// 현재 운동의 전체 세트 개수
-    var totalSetCount: Int
-    /// UI용 "1 / N"에서 1
-    var currentExerciseNumber: Int
-    /// UI용 "1 / N"에서 1
-    var currentSetNumber: Int
-    /// 세트 프로그레스바
-    var setProgressAmount: Int
-    
-    /// 현재 운동 종목의 메모
-    var commentInExercise: String?
-}
-
 final class HomePagingCardView: UIView, View {
     
     // MARK: - Properties
@@ -48,6 +22,8 @@ final class HomePagingCardView: UIView, View {
     private let restButtonText3 = "+10초"
     private let restResetButtonText = "초기화"
     private let setCompleteText = "세트 완료"
+    private let setText = "세트"
+    private let repsText = "회"
     
     var disposeBag = DisposeBag()
     
@@ -359,47 +335,24 @@ extension HomePagingCardView {
         
         // MARK: - State
         reactor.state.map { $0.cardState }
-            .distinctUntilChanged { $0.currentSetNumber == $1.currentSetNumber && $0.setProgressAmount == $1.setProgressAmount }
             .observe(on: MainScheduler.instance)
-            .bind(with: self) { view, state in
-                view.exerciseNameLabel.text = cardState.currentExerciseName
-                view.exerciseSetLabel.text = "\(cardState.currentSetNumber) / \(cardState.totalSetCount)"
-                view.currentSetLabel.text = "\(cardState.currentSetNumber)\(self.setText)"
-                view.weightLabel.text = "\(Int(cardState.currentWeight))\(cardState.currentUnit)"
-                view.repsLabel.text = "\(cardState.currentReps)\(self.repsText)"
+            .bind(onNext: { [weak self] state in
+                guard let self else { return }
+                self.exerciseNameLabel.text = state.currentExerciseName
+                self.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
+                self.currentSetLabel.text = "\(state.currentSetNumber)\(self.setText)"
+                self.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
+                self.repsLabel.text = "\(state.currentReps)\(self.repsText)"
                 
-                view.setProgressBar.updateProgress(currentSet: cardState.setProgressAmount)
+                self.setProgressBar.updateProgress(currentSet: state.setProgressAmount)
                 
-                if cardState.currentSetNumber == 1 {
-                    view.setProgressBar.setupSegments(totalSets: cardState.totalSetCount)
-                }
-            }.disposed(by: disposeBag)
-        
-        
-        // MARK: Action
-        // HomeViewReactor로부터 전달되는 updateCardState 액션의 파라미터 구독
-        reactor.action.ofType(HomePagingCardViewReactor.Action.updateCardState.self)
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] _, isResting, restRemaining, restStart in
-                guard let self = self else { return }
-                
-                if isResting {
-                    self.showRestUI()
-                    if let remaining = restRemaining {
-                        self.remaingRestTimeLabel.text = remaining.toRestTimeLabel()
-                    }
-                    if let totalTime = restStart, totalTime > 0, let remaining = restRemaining {
-                        let elapsed = Float(totalTime) - Float(remaining)
-                        self.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
-                    } else {
-                        self.restProgressBar.setProgress(0, animated: false)
-                    }
-                } else {
-                    self.showExerciseUI()
-                    self.restProgressBar.setProgress(0, animated: false)
+                if state.currentSetNumber == 1 {
+                    self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
                 }
             })
             .disposed(by: disposeBag)
+        
+      // TODO: 기존 휴식 시간 로직은 UI 변경 시 휴식 뷰에 적용!
         
     }
 }
