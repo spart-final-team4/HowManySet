@@ -70,19 +70,25 @@ final class DefaultPopupViewController: UIViewController {
     /// 팝업 초기화 메서드
     /// - Parameters:
     ///   - title: 제목 텍스트
+    ///   - titleTextColor: 제목 텍스트 색
     ///   - content: 내용 텍스트
     ///   - okButtonText: 확인 버튼 텍스트
+    ///   - okButtonBackgroundColor: 확인 버튼 배경 색
     ///   - okAction: 확인 버튼 클릭 시 실행할 클로저
     convenience init(title: String,
+                     titleTextColor: UIColor = .error,
                      content: String = "",
                      okButtonText: String,
+                     okButtonBackgroundColor: UIColor = .error,
                      okAction: @escaping () -> Void) {
         self.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overCurrentContext
         self.titleLabel.text = title
+        self.titleLabel.textColor = titleTextColor
         self.contentLabel.text = content
         self.okButton.setTitle(okButtonText, for: .normal)
+        self.okButton.backgroundColor = okButtonBackgroundColor
         self.okAction = okAction
     }
     
