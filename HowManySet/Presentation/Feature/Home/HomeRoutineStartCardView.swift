@@ -12,7 +12,6 @@ import Then
 final class HomeRoutineStartCardView: UIView {
     
     // MARK: - Properties
-    private let todayDate = "06.05"
     private let initialText = "오늘도 득근해요"
     private let selectButtonText = "운동 시작하기"
     
@@ -30,8 +29,7 @@ final class HomeRoutineStartCardView: UIView {
         $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
     
-    private lazy var todayDateLabel = UILabel().then {
-        $0.text = todayDate
+    lazy var todayDateLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     

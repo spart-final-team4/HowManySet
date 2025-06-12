@@ -38,7 +38,7 @@ final class HomeViewController: UIViewController, View {
         $0.spacing = 16
         $0.isHidden = true
     }
-        
+    
     private lazy var workoutTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 36, weight: .bold)
     }
@@ -55,7 +55,7 @@ final class HomeViewController: UIViewController, View {
         $0.alignment = .trailing
         $0.isHidden = true
     }
-
+    
     private lazy var stopButton = UIButton().then {
         $0.layer.cornerRadius = 22
         $0.backgroundColor = .roundButtonBG
@@ -63,7 +63,7 @@ final class HomeViewController: UIViewController, View {
         $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
         $0.tintColor = .pauseButton
     }
-
+    
     private lazy var forwardButton = UIButton().then {
         $0.layer.cornerRadius = 22
         $0.backgroundColor = .roundButtonBG
@@ -139,9 +139,9 @@ private extension HomeViewController {
             pageController,
             restInfoView
         )
-                
+        
         topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton)
-
+        
         buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
         
         pagingScrollView.addSubview(pagingScrollContentView)
@@ -166,11 +166,11 @@ private extension HomeViewController {
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
         }
-
+        
         stopButton.snp.makeConstraints {
             $0.width.height.equalTo(44)
         }
-
+        
         forwardButton.snp.makeConstraints {
             $0.width.height.equalTo(44)
         }
@@ -329,7 +329,7 @@ private extension HomeViewController {
             let nextCard = self.pagingCardViewContainer[nextPage]
             
             UIView.animate(withDuration: 0.1) {
-
+                
                 nextCard.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 nextCard.alpha = 0.8
             }
@@ -373,8 +373,16 @@ extension HomeViewController {
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
         }
-    
+        
         // MARK: - State
+        reactor.state.map { $0.isWorkingout }
+            .filter { !$0 }
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.routineStartCardView.todayDateLabel.text = reactor.currentState.date.toDateLabel()
+            }.disposed(by: disposeBag)
+        
         // 운동 시작 시 동작
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
@@ -406,12 +414,12 @@ extension HomeViewController {
             .bind(onNext: { [weak self] (isWorkingout: Bool) in
                 guard let self else { return }
                 
-                // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
-                //                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
-                //                let restStartTime = reactor.currentState.restStartTime
+                //                 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
+                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
+                let restStartTime = reactor.currentState.restStartTime
                 
                 if isWorkingout {
-
+                    
                     // 내부 카드 뷰들 세팅
                     self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
                 }
@@ -425,7 +433,6 @@ extension HomeViewController {
             .bind(with: self) { view, isResting in
                 
                 self.pagingCardViewContainer.forEach {
-                   
                     if isResting {
                         $0.showRestUI()
                     } else {
@@ -443,28 +450,28 @@ extension HomeViewController {
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
         
-//        reactor.state.map { $0 }
-//            .distinctUntilChanged()
-//            .observe(on: MainScheduler.instance)
-//            .bind(onNext: { [weak self] state in
-//                guard let self = self else { return }
-//
-//                if state.isResting {
-//                    self.showRestUI()
-//                    if let remaining = restRemaining {
-//                        self.remaingRestTimeLabel.text = remaining.toRestTimeLabel()
-//                    }
-//                    if let totalTime = restStart, totalTime > 0, let remaining = restRemaining {
-//                        let elapsed = Float(totalTime) - Float(remaining)
-//                        self.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
-//                    } else {
-//                        self.restProgressBar.setProgress(0, animated: false)
-//                    }
-//                } else {
-//                    self.showExerciseUI()
-//                    self.restProgressBar.setProgress(0, animated: false)
-//                }
-//            }).disposed(by: disposeBag)
+        //        reactor.state.map { $0 }
+        //            .distinctUntilChanged()
+        //            .observe(on: MainScheduler.instance)
+        //            .bind(onNext: { [weak self] state in
+        //                guard let self = self else { return }
+        //
+        //                if state.isResting {
+        //                    self.showRestUI()
+        //                    if let remaining = restRemaining {
+        //                        self.remaingRestTimeLabel.text = remaining.toRestTimeLabel()
+        //                    }
+        //                    if let totalTime = restStart, totalTime > 0, let remaining = restRemaining {
+        //                        let elapsed = Float(totalTime) - Float(remaining)
+        //                        self.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
+        //                    } else {
+        //                        self.restProgressBar.setProgress(0, animated: false)
+        //                    }
+        //                } else {
+        //                    self.showExerciseUI()
+        //                    self.restProgressBar.setProgress(0, animated: false)
+        //                }
+        //            }).disposed(by: disposeBag)
     }
 }
 
