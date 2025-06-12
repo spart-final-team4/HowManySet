@@ -16,20 +16,6 @@ final class SetProgressBarView: UIView {
     private let completedColor: UIColor = .brand
     private let remainingColor: UIColor = .gray
     
-    // 테스트 위해 임의로 지정
-    var totalSets = 5 {
-        didSet {
-            setupSegments()
-        }
-    }
-    
-    // 테스트 위해 임의로 지정
-    var currentSet = 2 {
-        didSet {
-            updateProgress()
-        }
-    }
-    
     // MARK: - UI Components
     /// 양 끝 부분만 round 처리하기 위한 View
     private let roundedContainerView: UIView = {
@@ -70,7 +56,6 @@ private extension SetProgressBarView {
     func setupUI() {
         setViewHiearchy()
         setConstraints()
-        setupSegments()
     }
     
     func setViewHiearchy() {
@@ -87,8 +72,12 @@ private extension SetProgressBarView {
             $0.edges.equalToSuperview()
         }
     }
+}
+
+// MARK: Internal Methods
+extension SetProgressBarView {
     
-    func setupSegments() {
+    func setupSegments(totalSets: Int) {
         // 기존 세그먼트 뷰 모두 제거
         progressBarStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
@@ -98,32 +87,19 @@ private extension SetProgressBarView {
             segmentView.backgroundColor = remainingColor
             
             progressBarStackView.addArrangedSubview(segmentView)
-            segmentView.snp.makeConstraints {
-                $0.width.equalTo(progressBarStackView.snp.width).multipliedBy(1/totalSets)
-                $0.height.equalToSuperview()
-            }
+        
         }
-        updateProgress()
     }
     
-    func updateProgress() {
+    func updateProgress(currentSet: Int) {
         // currentSet에 따라 각 세그먼트 뷰의 색상 변경
         for (index, segmentView) in progressBarStackView.arrangedSubviews.enumerated() {
        
-           if index < self.currentSet {
+           if index < currentSet {
                 segmentView.backgroundColor = self.completedColor
            } else {
                break
            }
        }
-    }
-}
-
-// MARK: Internal Methods
-extension SetProgressBarView {
-    func setProgress(totalSets: Int, currentSet: Int) {
-        self.totalSets = totalSets
-        self.currentSet = currentSet
-        updateProgress()
     }
 }

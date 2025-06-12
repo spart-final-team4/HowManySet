@@ -12,4 +12,11 @@ extension Date {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: self)
     }
+    
+    /// Date에서 "MM-dd" 형태의 String으로 반환하는 메서드
+    func toDateLabel() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM.dd"
+        return formatter.string(from: self)
+    }
 }

@@ -22,11 +22,6 @@ struct Workout {
     /// `WorkoutSet` 타입의 배열로, 각 세트의 반복 횟수, 무게 등을 포함할 수 있습니다.
     let sets: [WorkoutSet]
     
-    /// 세트 간의 휴식 시간(초)입니다.
-    ///
-    /// 예: `60`이면 세트 간 휴식 시간이 60초입니다.
-    let restTime: Int
-    
     /// 운동에 대한 메모 또는 코멘트입니다. 선택 사항입니다.
     ///
     /// 예: `"폼에 집중하기"`, `"마지막 세트는 최대 중량"` 등
@@ -41,9 +36,10 @@ extension Workout {
             sets: [
                 WorkoutSet(weight: 60, unit: "kg", reps: 10),
                 WorkoutSet(weight: 65, unit: "kg", reps: 8),
+                WorkoutSet(weight: 70, unit: "kg", reps: 6),
+                WorkoutSet(weight: 70, unit: "kg", reps: 6),
                 WorkoutSet(weight: 70, unit: "kg", reps: 6)
             ],
-            restTime: 90,
             comment: "팔꿈치 각도 유지"
         ),
         Workout(
@@ -53,7 +49,6 @@ extension Workout {
                 WorkoutSet(weight: 90, unit: "kg", reps: 10),
                 WorkoutSet(weight: 100, unit: "kg", reps: 8)
             ],
-            restTime: 120,
             comment: "무릎이 앞으로 나가지 않도록"
         ),
         Workout(
@@ -63,7 +58,6 @@ extension Workout {
                 WorkoutSet(weight: 110, unit: "kg", reps: 5),
                 WorkoutSet(weight: 120, unit: "kg", reps: 5)
             ],
-            restTime: 150,
             comment: "허리 고정에 집중"
         ),
         Workout(
@@ -73,7 +67,6 @@ extension Workout {
                 WorkoutSet(weight: 35, unit: "kg", reps: 8),
                 WorkoutSet(weight: 40, unit: "kg", reps: 6)
             ],
-            restTime: 90,
             comment: "코어에 힘 주기"
         ),
         Workout(
@@ -83,7 +76,6 @@ extension Workout {
                 WorkoutSet(weight: 50, unit: "kg", reps: 12),
                 WorkoutSet(weight: 55, unit: "kg", reps: 10)
             ],
-            restTime: 60,
             comment: "광배근 수축에 집중"
         )
     ]
