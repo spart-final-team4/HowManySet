@@ -38,7 +38,7 @@ final class HomeViewController: UIViewController, View {
         $0.spacing = 16
         $0.isHidden = true
     }
-    
+        
     private lazy var workoutTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 36, weight: .bold)
     }
@@ -49,21 +49,29 @@ final class HomeViewController: UIViewController, View {
         $0.tintColor = .white
     }
     
-    private lazy var topRoutineInfoVStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.spacing = 8
+    private lazy var buttonHStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 16
         $0.alignment = .trailing
+        $0.isHidden = true
+    }
+
+    private lazy var stopButton = UIButton().then {
+        $0.layer.cornerRadius = 22
+        $0.backgroundColor = .roundButtonBG
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
+        $0.tintColor = .pauseButton
+    }
+
+    private lazy var forwardButton = UIButton().then {
+        $0.layer.cornerRadius = 22
+        $0.backgroundColor = .roundButtonBG
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
+        $0.tintColor = .white
     }
     
-    private lazy var routineNameLabel = UILabel().then {
-        $0.textColor = .textSecondary
-        $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    }
-    
-    private lazy var routineNumberLabel = UILabel().then {
-        $0.textColor = .textSecondary
-        $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    }
     
     private lazy var routineStartCardView = HomeRoutineStartCardView().then {
         $0.layer.cornerRadius = 20
@@ -74,30 +82,6 @@ final class HomeViewController: UIViewController, View {
         $0.layer.cornerRadius = 20
         $0.isHidden = true
     }
-    
-    // TODO: UI 나오면 주석 해제 후 수정
-    //    private lazy var buttonHStackView = UIStackView().then {
-    //        $0.axis = .horizontal
-    //        $0.distribution = .equalSpacing
-    //        $0.alignment = .center
-    //        $0.isHidden = true
-    //    }
-    //
-    //    private lazy var stopButton = UIButton().then {
-    //        $0.layer.cornerRadius = 40
-    //        $0.backgroundColor = .roundButtonBG
-    //        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
-    //        $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
-    //        $0.tintColor = .pauseButton
-    //    }
-    //
-    //    private lazy var forwardButton = UIButton().then {
-    //        $0.layer.cornerRadius = 40
-    //        $0.backgroundColor = .roundButtonBG
-    //        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
-    //        $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
-    //        $0.tintColor = .white
-    //    }
     
     // MARK: - 페이징 스크롤 뷰 관련
     private lazy var pagingScrollView = UIScrollView().then {
@@ -149,15 +133,16 @@ private extension HomeViewController {
         view.addSubviews(
             titleLabel,
             topTimerHStackView,
+            buttonHStackView,
             routineStartCardView,
             pagingScrollView,
             pageController,
             restInfoView
         )
-        
-        topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton, topRoutineInfoVStackView)
-        topRoutineInfoVStackView.addArrangedSubviews(routineNameLabel, routineNumberLabel)
-        //        buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
+                
+        topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton)
+
+        buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
         
         pagingScrollView.addSubview(pagingScrollContentView)
     }
@@ -176,10 +161,18 @@ private extension HomeViewController {
             $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
         }
         
-        topRoutineInfoVStackView.snp.makeConstraints {
+        buttonHStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
+        }
+
+        stopButton.snp.makeConstraints {
+            $0.width.height.equalTo(44)
+        }
+
+        forwardButton.snp.makeConstraints {
+            $0.width.height.equalTo(44)
         }
         
         routineStartCardView.snp.makeConstraints {
@@ -208,20 +201,6 @@ private extension HomeViewController {
             $0.centerX.equalToSuperview()
             $0.height.equalToSuperview().multipliedBy(0.15)
         }
-        
-        //        buttonHStackView.snp.makeConstraints {
-        //            $0.top.equalTo(pageController.snp.bottom).offset(32)
-        //            $0.horizontalEdges.equalToSuperview().inset(80)
-        //            $0.centerX.equalToSuperview()
-        //        }
-        //
-        //        stopButton.snp.makeConstraints {
-        //            $0.width.height.equalTo(80)
-        //        }
-        //
-        //        forwardButton.snp.makeConstraints {
-        //            $0.width.height.equalTo(80)
-        //        }
     }
     
     /// 운동 시작 시 표현되는 뷰 설정
@@ -229,7 +208,7 @@ private extension HomeViewController {
         
         routineStartCardView.isHidden = true
         
-        [topTimerHStackView, topRoutineInfoVStackView, pageController, pagingScrollView, restInfoView].forEach {
+        [topTimerHStackView, buttonHStackView, pageController, pagingScrollView, restInfoView].forEach {
             $0.isHidden = false
         }
         
@@ -251,7 +230,7 @@ private extension HomeViewController {
             $0.bottom.equalTo(pagingScrollView.snp.top).offset(-32)
         }
         
-        topRoutineInfoVStackView.snp.remakeConstraints {
+        buttonHStackView.snp.remakeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(pagingScrollView.snp.top).offset(-32)
@@ -416,7 +395,7 @@ extension HomeViewController {
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] isWorkingout in
+            .bind(onNext: { [weak self] (isWorkingout: Bool) in
                 guard let self else { return }
                 
                 // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
@@ -424,9 +403,7 @@ extension HomeViewController {
                 //                let restStartTime = reactor.currentState.restStartTime
                 
                 if isWorkingout {
-                    self.routineNameLabel.text = reactor.currentState.workoutRoutine.workouts.first?.name
-                    self.routineNumberLabel.text = "\(reactor.currentState.exerciseIndex + 1) / \(reactor.currentState.workoutRoutine.workouts.count)"
-                    
+
                     // 내부 카드 뷰들 세팅
                     self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
                 }
