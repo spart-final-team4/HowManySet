@@ -36,7 +36,9 @@ extension WorkoutRoutine {
             workouts: [
                 Workout.mockData[0], // 벤치프레스
                 Workout.mockData[1], // 스쿼트
-                Workout.mockData[2]  // 데드리프트
+                Workout.mockData[2], // 데드리프트
+                Workout.mockData[3], // 오버헤드 프레스
+                Workout.mockData[4]  // 랫풀다운
             ], restTime: 5
         ),
         WorkoutRoutine(
