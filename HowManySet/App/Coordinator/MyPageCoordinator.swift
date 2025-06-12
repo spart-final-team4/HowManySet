@@ -7,6 +7,7 @@
 
 import UIKit
 import SafariServices
+import MessageUI
 
 protocol MyPageCoordinatorProtocol: Coordinator {
     func presentLanguageSettingAlert()
@@ -48,29 +49,13 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// 버전 정보
     /// 개인정보처리방침
     /// 문제제보
+    /// 로그아웃
     /// 계정탈퇴
     /// -----------------
-    /// 팝업: 무게 단위 설정
+    /// 팝업: 로그아웃, 계정탈퇴
     /// 설정으로 이동: 언어 변경
     /// View Push: 알림 설정
     /// alert: 버전정보
-    
-    
-    /// 프로필 설정 창 push
-    func pushProfileSettingView() {
-        
-    }
-    
-    /// 회원전환 or 로그아웃 시 뷰 스택 초기화 후 로그인 화면으로
-    func navigateToAuthView() {
-        // TODO: 회원전환 로직
-        // TODO: 로그아웃 로직
-        
-        let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
-        let authVC = container.makeAuthViewController(coordinator: authCoordinator)
-        
-        navigationController.setViewControllers([authVC], animated: false)
-    }
     
     /// 언어 변경 처리 (설정 앱 이동 알림)
     func presentLanguageSettingAlert() {
@@ -117,16 +102,25 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// Alert로 버전 정보 표시
     func showVersionInfo() {
         // 버전 정보 받아오기
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "알 수 없음"
-        
-        let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(version)", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        navigationController.present(alert, animated: true)
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        let appstoreVersion = getAppStoreVersion()
+        if appstoreVersion != currentVersion {
+            let needToUpdatePopupVC = DefaultPopupViewController(title: "최신버전이 아닙니다.", content: "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)", okButtonText: "업데이트") {
+                // TODO: 앱스토어 앱 페이지로 이동
+                print("업데이트")
+            }
+            navigationController.present(needToUpdatePopupVC, animated: true)
+        } else {
+            let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(currentVersion)", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            navigationController.present(alert, animated: true)
+        }
     }
+    
     /// 앱스토러에 등록된 앱의 버전 불러오기
     private func getAppStoreVersion() -> String? {
         let appLink = ""
-        let url = URL(string: appLink)!
+        guard let url = URL(string: appLink) else { return nil }
         let data = try? Data(contentsOf: url)
         if data == nil { return nil }
         let json = try? JSONSerialization.jsonObject(with: data!) as? [String: Any]
@@ -139,7 +133,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 앱스토어 리뷰 작성 페이지로 이동
     func openAppStoreReviewPage() {
-        // 추후에 url 설정 필요
+        // TODO: 추후에 url 설정 필요
         guard let url = URL(string: "itms-apps://itunes.apple.com/app/idYOUR_APP_ID?action=write-review"),
               UIApplication.shared.canOpenURL(url) else {
             return
@@ -149,7 +143,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 개인정보처리방침 링크로 이동
     func presentPrivacyPolicyView() {
-        // 추후에 url 설정 필요
+        // TODO: 추후에 url 설정 필요
         guard let url = URL(string: "개인정보처리방침 링크") else { return }
         let safariVC = SFSafariViewController(url: url)
         
@@ -158,16 +152,26 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 문제제보 링크로 이동
     func presentReportProblemView() {
+        if MFMailComposeViewController.canSendMail() {
+            let vc = MFMailComposeViewController()
+            
+            vc.setToRecipients(["HowManySet@gmail.com"])
+            vc.setSubject("HowManySet문제 제보하기")
+            
+            navigationController.present(vc, animated: true)
+        } else {
+            print("MFMailComposeViewController.canSendMail() is false")
+        }
         // 추후에 url 설정 필요
-        guard let url = URL(string: "문제제보 링크") else { return }
-        let safariVC = SFSafariViewController(url: url)
+//        guard let url = URL(string: "문제제보 링크") else { return }
+//        let safariVC = SFSafariViewController(url: url)
         
-        navigationController.present(safariVC, animated: true)
+//        navigationController.present(safariVC, animated: true)
     }
     
     func alertLogout() {
-        let deleteAccountVC = DefaultPopupViewController(title: "로그아웃 하시겠습니까?", content: "", okButtonText: "로그아웃") {
-            print("로그아웃")
+        let deleteAccountVC = DefaultPopupViewController(title: "로그아웃 하시겠습니까?", okButtonText: "로그아웃") {
+            // TODO: 로그인 페이지로 이동
         }
         navigationController.present(deleteAccountVC, animated: true)
     }
@@ -176,6 +180,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     func pushAccountWithdrawalView() {
         // TODO: 계정 삭제 로직
         let deleteAccountVC = DefaultPopupViewController(title: "정말 탈퇴하시겠습니까?", content: "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다.", okButtonText: "계정 삭제") {
+            // TODO: 계정 삭제 & 로그인 페이지로 이동
             print("계정 삭제")
         }
         navigationController.present(deleteAccountVC, animated: true)
