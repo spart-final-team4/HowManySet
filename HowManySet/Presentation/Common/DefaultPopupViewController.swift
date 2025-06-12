@@ -39,7 +39,7 @@ final class DefaultPopupViewController: UIViewController {
     /// 팝업 본문에 표시될 설명 레이블
     private let contentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
-        $0.numberOfLines = 2
+        $0.numberOfLines = 0
         $0.textColor = .textTertiary
     }
     
@@ -74,7 +74,7 @@ final class DefaultPopupViewController: UIViewController {
     ///   - okButtonText: 확인 버튼 텍스트
     ///   - okAction: 확인 버튼 클릭 시 실행할 클로저
     convenience init(title: String,
-                     content: String,
+                     content: String = "",
                      okButtonText: String,
                      okAction: @escaping () -> Void) {
         self.init(nibName: nil, bundle: nil)
@@ -122,7 +122,7 @@ private extension DefaultPopupViewController {
         stackView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.equalToSuperview().multipliedBy(0.75)
-            $0.height.equalToSuperview().multipliedBy(0.3)
+            $0.height.greaterThanOrEqualToSuperview().multipliedBy(0.2)
         }
     }
 }

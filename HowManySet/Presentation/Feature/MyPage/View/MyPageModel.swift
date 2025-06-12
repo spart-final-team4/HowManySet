@@ -37,7 +37,7 @@ enum MyPageCollectionViewModel {
                            ]),
         MyPageSectionModel(title: "도움말 및 정보",
                            cellModel: [
-                            MyPageCellModel(title: "버전 정보", version: "v1.0.0"),
+                            MyPageCellModel(title: "버전 정보", version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String),
                             MyPageCellModel(title: "앱 평가"),
                             MyPageCellModel(title: "문제 제보하기")
                            ]),

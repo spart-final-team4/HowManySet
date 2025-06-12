@@ -33,7 +33,7 @@ extension MyPageCollectionView: UICollectionViewDelegate, UICollectionViewDataSo
         return MyPageCollectionViewModel.model.count
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        if section >= 2 {
+        if section >= (MyPageCollectionViewModel.model.count-1) {
             return .zero
         }
         return CGSize(width: UIScreen.main.bounds.width, height: 10)
