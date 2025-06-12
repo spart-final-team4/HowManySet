@@ -62,20 +62,6 @@ final class AuthView: UIView {
         $0.contentHorizontalAlignment = .center
     }
 
-    let anonymousLoginButton: UIButton = {
-        let button = UIButton(type: .system)
-        let title = "비회원으로 시작하기"
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.lightGray,
-            .font: UIFont.systemFont(ofSize: 16, weight: .regular),
-            .underlineStyle: NSUnderlineStyle.single.rawValue
-        ]
-        let attributedTitle = NSAttributedString(string: title, attributes: attributes)
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        button.backgroundColor = .clear
-        return button
-    }()
-
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -90,7 +76,7 @@ final class AuthView: UIView {
     // MARK: - Layout
 
     private func setupLayout() {
-        addSubviews(logoView, logoTitle, kakaoLoginButton, googleLoginButton, appleLoginButton, anonymousLoginButton)
+        addSubviews(logoView, logoTitle, kakaoLoginButton, googleLoginButton, appleLoginButton)
 
         logoView.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(220)
@@ -113,12 +99,7 @@ final class AuthView: UIView {
         }
         appleLoginButton.snp.makeConstraints {
             $0.left.right.height.equalTo(kakaoLoginButton)
-            $0.bottom.equalTo(anonymousLoginButton.snp.top).offset(-24)
-        }
-        anonymousLoginButton.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(32)
         }
     }
 }
-
