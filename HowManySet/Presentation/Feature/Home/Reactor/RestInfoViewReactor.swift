@@ -1,17 +1,15 @@
 //
-//  CompleteViewReactor.swift
+//  RestInfoViewReactor.swift
 //  HowManySet
 //
-//  Created by 정근호 on 6/4/25.
+//  Created by 정근호 on 6/12/25.
 //
 
 import Foundation
 import RxSwift
 import ReactorKit
 
-final class RoutineCompleteViewReactor: Reactor {
-    
-    private let saveRecordUseCase: SaveRecordUseCase
+final class RestInfoViewReactor: Reactor {
     
     // Action is an user interaction
     enum Action {
@@ -30,9 +28,7 @@ final class RoutineCompleteViewReactor: Reactor {
     
     let initialState: State
     
-    init(saveRecordUseCase: SaveRecordUseCase) {
-        self.saveRecordUseCase = saveRecordUseCase
-
+    init() {
         self.initialState = State()
     }
     
@@ -46,3 +42,4 @@ final class RoutineCompleteViewReactor: Reactor {
     //
     //    }
 }
+

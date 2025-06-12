@@ -56,7 +56,7 @@ extension WorkoutRecordDTO {
     func toEntity() -> WorkoutRecord {
         return WorkoutRecord(
             workoutRoutine: self.workoutRoutine?.toEntity()
-                ?? WorkoutRoutine(name: "MOCK", workouts: []),
+            ?? WorkoutRoutine(name: "MOCK", workouts: []),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
             comment: self.comment,

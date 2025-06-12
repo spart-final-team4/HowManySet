@@ -7,19 +7,50 @@
 
 import UIKit
 import SnapKit
+import Then
+import RxSwift
+import ReactorKit
 
-final class WorkoutOptionViewController: UIViewController {
+final class WorkoutOptionViewController: UIViewController, View {
     
     // MARK: - Properties
-    private let reactor: WorkoutOptionViewReactor
+    var disposeBag = DisposeBag()
+    
+    private let editText = "편집"
+    private let editRoutineButtonText = "운동 목록 변경"
+    private let memoText = "메모"
+    private let memoPlaceHolderText = "메모를 입력해주세요."
     
     // MARK: - UI Components
+    private lazy var containerView = UIView()
+    
+    private lazy var editLabel = UILabel().then {
+        $0.text = editText
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+    }
+    
+    private lazy var editRoutineButton = UIButton().then {
+        $0.backgroundColor = .disabledButton
+        $0.layer.cornerRadius = 12
+        $0.setTitle(editRoutineButtonText, for: .normal)
+    }
+    
+    private lazy var memoLabel = UILabel().then {
+        $0.text = memoText
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+    }
+    
+    private lazy var memoTextView = UITextView().then {
+        $0.backgroundColor = .bsInputFieldBG
+        $0.text = memoPlaceHolderText
+    }
     
     
     // MARK: - Initializer
     init(reactor: WorkoutOptionViewReactor) {
-        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
+
     }
     
     required init?(coder: NSCoder) {
@@ -29,6 +60,8 @@ final class WorkoutOptionViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
     }
     
 }
@@ -36,4 +69,23 @@ final class WorkoutOptionViewController: UIViewController {
 // MARK: - UI Methods
 private extension WorkoutOptionViewController {
     
+    func setupUI() {
+        
+    }
+    
+    func setViewHiearchy() {
+        
+    }
+    
+    func setConstraints() {
+        
+    }
+}
+
+// MARK: - Reactor Binding
+extension WorkoutOptionViewController {
+    
+    func bind(reactor: WorkoutOptionViewReactor) {
+        
+    }
 }
