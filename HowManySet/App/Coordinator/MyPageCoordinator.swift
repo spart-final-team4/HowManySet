@@ -126,20 +126,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         }
     }
     
-    /// 앱스토러에 등록된 앱의 버전 불러오기
-    private func getAppStoreVersion() -> String? {
-        let appLink = ""
-        guard let url = URL(string: appLink) else { return nil }
-        let data = try? Data(contentsOf: url)
-        if data == nil { return nil }
-        let json = try? JSONSerialization.jsonObject(with: data!) as? [String: Any]
-        let results = json?["results"] as? [[String: Any]]
-        if (results?.count ?? -1) > 0 {
-            return results![0]["version"] as? String
-        }
-        return nil
-    }
-    
     /// 앱스토어 리뷰 작성 페이지로 이동
     func openAppStoreReviewPage() {
         // TODO: 추후에 url 설정 필요
@@ -208,7 +194,21 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
 }
 
 
-extension MyPageCoordinator {
+private extension MyPageCoordinator {
+    /// 앱스토러에 등록된 앱의 버전 불러오기
+    func getAppStoreVersion() -> String? {
+        let appLink = ""
+        guard let url = URL(string: appLink) else { return nil }
+        let data = try? Data(contentsOf: url)
+        if data == nil { return nil }
+        let json = try? JSONSerialization.jsonObject(with: data!) as? [String: Any]
+        let results = json?["results"] as? [[String: Any]]
+        if (results?.count ?? -1) > 0 {
+            return results![0]["version"] as? String
+        }
+        return nil
+    }
+    
     func getModelName() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
