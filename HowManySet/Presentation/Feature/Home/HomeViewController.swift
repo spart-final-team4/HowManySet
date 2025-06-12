@@ -68,30 +68,30 @@ final class HomeViewController: UIViewController, View {
     private lazy var routineStartCardView = HomeRoutineStartCardView().then {
         $0.layer.cornerRadius = 20
     }
-
+    
     // TODO: UI 나오면 주석 해제 후 수정
-//    private lazy var buttonHStackView = UIStackView().then {
-//        $0.axis = .horizontal
-//        $0.distribution = .equalSpacing
-//        $0.alignment = .center
-//        $0.isHidden = true
-//    }
-//    
-//    private lazy var stopButton = UIButton().then {
-//        $0.layer.cornerRadius = 40
-//        $0.backgroundColor = .roundButtonBG
-//        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
-//        $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
-//        $0.tintColor = .pauseButton
-//    }
-//    
-//    private lazy var forwardButton = UIButton().then {
-//        $0.layer.cornerRadius = 40
-//        $0.backgroundColor = .roundButtonBG
-//        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
-//        $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
-//        $0.tintColor = .white
-//    }
+    //    private lazy var buttonHStackView = UIStackView().then {
+    //        $0.axis = .horizontal
+    //        $0.distribution = .equalSpacing
+    //        $0.alignment = .center
+    //        $0.isHidden = true
+    //    }
+    //
+    //    private lazy var stopButton = UIButton().then {
+    //        $0.layer.cornerRadius = 40
+    //        $0.backgroundColor = .roundButtonBG
+    //        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
+    //        $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
+    //        $0.tintColor = .pauseButton
+    //    }
+    //
+    //    private lazy var forwardButton = UIButton().then {
+    //        $0.layer.cornerRadius = 40
+    //        $0.backgroundColor = .roundButtonBG
+    //        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
+    //        $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
+    //        $0.tintColor = .white
+    //    }
     
     // MARK: - 페이징 스크롤 뷰 관련
     private lazy var pagingScrollView = UIScrollView().then {
@@ -131,6 +131,10 @@ final class HomeViewController: UIViewController, View {
         bindUIEvents()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    
+    }
 }
 
 // MARK: - UI Methods
@@ -147,12 +151,12 @@ private extension HomeViewController {
             routineStartCardView,
             pagingScrollView,
             pageController,
-//            buttonHStackView
+            //            buttonHStackView
         )
         
         topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton, topRoutineInfoVStackView)
         topRoutineInfoVStackView.addArrangedSubviews(routineNameLabel, routineNumberLabel)
-//        buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
+        //        buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
         
         pagingScrollView.addSubview(pagingScrollContentView)
     }
@@ -197,19 +201,19 @@ private extension HomeViewController {
             $0.centerX.equalToSuperview()
         }
         
-//        buttonHStackView.snp.makeConstraints {
-//            $0.top.equalTo(pageController.snp.bottom).offset(32)
-//            $0.horizontalEdges.equalToSuperview().inset(80)
-//            $0.centerX.equalToSuperview()
-//        }
-//        
-//        stopButton.snp.makeConstraints {
-//            $0.width.height.equalTo(80)
-//        }
-//        
-//        forwardButton.snp.makeConstraints {
-//            $0.width.height.equalTo(80)
-//        }
+        //        buttonHStackView.snp.makeConstraints {
+        //            $0.top.equalTo(pageController.snp.bottom).offset(32)
+        //            $0.horizontalEdges.equalToSuperview().inset(80)
+        //            $0.centerX.equalToSuperview()
+        //        }
+        //
+        //        stopButton.snp.makeConstraints {
+        //            $0.width.height.equalTo(80)
+        //        }
+        //
+        //        forwardButton.snp.makeConstraints {
+        //            $0.width.height.equalTo(80)
+        //        }
     }
     
     /// 운동 시작 시 표현되는 뷰 설정
@@ -224,8 +228,8 @@ private extension HomeViewController {
         titleLabel.alpha = 0
     }
     
-    /// 스크롤 뷰 안의 운동 정보 카드 뷰 레이아웃 설정
-    func setPagingCardViewsConstraints(cardView: HomePagingCardView) {
+    /// 스크롤 뷰 기준으로 레이아웃 재설정
+    func remakeOtherViewsWithScrollView() {
         
         titleLabel.snp.remakeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -251,7 +255,12 @@ private extension HomeViewController {
         }
     }
     
+    /// 운동 카드뷰들 생성 및 레이아웃 적용
     func configureRoutineCardViews(cardStates: [WorkoutCardState]) {
+        
+        let screenWidth = UIScreen.main.bounds.width
+        let cardInset: CGFloat = 20
+        let cardWidth = screenWidth - (cardInset * 2)
         
         for (i, cardState) in cardStates.enumerated() {
             
@@ -259,42 +268,92 @@ private extension HomeViewController {
                 $0.layer.cornerRadius = 20
             }
             
-            pagingCardViewContainer.append(cardView)
+            // 레이아웃 설정
             pagingScrollContentView.addSubview(cardView)
             
             cardView.snp.makeConstraints {
-                $0.verticalEdges.equalToSuperview()
-                $0.width.equalTo(UIScreen.main.bounds.width - 40)
-                $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen.main.bounds.width + 20) 
+                $0.top.bottom.equalToSuperview()
+                $0.width.equalTo(cardWidth)
+                $0.leading.equalToSuperview()
+                    .offset(cardInset + CGFloat(i) * screenWidth)
             }
             
             cardView.showExerciseUI()
             
-            setPagingCardViewsConstraints(cardView: cardView)
+            // 뷰 저장하는 리스트에 append
+            pagingCardViewContainer.append(cardView)
         }
+        
+        remakeOtherViewsWithScrollView()
         
         if let lastCard = pagingCardViewContainer.last {
             pagingScrollContentView.snp.makeConstraints {
-                $0.trailing.equalTo(lastCard.snp.trailing).offset(20)
+                // 첫 번째에 leading+20을 했으니 여기서 trailing+20 추가
+                $0.trailing.equalTo(lastCard.snp.trailing).offset(cardInset)
             }
         }
-
+        
         pageController.numberOfPages = cardStates.count
         
         print(pagingCardViewContainer.count)
+        
+        handlePageChanged()
     }
     
-    /// 페이징 후 스크롤 이동, 배경 처리, 레이아웃 조정
-    func handlePageChanged(to currentPage: Int) {
-                
-        let offsetX = Int(pagingScrollView.frame.width) * currentPage
+    
+    /// 페이징 시 애니메이션 및 내부 콘텐츠 offset 수정
+    func handlePageChanged(currentPage: Int = 0) {
+        
+        let previousPage = currentPage - 1
+        let nextPage = currentPage + 1
+        
+        let offsetX = Int(UIScreen.main.bounds.width) * currentPage
+        
         pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
+        
+        // 애니메이션
+        if pagingCardViewContainer.indices.contains(currentPage) {
+            
+            let currentCard = self.pagingCardViewContainer[currentPage]
+            
+            currentCard.transform = .identity
+            currentCard.alpha = 1
+        }
+        
+        // 이전/다음 카드: 살짝 축소 + 흐리게
+        if previousPage >= 0,
+           pagingCardViewContainer.indices.contains(previousPage) {
+            
+            let previousCard = self.pagingCardViewContainer[previousPage]
+            
+            UIView.animate(withDuration: 0.1) {
+                
+                previousCard.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                previousCard.alpha = 0.8
+            }
+        }
+        
+        
+        if nextPage <= pagingCardViewContainer.count - 1,
+           pagingCardViewContainer.indices.contains(nextPage){
+            
+            let nextCard = self.pagingCardViewContainer[nextPage]
+            
+            UIView.animate(withDuration: 0.1) {
+
+                nextCard.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                nextCard.alpha = 0.8
+            }
+            
+        }
         
         // 이전 페이지 업데이트
         self.previousPage = currentPage
         // 현재 페이지 업데이트
         self.currentPage = currentPage
         print("currentPage: \(self.currentPage)")
+        
+        print(previousPage, currentPage, nextPage)
     }
 }
 
@@ -351,8 +410,8 @@ extension HomeViewController {
                 guard let self else { return }
                 
                 // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
-//                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
-//                let restStartTime = reactor.currentState.restStartTime
+                //                let restSecondsRemaining = reactor.currentState.restSecondsRemaining
+                //                let restStartTime = reactor.currentState.restStartTime
                 
                 if isWorkingout {
                     self.routineNameLabel.text = reactor.currentState.workoutRoutine.workouts.first?.name
@@ -363,7 +422,7 @@ extension HomeViewController {
                 }
             })
             .disposed(by: disposeBag)
-
+        
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         reactor.state.map { $0.isResting }
             .filter { $0 == true }
@@ -407,7 +466,7 @@ private extension HomeViewController {
                 
                 // 페이지가 변경 되었을 때만 조정
                 if newPage != previousPage {
-                    handlePageChanged(to: newPage)
+                    self.handlePageChanged(currentPage: newPage)
                 }
             })
             .bind(to: pageController.rx.currentPage)
@@ -423,9 +482,10 @@ private extension HomeViewController {
                 let currentPage = self.pageController.currentPage
                 return currentPage
             }
-            .bind(with: self) { view, currentPage in
-                view.handlePageChanged(to: currentPage)
-            }
+            .bind(onNext: { [weak self] currentPage in
+                guard let self else { return }
+                self.handlePageChanged(currentPage: currentPage)
+            })
             .disposed(by: disposeBag)
     }
 }
