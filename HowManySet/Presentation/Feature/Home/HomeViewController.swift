@@ -287,7 +287,7 @@ private extension HomeViewController {
         handlePageChanged()
     }
     
-    
+    // MARK: - Animation
     /// 페이징 시 애니메이션 및 내부 콘텐츠 offset 수정
     func handlePageChanged(currentPage: Int = 0) {
         
@@ -317,7 +317,7 @@ private extension HomeViewController {
             
             UIView.animate(withDuration: 0.1) {
                 
-                previousCard.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                previousCard.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 previousCard.alpha = 0.8
             }
         }
@@ -330,7 +330,7 @@ private extension HomeViewController {
             
             UIView.animate(withDuration: 0.1) {
 
-                nextCard.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                nextCard.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 nextCard.alpha = 0.8
             }
             
