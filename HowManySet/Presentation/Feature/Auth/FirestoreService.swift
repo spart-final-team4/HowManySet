@@ -121,7 +121,7 @@ final class FirestoreService {
 
     // MARK: - 운동 세션
 
-    /// 운동 세션 생성
+    /// 운동 세션 생성 (Create)
     /// - Parameter session: 저장할 FSWorkoutSession 객체 (id는 자동 할당)
     func createSession(_ session: FSWorkoutSession) async throws {
         let ref = db.collection("sessions").document()
@@ -130,7 +130,7 @@ final class FirestoreService {
         try ref.setData(from: newSession)
     }
 
-    /// 특정 사용자의 운동 세션 목록 조회
+    /// 특정 사용자의 운동 세션 목록 조회 (Read)
     /// - Parameter uid: 사용자 UID
     /// - Returns: FSWorkoutSession 배열
     func fetchSessions(for uid: String) async throws -> [FSWorkoutSession] {
@@ -139,8 +139,26 @@ final class FirestoreService {
             .getDocuments()
         return try snapshot.documents.compactMap { try $0.data(as: FSWorkoutSession.self) }
     }
-}
-
+    
+    /// 루틴 수정 (Update)
+    /// 루틴 수정: 해당 문서의 userId가 내 uid와 일치할 때만 수정
+    func updateRoutine(_ routine: FSWorkoutRoutine) async throws {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            throw NSError(domain: "NoAuth", code: 401)
+        }
+        guard let routineId = routine.id else {
+            throw NSError(domain: "NoRoutineId", code: 400)
+        }
+        let ref = db.collection("routines").document(routineId)
+        let snapshot = try await ref.getDocument()
+        guard let data = snapshot.data(),
+              let docUserId = data["userId"] as? String,
+              docUserId == uid else {
+            throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
+        }
+        try ref.setData(from: routine, merge: true)
+    }
+    
 // MARK: - 테스트 코드입니다.
 extension FirestoreService {
     /// FirestoreService 기능 테스트용 메서드
