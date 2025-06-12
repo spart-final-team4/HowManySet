@@ -7,7 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
-
+import FirebaseAuth // ✅ 테스트를 위한 import ✅
 
 // MARK: - Firestore 데이터 모델
 
@@ -138,5 +138,101 @@ final class FirestoreService {
             .whereField("userId", isEqualTo: uid)
             .getDocuments()
         return try snapshot.documents.compactMap { try $0.data(as: FSWorkoutSession.self) }
+    }
+}
+
+// MARK: - 테스트 코드입니다.
+extension FirestoreService {
+    /// FirestoreService 기능 테스트용 메서드
+    /// - 인증된 상태에서만 정상 동작합니다.
+    func testFirestoreService() async {
+        // 1. 현재 로그인된 사용자 UID 가져오기
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("❌ [테스트] 인증된 사용자가 없습니다. 먼저 Firebase 인증을 진행하세요.")
+            return
+        }
+        print("✅ [테스트] 현재 사용자 UID: \(uid)")
+
+        // 2. 테스트용 운동 세트/운동/루틴 생성
+        let testSet = FSWorkoutSet(weight: 50, unit: "kg", reps: 12)
+        let testWorkout = FSWorkout(name: "스쿼트", restTime: 90, comment: "무릎 조심", sets: [testSet])
+        let testRoutine = FSWorkoutRoutine(id: nil, userId: uid, name: "하체 루틴", workouts: [testWorkout])
+
+        // 3. 루틴 저장 테스트
+        do {
+            try await createRoutine(testRoutine)
+            print("✅ [테스트] 루틴 저장 성공")
+        } catch {
+            print("❌ [테스트] 루틴 저장 실패: \(error)")
+        }
+
+        // 4. 루틴 목록 조회 테스트
+        do {
+            let routines = try await fetchRoutines(for: uid)
+            print("✅ [테스트] 루틴 목록 조회 성공: 총 \(routines.count)개")
+            for routine in routines {
+                print("   - 루틴 이름: \(routine.name), 운동 개수: \(routine.workouts.count)")
+            }
+        } catch {
+            print("❌ [테스트] 루틴 목록 조회 실패: \(error)")
+        }
+
+        // 5. 운동 기록 저장 테스트
+        if let firstRoutine = try? await fetchRoutines(for: uid).first {
+            let testRecord = FSWorkoutRecord(
+                id: nil,
+                userId: uid,
+                routineId: firstRoutine.id ?? "",
+                totalTime: 3600,
+                workoutTime: 3200,
+                comment: "기록 테스트",
+                date: Date()
+            )
+            do {
+                try await createRecord(testRecord)
+                print("✅ [테스트] 운동 기록 저장 성공")
+            } catch {
+                print("❌ [테스트] 운동 기록 저장 실패: \(error)")
+            }
+        }
+
+        // 6. 운동 기록 목록 조회 테스트
+        do {
+            let records = try await fetchRecords(for: uid)
+            print("✅ [테스트] 운동 기록 목록 조회 성공: 총 \(records.count)개")
+            for record in records {
+                print("   - 기록 날짜: \(record.date), 루틴ID: \(record.routineId)")
+            }
+        } catch {
+            print("❌ [테스트] 운동 기록 목록 조회 실패: \(error)")
+        }
+
+        // 7. 운동 세션 저장 테스트
+        if let firstRecord = try? await fetchRecords(for: uid).first {
+            let testSession = FSWorkoutSession(
+                id: nil,
+                userId: uid,
+                recordId: firstRecord.id ?? "",
+                startDate: Date(),
+                endDate: Date().addingTimeInterval(3600)
+            )
+            do {
+                try await createSession(testSession)
+                print("✅ [테스트] 운동 세션 저장 성공")
+            } catch {
+                print("❌ [테스트] 운동 세션 저장 실패: \(error)")
+            }
+        }
+
+        // 8. 운동 세션 목록 조회 테스트
+        do {
+            let sessions = try await fetchSessions(for: uid)
+            print("✅ [테스트] 운동 세션 목록 조회 성공: 총 \(sessions.count)개")
+            for session in sessions {
+                print("   - 세션 시작: \(session.startDate), 종료: \(session.endDate)")
+            }
+        } catch {
+            print("❌ [테스트] 운동 세션 목록 조회 실패: \(error)")
+        }
     }
 }
