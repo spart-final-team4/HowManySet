@@ -187,12 +187,12 @@ private extension HomeViewController {
         pagingScrollView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalToSuperview().multipliedBy(0.47)
-            self.contentViewWidthConstraint = $0.width.equalTo(view.snp.width).multipliedBy(1).constraint
         }
         
         pagingScrollContentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalToSuperview()
+            self.contentViewWidthConstraint = $0.width.equalTo(view.snp.width).multipliedBy(1).constraint
         }
         
         pageController.snp.makeConstraints {
@@ -267,7 +267,8 @@ private extension HomeViewController {
             
             cardView.snp.makeConstraints {
                 $0.verticalEdges.equalToSuperview()
-                $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen().bounds.width)
+                $0.width.equalTo(pagingScrollView)
+                $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen.main.bounds.width)
             }
             
             cardView.showExerciseUI()
@@ -275,11 +276,10 @@ private extension HomeViewController {
             setPagingCardViewsConstraints(cardView: cardView)
         }
         
-        pagingScrollContentView.snp.makeConstraints {
-            $0.width.equalTo(UIScreen.main.bounds.width * CGFloat(cardStates.count))
-        }
-        
         contentViewWidthConstraint?.update(offset: UIScreen().bounds.width * CGFloat(cardStates.count))
+        
+
+        pageController.numberOfPages = cardStates.count
         
         print(pagingCardViewContainer.count)
     }
