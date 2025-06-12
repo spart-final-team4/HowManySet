@@ -23,8 +23,6 @@ final class HomeViewController: UIViewController, View {
     
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
-    /// 페이징 뷰가 들어갈 콘텐트 뷰의 너비 제약조건
-    private var contentViewWidthConstraint: Constraint?
     
     private var currentPage = 0
     private var previousPage = 0
@@ -185,14 +183,13 @@ private extension HomeViewController {
         }
         
         pagingScrollView.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalToSuperview().multipliedBy(0.47)
         }
         
         pagingScrollContentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalToSuperview()
-            self.contentViewWidthConstraint = $0.width.equalTo(view.snp.width).multipliedBy(1).constraint
         }
         
         pageController.snp.makeConstraints {
@@ -267,8 +264,8 @@ private extension HomeViewController {
             
             cardView.snp.makeConstraints {
                 $0.verticalEdges.equalToSuperview()
-                $0.width.equalTo(pagingScrollView)
-                $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen.main.bounds.width)
+                $0.width.equalTo(UIScreen.main.bounds.width - 40)
+                $0.leading.equalToSuperview().offset(CGFloat(i) * UIScreen.main.bounds.width + 20) 
             }
             
             cardView.showExerciseUI()
@@ -276,8 +273,11 @@ private extension HomeViewController {
             setPagingCardViewsConstraints(cardView: cardView)
         }
         
-        contentViewWidthConstraint?.update(offset: UIScreen().bounds.width * CGFloat(cardStates.count))
-        
+        if let lastCard = pagingCardViewContainer.last {
+            pagingScrollContentView.snp.makeConstraints {
+                $0.trailing.equalTo(lastCard.snp.trailing).offset(20)
+            }
+        }
 
         pageController.numberOfPages = cardStates.count
         
