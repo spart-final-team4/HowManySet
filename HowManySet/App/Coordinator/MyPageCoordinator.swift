@@ -123,6 +123,19 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         navigationController.present(alert, animated: true)
     }
+    /// 앱스토러에 등록된 앱의 버전 불러오기
+    private func getAppStoreVersion() -> String? {
+        let appLink = ""
+        let url = URL(string: appLink)!
+        let data = try? Data(contentsOf: url)
+        if data == nil { return nil }
+        let json = try? JSONSerialization.jsonObject(with: data!) as? [String: Any]
+        let results = json?["results"] as? [[String: Any]]
+        if (results?.count ?? -1) > 0 {
+            return results![0]["version"] as? String
+        }
+        return nil
+    }
     
     /// 앱스토어 리뷰 작성 페이지로 이동
     func openAppStoreReviewPage() {
@@ -153,20 +166,19 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     }
     
     func alertLogout() {
-        print(#function)
+        let deleteAccountVC = DefaultPopupViewController(title: "로그아웃 하시겠습니까?", content: "", okButtonText: "로그아웃") {
+            print("로그아웃")
+        }
+        navigationController.present(deleteAccountVC, animated: true)
     }
     
     /// 계정 삭제 시 단순 alert? or View?
     func pushAccountWithdrawalView() {
         // TODO: 계정 삭제 로직
-        let alert = UIAlertController(title: "계정 삭제", message: "정말로 계정을 삭제하시겠어요?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "네", style: .destructive))
-        alert.addAction(UIAlertAction(title: "아니오", style: .cancel))
-        
-        let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
-        let authVC = container.makeAuthViewController(coordinator: authCoordinator)
-        
-        navigationController.setViewControllers([authVC], animated: false)
+        let deleteAccountVC = DefaultPopupViewController(title: "정말 탈퇴하시겠습니까?", content: "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다.", okButtonText: "계정 삭제") {
+            print("계정 삭제")
+        }
+        navigationController.present(deleteAccountVC, animated: true)
     }
     
     
