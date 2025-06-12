@@ -159,6 +159,23 @@ final class FirestoreService {
         try ref.setData(from: routine, merge: true)
     }
     
+    /// 루틴 삭제 (Delete)
+    /// 루틴 삭제: 해당 문서의 userId가 내 uid와 일치할 때만 삭제
+    func deleteRoutine(routineId: String) async throws {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            throw NSError(domain: "NoAuth", code: 401)
+        }
+        let ref = db.collection("routines").document(routineId)
+        let snapshot = try await ref.getDocument()
+        guard let data = snapshot.data(),
+              let docUserId = data["userId"] as? String,
+              docUserId == uid else {
+            throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
+        }
+        try await ref.delete()
+    }
+}
+
 // MARK: - 테스트 코드입니다.
 extension FirestoreService {
     /// FirestoreService 기능 테스트용 메서드
