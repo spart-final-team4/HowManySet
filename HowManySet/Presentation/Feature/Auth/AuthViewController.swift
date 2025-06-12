@@ -113,12 +113,6 @@ final class AuthViewController: UIViewController, View {
         /// 애플 로그인 버튼은 Rx 확장이 없어 addTarget으로 처리
         authView.appleLoginButton.addTarget(self, action: #selector(handleAppleLogin), for: .touchUpInside)
 
-        /// 비회원 로그인 버튼 탭 이벤트를 reactor 액션으로 전달
-        authView.anonymousLoginButton.rx.tap
-            .map { AuthViewReactor.Action.tapAnonymousLogin }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
         /// 로그인 성공 시 coordinator의 completeAuth() 호출로 인증 플로우 종료
         reactor.state.map { $0.isLoggedIn }
             .distinctUntilChanged()
