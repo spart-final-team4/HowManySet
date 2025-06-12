@@ -69,6 +69,12 @@ final class HomeViewController: UIViewController, View {
         $0.layer.cornerRadius = 20
     }
     
+    private lazy var restInfoView = RestInfoView(frame: .zero, reactor: RestInfoViewReactor()).then {
+        $0.backgroundColor = .cardBackground
+        $0.layer.cornerRadius = 20
+        $0.isHidden = true
+    }
+    
     // TODO: UI 나오면 주석 해제 후 수정
     //    private lazy var buttonHStackView = UIStackView().then {
     //        $0.axis = .horizontal
@@ -130,11 +136,6 @@ final class HomeViewController: UIViewController, View {
         setupUI()
         bindUIEvents()
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    
-    }
 }
 
 // MARK: - UI Methods
@@ -151,7 +152,7 @@ private extension HomeViewController {
             routineStartCardView,
             pagingScrollView,
             pageController,
-            //            buttonHStackView
+            restInfoView
         )
         
         topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton, topRoutineInfoVStackView)
@@ -183,12 +184,12 @@ private extension HomeViewController {
         
         routineStartCardView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.47)
+            $0.height.equalToSuperview().multipliedBy(0.45)
         }
         
         pagingScrollView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalToSuperview().multipliedBy(0.47)
+            $0.height.equalToSuperview().multipliedBy(0.45)
         }
         
         pagingScrollContentView.snp.makeConstraints {
@@ -199,6 +200,13 @@ private extension HomeViewController {
         pageController.snp.makeConstraints {
             $0.top.equalTo(routineStartCardView.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
+        }
+        
+        restInfoView.snp.makeConstraints {
+            $0.top.equalTo(pageController.snp.bottom).offset(16)
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.centerX.equalToSuperview()
+            $0.height.equalToSuperview().multipliedBy(0.15)
         }
         
         //        buttonHStackView.snp.makeConstraints {
@@ -221,7 +229,7 @@ private extension HomeViewController {
         
         routineStartCardView.isHidden = true
         
-        [topTimerHStackView, topRoutineInfoVStackView, pageController, pagingScrollView].forEach {
+        [topTimerHStackView, topRoutineInfoVStackView, pageController, pagingScrollView, restInfoView].forEach {
             $0.isHidden = false
         }
         
@@ -316,8 +324,10 @@ private extension HomeViewController {
             
             let currentCard = self.pagingCardViewContainer[currentPage]
             
-            currentCard.transform = .identity
-            currentCard.alpha = 1
+            UIView.animate(withDuration: 0.1) {
+                currentCard.transform = .identity
+                currentCard.alpha = 1
+            }
         }
         
         // 이전/다음 카드: 살짝 축소 + 흐리게
