@@ -366,6 +366,14 @@ extension HomeViewController {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        pagingCardViewContainer.forEach {
+            $0.setCompleteButton.rx.tap
+                .observe(on: MainScheduler.instance)
+                .map { Reactor.Action.setCompleteButtonClicked }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        }
+    
         // MARK: - State
         // 운동 시작 시 동작
         reactor.state.map { $0.isWorkingout }
@@ -415,12 +423,15 @@ extension HomeViewController {
             .filter { $0 == true }
             .observe(on: MainScheduler.instance)
             .bind(with: self) { view, isResting in
-                let pagingCardView = view.pagingCardViewContainer[reactor.currentState.exerciseIndex]
-                if isResting {
-                    pagingCardView.showRestUI()
-                } else {
-                    pagingCardView.showExerciseUI()
-                    pagingCardView.restProgressBar.setProgress(0, animated: false)
+                
+                self.pagingCardViewContainer.forEach {
+                   
+                    if isResting {
+                        $0.showRestUI()
+                    } else {
+                        $0.showExerciseUI()
+                        $0.restProgressBar.setProgress(0, animated: false)
+                    }
                 }
             }.disposed(by: disposeBag)
         
@@ -431,6 +442,29 @@ extension HomeViewController {
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
+        
+//        reactor.state.map { $0 }
+//            .distinctUntilChanged()
+//            .observe(on: MainScheduler.instance)
+//            .bind(onNext: { [weak self] state in
+//                guard let self = self else { return }
+//
+//                if state.isResting {
+//                    self.showRestUI()
+//                    if let remaining = restRemaining {
+//                        self.remaingRestTimeLabel.text = remaining.toRestTimeLabel()
+//                    }
+//                    if let totalTime = restStart, totalTime > 0, let remaining = restRemaining {
+//                        let elapsed = Float(totalTime) - Float(remaining)
+//                        self.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
+//                    } else {
+//                        self.restProgressBar.setProgress(0, animated: false)
+//                    }
+//                } else {
+//                    self.showExerciseUI()
+//                    self.restProgressBar.setProgress(0, animated: false)
+//                }
+//            }).disposed(by: disposeBag)
     }
 }
 

@@ -277,9 +277,6 @@ extension HomePagingCardView {
                 }
             })
             .disposed(by: disposeBag)
-        
-      // TODO: 기존 휴식 시간 로직은 UI 변경 시 휴식 뷰에 적용!
-        
     }
 }
 

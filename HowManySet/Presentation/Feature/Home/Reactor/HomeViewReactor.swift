@@ -70,9 +70,9 @@ final class HomeViewReactor: Reactor {
         
         var isResting: Bool
         var isRestPaused: Bool
-        /// 프로그레스바에 사용될 현재 휴식 시간 (사용자가 버튼으로 변경 시 즉시 변경 안됨)
+        /// 프로그레스바에 사용될 현재 휴식 시간
         var restSecondsRemaining: Float
-        /// 기본 휴식 시간 (사용자가 버튼으로 변경 시 즉시 변경)
+        /// 기본 휴식 시간
         var restTime: Int
         /// 휴식이 시작될 때의 값 (프로그레스바 용)
         var restStartTime: Int?
@@ -130,7 +130,7 @@ final class HomeViewReactor: Reactor {
             isResting: false,
             isRestPaused: false,
             restSecondsRemaining: 0,
-            restTime: initialRoutine.restTime,
+            restTime: 0,
             date: Date(),
             commentInRoutine: nil,
             pagingCardViewReactors: initialPagingCardViewReactors
@@ -189,13 +189,13 @@ final class HomeViewReactor: Reactor {
         // 세트 완료 버튼 클릭 시 로직
         case .setCompleteButtonClicked:
             
-            let setResting = Observable.just(Mutation.setResting(true))
             let restTime = currentState.restTime
             let interval = 0.01
             let tickCount = Int(Double(restTime) / interval)
-            let timer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
+            Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
                 .take(tickCount)
                 .map { _ in return Mutation.restRemainingSecondsUpdating }
+            
             // 현재 세트 완료 처리
             currentCardState.setProgressAmount += 1
             currentWorkoutCardStates[currentExerciseIndex] = currentCardState
@@ -336,6 +336,7 @@ final class HomeViewReactor: Reactor {
             if isRoutineCompleted { // 루틴 전체 완료
                 state.isWorkingout = false
                 // TODO: 운동 완료 후 기록 저장 등의 추가 작업
+                
             } else {
                 state.exerciseIndex = newExerciseIndex // 현재 운동 인덱스 업데이트
                 
@@ -381,7 +382,7 @@ final class HomeViewReactor: Reactor {
             state.isResting = isResting
             state.restSecondsRemaining = restSecondsRemaining
             state.restStartTime = restStartTime
-            state.exerciseIndex = currentExerciseIndex // 현재 운동 인덱스도 함께 업데이트
+            state.exerciseIndex = currentExerciseIndex
             state = updatePagingCardReactors(state)
             
         case .workoutTimeUpdating:
@@ -405,12 +406,6 @@ private extension HomeViewReactor {
         
         for (index, reactor) in state.pagingCardViewReactors.enumerated() {
             let cardState = state.workoutCardStates[index]
-            let isCurrentCard = (index == state.exerciseIndex)
-            
-//            // 현재 활성화된 카드 뷰에게만 HomeViewReactor의 휴식 상태를 전달
-//            let currentRestRemaining = isCurrentCard ? newState.restSecondsRemaining : 0
-//            let currentRestStart = isCurrentCard ? newState.restStartTime : nil
-//            let currentIsResting = isCurrentCard && newState.isResting
             
             reactor.action.onNext(.updateCardState(cardState))
         }
