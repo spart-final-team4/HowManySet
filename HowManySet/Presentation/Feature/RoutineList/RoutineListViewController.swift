@@ -9,11 +9,16 @@ import UIKit
 import SnapKit
 
 final class RoutineListViewController: UIViewController {
-    
+
+    let routineListView = RoutineListView()
     private weak var coordinator: RoutineListCoordinatorProtocol?
 
     private let reactor: RoutineListViewReactor
-    
+
+    override func loadView() {
+        view = routineListView
+    }
+
     init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
