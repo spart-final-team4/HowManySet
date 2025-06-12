@@ -63,7 +63,7 @@ extension VersionMyPageCollectionViewCell {
     
     /// 외형 설정 (배경색 등)
     func setAppearance() {
-        self.backgroundColor = .bsInputFieldBG
+        self.backgroundColor = .background
     }
     
     /// 뷰 계층 구성

@@ -73,7 +73,10 @@ final class DefaultPopupViewController: UIViewController {
     ///   - content: 내용 텍스트
     ///   - okButtonText: 확인 버튼 텍스트
     ///   - okAction: 확인 버튼 클릭 시 실행할 클로저
-    convenience init(title: String, content: String, okButtonText: String, okAction: @escaping () -> Void) {
+    convenience init(title: String,
+                     content: String,
+                     okButtonText: String,
+                     okAction: @escaping () -> Void) {
         self.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overCurrentContext

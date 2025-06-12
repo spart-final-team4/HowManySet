@@ -45,7 +45,7 @@ private extension MyPageHeaderView {
     
     /// 배경색 등 뷰의 외형 설정
     func setAppearance() {
-        self.backgroundColor = .bsInputFieldBG
+        self.backgroundColor = .background
     }
     
     /// 서브뷰(요소) 계층 구성

@@ -14,23 +14,7 @@ final class MyPageCollectionView: UICollectionView {
     /// 기본 생성자 - 커스텀 레이아웃 및 셀/헤더 등록
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: UICollectionViewLayout())
-        setLayout()
-        
-        // 기본 셀 등록
-        self.register(DefaultMyPageCollectionViewCell.self,
-                      forCellWithReuseIdentifier: DefaultMyPageCollectionViewCell.identifier)
-        
-        // 버전 정보 셀 등록
-        self.register(VersionMyPageCollectionViewCell.self,
-                      forCellWithReuseIdentifier: VersionMyPageCollectionViewCell.identifier)
-        
-        // 섹션 헤더 등록
-        self.register(MyPageCollectionHeaderView.self,
-                      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                      withReuseIdentifier: MyPageCollectionHeaderView.identifier)
-        
-        delegate = self
-        dataSource = self
+        setupUI()
     }
     
     /// 스토리보드 사용 방지
@@ -39,18 +23,7 @@ final class MyPageCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    /// 컬렉션 뷰 레이아웃 설정
-    private func setLayout() {
-        var layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 50)
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
-        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 40)
-        layout.minimumLineSpacing = 0
-        
-        self.collectionViewLayout = layout
-        self.reloadData()
-    }
+    
 }
 
 extension MyPageCollectionView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -58,6 +31,12 @@ extension MyPageCollectionView: UICollectionViewDelegate, UICollectionViewDataSo
     /// 섹션 개수 반환
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return MyPageCollectionViewModel.model.count
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if section >= 2 {
+            return .zero
+        }
+        return CGSize(width: UIScreen.main.bounds.width, height: 10)
     }
     
     /// 섹션별 아이템 수 반환
@@ -98,8 +77,60 @@ extension MyPageCollectionView: UICollectionViewDelegate, UICollectionViewDataSo
             else { return UICollectionReusableView() }
             header.configure(model: MyPageCollectionViewModel.model[indexPath.section])
             return header
+        case UICollectionView.elementKindSectionFooter:
+            guard let footer = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
+                                                                               withReuseIdentifier: MyPageCollectionFooterView.identifier,
+                                                                               for: indexPath) as? MyPageCollectionFooterView
+            else { return UICollectionReusableView() }
+            return footer
         default:
             return UICollectionReusableView()
         }
+    }
+}
+
+private extension MyPageCollectionView {
+    func setupUI() {
+        setLayout()
+        setAppearance()
+        setDelegates()
+        registerViews()
+    }
+    func setAppearance() {
+        self.backgroundColor = .background
+    }
+    /// 컬렉션 뷰 레이아웃 설정
+    func setLayout() {
+        var layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 50)
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 40)
+        layout.minimumLineSpacing = 0
+        
+        self.collectionViewLayout = layout
+        self.reloadData()
+    }
+    func setDelegates() {
+        delegate = self
+        dataSource = self
+    }
+    func registerViews() {
+        // 기본 셀 등록
+        self.register(DefaultMyPageCollectionViewCell.self,
+                      forCellWithReuseIdentifier: DefaultMyPageCollectionViewCell.identifier)
+        
+        // 버전 정보 셀 등록
+        self.register(VersionMyPageCollectionViewCell.self,
+                      forCellWithReuseIdentifier: VersionMyPageCollectionViewCell.identifier)
+        
+        // 섹션 헤더 등록
+        self.register(MyPageCollectionHeaderView.self,
+                      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                      withReuseIdentifier: MyPageCollectionHeaderView.identifier)
+        // 섹션 풋터 등록
+        self.register(MyPageCollectionFooterView.self,
+                      forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+                      withReuseIdentifier: MyPageCollectionFooterView.identifier)
+        
     }
 }

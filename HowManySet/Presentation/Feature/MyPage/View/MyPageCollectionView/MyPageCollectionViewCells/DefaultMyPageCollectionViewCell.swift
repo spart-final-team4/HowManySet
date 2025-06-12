@@ -54,7 +54,7 @@ private extension DefaultMyPageCollectionViewCell {
     
     /// 셀 배경색 및 외형 설정
     func setAppearance() {
-        self.backgroundColor = .bsInputFieldBG
+        self.backgroundColor = .background
     }
     
     /// 뷰 계층 구성

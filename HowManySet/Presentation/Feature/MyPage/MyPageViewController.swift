@@ -22,7 +22,7 @@ final class MyPageViewController: UIViewController, View {
     var disposeBag = DisposeBag()
     
     /// 화면 전환을 위한 Coordinator (약한 참조)
-    private weak var coordinator: MyPageCoordinatorProtocol?
+    private var coordinator: MyPageCoordinatorProtocol?
     
     /// 마이페이지 화면의 UI 뷰
     private let mypageView = MyPageView()
@@ -97,8 +97,12 @@ private extension MyPageViewController {
     func setupUI() {
         setViewHierarchy()
         setConstraints()
+        setAppearance()
     }
-    
+    /// 외형 설정 (배경색 등)
+    func setAppearance() {
+        view.backgroundColor = .background
+    }
     /// 뷰 계층 구성
     func setViewHierarchy() {
         view.addSubviews(mypageView)
