@@ -16,9 +16,6 @@ final class WorkoutRoutineDTO: Object {
 
     /// 루틴에 포함된 운동 목록입니다. `WorkoutDTO` 객체의 리스트로 구성됩니다.
     @Persisted var workouts = List<WorkoutDTO>()
-    
-    /// 세트 간 휴식 시간(초)입니다.
-    @Persisted var restTime: Int
 
     /// 운동 리스트를 배열 형태로 다룰 수 있도록 하는 계산 속성입니다.
     var workoutArray: [WorkoutDTO] {
@@ -50,7 +47,7 @@ extension WorkoutRoutineDTO {
     /// - Returns: 동일한 정보를 가진 `WorkoutRoutine` 도메인 객체
     func toEntity() -> WorkoutRoutine {
         return WorkoutRoutine(name: self.name,
-                              workouts: self.workouts.map { $0.toEntity() }, restTime: self.restTime)
+                              workouts: self.workouts.map { $0.toEntity() })
     }
 }
 
