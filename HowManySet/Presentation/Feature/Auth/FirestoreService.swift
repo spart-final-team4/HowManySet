@@ -7,7 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
-import FirebaseAuth // ✅ 테스트를 위한 import ✅
+import FirebaseAuth
 
 // MARK: - Firestore 데이터 모델
 
@@ -30,7 +30,7 @@ struct FSWorkout: Codable {
 struct FSWorkoutRoutine: Codable, Identifiable {
     @DocumentID var id: String?    /// Firestore 문서 ID
     let userId: String             /// 사용자 UID(외래키)
-    let name: String               /// 루틴 이름
+    var name: String               /// 루틴 이름
     let workouts: [FSWorkout]      /// 운동 목록
 }
 
@@ -76,9 +76,9 @@ final class FirestoreService {
     private let db = Firestore.firestore()
     /// 외부 인스턴스 생성을 막기 위한 private init
     private init() {}
-
+    
     // MARK: - 루틴
-
+    
     /// 운동 루틴 생성
     /// - Parameter routine: 저장할 FSWorkoutRoutine 객체 (id는 자동 할당)
     func createRoutine(_ routine: FSWorkoutRoutine) async throws {
@@ -87,7 +87,7 @@ final class FirestoreService {
         newRoutine.id = ref.documentID
         try ref.setData(from: newRoutine)
     }
-
+    
     /// 특정 사용자의 운동 루틴 목록 조회
     /// - Parameter uid: 사용자 UID
     /// - Returns: FSWorkoutRoutine 배열
@@ -97,9 +97,9 @@ final class FirestoreService {
             .getDocuments()
         return try snapshot.documents.compactMap { try $0.data(as: FSWorkoutRoutine.self) }
     }
-
+    
     // MARK: - 운동 기록
-
+    
     /// 운동 기록 생성
     /// - Parameter record: 저장할 FSWorkoutRecord 객체 (id는 자동 할당)
     func createRecord(_ record: FSWorkoutRecord) async throws {
@@ -108,7 +108,7 @@ final class FirestoreService {
         newRecord.id = ref.documentID
         try ref.setData(from: newRecord)
     }
-
+    
     /// 특정 사용자의 운동 기록 목록 조회
     /// - Parameter uid: 사용자 UID
     /// - Returns: FSWorkoutRecord 배열
@@ -118,9 +118,9 @@ final class FirestoreService {
             .getDocuments()
         return try snapshot.documents.compactMap { try $0.data(as: FSWorkoutRecord.self) }
     }
-
+    
     // MARK: - 운동 세션
-
+    
     /// 운동 세션 생성 (Create)
     /// - Parameter session: 저장할 FSWorkoutSession 객체 (id는 자동 할당)
     func createSession(_ session: FSWorkoutSession) async throws {
@@ -129,7 +129,7 @@ final class FirestoreService {
         newSession.id = ref.documentID
         try ref.setData(from: newSession)
     }
-
+    
     /// 특정 사용자의 운동 세션 목록 조회 (Read)
     /// - Parameter uid: 사용자 UID
     /// - Returns: FSWorkoutSession 배열
@@ -144,130 +144,59 @@ final class FirestoreService {
     /// 루틴 수정: 해당 문서의 userId가 내 uid와 일치할 때만 수정
     func updateRoutine(_ routine: FSWorkoutRoutine) async throws {
         guard let uid = Auth.auth().currentUser?.uid else {
+            print("❌ [Update] 로그인된 사용자가 없습니다.")
             throw NSError(domain: "NoAuth", code: 401)
         }
         guard let routineId = routine.id else {
+            print("❌ [Update] 루틴 ID가 없습니다.")
             throw NSError(domain: "NoRoutineId", code: 400)
         }
         let ref = db.collection("routines").document(routineId)
         let snapshot = try await ref.getDocument()
-        guard let data = snapshot.data(),
-              let docUserId = data["userId"] as? String,
-              docUserId == uid else {
+        
+        guard let data = snapshot.data() else {
+            print("❌ [Update] 문서 데이터가 없습니다.")
+            throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
+        }
+        guard let docUserId = data["userId"] as? String else {
+            print("❌ [Update] 문서에 userId 필드가 없습니다. data: \(data)")
+            throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
+        }
+        print("현재 로그인 uid: \(uid)")
+        print("문서의 userId: \(docUserId)")
+        guard docUserId == uid else {
+            print("❌ [Update] uid 불일치! (권한 없음)")
             throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
         }
         try ref.setData(from: routine, merge: true)
+        print("✅ [Update] 루틴 수정 성공")
     }
     
     /// 루틴 삭제 (Delete)
     /// 루틴 삭제: 해당 문서의 userId가 내 uid와 일치할 때만 삭제
     func deleteRoutine(routineId: String) async throws {
         guard let uid = Auth.auth().currentUser?.uid else {
+            print("❌ [Delete] 로그인된 사용자가 없습니다.")
             throw NSError(domain: "NoAuth", code: 401)
         }
         let ref = db.collection("routines").document(routineId)
         let snapshot = try await ref.getDocument()
-        guard let data = snapshot.data(),
-              let docUserId = data["userId"] as? String,
-              docUserId == uid else {
+        
+        guard let data = snapshot.data() else {
+            print("❌ [Delete] 문서 데이터가 없습니다.")
+            throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
+        }
+        guard let docUserId = data["userId"] as? String else {
+            print("❌ [Delete] 문서에 userId 필드가 없습니다. data: \(data)")
+            throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
+        }
+        print("현재 로그인 uid: \(uid)")
+        print("문서의 userId: \(docUserId)")
+        guard docUserId == uid else {
+            print("❌ [Delete] uid 불일치! (권한 없음)")
             throw NSError(domain: "권한 없음 또는 문서 없음", code: 403)
         }
         try await ref.delete()
-    }
-}
-
-// MARK: - 테스트 코드입니다.
-extension FirestoreService {
-    /// FirestoreService 기능 테스트용 메서드
-    /// - 인증된 상태에서만 정상 동작합니다.
-    func testFirestoreService() async {
-        // 1. 현재 로그인된 사용자 UID 가져오기
-        guard let uid = Auth.auth().currentUser?.uid else {
-            print("❌ [테스트] 인증된 사용자가 없습니다. 먼저 Firebase 인증을 진행하세요.")
-            return
-        }
-        print("✅ [테스트] 현재 사용자 UID: \(uid)")
-
-        // 2. 테스트용 운동 세트/운동/루틴 생성
-        let testSet = FSWorkoutSet(weight: 50, unit: "kg", reps: 12)
-        let testWorkout = FSWorkout(name: "스쿼트", restTime: 90, comment: "무릎 조심", sets: [testSet])
-        let testRoutine = FSWorkoutRoutine(id: nil, userId: uid, name: "하체 루틴", workouts: [testWorkout])
-
-        // 3. 루틴 저장 테스트
-        do {
-            try await createRoutine(testRoutine)
-            print("✅ [테스트] 루틴 저장 성공")
-        } catch {
-            print("❌ [테스트] 루틴 저장 실패: \(error)")
-        }
-
-        // 4. 루틴 목록 조회 테스트
-        do {
-            let routines = try await fetchRoutines(for: uid)
-            print("✅ [테스트] 루틴 목록 조회 성공: 총 \(routines.count)개")
-            for routine in routines {
-                print("   - 루틴 이름: \(routine.name), 운동 개수: \(routine.workouts.count)")
-            }
-        } catch {
-            print("❌ [테스트] 루틴 목록 조회 실패: \(error)")
-        }
-
-        // 5. 운동 기록 저장 테스트
-        if let firstRoutine = try? await fetchRoutines(for: uid).first {
-            let testRecord = FSWorkoutRecord(
-                id: nil,
-                userId: uid,
-                routineId: firstRoutine.id ?? "",
-                totalTime: 3600,
-                workoutTime: 3200,
-                comment: "기록 테스트",
-                date: Date()
-            )
-            do {
-                try await createRecord(testRecord)
-                print("✅ [테스트] 운동 기록 저장 성공")
-            } catch {
-                print("❌ [테스트] 운동 기록 저장 실패: \(error)")
-            }
-        }
-
-        // 6. 운동 기록 목록 조회 테스트
-        do {
-            let records = try await fetchRecords(for: uid)
-            print("✅ [테스트] 운동 기록 목록 조회 성공: 총 \(records.count)개")
-            for record in records {
-                print("   - 기록 날짜: \(record.date), 루틴ID: \(record.routineId)")
-            }
-        } catch {
-            print("❌ [테스트] 운동 기록 목록 조회 실패: \(error)")
-        }
-
-        // 7. 운동 세션 저장 테스트
-        if let firstRecord = try? await fetchRecords(for: uid).first {
-            let testSession = FSWorkoutSession(
-                id: nil,
-                userId: uid,
-                recordId: firstRecord.id ?? "",
-                startDate: Date(),
-                endDate: Date().addingTimeInterval(3600)
-            )
-            do {
-                try await createSession(testSession)
-                print("✅ [테스트] 운동 세션 저장 성공")
-            } catch {
-                print("❌ [테스트] 운동 세션 저장 실패: \(error)")
-            }
-        }
-
-        // 8. 운동 세션 목록 조회 테스트
-        do {
-            let sessions = try await fetchSessions(for: uid)
-            print("✅ [테스트] 운동 세션 목록 조회 성공: 총 \(sessions.count)개")
-            for session in sessions {
-                print("   - 세션 시작: \(session.startDate), 종료: \(session.endDate)")
-            }
-        } catch {
-            print("❌ [테스트] 운동 세션 목록 조회 실패: \(error)")
-        }
+        print("✅ [Delete] 루틴 삭제 성공")
     }
 }
