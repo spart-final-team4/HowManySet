@@ -443,9 +443,6 @@ extension HomeViewController {
                         if let totalTime = restStartTime, totalTime > 0 {
                             let elapsed = Float(totalTime) - Float(restSecondsRemaining)
                             $0.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
-                        } else {
-                            $0.restProgressBar.setProgress(0, animated: true)
-                            $0.showExerciseUI()
                         }
                     } else {
                         $0.showExerciseUI()
