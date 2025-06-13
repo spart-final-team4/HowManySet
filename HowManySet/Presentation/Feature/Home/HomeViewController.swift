@@ -437,6 +437,7 @@ extension HomeViewController {
                     if isResting,
                        reactor.currentState.restTime != 0,
                        reactor.currentState.restSecondsRemaining != 0 {
+                        
                         self.restInfoView.setWaterUI()
                         $0.showRestUI()
                         
@@ -456,6 +457,7 @@ extension HomeViewController {
                         self.restInfoView.setRestUI()
                         $0.showExerciseUI()
                         $0.restProgressBar.setProgress(0, animated: false)
+                        
                     }
                 }
             }).disposed(by: disposeBag)
@@ -466,6 +468,15 @@ extension HomeViewController {
             .bind(with: self) { view, isWorkoutPaused in
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
+            }.disposed(by: disposeBag)
+        
+        reactor.state.map { $0.currentExerciseCompleted }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.pagingCardViewContainer.remove(at: reactor.currentState.exerciseIndex)
             }.disposed(by: disposeBag)
     }
 }
