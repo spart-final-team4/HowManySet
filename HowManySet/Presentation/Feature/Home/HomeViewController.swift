@@ -380,6 +380,7 @@ extension HomeViewController {
 
         
         // MARK: - State
+        // 초기 뷰 현재 날짜 표시
         reactor.state.map { $0.isWorkingout }
             .filter { !$0 }
             .observe(on: MainScheduler.instance)
@@ -400,6 +401,7 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
+        // 운동 시간 업데이트
         reactor.state.map { $0.isWorkingout }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] isWorkingout in
@@ -432,11 +434,15 @@ extension HomeViewController {
             .bind(onNext: { [weak self] isResting in
                 guard let self else { return }
                 self.pagingCardViewContainer.forEach {
-                    if isResting && reactor.currentState.restTime != 0{
+                    if isResting,
+                       reactor.currentState.restTime != 0,
+                       reactor.currentState.restSecondsRemaining != 0 {
                         self.restInfoView.setWaterUI()
                         $0.showRestUI()
-                        // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
+                        
+                        /// 현재 남은 휴식 시간
                         let restSecondsRemaining = reactor.currentState.restSecondsRemaining
+                        /// 프로그레스바 구현에 쓰이는 초기 휴식 시작 시간
                         let restStartTime = reactor.currentState.restStartTime
                         
                         $0.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
@@ -445,6 +451,7 @@ extension HomeViewController {
                             let elapsed = Float(totalTime) - Float(restSecondsRemaining)
                             $0.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
                         }
+                        
                     } else {
                         self.restInfoView.setRestUI()
                         $0.showExerciseUI()
