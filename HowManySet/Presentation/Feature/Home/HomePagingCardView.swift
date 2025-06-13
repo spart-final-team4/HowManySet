@@ -133,9 +133,11 @@ final class HomePagingCardView: UIView, View {
     // MARK: - Initializer
     init(frame: CGRect, reactor: HomePagingCardViewReactor) {
         super.init(frame: frame)
+        
+        setupUI()
+
         self.reactor = reactor
             
-        setupUI()
     }
     
     required init?(coder: NSCoder) {
@@ -243,12 +245,23 @@ extension HomePagingCardView {
     
     func bind(reactor: HomePagingCardViewReactor) {
         
+        // MARK: - Action
+        setCompleteButton.rx.tap
+            .throttle(.milliseconds(1000), scheduler: MainScheduler.instance)
+            .do(onNext: { debugPrint("세트 완료 버튼 클릭") })
+            .observe(on: MainScheduler.instance)
+            .map { HomeViewReactor.Action.setCompleteButtonClicked }
+            .bind(to: reactor.homeViewAction)
+            .disposed(by: disposeBag)
+        
         // MARK: - State
         reactor.state.map { $0.cardState }
-            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] state in
-                guard let self else { return }
+            .subscribe(onNext: { [weak self] state in
+                guard let self = self else { return }
+                
+                print("카드뷰 업데이트!")
+                
                 self.exerciseNameLabel.text = state.currentExerciseName
                 self.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
                 self.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
@@ -256,7 +269,7 @@ extension HomePagingCardView {
                 
                 // 세트 프로그레스바 업데이트
                 self.setProgressBar.updateProgress(currentSet: state.setProgressAmount)
-                debugPrint(state.setProgressAmount)
+                debugPrint("setProgressAmount: \(state.setProgressAmount)")
                 
                 if state.currentSetNumber == 1 {
                     self.setProgressBar.setupSegments(totalSets: state.totalSetCount)

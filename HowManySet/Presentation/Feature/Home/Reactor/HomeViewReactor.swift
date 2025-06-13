@@ -45,10 +45,10 @@ final class HomeViewReactor: Reactor {
         case workoutTimeUpdating
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
-        /// 스킵(다음) 버튼 클릭 시 다음 세트 또는 다음 운동 정보 표현
+        /// 스킵(다음) 버튼 클릭 시 다음 세트로
         case moveToNextSetOrExercise(newExerciseIndex: Int, newSetIndex: Int, isRoutineCompleted: Bool)
-        /// 현재 활성화된 운동 카드 상태만 업데이트
-        case updateCurrentWorkoutCardState(WorkoutCardState)
+        /// 현재 운동 카드 업데이트
+        case updateWorkoutCardState(WorkoutCardState)
         /// 모든 카드 상태 초기화 (루틴 시작 시)
         case initializeWorkoutCardStates([WorkoutCardState])
     }
@@ -194,7 +194,7 @@ final class HomeViewReactor: Reactor {
             
         // 세트 완료 버튼 클릭 시 로직
         case .setCompleteButtonClicked:
-            
+            print("mutate - 세트 완료 버튼 클릭!")
             let restTime = currentState.restTime
             let interval = 0.01
             let tickCount = Int(Double(restTime) / interval)
@@ -202,14 +202,33 @@ final class HomeViewReactor: Reactor {
                 .take(tickCount)
                 .map { _ in Mutation.restRemainingSecondsUpdating }
             
-            // 현재 세트 완료 처리
-            currentCardState.setProgressAmount += 1
-            
-//            currentWorkoutCardStates[currentExerciseIndex] = currentCardState
-            
             let nextSetIndex = currentCardState.setIndex + 1
             
-            if nextSetIndex < currentWorkout.sets.count { // 다음 세트가 있는 경우 (휴식 시작)
+//            // 현재 세트 완료 처리
+//            currentCardState.setProgressAmount += 1
+//            currentCardState.currentSetNumber += 1
+//            currentCardState.setIndex += 1
+            
+            // 현재 cardState에 적용
+//            currentWorkoutCardStates[currentExerciseIndex] = updatedCardState
+                        
+            // 다음 세트가 있는 경우 (휴식 시작)
+            if nextSetIndex < currentWorkout.sets.count {
+                
+                let updatedCardState = WorkoutCardState(
+                    currentExerciseName: currentWorkout.name,
+                    currentWeight: currentWorkout.sets[nextSetIndex].weight,
+                    currentUnit: currentWorkout.sets[nextSetIndex].unit,
+                    currentReps: currentWorkout.sets[nextSetIndex].reps,
+                    setIndex: nextSetIndex,
+                    totalExerciseCount: currentState.workoutRoutine.workouts.count,
+                    totalSetCount: currentWorkout.sets.count,
+                    currentExerciseNumber: currentExerciseIndex + 1,
+                    currentSetNumber: nextSetIndex + 1,
+                    setProgressAmount: currentCardState.setProgressAmount + 1)
+                
+                print("현재 세트 정보: \(updatedCardState)")
+                
                 return .concat([
                     .just(.setResting(true)),
                     .just(.setRestStartTime(currentState.restTime)),
@@ -331,10 +350,9 @@ final class HomeViewReactor: Reactor {
         case let .moveToNextSetOrExercise(newExerciseIndex, newSetIndex, isRoutineCompleted):
             if isRoutineCompleted { // 루틴 전체 완료
                 state.isWorkingout = false
-                // TODO: 운동 완료 후 기록 저장 등의 추가 작업
+                // MARK: - TODO: 운동 완료 후 기록 저장 등의 추가 작업
                 
             } else {
-                state.currentExerciseCompleted = true
                 
                 state.exerciseIndex = newExerciseIndex // 현재 운동 인덱스 업데이트
                 
@@ -343,12 +361,17 @@ final class HomeViewReactor: Reactor {
                 let workout = state.workoutRoutine.workouts[newExerciseIndex]
                 
                 if newSetIndex == 0 { // 새로운 운동으로 넘어갈 때 (첫 세트로 초기화)
+                    state.currentExerciseCompleted = true
+
                     currentCardState.setIndex = 0
                     currentCardState.currentSetNumber = 1
                     currentCardState.setProgressAmount = 0
                     currentCardState.currentWeight = workout.sets.first?.weight ?? 0
                     currentCardState.currentReps = workout.sets.first?.reps ?? 0
                     currentCardState.currentUnit = workout.sets.first?.unit ?? "kg"
+                    
+                    state.currentExerciseCompleted = false
+
                 } else { // 다음 세트로 넘어갈 때
                     let nextSet = workout.sets[newSetIndex]
                     currentCardState.setIndex = newSetIndex
@@ -360,15 +383,14 @@ final class HomeViewReactor: Reactor {
                 }
                 state.workoutCardStates[newExerciseIndex] = currentCardState
                 
-                state.currentExerciseCompleted = false
                 // 모든 카드 뷰 리액터에게 최신 상태 전달
                 //                state = updatePagingCardReactors(state)
             }
             
-        case let .updateCurrentWorkoutCardState(cardState):
+        case let .updateWorkoutCardState(cardState):
             // 현재 활성화된 카드 상태만 업데이트
             state.workoutCardStates[state.exerciseIndex] = cardState
-            state = updatePagingCardReactors(state)
+            state.pagingCardViewReactors[state.exerciseIndex].action.onNext(.updateCardState(cardState))
             
         case let .initializeWorkoutCardStates(cardStates):
             state.workoutCardStates = cardStates
@@ -394,6 +416,8 @@ private extension HomeViewReactor {
     /// HomePagingCardViewReactor의 action 스트림을 통해 상태를 주입
     func updatePagingCardReactors(_ state: State) -> State {
         let state = state
+        
+        print("🧪 갱신된 cardState: \(state.workoutCardStates[state.exerciseIndex].setIndex)")
         
         for (index, reactor) in state.pagingCardViewReactors.enumerated() {
             let cardState = state.workoutCardStates[index]
