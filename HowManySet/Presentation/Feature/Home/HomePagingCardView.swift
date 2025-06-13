@@ -22,13 +22,19 @@ final class HomePagingCardView: UIView, View {
     var disposeBag = DisposeBag()
     
     // MARK: - UI Components
+    lazy var mainContentVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .equalSpacing
+        $0.alignment = .fill
+    }
+    
     lazy var topLineHStack = UIStackView().then {
         $0.axis = .horizontal
     }
     
     lazy var topConentsVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 16
+        $0.spacing = 20
     }
     
     lazy var spacer = UIView().then {
@@ -59,7 +65,7 @@ final class HomePagingCardView: UIView, View {
         $0.backgroundColor = .cardBackground
     }
 
-    lazy var containerView = UIView().then {
+    lazy var weightRepscontainerView = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
@@ -82,7 +88,7 @@ final class HomePagingCardView: UIView, View {
     }
     
     lazy var weightLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 24)
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
         $0.textColor = .white
     }
     
@@ -99,7 +105,7 @@ final class HomePagingCardView: UIView, View {
     }
     
     lazy var repsLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 24)
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
         $0.textColor = .white
     }
     
@@ -110,7 +116,7 @@ final class HomePagingCardView: UIView, View {
     
     lazy var setCompleteButton = UIButton().then {
         $0.backgroundColor = .brand
-        $0.setTitle(accessibilityElementsHidden ? "" : setCompleteText, for: .normal)
+        $0.setTitle(setCompleteText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
         $0.titleLabel?.textColor = .black
@@ -147,21 +153,23 @@ private extension HomePagingCardView {
     }
     
     func setViewHiearchy() {
-        self.addSubviews(
+        
+        self.addSubview(mainContentVStack)
+        
+        mainContentVStack.addArrangedSubviews(
             topLineHStack,
             topConentsVStack,
-            containerView,
+            weightRepscontainerView,
             setCompleteButton,
-            
+            // 휴식 시 나타나는 뷰
             restProgressBar,
             remaingRestTimeLabel
         )
         
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
         topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
-        
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
-        containerView.addSubview(weightRepsHStack)
+        weightRepscontainerView.addSubview(weightRepsHStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
                                              repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
@@ -171,35 +179,33 @@ private extension HomePagingCardView {
     
     func setConstraints() {
         
-        topConentsVStack.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(28)
+        mainContentVStack.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
         }
         
-        containerView.snp.makeConstraints {
-            $0.top.equalTo(topConentsVStack.snp.bottom).offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.39)
+        topLineHStack.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(mainContentVStack)
         }
         
         setProgressBar.snp.makeConstraints {
             $0.height.equalTo(16)
         }
         
+        weightRepscontainerView.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(mainContentVStack)
+            $0.height.equalToSuperview().multipliedBy(0.4)
+        }
+        
         weightRepsHStack.snp.makeConstraints {
-            $0.height.equalTo(containerView.snp.height).multipliedBy(0.5)
             $0.center.equalToSuperview()
         }
         
         setCompleteButton.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.bottom).offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
         }
         
         restProgressBar.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.bottom).offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
         }
         
