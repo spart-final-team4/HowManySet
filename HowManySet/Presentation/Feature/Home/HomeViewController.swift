@@ -254,17 +254,20 @@ private extension HomeViewController {
         
         for (i, cardState) in cardStates.enumerated() {
             
-            let pagingCardViewReactor = HomePagingCardViewReactor(initialCardState: cardState)
+            let pagingCardViewReactor = HomePagingCardViewReactor(initialCardState: cardState, index: i)
             
             guard let reactor = self.reactor else { return }
             pagingCardViewReactor.homeViewAction
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
-            let cardView = HomePagingCardView(frame: .zero, reactor: pagingCardViewReactor).then {
+            let cardView = HomePagingCardView(frame: .zero).then {
                 $0.layer.cornerRadius = 20
             }
-                        
+            
+            cardView.reactor = pagingCardViewReactor
+
+            
             // 레이아웃 설정
             pagingScrollContentView.addSubview(cardView)
             
@@ -274,14 +277,12 @@ private extension HomeViewController {
                 $0.leading.equalToSuperview()
                     .offset(cardInset + CGFloat(i) * screenWidth)
             }
-                        
+            
             // 뷰 저장하는 리스트에 append
             pagingCardViewContainer.append(cardView)
             
 //            // 각 새로 생성된 cardView에 대한 setCompleteButton들 Binding
 //            cardView.setCompleteButton.rx.tap
-//                .throttle(.milliseconds(1000), scheduler: MainScheduler.instance)
-//                .do(onNext: { debugPrint("세트 완료 버튼 클릭") })
 //                .observe(on: MainScheduler.instance)
 //                .map { Reactor.Action.setCompleteButtonClicked }
 //                .bind(to: self.reactor!.action)

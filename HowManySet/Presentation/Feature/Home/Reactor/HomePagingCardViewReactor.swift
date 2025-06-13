@@ -8,9 +8,10 @@
 import Foundation
 import RxSwift
 import ReactorKit
+import RxRelay
 
 /// 사용자에게 보여지는 운동 종목 카드 뷰의 정보를 담은 구조체
-struct WorkoutCardState: Equatable {
+struct WorkoutCardState {
     
     // UI에 직접 표시될 값들 (Reactor에서 미리 계산하여 제공)
     var currentExerciseName: String
@@ -35,6 +36,14 @@ struct WorkoutCardState: Equatable {
     var commentInExercise: String?
 }
 
+//// 세트 관련 속성만 변경 감지
+//extension WorkoutCardState: Equatable {
+//    static func == (lhs: WorkoutCardState, rhs: WorkoutCardState) -> Bool {
+//        return lhs.currentSetNumber == rhs.currentSetNumber &&
+//               lhs.setProgressAmount == rhs.setProgressAmount
+//    }
+//}
+
 
 final class HomePagingCardViewReactor: Reactor {
     
@@ -58,9 +67,14 @@ final class HomePagingCardViewReactor: Reactor {
     }
     
     let initialState: State
+    let index: Int
     
-    init(initialCardState: WorkoutCardState) {
-       self.initialState = State(cardState: initialCardState)
+    // HomeViewReactor로 전달할 액션 스트림
+    let homeViewAction = PublishRelay<HomeViewReactor.Action>()
+    
+    init(initialCardState: WorkoutCardState, index: Int) {
+        self.initialState = State(cardState: initialCardState)
+        self.index = index
     }
     
     // Action -> Mutation
@@ -69,6 +83,7 @@ final class HomePagingCardViewReactor: Reactor {
         switch action {
             
         case .updateCardState(let newCardState):
+            print("updateCardState: \(newCardState)")
             return .just(.setWorkoutCardState(newCardState))
         }
     }
@@ -79,7 +94,9 @@ final class HomePagingCardViewReactor: Reactor {
         var state = state
         
         switch mutation {
+            
         case .setWorkoutCardState(let cardState):
+            print("setWorkoutCardState: \(cardState)")
             state.cardState = cardState
         }
         
