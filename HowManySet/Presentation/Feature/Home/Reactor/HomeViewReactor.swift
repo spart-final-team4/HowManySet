@@ -45,6 +45,7 @@ final class HomeViewReactor: Reactor {
         case workoutTimeUpdating
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
+        /// 스킵(다음) 버튼 클릭 시 다음 세트 또는 다음 운동 정보 표현
         case moveToNextSetOrExercise(newExerciseIndex: Int, newSetIndex: Int, isRoutineCompleted: Bool)
         /// 현재 활성화된 운동 카드 상태만 업데이트
         case updateCurrentWorkoutCardState(WorkoutCardState)
@@ -374,6 +375,7 @@ final class HomeViewReactor: Reactor {
                 // 모든 카드 뷰 리액터에게 최신 상태 전달
                 state = updatePagingCardReactors(state)
             }
+            
         case let .updateCurrentWorkoutCardState(cardState):
             // 현재 활성화된 카드 상태만 업데이트
             state.workoutCardStates[state.exerciseIndex] = cardState
@@ -396,6 +398,7 @@ final class HomeViewReactor: Reactor {
             
         case .workoutTimeUpdating:
             state.workoutTime += 1
+            
         case .restRemainingSecondsUpdating:
             if state.isResting {
                 state.restSecondsRemaining = max(state.restSecondsRemaining - 0.01, 0)
