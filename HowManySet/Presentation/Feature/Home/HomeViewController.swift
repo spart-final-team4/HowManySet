@@ -432,7 +432,8 @@ extension HomeViewController {
             .bind(onNext: { [weak self] isResting in
                 guard let self else { return }
                 self.pagingCardViewContainer.forEach {
-                    if isResting {
+                    if isResting && reactor.currentState.restTime != 0{
+                        self.restInfoView.setWaterUI()
                         $0.showRestUI()
                         // 프로그레스바에 사용될 휴식 시간, 시작시 고정되는 휴식시간, 휴식 중 여부
                         let restSecondsRemaining = reactor.currentState.restSecondsRemaining
@@ -445,6 +446,7 @@ extension HomeViewController {
                             $0.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
                         }
                     } else {
+                        self.restInfoView.setRestUI()
                         $0.showExerciseUI()
                         $0.restProgressBar.setProgress(0, animated: false)
                     }
