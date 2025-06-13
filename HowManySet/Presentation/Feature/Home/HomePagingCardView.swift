@@ -21,6 +21,14 @@ final class HomePagingCardView: UIView, View {
     
     var disposeBag = DisposeBag()
     
+    var reactor: HomePagingCardViewReactor! {
+        didSet {
+            // Reset bindings when reactor changes
+            disposeBag = DisposeBag()
+            bind(reactor: reactor)
+        }
+    }
+    
     // MARK: - UI Components
     lazy var mainContentVStack = UIStackView().then {
         $0.axis = .vertical
@@ -131,13 +139,10 @@ final class HomePagingCardView: UIView, View {
     }
     
     // MARK: - Initializer
-    init(frame: CGRect, reactor: HomePagingCardViewReactor) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupUI()
-
-        self.reactor = reactor
-            
+        // reactor assignment will be handled externally to trigger binding
     }
     
     required init?(coder: NSCoder) {
@@ -247,15 +252,15 @@ extension HomePagingCardView {
         
         // MARK: - Action
         setCompleteButton.rx.tap
-            .throttle(.milliseconds(1000), scheduler: MainScheduler.instance)
-            .do(onNext: { debugPrint("세트 완료 버튼 클릭") })
+            .do(onNext: { print("세트 완료 버튼 클릭") })
             .observe(on: MainScheduler.instance)
-            .map { HomeViewReactor.Action.setCompleteButtonClicked }
+            .map { HomeViewReactor.Action.setCompleteButtonClicked(at: reactor.index) }
             .bind(to: reactor.homeViewAction)
             .disposed(by: disposeBag)
         
         // MARK: - State
         reactor.state.map { $0.cardState }
+            .do(onNext: { print("카드 값 변경! \($0)") })
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
