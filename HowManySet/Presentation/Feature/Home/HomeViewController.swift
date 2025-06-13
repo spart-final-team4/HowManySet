@@ -263,9 +263,7 @@ private extension HomeViewController {
                 $0.leading.equalToSuperview()
                     .offset(cardInset + CGFloat(i) * screenWidth)
             }
-            
-            cardView.showExerciseUI()
-            
+                        
             // 뷰 저장하는 리스트에 append
             pagingCardViewContainer.append(cardView)
             
@@ -430,6 +428,7 @@ extension HomeViewController {
         
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         reactor.state.map { $0.isResting }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] isResting in
                 guard let self else { return }
