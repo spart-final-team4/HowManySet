@@ -14,7 +14,7 @@ final class HomeViewReactor: Reactor {
     private let saveRecordUseCase: SaveRecordUseCase
     
     private let routineMockData = WorkoutRoutine.mockData[0]
-        
+    
     // MARK: - Action is an user interaction
     enum Action {
         /// 루틴 선택 시 (현재는 바로 시작, but 추후에 루틴 선택 창 present)
@@ -36,11 +36,12 @@ final class HomeViewReactor: Reactor {
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
-
+        
         case setWorkingout(Bool)
         case setWorkoutTime(Int)
         case setResting(Bool)
         case setRestStartTime(Int?)
+        case setRestTime(Int)
         case workoutTimeUpdating
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
@@ -173,7 +174,7 @@ final class HomeViewReactor: Reactor {
                 .withLatestFrom(self.state.map{ $0.isWorkoutPaused }) { _, isPaused in return isPaused }
                 .filter { !$0 }
                 .map { _ in Mutation.workoutTimeUpdating }
-
+            
             return .concat([
                 .just(.setWorkingout(true)),
                 timer,
@@ -186,15 +187,15 @@ final class HomeViewReactor: Reactor {
                     restStartTime: nil))
             ])
             
-        // 세트 완료 버튼 클릭 시 로직
+            // 세트 완료 버튼 클릭 시 로직
         case .setCompleteButtonClicked:
             
             let restTime = currentState.restTime
             let interval = 0.01
             let tickCount = Int(Double(restTime) / interval)
-            Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
+            let restTimer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
                 .take(tickCount)
-                .map { _ in return Mutation.restRemainingSecondsUpdating }
+                .map { _ in Mutation.restRemainingSecondsUpdating }
             
             // 현재 세트 완료 처리
             currentCardState.setProgressAmount += 1
@@ -205,14 +206,15 @@ final class HomeViewReactor: Reactor {
             if nextSetIndex < currentWorkout.sets.count { // 다음 세트가 있는 경우 (휴식 시작)
                 return .concat([
                     .just(.setResting(true)),
-                    .just(.setRestStartTime(currentState.restTime)), // 루틴의 기본 휴식 시간으로 설정
-                    .just(.restRemainingSecondsUpdating),
+                    .just(.setRestStartTime(currentState.restTime)),
+                    // 모든 카드 정보 업데이트
                     .just(.updateAllCardStates(
                         newStates: currentWorkoutCardStates,
                         currentExerciseIndex: currentExerciseIndex,
                         isResting: true,
                         restSecondsRemaining: Float(currentState.restTime),
-                        restStartTime: currentState.restTime))
+                        restStartTime: currentState.restTime)),
+                    restTimer
                 ])
             } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
                 let nextExerciseIndex = currentExerciseIndex + 1
@@ -280,31 +282,30 @@ final class HomeViewReactor: Reactor {
             }
         case .pauseButtonClicked:
             // 중지 버튼 클릭 시 - 이 시점에는 isWorkingoutPaused가 변경 안되어 있음
-//            if currentState.isWorkoutPaused {
-//                startWorkoutTimer()
-//                if currentState.isResting { startRestTimer() }
-//            } else {
-//                stopWorkoutTimer()
-//                stopRestTimer()
-//            }
+            //            if currentState.isWorkoutPaused {
+            //                startWorkoutTimer()
+            //                if currentState.isResting { startRestTimer() }
+            //            } else {
+            //                stopWorkoutTimer()
+            //                stopRestTimer()
+            //            }
             return .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
             
             
         case .setRestTime(let newRestTime):
             return .concat([
                 .just(.setRestStartTime(newRestTime)),
+                .just(.setRestTime(newRestTime))
             ])
             
         case .pageChanged(let newPageIndex):
             // 해당 페이지의 운동으로 이동
             return .concat([
-                .just(.setResting(false)),
-                .just(.setRestStartTime(nil)),
                 .just(.moveToNextSetOrExercise(newExerciseIndex: newPageIndex, newSetIndex: 0, isRoutineCompleted: false))
             ])
         }
     }
-        
+    
     // MARK: - Reduce(Mutation -> State)
     func reduce(state: State, mutation: Mutation) -> State {
         
@@ -328,9 +329,17 @@ final class HomeViewReactor: Reactor {
                 state.restSecondsRemaining = 0
                 state.restStartTime = nil
             }
-                        
+            
         case let .setRestStartTime(startTime):
             state.restStartTime = startTime
+            
+        case let .setRestTime(restTime):
+            // 초기화 버튼 클릭 시 0으로 설정
+            if restTime == 0 {
+                state.restTime = restTime
+            } else {
+                state.restTime += restTime
+            }
             
         case let .moveToNextSetOrExercise(newExerciseIndex, newSetIndex, isRoutineCompleted):
             if isRoutineCompleted { // 루틴 전체 완료
