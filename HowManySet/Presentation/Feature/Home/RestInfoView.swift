@@ -91,15 +91,25 @@ final class RestInfoView: UIView, View {
     
     private lazy var waterImageHStack = UIStackView().then {
         $0.axis = .horizontal
-        $0.distribution = .equalSpacing
+        $0.spacing = 28
         
+        // MARK: - 내부 물 버튼 들 생성 및 바인딩
         for _ in 0..<5 {
             let waterButton = UIButton().then {
                 $0.setImage(UIImage(systemName: "waterbottle"), for: .normal)
-                $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
+                $0.setImage(UIImage(systemName: "waterbottle.fill"), for: .selected)
+                $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
                 $0.tintColor = .white
                 $0.setTitleColor(.brand, for: .selected)
             }
+            
+            waterButton.rx.tap
+                .bind { [weak waterButton]  in
+                    guard let waterButton else { return }
+                    waterButton.isSelected.toggle()
+                    waterButton.tintColor = waterButton.isSelected ? .brand : .white
+                }.disposed(by: disposeBag)
+            
             $0.addArrangedSubview(waterButton)
         }
     }
@@ -109,7 +119,7 @@ final class RestInfoView: UIView, View {
         super.init(frame: frame)
         self.reactor = reactor
         self.homeViewReactor = homeViewReactor
-                
+        
         setupUI()
         
         bind(reactor: homeViewReactor)
