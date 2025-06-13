@@ -9,6 +9,32 @@ import Foundation
 import RxSwift
 import ReactorKit
 
+/// 사용자에게 보여지는 운동 종목 카드 뷰의 정보를 담은 구조체
+struct WorkoutCardState {
+    
+    // UI에 직접 표시될 값들 (Reactor에서 미리 계산하여 제공)
+    var currentExerciseName: String
+    var currentWeight: Double
+    var currentUnit: String
+    var currentReps: Int
+    /// 현재 진행 중인 세트 인덱스
+    var setIndex: Int
+    
+    /// 전체 운동 개수
+    var totalExerciseCount: Int
+    /// 현재 운동의 전체 세트 개수
+    var totalSetCount: Int
+    /// UI용 "1 / N"에서 1
+    var currentExerciseNumber: Int
+    /// UI용 "1 / N"에서 1
+    var currentSetNumber: Int
+    /// 세트 프로그레스바
+    var setProgressAmount: Int
+    
+    /// 현재 운동 종목의 메모
+    var commentInExercise: String?
+}
+
 final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
