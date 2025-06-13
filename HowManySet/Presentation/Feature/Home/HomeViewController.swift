@@ -254,19 +254,9 @@ private extension HomeViewController {
         
         for (i, cardState) in cardStates.enumerated() {
             
-            let pagingCardViewReactor = HomePagingCardViewReactor(initialCardState: cardState, index: i)
-            
-            guard let reactor = self.reactor else { return }
-            pagingCardViewReactor.homeViewAction
-                .bind(to: reactor.action)
-                .disposed(by: disposeBag)
-            
             let cardView = HomePagingCardView(frame: .zero).then {
                 $0.layer.cornerRadius = 20
             }
-            
-            cardView.reactor = pagingCardViewReactor
-
             
             // 레이아웃 설정
             pagingScrollContentView.addSubview(cardView)

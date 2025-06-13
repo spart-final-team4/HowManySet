@@ -10,9 +10,8 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
-import ReactorKit
 
-final class HomePagingCardView: UIView, View {
+final class HomePagingCardView: UIView {
     
     // MARK: - Properties
     private let setCompleteText = "세트 완료"
@@ -20,14 +19,6 @@ final class HomePagingCardView: UIView, View {
     private let repsText = "회"
     
     var disposeBag = DisposeBag()
-    
-    var reactor: HomePagingCardViewReactor! {
-        didSet {
-            // Reset bindings when reactor changes
-            disposeBag = DisposeBag()
-            bind(reactor: reactor)
-        }
-    }
     
     // MARK: - UI Components
     lazy var mainContentVStack = UIStackView().then {
@@ -248,40 +239,40 @@ extension HomePagingCardView {
 // MARK: - Reactor Binding
 extension HomePagingCardView {
     
-    func bind(reactor: HomePagingCardViewReactor) {
-        
-        // MARK: - Action
-        setCompleteButton.rx.tap
-            .do(onNext: { print("세트 완료 버튼 클릭") })
-            .observe(on: MainScheduler.instance)
-            .map { HomeViewReactor.Action.setCompleteButtonClicked(at: reactor.index) }
-            .bind(to: reactor.homeViewAction)
-            .disposed(by: disposeBag)
-        
-        // MARK: - State
-        reactor.state.map { $0.cardState }
-            .do(onNext: { print("카드 값 변경! \($0)") })
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] state in
-                guard let self = self else { return }
-                
-                print("카드뷰 업데이트!")
-                
-                self.exerciseNameLabel.text = state.currentExerciseName
-                self.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
-                self.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
-                self.repsLabel.text = "\(state.currentReps)\(self.repsText)"
-                
-                // 세트 프로그레스바 업데이트
-                self.setProgressBar.updateProgress(currentSet: state.setProgressAmount)
-                debugPrint("setProgressAmount: \(state.setProgressAmount)")
-                
-                if state.currentSetNumber == 1 {
-                    self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
-                }
-            })
-            .disposed(by: disposeBag)
-    }
+//    func bind(reactor: HomePagingCardViewReactor) {
+//        
+//        // MARK: - Action
+//        setCompleteButton.rx.tap
+//            .do(onNext: { print("세트 완료 버튼 클릭") })
+//            .observe(on: MainScheduler.instance)
+//            .map { HomeViewReactor.Action.setCompleteButtonClicked(at: reactor.index) }
+//            .bind(to: reactor.homeViewAction)
+//            .disposed(by: disposeBag)
+//        
+//        // MARK: - State
+//        reactor.state.map { $0.cardState }
+//            .do(onNext: { print("카드 값 변경! \($0)") })
+//            .observe(on: MainScheduler.instance)
+//            .subscribe(onNext: { [weak self] state in
+//                guard let self = self else { return }
+//                
+//                print("카드뷰 업데이트!")
+//                
+//                self.exerciseNameLabel.text = state.currentExerciseName
+//                self.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
+//                self.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
+//                self.repsLabel.text = "\(state.currentReps)\(self.repsText)"
+//                
+//                // 세트 프로그레스바 업데이트
+//                self.setProgressBar.updateProgress(currentSet: state.setProgressAmount)
+//                debugPrint("setProgressAmount: \(state.setProgressAmount)")
+//                
+//                if state.currentSetNumber == 1 {
+//                    self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
+//                }
+//            })
+//            .disposed(by: disposeBag)
+//    }
 }
 
 
