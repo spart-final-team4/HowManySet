@@ -244,16 +244,27 @@ private extension HomeViewController {
     // MARK: -  운동 카드뷰들 생성, 레이아웃 적용, Binding
     func configureRoutineCardViews(cardStates: [WorkoutCardState]) {
         
+        // 기존 카드뷰 컨테이너 제거
+        pagingCardViewContainer.forEach { $0.removeFromSuperview() }
+        pagingCardViewContainer.removeAll()
+        
         let screenWidth = UIScreen.main.bounds.width
         let cardInset: CGFloat = 20
         let cardWidth = screenWidth - (cardInset * 2)
         
         for (i, cardState) in cardStates.enumerated() {
             
-            let cardView = HomePagingCardView(frame: .zero, reactor: HomePagingCardViewReactor(initialCardState: cardState)).then {
+            let pagingCardViewReactor = HomePagingCardViewReactor(initialCardState: cardState)
+            
+            guard let reactor = self.reactor else { return }
+            pagingCardViewReactor.homeViewAction
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+            
+            let cardView = HomePagingCardView(frame: .zero, reactor: pagingCardViewReactor).then {
                 $0.layer.cornerRadius = 20
             }
-            
+                        
             // 레이아웃 설정
             pagingScrollContentView.addSubview(cardView)
             
@@ -267,12 +278,14 @@ private extension HomeViewController {
             // 뷰 저장하는 리스트에 append
             pagingCardViewContainer.append(cardView)
             
-            // 각 새로 생성된 cardView에 대한 setCompleteButton들 Binding
-            cardView.setCompleteButton.rx.tap
-                .observe(on: MainScheduler.instance)
-                .map { Reactor.Action.setCompleteButtonClicked }
-                .bind(to: self.reactor!.action)
-                .disposed(by: disposeBag)
+//            // 각 새로 생성된 cardView에 대한 setCompleteButton들 Binding
+//            cardView.setCompleteButton.rx.tap
+//                .throttle(.milliseconds(1000), scheduler: MainScheduler.instance)
+//                .do(onNext: { debugPrint("세트 완료 버튼 클릭") })
+//                .observe(on: MainScheduler.instance)
+//                .map { Reactor.Action.setCompleteButtonClicked }
+//                .bind(to: self.reactor!.action)
+//                .disposed(by: disposeBag)
         }
         
         remakeOtherViewsWithScrollView()
@@ -415,6 +428,7 @@ extension HomeViewController {
         // 텍스트 등 뷰 요소 바인딩
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
+            .filter { $0 }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] isWorkingout in
                 guard let self else { return }
