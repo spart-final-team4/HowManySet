@@ -58,13 +58,7 @@ final class HomePagingCardView: UIView, View {
     lazy var setProgressBar = SetProgressBarView().then {
         $0.backgroundColor = .cardBackground
     }
-    
-    
-    lazy var currentSetLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 16)
-        $0.textAlignment = .left
-    }
-    
+
     lazy var containerView = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
@@ -111,6 +105,7 @@ final class HomePagingCardView: UIView, View {
     
     lazy var remaingRestTimeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 28, weight: .medium)
+        $0.isHidden = true
     }
     
     lazy var setCompleteButton = UIButton().then {
@@ -126,13 +121,14 @@ final class HomePagingCardView: UIView, View {
         $0.progressTintColor = .brand
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
+        $0.isHidden = true
     }
     
     // MARK: - Initializer
     init(frame: CGRect, reactor: HomePagingCardViewReactor) {
         super.init(frame: frame)
         self.reactor = reactor
-        
+            
         setupUI()
     }
     
@@ -154,7 +150,6 @@ private extension HomePagingCardView {
         self.addSubviews(
             topLineHStack,
             topConentsVStack,
-            currentSetLabel,
             containerView,
             setCompleteButton,
             
@@ -162,7 +157,7 @@ private extension HomePagingCardView {
             remaingRestTimeLabel
         )
         
-        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar, currentSetLabel)
+        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
         topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
         
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
@@ -182,7 +177,7 @@ private extension HomePagingCardView {
         }
         
         containerView.snp.makeConstraints {
-            $0.top.equalTo(topConentsVStack.snp.bottom).offset(16)
+            $0.top.equalTo(topConentsVStack.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalToSuperview().multipliedBy(0.39)
         }
@@ -194,10 +189,6 @@ private extension HomePagingCardView {
         weightRepsHStack.snp.makeConstraints {
             $0.height.equalTo(containerView.snp.height).multipliedBy(0.5)
             $0.center.equalToSuperview()
-        }
-        
-        currentSetLabel.snp.makeConstraints {
-            $0.height.equalTo(16)
         }
         
         setCompleteButton.snp.makeConstraints {
@@ -218,17 +209,6 @@ private extension HomePagingCardView {
     }
 }
 
-// MARK: UI Methods
-private extension HomePagingCardView {
-    func updateContainerViewConstraint() {
-        containerView.snp.updateConstraints {
-            let offset: CGFloat = currentSetLabel.isHidden ? 38 : 24
-            $0.top.equalTo(topConentsVStack.snp.bottom).offset(offset)
-            $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.39)
-        }
-    }
-}
 
 // MARK: Internal Methods
 extension HomePagingCardView {
@@ -240,7 +220,6 @@ extension HomePagingCardView {
         [restProgressBar, remaingRestTimeLabel].forEach {
             $0.isHidden = true
         }
-        updateContainerViewConstraint()
     }
     
     func showRestUI() {
@@ -249,7 +228,6 @@ extension HomePagingCardView {
         [restProgressBar, remaingRestTimeLabel].forEach {
             $0.isHidden = false
         }
-        updateContainerViewConstraint()
     }
     
 }
@@ -261,16 +239,18 @@ extension HomePagingCardView {
         
         // MARK: - State
         reactor.state.map { $0.cardState }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] state in
                 guard let self else { return }
                 self.exerciseNameLabel.text = state.currentExerciseName
                 self.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
-                self.currentSetLabel.text = "\(state.currentSetNumber)\(self.setText)"
                 self.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
                 self.repsLabel.text = "\(state.currentReps)\(self.repsText)"
                 
+                // 세트 프로그레스바 업데이트
                 self.setProgressBar.updateProgress(currentSet: state.setProgressAmount)
+                debugPrint(state.setProgressAmount)
                 
                 if state.currentSetNumber == 1 {
                     self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
