@@ -51,8 +51,6 @@ final class HomeViewReactor: Reactor {
         case updateCurrentWorkoutCardState(WorkoutCardState)
         /// 모든 카드 상태 초기화 (루틴 시작 시)
         case initializeWorkoutCardStates([WorkoutCardState])
-        /// 모든 카드 리액터에 전달할 정보
-        case updateAllCardStates(newStates: [WorkoutCardState], currentExerciseIndex: Int, isResting: Bool, restSecondsRemaining: Float, restStartTime: Int?)
     }
     
     // MARK: - State is a current view state
@@ -191,12 +189,7 @@ final class HomeViewReactor: Reactor {
                 .just(.setWorkingout(true)),
                 timer,
                 .just(.initializeWorkoutCardStates(updatedCardStates)),
-                .just(.updateAllCardStates(
-                    newStates: updatedCardStates,
-                    currentExerciseIndex: currentState.exerciseIndex,
-                    isResting: false,
-                    restSecondsRemaining: 0,
-                    restStartTime: nil))
+                
             ])
             
         // 세트 완료 버튼 클릭 시 로직
@@ -221,43 +214,19 @@ final class HomeViewReactor: Reactor {
                     .just(.setResting(true)),
                     .just(.setRestStartTime(currentState.restTime)),
                     // 모든 카드 정보 업데이트
-                    .just(.updateAllCardStates(
-                        newStates: currentWorkoutCardStates,
-                        currentExerciseIndex: currentExerciseIndex,
-                        isResting: true,
-                        restSecondsRemaining: Float(currentState.restTime),
-                        restStartTime: currentState.restTime)),
+                    .just(.updateWorkoutCardState(updatedCardState))
+                    ,
                     restTimer
                 ])
             } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
                 
                 let nextExerciseIndex = currentExerciseIndex + 1
                 if nextExerciseIndex < currentState.workoutRoutine.workouts.count {
-                    // 다음 운동의 첫 세트로 이동
-//                    let nextWorkout = currentState.workoutRoutine.workouts[nextExerciseIndex]
-//                    let nextCardState = WorkoutCardState(
-//                        currentExerciseName: nextWorkout.name,
-//                        currentWeight: nextWorkout.sets.first!.weight,
-//                        currentUnit: nextWorkout.sets.first!.unit,
-//                        currentReps: nextWorkout.sets.first!.reps,
-//                        setIndex: 0,
-//                        totalExerciseCount: currentState.workoutRoutine.workouts.count,
-//                        totalSetCount: nextWorkout.sets.count,
-//                        currentExerciseNumber: nextExerciseIndex + 1,
-//                        currentSetNumber: 1,
-//                        setProgressAmount: 0,
-//                        commentInExercise: nextWorkout.comment
-//                    )
-                    // 다음 운동 카드 상태 업데이트
-//                    currentWorkoutCardStates[nextExerciseIndex] = nextCardState
-//                    currentState.workoutRoutine.workouts.remove(at: nextExerciseIndex)
-                    
         
                     return .concat([
                         .just(.setResting(false)), // 휴식 종료 (다음 운동으로 바로 이동)
                         .just(.setRestStartTime(nil)),
                         .just(.moveToNextSetOrExercise(newExerciseIndex: nextExerciseIndex, newSetIndex: 0, isRoutineCompleted: false)),
-//                        .just(.updateAllCardStates(newStates: currentWorkoutCardStates, currentExerciseIndex: nextExerciseIndex, isResting: false, restSecondsRemaining: 0, restStartTime: nil))
                     ])
                 } else { // 모든 운동 루틴 완료
                     // TODO: 운동 완료 화면 이동 또는 Alert 처리
@@ -404,16 +373,6 @@ final class HomeViewReactor: Reactor {
         case let .initializeWorkoutCardStates(cardStates):
             state.workoutCardStates = cardStates
             state.exerciseIndex = 0 // 첫 운동으로 초기화
-            state = updatePagingCardReactors(state)
-            
-        case let .updateAllCardStates(newStates, currentExerciseIndex, isResting, restSecondsRemaining, restStartTime):
-            // 이 뮤테이션은 mutate에서 명시적으로 호출되어 reduce에서 workoutCardStates를 업데이트하고,
-            // 모든 pagingCardViewReactors에 최신 상태를 전달하는 역할
-            state.workoutCardStates = newStates
-            state.isResting = isResting
-            state.restSecondsRemaining = restSecondsRemaining
-            state.restStartTime = restStartTime
-            state.exerciseIndex = currentExerciseIndex
             state = updatePagingCardReactors(state)
             
         case .workoutTimeUpdating:
