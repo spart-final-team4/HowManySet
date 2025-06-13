@@ -65,7 +65,9 @@ final class HomePagingCardViewReactor: Reactor {
     
     // Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
+        
         switch action {
+            
         case .updateCardState(let newCardState):
             return .just(.setWorkoutCardState(newCardState))
         }
@@ -73,12 +75,15 @@ final class HomePagingCardViewReactor: Reactor {
 
     // Mutation -> State
     func reduce(state: State, mutation: Mutation) -> State {
-        var newState = state
+        
+        var state = state
+        
         switch mutation {
         case .setWorkoutCardState(let cardState):
-            newState.cardState = cardState
+            state.cardState = cardState
         }
-        return newState
+        
+        return state
     }
 }
 
