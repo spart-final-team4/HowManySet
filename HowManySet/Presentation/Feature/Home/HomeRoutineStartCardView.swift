@@ -32,12 +32,6 @@ final class HomeRoutineStartCardView: UIView {
     lazy var todayDateLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
-    
-    private lazy var optionButton = UIButton().then {
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
-        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        $0.tintColor = .label
-    }
 
     private lazy var containerView = UIView().then {
         $0.backgroundColor = .cardContentBG
@@ -89,7 +83,7 @@ private extension HomeRoutineStartCardView {
     func setViewHiearchy() {
         self.addSubview(mainVStack)
         mainVStack.addArrangedSubviews(topContentsHStack, containerView, routineSelectButton)
-        topContentsHStack.addArrangedSubviews(todayDateLabel, spacer, optionButton)
+        topContentsHStack.addArrangedSubviews(todayDateLabel)
         containerView.addSubviews(initialImageView, initialTextLabel)
     }
     
