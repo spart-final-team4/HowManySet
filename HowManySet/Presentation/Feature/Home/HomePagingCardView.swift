@@ -20,98 +20,100 @@ final class HomePagingCardView: UIView {
     
     var disposeBag = DisposeBag()
     
+    /// 현재 카드 뷰의 index
+    /// WorkoutCardState의 index와 동일해야 함!
     var index: Int
     
     // MARK: - UI Components
-    lazy var mainContentVStack = UIStackView().then {
+    private lazy var mainContentVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .fill
     }
     
-    lazy var topLineHStack = UIStackView().then {
+    private lazy var topLineHStack = UIStackView().then {
         $0.axis = .horizontal
     }
     
-    lazy var topConentsVStack = UIStackView().then {
+    private lazy var topConentsVStack = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 20
     }
     
-    lazy var spacer = UIView().then {
+    private lazy var spacer = UIView().then {
         $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
     
-    lazy var exerciseInfoHStack = UIStackView().then {
+    private lazy var exerciseInfoHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 12
     }
     
-    lazy var exerciseNameLabel = UILabel().then {
+    private lazy var exerciseNameLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
-    lazy var exerciseSetLabel = UILabel().then {
+    private lazy var exerciseSetLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 14)
         $0.textColor = .textSecondary
     }
     
-    lazy var optionButton = UIButton().then {
+    private lazy var optionButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.tintColor = .label
     }
     
-    lazy var setProgressBar = SetProgressBarView().then {
+    private lazy var setProgressBar = SetProgressBarView().then {
         $0.backgroundColor = .cardBackground
     }
 
-    lazy var weightRepscontainerView = UIView().then {
+    private lazy var weightRepscontainerView = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
     
-    lazy var weightRepsHStack = UIStackView().then {
+    private lazy var weightRepsHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 70
     }
     
-    lazy var weightInfoVStack = UIStackView().then {
+    private lazy var weightInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
-    lazy var weightImageView = UIImageView().then {
+    private lazy var weightImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
         $0.tintColor = .brand
     }
     
-    lazy var weightLabel = UILabel().then {
+    private lazy var weightLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 20, weight: .semibold)
         $0.textColor = .white
     }
     
-    lazy var repsInfoVStack = UIStackView().then {
+    private lazy var repsInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
-    lazy var repsImageView = UIImageView().then {
+    private lazy var repsImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "repeat", withConfiguration: config)
         $0.tintColor = .white
     }
     
-    lazy var repsLabel = UILabel().then {
+    private lazy var repsLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 20, weight: .semibold)
         $0.textColor = .white
     }
     
     lazy var remainingRestTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 28, weight: .medium)
+        $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
         $0.isHidden = true
     }
     
@@ -119,9 +121,18 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .brand
         $0.setTitle(setCompleteText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         $0.titleLabel?.textColor = .black
         $0.layer.cornerRadius = 12
+    }
+    
+    lazy var restPlayPauseButton = UIButton().then {
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        $0.setImage(UIImage(systemName: "play.fill"), for: .selected)
+        $0.isUserInteractionEnabled = false
+        $0.alpha = 0
+        $0.tintColor = .white
     }
     
     lazy var restProgressBar = UIProgressView().then {
@@ -159,6 +170,7 @@ private extension HomePagingCardView {
             mainContentVStack,
             restProgressBar,
             remainingRestTimeLabel,
+            restPlayPauseButton
         )
         
         mainContentVStack.addArrangedSubviews(
@@ -215,6 +227,11 @@ private extension HomePagingCardView {
         remainingRestTimeLabel.snp.makeConstraints {
             $0.center.equalTo(restProgressBar)
         }
+        
+        restPlayPauseButton.snp.makeConstraints {
+            $0.centerY.equalTo(remainingRestTimeLabel)
+            $0.trailing.equalTo(remainingRestTimeLabel.snp.leading).offset(-12)
+        }
     }
 }
 
@@ -225,18 +242,25 @@ extension HomePagingCardView {
     // TODO: 추후에 통합하여 리팩토링
     func showExerciseUI() {
         print(#function)
-        [restProgressBar, remainingRestTimeLabel].forEach {
+        [restProgressBar,
+         remainingRestTimeLabel].forEach {
             $0.isHidden = true
         }
+        restPlayPauseButton.isUserInteractionEnabled = false
+        restPlayPauseButton.alpha = 0
         setCompleteButton.isUserInteractionEnabled = true
         setCompleteButton.alpha = 1
+        
     }
     
     func showRestUI() {
         print(#function)
-        [restProgressBar, remainingRestTimeLabel].forEach {
+        [restProgressBar,
+         remainingRestTimeLabel].forEach {
             $0.isHidden = false
         }
+        restPlayPauseButton.isUserInteractionEnabled = true
+        restPlayPauseButton.alpha = 1
         setCompleteButton.isUserInteractionEnabled = false
         setCompleteButton.alpha = 0
     }
@@ -248,7 +272,7 @@ extension HomePagingCardView {
     
     func configure(with state: WorkoutCardState) {
         
-        print("카드 뷰: \(state.currentExerciseName), \(state.currentSetNumber)세트")
+//        print("카드 뷰: \(state.currentExerciseName), \(state.currentSetNumber)세트")
         
         exerciseNameLabel.text = state.currentExerciseName
         exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
@@ -261,6 +285,5 @@ extension HomePagingCardView {
         }
     }
 }
-
 
 

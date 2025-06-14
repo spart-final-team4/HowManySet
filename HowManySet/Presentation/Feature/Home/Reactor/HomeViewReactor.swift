@@ -52,11 +52,13 @@ final class HomeViewReactor: Reactor {
         /// 휴식 스킵? 다음 세트?
         case forwardButtonClicked
         /// 운동 중지 버튼 클릭 시
-        case pauseButtonClicked
+        case workoutPauseButtonClicked
         /// 휴식 시간 설정 버튼 클릭 (1분, 30초, 10초)
         case setRestTime(Int)
         /// 스크롤 뷰 페이지 변경
         case pageChanged(to: Int)
+        /// 휴식 중지 버튼 클릭 시
+        case restPauseButtonClicked
         
         //        case stop
         //        case option
@@ -74,6 +76,7 @@ final class HomeViewReactor: Reactor {
         case workoutTimeUpdating
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
+        case pauseAndPlayRest(Bool)
         /// 스킵(다음) 버튼 클릭 시 다음 세트로
         case moveToNextSetOrExercise(
             newExerciseIndex: Int,
@@ -226,6 +229,8 @@ final class HomeViewReactor: Reactor {
             let interval = 0.01
             let tickCount = Int(Double(restTime) / interval)
             let restTimer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
+                .withLatestFrom(self.state) { _, state in state }
+                .filter { $0.isResting && !$0.isWorkoutPaused && !$0.isRestPaused }
                 .take(tickCount)
                 .map { _ in Mutation.restRemainingSecondsUpdating }
             
@@ -314,7 +319,7 @@ final class HomeViewReactor: Reactor {
                     ])
                 }
             }
-        case .pauseButtonClicked:
+        case .workoutPauseButtonClicked:
             return .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
             
         case .setRestTime(let newRestTime):
@@ -329,6 +334,9 @@ final class HomeViewReactor: Reactor {
                 newExerciseIndex: newPageIndex,
                 isCurrentExerciseComplete: false,
                 isRoutineCompleted: false))
+            
+        case .restPauseButtonClicked:
+            return .just(.pauseAndPlayRest(!currentState.isRestPaused))
         }
     }
     
@@ -347,7 +355,6 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseAndPlayWorkout(isPaused):
             state.isWorkoutPaused = isPaused
-            state.isRestPaused = isPaused
             
         case let .setResting(isResting):
             print("휴식중? \(isResting)")
@@ -408,12 +415,18 @@ final class HomeViewReactor: Reactor {
             state.workoutTime += 1
             
         case .restRemainingSecondsUpdating:
-            if state.isResting {
+            if state.isResting,
+               !state.isWorkoutPaused,
+               !state.isRestPaused {
+                
                 state.restSecondsRemaining = max(state.restSecondsRemaining - 0.01, 0)
                 if Int(state.restSecondsRemaining) == 0 {
                     state.isResting = false
                 }
             }
+            
+        case let .pauseAndPlayRest(isPaused):
+            state.isRestPaused = isPaused
         }
         
         return state
