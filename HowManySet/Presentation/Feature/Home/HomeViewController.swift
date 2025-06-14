@@ -413,6 +413,15 @@ extension HomeViewController {
                     self.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
                 }
                 
+                        .do(onNext: { _ in
+                            // 클릭 애니메이션
+                            UIView.animate(withDuration: 0.1,
+                                           animations: {
+                                cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.99, y: 0.99)
+                            }, completion: { _ in
+                                UIView.animate(withDuration: 0.1) {
+                                    cardView.setCompleteButton.transform = CGAffineTransform.identity
+                                }
             })
             .disposed(by: disposeBag)
         
