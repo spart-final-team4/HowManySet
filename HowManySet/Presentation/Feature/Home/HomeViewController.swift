@@ -375,6 +375,15 @@ extension HomeViewController {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        stopButton.rx.tap
+            .map { Reactor.Action.stopButtonClicked }
+            .bind(onNext: { [weak self] stop in
+                guard let self else { return }
+                let workoutEnded = self.coordinator?.popUpEndWorkoutAlert()
+                reactor.action.onNext(stop(workoutEnded ?? false))
+            })
+            .disposed(by: disposeBag)
+        
         // 스크롤의 감속이 끝났을 때 페이징
         pagingScrollView.rx.didEndDecelerating
             .observe(on: MainScheduler.instance)
@@ -529,6 +538,8 @@ extension HomeViewController {
                 }
 
                 if isResting && restTime > 0 && Int(restSecondsRemaining) > 0 {
+                    
+                    print("남은 휴식 시간: \(restSecondsRemaining)")
                     
                     let elapsed = Float(totalRestTime) - restSecondsRemaining
                     let progress = max(min(elapsed / Float(totalRestTime), 1), 0)

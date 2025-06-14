@@ -59,8 +59,8 @@ final class HomeViewReactor: Reactor {
         case pageChanged(to: Int)
         /// 휴식 중지 버튼 클릭 시
         case restPauseButtonClicked
-        
-        //        case stop
+        /// 운동 종료 버튼 클릭 시
+        case stopButtonClicked(with: Bool)
         //        case option
     }
     
@@ -77,6 +77,7 @@ final class HomeViewReactor: Reactor {
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
         case pauseAndPlayRest(Bool)
+        case endCurrentWorkout(with: Bool)
         /// 스킵(다음) 버튼 클릭 시 다음 세트로
         case moveToNextSetOrExercise(
             newExerciseIndex: Int,
@@ -358,6 +359,9 @@ final class HomeViewReactor: Reactor {
             
         case .restPauseButtonClicked:
             return .just(.pauseAndPlayRest(!currentState.isRestPaused))
+            
+        case .stopButtonClicked(let isEnded):
+            return .just(.endCurrentWorkout(with: isEnded))
         }
     }
     
@@ -449,6 +453,11 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseAndPlayRest(isPaused):
             state.isRestPaused = isPaused
+            
+        case let .endCurrentWorkout(isEnded):
+            if isEnded {
+                state.isWorkingout = false
+            }
         }
         
         return state
