@@ -8,7 +8,10 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-    
+    func presentWorkoutOptionView()
+    func pushEditRoutineView()
+    func pushRoutineCompleteView()
+    func popUpEndWorkoutAlert() -> Bool
 }
 
 /// 홈 흐름 담당 coordinator
@@ -75,4 +78,34 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container)
         routineCompleteCoordinator.start()
     }
+    
+    func popUpEndWorkoutAlert() -> Bool {
+        
+        var workoutEnded = false
+        
+        let endWorkoutVC = DefaultPopupViewController(
+            title: "운동 종료",
+            titleTextColor: .error,
+            content: "현재 운동을 종료하시겠습니까?",
+            okButtonText: "종료",
+            okButtonBackgroundColor: .error,
+            okAction: { [weak self] in
+                guard let self else { return }
+                
+//                 HomeVC 초기화
+                self.navigationController.popToRootViewController(animated: false)
+                let newHomeVC = self.container.makeHomeViewController(coordinator: self)
+                self.navigationController.setViewControllers([newHomeVC], animated: false)
+                
+                workoutEnded = true
+                
+                self.pushRoutineCompleteView()
+                
+            })
+        
+        navigationController.present(endWorkoutVC, animated: true)
+        
+        return workoutEnded
+    }
+
 }
