@@ -505,14 +505,17 @@ extension HomeViewController {
             reactor.state.map { $0.exerciseIndex },
             reactor.state.map { $0.restTime },
             reactor.state.map { $0.restSecondsRemaining },
-            reactor.state.map { $0.restStartTime }
+            reactor.state.map { $0.restStartTime },
+            reactor.state.map { $0.isWorkingout }
         )
+        .filter { $5 }
         .bind(onNext: { [weak self]
             isResting,
             exerciseIndex,
             restTime,
             restSecondsRemaining,
-            restStartTime in
+            restStartTime,
+            isWorkingout in
             guard let self else { return }
 
             self.pagingCardViewContainer.enumerated().forEach { index, cardView in
@@ -573,19 +576,25 @@ extension HomeViewController {
         
         
         reactor.state.map { $0.isWorkoutPaused }
-            .distinctUntilChanged()
             .bind(with: self) { view, isWorkoutPaused in
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
         
         reactor.state.map { $0.currentExerciseCompleted }
-            .distinctUntilChanged()
             .filter { $0 }
             .bind { [weak self] _ in
                 guard let self else { return }
                 self.pagingCardViewContainer.remove(at: reactor.currentState.exerciseIndex)
             }.disposed(by: disposeBag)
         
+        reactor.state.map { $0.exerciseIndex }
+            .bind { [weak self] page in
+                guard let self else { return }
+                
+                self.handlePageChanged(currentPage: page)
+                self.pageController.currentPage = page
+                
+            }.disposed(by: disposeBag)
     }
 }
