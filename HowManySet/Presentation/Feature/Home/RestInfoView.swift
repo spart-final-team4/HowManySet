@@ -21,17 +21,7 @@ final class RestInfoView: UIView, View {
     private let restResetButtonText = "초기화"
     private let restText = "현재 설정된 휴식 시간"
     private let waterText = "물 한잔 챙겼다면, 클릭!"
-    
-    // HomeViewReactor 참조
-    var reactor: HomeViewReactor? {
-            didSet {
-                if let reactor = reactor {
-                    bind(reactor: reactor)
-                }
-            }
-        }
 
-    weak var homeViewReactor: HomeViewReactor?
     var disposeBag = DisposeBag()
     
     // MARK: - UI Components
@@ -124,11 +114,9 @@ final class RestInfoView: UIView, View {
     // MARK: - Initializer
     init(frame: CGRect, homeViewReactor: HomeViewReactor) {
         super.init(frame: frame)
-        self.homeViewReactor = homeViewReactor
+        self.reactor = homeViewReactor
         
         setupUI()
-        
-        bind(reactor: homeViewReactor)
     }
     
     required init?(coder: NSCoder) {

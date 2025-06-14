@@ -105,8 +105,6 @@ final class HomeViewController: UIViewController, View {
         self.reactor = reactor
         self.coordinator = coordinator
         
-        self.bind(reactor: reactor)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -489,6 +487,30 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
         
+//        Observable.combineLatest (
+//            reactor.state.map { $0.isResting }.distinctUntilChanged(),
+//            reactor.state.map { $0.exerciseIndex },
+//        )
+        
+        reactor.state.map { ($0.restTime, $0.isResting) }
+            .distinctUntilChanged { $0 == $1 }
+            .bind { [weak self] restTime, isResting in
+                guard let self else { return }
+                
+                self.restInfoView.restTimeLabel.text = restTime.toRestTimeLabel()
+                
+                if isResting {
+                    self.pagingCardViewContainer.forEach {
+                        $0.showRestUI()
+                    }
+                } else {
+                    self.pagingCardViewContainer.forEach {
+                        $0.showExerciseUI()
+                    }
+                }
+                                
+            }.disposed(by: disposeBag)
+        
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         Observable.combineLatest(
             reactor.state.map { $0.isResting }.distinctUntilChanged(),
@@ -516,11 +538,8 @@ extension HomeViewController {
                     print("cardIndex = \(cardIndex), exerciseIndex = \(exerciseIndex)")
                     
                     if isResting, restTime != 0, restStartTime != 0 {
-                        
-                        cardView.showRestUI()
-                        
-                        print("😌 휴식 중! 시간: \(restTime)")
-                        self.restInfoView.restTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
+                                                
+                        print("😌 휴식 중! 시간: \(restTime), 남은 시간: \(restSecondsRemaining)")
                         
                         if let totalTime = restStartTime, totalTime > 0 {
                             let elapsed = Float(totalTime) - Float(restSecondsRemaining)
@@ -528,16 +547,17 @@ extension HomeViewController {
                         }
                         
                         self.restInfoView.showWaterInfo()
+                        cardView.configure(with: cardState)
+                        
                     } else if isResting {
                         print("😌 휴식 시간 0!")
                         self.restInfoView.showRestInfo()
-                        cardView.showExerciseUI()
-                        cardView.configure(with: cardState)
                         cardView.restProgressBar.setProgress(0, animated: false)
+                        cardView.configure(with: cardState)
+
                     } else {
-                        cardView.showExerciseUI()
+                        cardView.configure(with: cardState)
                     }
-                    cardView.configure(with: cardState)
                 }
             }
         }).disposed(by: disposeBag)
