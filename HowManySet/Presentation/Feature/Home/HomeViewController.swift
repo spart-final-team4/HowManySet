@@ -105,6 +105,8 @@ final class HomeViewController: UIViewController, View {
         self.reactor = reactor
         self.coordinator = coordinator
         
+        self.bind(reactor: reactor)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -117,7 +119,6 @@ final class HomeViewController: UIViewController, View {
         print(#function)
         
         setupUI()
-        bindUIEvents()
     }
 }
 
@@ -207,7 +208,11 @@ private extension HomeViewController {
         
         routineStartCardView.isHidden = true
         
-        [topTimerHStackView, buttonHStackView, pageController, pagingScrollView, restInfoView].forEach {
+        [topTimerHStackView,
+         buttonHStackView,
+         pageController,
+         pagingScrollView,
+         restInfoView].forEach {
             $0.isHidden = false
         }
         
@@ -254,7 +259,7 @@ private extension HomeViewController {
         
         for (i, cardState) in cardStates.enumerated() {
             
-            let cardView = HomePagingCardView(frame: .zero).then {
+            let cardView = HomePagingCardView(frame: .zero, index: cardState.exerciseIndex).then {
                 $0.layer.cornerRadius = 20
             }
             
@@ -270,13 +275,6 @@ private extension HomeViewController {
             
             // 뷰 저장하는 리스트에 append
             pagingCardViewContainer.append(cardView)
-            
-//            // 각 새로 생성된 cardView에 대한 setCompleteButton들 Binding
-//            cardView.setCompleteButton.rx.tap
-//                .observe(on: MainScheduler.instance)
-//                .map { Reactor.Action.setCompleteButtonClicked }
-//                .bind(to: self.reactor!.action)
-//                .disposed(by: disposeBag)
         }
         
         remakeOtherViewsWithScrollView()
@@ -373,13 +371,58 @@ extension HomeViewController {
             .map { Reactor.Action.pauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-
+        
         forwardButton.rx.tap
             .observe(on: MainScheduler.instance)
             .map { Reactor.Action.forwardButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-
+        
+        // 스크롤의 감속이 끝났을 때 페이징
+        pagingScrollView.rx.didEndDecelerating
+            .observe(on: MainScheduler.instance)
+            .map { [weak self] _ -> Int in
+                guard let self else { return 0 }
+                // scrollView 내부 콘텐트가 수평으로 얼마나 스크롤 됐는지 / scrollView가 화면에 차지하는 너비
+                let newPage = Int(round(pagingScrollView.contentOffset.x / pagingScrollView.frame.width))
+                return newPage
+            }
+            .do(onNext: { [weak self] newPage in
+                guard let self else { return }
+                
+                print("변경된 페이지: \(newPage)")
+                
+                // 페이지가 변경 되었을 때만 조정
+                if newPage != previousPage {
+                    self.handlePageChanged(currentPage: newPage)
+                }
+                
+                reactor.action.onNext(.pageChanged(to: newPage))
+                
+            })
+            .bind(to: pageController.rx.currentPage)
+            .disposed(by: disposeBag)
+        
+        
+        // 페이징이 되었을 시 동작 (페이지 컨트롤 클릭 시 대응)
+        // 기본적으로 페이지 컨트롤 클릭 시 페이지 값이 변경되어 .valueChaned로 구현
+        pageController.rx.controlEvent(.valueChanged)
+            .observe(on: MainScheduler.instance)
+            .map { [weak self] _ -> Int in
+                guard let self else { return 0 }
+                let currentPage = self.pageController.currentPage
+                return currentPage
+            }
+            .bind(onNext: { [weak self] newPage in
+                guard let self else { return }
+                
+                self.handlePageChanged(currentPage: newPage)
+                
+                reactor.action.onNext(.pageChanged(to: newPage))
+                
+                
+            })
+            .disposed(by: disposeBag)
         
         // MARK: - State
         // 초기 뷰 현재 날짜 표시
@@ -391,28 +434,27 @@ extension HomeViewController {
                 self.routineStartCardView.todayDateLabel.text = reactor.currentState.date.toDateLabel()
             }.disposed(by: disposeBag)
         
+        
         // 운동 시작 시 동작
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
             .filter { $0 }
-            .observe(on: MainScheduler.instance)
-            .take(1) // 처음 true 된 시점에만 운동 초기 화면
-            .bind(with: self) { view, _ in
-                print("--- 운동시작 ---")
-                view.showStartRoutineUI()
-            }
-            .disposed(by: disposeBag)
-        
-        // 운동 시간 업데이트
-        reactor.state.map { $0.isWorkingout }
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] isWorkingout in
+            .bind(onNext: { [weak self]  _ in
+                
                 guard let self else { return }
+                print("--- 운동시작 ---")
+                self.showStartRoutineUI()
                 
-                if isWorkingout {
-                    self.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
-                }
+                // 내부 카드 뷰들 세팅
+                self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
                 
+                // 각 카드 뷰의 세트 완료 버튼 바인딩 및 UI 정보 설정
+                for (index, cardView) in self.pagingCardViewContainer.enumerated() {
+                    
+                    print("세트 완료 버튼 바인딩: \(index)")
+                    
+                    cardView.setCompleteButton.rx.tap
+                        .observe(on: MainScheduler.instance)
                         .do(onNext: { _ in
                             // 클릭 애니메이션
                             UIView.animate(withDuration: 0.1,
@@ -422,58 +464,83 @@ extension HomeViewController {
                                 UIView.animate(withDuration: 0.1) {
                                     cardView.setCompleteButton.transform = CGAffineTransform.identity
                                 }
+                            })
+                        })
+                        .map { Reactor.Action.setCompleteButtonClicked(at: index) }
+                        .subscribe(onNext: {
+                            reactor.action.onNext($0)
+                        })
+                        .disposed(by: self.disposeBag)
+                    
+                    cardView.configure(with: reactor.currentState.workoutCardStates[index])
+                }
             })
             .disposed(by: disposeBag)
         
-        // 텍스트 등 뷰 요소 바인딩
+        // 운동 시간 업데이트
         reactor.state.map { $0.isWorkingout }
-            .distinctUntilChanged()
             .filter { $0 }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] isWorkingout in
                 guard let self else { return }
-            
-                if isWorkingout {
-                    // 내부 카드 뷰들 세팅
-                    self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
-                }
+                
+                self.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
+                
             })
             .disposed(by: disposeBag)
         
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
-        reactor.state.map { $0.isResting }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] isResting in
-                guard let self else { return }
-                self.pagingCardViewContainer.forEach {
-                    if isResting,
-                       reactor.currentState.restTime != 0,
-                       reactor.currentState.restSecondsRemaining != 0 {
+        Observable.combineLatest(
+            reactor.state.map { $0.isResting }.distinctUntilChanged(),
+            reactor.state.map { $0.exerciseIndex },
+            reactor.state.map { $0.restTime },
+            reactor.state.map { $0.restSecondsRemaining },
+            reactor.state.map { $0.restStartTime }
+        )
+        .bind(onNext: { [weak self]
+            isResting,
+            exerciseIndex,
+            restTime,
+            restSecondsRemaining,
+            restStartTime in
+            guard let self else { return }
+            
+            self.pagingCardViewContainer.enumerated().forEach { index, cardView in
+                
+                let cardState = reactor.currentState.workoutCardStates[cardView.index]
+                let cardIndex = index
+                
+                if cardIndex == exerciseIndex {
+                    
+                    print("카드 인덱스 \(cardIndex), 운동 인덱스 \(exerciseIndex)")
+                    print("cardIndex = \(cardIndex), exerciseIndex = \(exerciseIndex)")
+                    
+                    if isResting, restTime != 0, restStartTime != 0 {
                         
-                        self.restInfoView.setWaterUI()
-                        $0.showRestUI()
+                        cardView.showRestUI()
                         
-                        /// 현재 남은 휴식 시간
-                        let restSecondsRemaining = reactor.currentState.restSecondsRemaining
-                        /// 프로그레스바 구현에 쓰이는 초기 휴식 시작 시간
-                        let restStartTime = reactor.currentState.restStartTime
-                        
-                        $0.remaingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
+                        print("😌 휴식 중! 시간: \(restTime)")
+                        self.restInfoView.restTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
                         
                         if let totalTime = restStartTime, totalTime > 0 {
                             let elapsed = Float(totalTime) - Float(restSecondsRemaining)
-                            $0.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
+                            cardView.restProgressBar.setProgress(max(min(elapsed / Float(totalTime), 1), 0), animated: true)
                         }
                         
+                        self.restInfoView.showWaterInfo()
+                    } else if isResting {
+                        print("😌 휴식 시간 0!")
+                        self.restInfoView.showRestInfo()
+                        cardView.showExerciseUI()
+                        cardView.configure(with: cardState)
+                        cardView.restProgressBar.setProgress(0, animated: false)
                     } else {
-                        self.restInfoView.setRestUI()
-                        $0.showExerciseUI()
-                        $0.restProgressBar.setProgress(0, animated: false)
-                        
+                        cardView.showExerciseUI()
                     }
+                    cardView.configure(with: cardState)
                 }
-            }).disposed(by: disposeBag)
+            }
+        }).disposed(by: disposeBag)
         
         reactor.state.map { $0.isWorkoutPaused }
             .distinctUntilChanged()
@@ -491,48 +558,6 @@ extension HomeViewController {
                 guard let self else { return }
                 self.pagingCardViewContainer.remove(at: reactor.currentState.exerciseIndex)
             }.disposed(by: disposeBag)
-    }
-}
-
-// MARK: - Rx Cocoa
-private extension HomeViewController {
-    
-    func bindUIEvents() {
         
-        // 스크롤의 감속이 끝났을 때 페이징
-        pagingScrollView.rx.didEndDecelerating
-            .observe(on: MainScheduler.instance)
-            .map { [weak self] _ -> Int in
-                guard let self else { return 0 }
-                // scrollView 내부 콘텐트가 수평으로 얼마나 스크롤 됐는지 / scrollView가 화면에 차지하는 너비
-                let newPage = Int(round(pagingScrollView.contentOffset.x / pagingScrollView.frame.width))
-                return newPage
-            }
-            .do(onNext: { [weak self] newPage in
-                guard let self else { return }
-                
-                // 페이지가 변경 되었을 때만 조정
-                if newPage != previousPage {
-                    self.handlePageChanged(currentPage: newPage)
-                }
-            })
-            .bind(to: pageController.rx.currentPage)
-            .disposed(by: disposeBag)
-        
-        
-        // 페이징이 되었을 시 동작 (페이지 컨트롤 클릭 시 대응)
-        // 기본적으로 페이지 컨트롤 클릭 시 페이지 값이 변경되어 .valueChaned로 구현
-        pageController.rx.controlEvent(.valueChanged)
-            .observe(on: MainScheduler.instance)
-            .map { [weak self] _ -> Int in
-                guard let self else { return 0 }
-                let currentPage = self.pageController.currentPage
-                return currentPage
-            }
-            .bind(onNext: { [weak self] currentPage in
-                guard let self else { return }
-                self.handlePageChanged(currentPage: currentPage)
-            })
-            .disposed(by: disposeBag)
     }
 }

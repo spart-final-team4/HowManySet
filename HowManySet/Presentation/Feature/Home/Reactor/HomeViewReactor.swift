@@ -19,6 +19,8 @@ struct WorkoutCardState {
     var currentReps: Int
     /// 현재 진행 중인 세트 인덱스
     var setIndex: Int
+    /// 현재 루틴 안 운동종목의 인덱스
+    var exerciseIndex: Int
     
     /// 전체 운동 개수
     var totalExerciseCount: Int
@@ -72,7 +74,10 @@ final class HomeViewReactor: Reactor {
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
         /// 스킵(다음) 버튼 클릭 시 다음 세트로
-        case moveToNextSetOrExercise(newExerciseIndex: Int, newSetIndex: Int, isRoutineCompleted: Bool)
+        case moveToNextSetOrExercise(
+            newExerciseIndex: Int,
+            isCurrentExerciseComplete: Bool,
+            isRoutineCompleted: Bool)
         /// 현재 운동 카드 업데이트
         case updateWorkoutCardState(WorkoutCardState)
         /// 모든 카드 상태 초기화 (루틴 시작 시)
@@ -115,7 +120,7 @@ final class HomeViewReactor: Reactor {
     init(saveRecordUseCase: SaveRecordUseCase) {
         self.saveRecordUseCase = saveRecordUseCase
         
-        // TODO: MOCKDATA -> 실제 데이터로 수정
+        // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routineMockData
         
@@ -131,6 +136,7 @@ final class HomeViewReactor: Reactor {
                 currentUnit: firstSet.unit,
                 currentReps: firstSet.reps,
                 setIndex: 0,
+                exerciseIndex: i,
                 totalExerciseCount: initialRoutine.workouts.count,
                 totalSetCount: workout.sets.count,
                 currentExerciseNumber: i + 1,
@@ -187,6 +193,7 @@ final class HomeViewReactor: Reactor {
                     currentUnit: firstSet.unit,
                     currentReps: firstSet.reps,
                     setIndex: 0,
+                    exerciseIndex: 0,
                     totalExerciseCount: currentState.workoutRoutine.workouts.count,
                     totalSetCount: workout.sets.count,
                     currentExerciseNumber: i + 1,
@@ -198,6 +205,7 @@ final class HomeViewReactor: Reactor {
             
             // 운동 시간 타이머 설정
             let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
                 .withLatestFrom(self.state.map{ $0.isWorkoutPaused }) { _, isPaused in return isPaused }
                 .filter { !$0 }
                 .map { _ in Mutation.workoutTimeUpdating }
@@ -211,8 +219,6 @@ final class HomeViewReactor: Reactor {
             
         // 세트 완료 버튼 클릭 시 로직
         case let .setCompleteButtonClicked(cardIndex):
-            
-            var currentCardState = currentWorkoutCardStates[cardIndex]
 
             print("mutate - 세트 완료 버튼 클릭!")
             let restTime = currentState.restTime
@@ -224,28 +230,27 @@ final class HomeViewReactor: Reactor {
             
             let nextSetIndex = currentCardState.setIndex + 1
             
-//            // 현재 세트 완료 처리
-//            currentCardState.setProgressAmount += 1
-//            currentCardState.currentSetNumber += 1
-//            currentCardState.setIndex += 1
-            
-            // 현재 cardState에 적용
-//            currentWorkoutCardStates[currentExerciseIndex] = updatedCardState
-                        
             // 다음 세트가 있는 경우 (휴식 시작)
             if nextSetIndex < currentCardState.totalSetCount {
                 
-                currentCardState.setIndex = nextSetIndex
-                currentCardState.currentSetNumber = nextSetIndex + 1
-                currentCardState.setProgressAmount += 1
+                currentWorkoutCardStates[cardIndex].setIndex = nextSetIndex
+                currentWorkoutCardStates[cardIndex].currentSetNumber = nextSetIndex + 1
+                currentWorkoutCardStates[cardIndex].setProgressAmount += 1
                 
-                print("현재 세트 정보: \(currentCardState)")
+                /// 변경된 카드 State!
+                let updatedCardState = currentWorkoutCardStates[cardIndex]
+                
+                print("현재 세트 정보: \(updatedCardState)")
                 
                 return .concat([
                     .just(.setResting(true)),
                     .just(.setRestStartTime(currentState.restTime)),
+                    .just(.moveToNextSetOrExercise(
+                        newExerciseIndex: currentExerciseIndex,
+                        isCurrentExerciseComplete: false,
+                        isRoutineCompleted: false)),
                     // 카드 정보 업데이트
-                    .just(.updateWorkoutCardState(currentCardState)),
+                    .just(.updateWorkoutCardState(updatedCardState)),
                     restTimer
                 ])
             } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
@@ -256,7 +261,8 @@ final class HomeViewReactor: Reactor {
                     return .concat([
                         .just(.setResting(false)), // 휴식 종료 (다음 운동으로 바로 이동)
                         .just(.setRestStartTime(nil)),
-                        .just(.moveToNextSetOrExercise(newExerciseIndex: nextExerciseIndex, newSetIndex: 0, isRoutineCompleted: false)),
+                        .just(.moveToNextSetOrExercise(newExerciseIndex: nextExerciseIndex, isCurrentExerciseComplete: true,
+                            isRoutineCompleted: false)),
                     ])
                 } else { // 모든 운동 루틴 완료
                     // TODO: 운동 완료 화면 이동 또는 Alert 처리
@@ -276,7 +282,10 @@ final class HomeViewReactor: Reactor {
                 return .concat([
                     .just(.setResting(false)),
                     .just(.setRestStartTime(nil)),
-                    .just(.moveToNextSetOrExercise(newExerciseIndex: currentExerciseIndex, newSetIndex: nextSetIndex, isRoutineCompleted: false))
+                    .just(.moveToNextSetOrExercise(
+                        newExerciseIndex: currentExerciseIndex,
+                        isCurrentExerciseComplete: false,
+                        isRoutineCompleted: false))
                 ])
             } else { // 현재 운동의 마지막 세트에서 건너뛰는 경우 (다음 운동으로 이동 또는 루틴 종료)
                 let nextExerciseIndex = currentExerciseIndex + 1
@@ -284,7 +293,10 @@ final class HomeViewReactor: Reactor {
                     return .concat([
                         .just(.setResting(false)),
                         .just(.setRestStartTime(nil)),
-                        .just(.moveToNextSetOrExercise(newExerciseIndex: nextExerciseIndex, newSetIndex: 0, isRoutineCompleted: false))
+                        .just(.moveToNextSetOrExercise(
+                            newExerciseIndex: nextExerciseIndex,
+                            isCurrentExerciseComplete: true,
+                            isRoutineCompleted: false))
                     ])
                 } else { // 모든 운동 루틴 완료
                     // TODO: 운동 완료 화면 이동 또는 Alert 처리
@@ -310,6 +322,7 @@ final class HomeViewReactor: Reactor {
             
             
         case .setRestTime(let newRestTime):
+            print("설정된 휴식시간: \(newRestTime)")
             return .concat([
                 .just(.setRestStartTime(newRestTime)),
                 .just(.setRestTime(newRestTime))
@@ -317,9 +330,10 @@ final class HomeViewReactor: Reactor {
             
         case .pageChanged(let newPageIndex):
             // 해당 페이지의 운동으로 이동
-            return .concat([
-                .just(.moveToNextSetOrExercise(newExerciseIndex: newPageIndex, newSetIndex: 0, isRoutineCompleted: false))
-            ])
+            return .just(.moveToNextSetOrExercise(
+                newExerciseIndex: newPageIndex,
+                isCurrentExerciseComplete: false,
+                isRoutineCompleted: false))
         }
     }
     
@@ -338,8 +352,10 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseAndPlayWorkout(isPaused):
             state.isWorkoutPaused = isPaused
+//            state.isRestPaused = isPaused
             
         case let .setResting(isResting):
+            print("휴식중? \(isResting)")
             state.isResting = isResting
             // 휴식 상태가 해제되면 휴식 시간 관련 정보 초기화
             if !isResting {
@@ -358,49 +374,35 @@ final class HomeViewReactor: Reactor {
                 state.restTime += restTime
             }
             
-        case let .moveToNextSetOrExercise(newExerciseIndex, newSetIndex, isRoutineCompleted):
-            if isRoutineCompleted { // 루틴 전체 완료
+        case let .moveToNextSetOrExercise(
+            newExerciseIndex,
+            isCurrentExerciseCompleted,
+            isRoutineCompleted):
+            
+            if isRoutineCompleted && isCurrentExerciseCompleted { // 루틴 전체 완료
                 state.isWorkingout = false
+                print("루틴 전체 완료 - \(!state.isWorkingout)")
                 // MARK: - TODO: 운동 완료 후 기록 저장 등의 추가 작업
                 
-            } else {
+            } else if isCurrentExerciseCompleted { // 현재 운동만 완료
+                
+                print("현재 운동 완료")
                 
                 state.exerciseIndex = newExerciseIndex // 현재 운동 인덱스 업데이트
                 
-                // 현재 운동의 카드 상태 업데이트
-                var currentCardState = state.workoutCardStates[newExerciseIndex]
-                let workout = state.workoutRoutine.workouts[newExerciseIndex]
+            } else { // 다음 세트로
                 
-                if newSetIndex == 0 { // 새로운 운동으로 넘어갈 때 (첫 세트로 초기화)
-                    state.currentExerciseCompleted = true
+                state.exerciseIndex = newExerciseIndex // 현재 운동 인덱스 업데이트
 
-                    currentCardState.setIndex = 0
-                    currentCardState.currentSetNumber = 1
-                    currentCardState.setProgressAmount = 0
-                    currentCardState.currentWeight = workout.sets.first?.weight ?? 0
-                    currentCardState.currentReps = workout.sets.first?.reps ?? 0
-                    currentCardState.currentUnit = workout.sets.first?.unit ?? "kg"
-                    
-                    state.currentExerciseCompleted = false
-
-                } else { // 다음 세트로 넘어갈 때
-                    let nextSet = workout.sets[newSetIndex]
-                    currentCardState.setIndex = newSetIndex
-                    currentCardState.currentSetNumber = newSetIndex + 1
-                    currentCardState.setProgressAmount = newSetIndex / workout.sets.count // 진행률 업데이트
-                    currentCardState.currentWeight = nextSet.weight
-                    currentCardState.currentReps = nextSet.reps
-                    currentCardState.currentUnit = nextSet.unit
-                }
-                state.workoutCardStates[newExerciseIndex] = currentCardState
-             
+                print("다음 세트로 - \(                currentState.workoutCardStates[currentState.exerciseIndex].setIndex)")
             }
             
         case let .updateWorkoutCardState(cardState):
-            let index = cardState.currentExerciseNumber - 1
-            print("보내는 index: \(index)")
+            let index = cardState.exerciseIndex
+            print("현재 카드 index: \(index)")
             // 현재 카드 상태 업데이트
             state.workoutCardStates[index] = cardState
+            print("\n Reactor의 현재 카드 State \(state.workoutCardStates[index])\n")
             
         case let .initializeWorkoutCardStates(cardStates):
             state.workoutCardStates = cardStates

@@ -23,8 +23,15 @@ final class RestInfoView: UIView, View {
     private let waterText = "물 한잔 챙겼다면, 클릭!"
     
     // HomeViewReactor 참조
+    var reactor: HomeViewReactor? {
+            didSet {
+                if let reactor = reactor {
+                    bind(reactor: reactor)
+                }
+            }
+        }
+
     weak var homeViewReactor: HomeViewReactor?
-    
     var disposeBag = DisposeBag()
     
     // MARK: - UI Components
@@ -45,7 +52,7 @@ final class RestInfoView: UIView, View {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
     
-    private lazy var restTimeLabel = UILabel().then {
+    lazy var restTimeLabel = UILabel().then {
         $0.text = "00:00"
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .medium)
     }
@@ -117,7 +124,6 @@ final class RestInfoView: UIView, View {
     // MARK: - Initializer
     init(frame: CGRect, homeViewReactor: HomeViewReactor) {
         super.init(frame: frame)
-        self.reactor = reactor
         self.homeViewReactor = homeViewReactor
         
         setupUI()
@@ -137,7 +143,7 @@ private extension RestInfoView {
         setViewHiearchy()
         setConstraints()
         
-        setRestUI()
+        showRestInfo()
     }
     
     func setViewHiearchy() {
@@ -172,7 +178,7 @@ private extension RestInfoView {
 // MARK: - Internal Methods
 extension RestInfoView {
     
-    func setRestUI() {
+    func showRestInfo() {
         
         [restLabelHStack, restButtonHStack].forEach {
             $0.isHidden = false
@@ -183,7 +189,7 @@ extension RestInfoView {
         }
     }
     
-    func setWaterUI() {
+    func showWaterInfo() {
         [restLabelHStack, restButtonHStack].forEach {
             $0.isHidden = true
         }
