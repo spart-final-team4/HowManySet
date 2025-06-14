@@ -400,11 +400,10 @@ extension HomeViewController {
                 
                 // 페이지가 변경 되었을 때만 조정
                 if newPage != previousPage {
-                    self.handlePageChanged(currentPage: newPage)
+
+                    reactor.action.onNext(.pageChanged(to: newPage))
                 }
-                
-                reactor.action.onNext(.pageChanged(to: newPage))
-                
+             
             })
             .bind(to: pageController.rx.currentPage)
             .disposed(by: disposeBag)
@@ -425,8 +424,6 @@ extension HomeViewController {
                 self.handlePageChanged(currentPage: newPage)
                 
                 reactor.action.onNext(.pageChanged(to: newPage))
-                
-                
             })
             .disposed(by: disposeBag)
         
