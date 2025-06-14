@@ -217,7 +217,6 @@ extension RestInfoView {
         // MARK: State
         // HomeViewReactor의 상태를 구독하여 RestInfoView의 UI를 업데이트
         reactor.state.map { $0.restTime }
-            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] restTime in
                 guard let self else { return }
                 self.restTimeLabel.text = restTime.toRestTimeLabel()
