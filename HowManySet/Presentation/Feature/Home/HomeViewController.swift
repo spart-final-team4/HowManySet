@@ -364,7 +364,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
-            .map { Reactor.Action.pauseButtonClicked }
+            .map { Reactor.Action.workoutPauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -442,13 +442,12 @@ extension HomeViewController {
                 // 내부 카드 뷰들 세팅
                 self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
                 
-                // 각 카드 뷰의 세트 완료 버튼 바인딩 및 UI 정보 설정
+                // MARK: -  각 카드 뷰 버튼 바인딩, UI 정보 설정
                 for (index, cardView) in self.pagingCardViewContainer.enumerated() {
                     
-                    print("세트 완료 버튼 바인딩: \(index)")
+                    print("버튼 바인딩: \(index)")
                     
                     cardView.setCompleteButton.rx.tap
-                        .observe(on: MainScheduler.instance)
                         .do(onNext: { _ in
                             // 클릭 애니메이션
                             UIView.animate(withDuration: 0.1,
@@ -463,13 +462,18 @@ extension HomeViewController {
                         .map { Reactor.Action.setCompleteButtonClicked(at: index) }
                         .subscribe(onNext: {
                             reactor.action.onNext($0)
-                        })
-                        .disposed(by: self.disposeBag)
+                        }).disposed(by: cardView.disposeBag)
+                    
+                   cardView.restPlayPauseButton.rx.tap
+                        .bind { [weak cardView] in
+                            guard let cardView else { return }
+                            cardView.restPlayPauseButton.isSelected.toggle()
+                            reactor.action.onNext(.restPauseButtonClicked)
+                        }.disposed(by: cardView.disposeBag)
                     
                     cardView.configure(with: reactor.currentState.workoutCardStates[index])
                 }
-            })
-            .disposed(by: disposeBag)
+            }).disposed(by: disposeBag)
         
         // 운동 시간 업데이트
         reactor.state.map { $0.isWorkingout }
@@ -505,12 +509,13 @@ extension HomeViewController {
         
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         Observable.combineLatest(
-            reactor.state.map { $0.isResting }.distinctUntilChanged(),
+            reactor.state.map { $0.isResting },
             reactor.state.map { $0.exerciseIndex },
             reactor.state.map { $0.restTime },
             reactor.state.map { $0.restSecondsRemaining },
             reactor.state.map { $0.restStartTime }
         )
+        .distinctUntilChanged { $0 == $1 }
         .bind(onNext: { [weak self]
             isResting,
             exerciseIndex,
@@ -527,8 +532,8 @@ extension HomeViewController {
                 // 현재 카드 뷰가 현재 운동 종목이 맞는지 체크
                 if cardIndex == exerciseIndex {
                     
-                    print("카드 인덱스 \(cardIndex), 운동 인덱스 \(exerciseIndex)")
-                    print("cardIndex = \(cardIndex), exerciseIndex = \(exerciseIndex)")
+//                    print("카드 인덱스 \(cardIndex), 운동 인덱스 \(exerciseIndex)")
+//                    print("cardIndex = \(cardIndex), exerciseIndex = \(exerciseIndex)")
                     
                     guard let totalRestTime = restStartTime,
                               totalRestTime > 0 else {
@@ -538,11 +543,12 @@ extension HomeViewController {
 
                     if  isResting,
                         restTime != 0,
-                        restStartTime != 0 {
+                        restStartTime != 0,
+                        Int(restSecondsRemaining) != 0 {
                         
                         cardView.restProgressBar.setProgress(0, animated: false)
                         
-                        print("😌 휴식 중! 시간: \(restTime), 남은 시간: \(restSecondsRemaining)")
+//                        print("😌 휴식 중! 시간: \(restTime), 남은 시간: \(restSecondsRemaining)")
                         
                         let elapsed = Float(totalRestTime) - Float(restSecondsRemaining)
                         cardView.restProgressBar.setProgress(max(min(elapsed / Float(totalRestTime), 1), 0), animated: true)
@@ -551,7 +557,7 @@ extension HomeViewController {
                         self.restInfoView.showWaterInfo()
                         
                     } else if isResting {
-                        print("😌 휴식 시간 0!")
+//                        print("😌 휴식 시간 0!")
                         self.restInfoView.showRestInfo()
                         cardView.restProgressBar.setProgress(0, animated: false)
                         cardView.configure(with: cardState)
@@ -561,6 +567,33 @@ extension HomeViewController {
                 }
             }
         }).disposed(by: disposeBag)
+        
+        reactor.state.map { $0.isRestPaused }
+            .distinctUntilChanged()
+            .bind { [weak self] isRestPaused in
+                guard let self else { return }
+                
+                self.pagingCardViewContainer.forEach {
+                    
+                    if isRestPaused {
+                        // 정지처럼 보이게
+                        let currentProgress = $0.restProgressBar.progress
+                        $0.restProgressBar.setProgress(currentProgress, animated: false)
+                    } else {
+                        // 다시 재생 - 현재 시간 기반 비율로 애니메이션 적용
+                        let cardIndex = $0.index
+                        let state = reactor.currentState
+                        guard state.exerciseIndex == cardIndex,
+                              state.isResting,
+                              let totalRest = state.restStartTime,
+                              totalRest > 0 else { return }
+
+                        let elapsed = Float(totalRest) - Float(state.restSecondsRemaining)
+                        let progress = max(min(elapsed / Float(totalRest), 1), 0)
+                        $0.restProgressBar.setProgress(progress, animated: true)
+                    }
+                }
+            }.disposed(by: disposeBag)
         
         
         reactor.state.map { $0.isWorkoutPaused }
