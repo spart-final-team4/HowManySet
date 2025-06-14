@@ -448,17 +448,6 @@ extension HomeViewController {
                     print("버튼 바인딩: \(index)")
                     
                     cardView.setCompleteButton.rx.tap
-                        .do(onNext: { _ in
-                            // 클릭 애니메이션
-                            UIView.animate(withDuration: 0.1,
-                                           animations: {
-                                cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.99, y: 0.99)
-                            }, completion: { _ in
-                                UIView.animate(withDuration: 0.1) {
-                                    cardView.setCompleteButton.transform = CGAffineTransform.identity
-                                }
-                            })
-                        })
                         .map { Reactor.Action.setCompleteButtonClicked(at: index) }
                         .subscribe(onNext: {
                             reactor.action.onNext($0)
