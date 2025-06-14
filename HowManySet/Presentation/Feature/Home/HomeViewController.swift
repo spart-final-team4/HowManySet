@@ -369,7 +369,9 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         forwardButton.rx.tap
-            .map { Reactor.Action.forwardButtonClicked }
+            .map {
+                Reactor.Action.forwardButtonClicked(at: reactor.currentState.exerciseIndex)
+            }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -462,6 +464,7 @@ extension HomeViewController {
                     
                     cardView.configure(with: reactor.currentState.workoutCardStates[index])
                 }
+                
             }).disposed(by: disposeBag)
         
         // 운동 시간 업데이트
@@ -504,7 +507,6 @@ extension HomeViewController {
             reactor.state.map { $0.restSecondsRemaining },
             reactor.state.map { $0.restStartTime }
         )
-        .distinctUntilChanged { $0 == $1 }
         .bind(onNext: { [weak self]
             isResting,
             exerciseIndex,
@@ -512,47 +514,32 @@ extension HomeViewController {
             restSecondsRemaining,
             restStartTime in
             guard let self else { return }
-            
+
             self.pagingCardViewContainer.enumerated().forEach { index, cardView in
                 
                 let cardState = reactor.currentState.workoutCardStates[cardView.index]
-                let cardIndex = index
                 
-                // 현재 카드 뷰가 현재 운동 종목이 맞는지 체크
-                if cardIndex == exerciseIndex {
-                    
-//                    print("카드 인덱스 \(cardIndex), 운동 인덱스 \(exerciseIndex)")
-//                    print("cardIndex = \(cardIndex), exerciseIndex = \(exerciseIndex)")
-                    
-                    guard let totalRestTime = restStartTime,
-                              totalRestTime > 0 else {
-                        cardView.restProgressBar.setProgress(0, animated: false)
-                        return
-                    }
+                guard let totalRestTime = restStartTime, totalRestTime > 0 else {
+                    cardView.restProgressBar.setProgress(0, animated: false)
+                    cardView.configure(with: cardState)
+                    return
+                }
 
-                    if  isResting,
-                        restTime != 0,
-                        restStartTime != 0,
-                        Int(restSecondsRemaining) != 0 {
-                        
-                        cardView.restProgressBar.setProgress(0, animated: false)
-                        
-//                        print("😌 휴식 중! 시간: \(restTime), 남은 시간: \(restSecondsRemaining)")
-                        
-                        let elapsed = Float(totalRestTime) - Float(restSecondsRemaining)
-                        cardView.restProgressBar.setProgress(max(min(elapsed / Float(totalRestTime), 1), 0), animated: true)
-                        cardView.remainingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
-                        
-                        self.restInfoView.showWaterInfo()
-                        
-                    } else if isResting {
-//                        print("😌 휴식 시간 0!")
-                        self.restInfoView.showRestInfo()
-                        cardView.restProgressBar.setProgress(0, animated: false)
-                        cardView.configure(with: cardState)
-                    } else {
-                        cardView.configure(with: cardState)
-                    }
+                if isResting && restTime > 0 && Int(restSecondsRemaining) > 0 {
+                    
+                    let elapsed = Float(totalRestTime) - restSecondsRemaining
+                    let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
+                    cardView.restProgressBar.setProgress(progress, animated: true)
+                    cardView.remainingRestTimeLabel.text = Int(restSecondsRemaining).toRestTimeLabel()
+                    self.restInfoView.showWaterInfo()
+                    cardView.showRestUI()
+                    
+                } else {
+                    
+                    cardView.restProgressBar.setProgress(0, animated: false)
+                    cardView.configure(with: cardState)
+                    cardView.showExerciseUI()
+                    self.restInfoView.showRestInfo()
                 }
             }
         }).disposed(by: disposeBag)
