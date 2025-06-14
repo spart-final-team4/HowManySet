@@ -133,12 +133,11 @@ final class HomeViewReactor: Reactor {
         
         // 현재 루틴의 모든 정보를 workoutCardStates에 저장
         for (i, workout) in initialRoutine.workouts.enumerated() {
-            let firstSet = workout.sets.first!
             initialWorkoutCardStates.append(WorkoutCardState(
                 currentExerciseName: workout.name,
-                currentWeight: firstSet.weight,
-                currentUnit: firstSet.unit,
-                currentReps: firstSet.reps,
+                currentWeight: workout.sets[0].weight,
+                currentUnit: workout.sets[0].unit,
+                currentReps: workout.sets[0].reps,
                 setIndex: 0,
                 exerciseIndex: i,
                 totalExerciseCount: initialRoutine.workouts.count,
@@ -238,11 +237,15 @@ final class HomeViewReactor: Reactor {
             
             // 다음 세트가 있는 경우 (휴식 시작)
             if nextSetIndex < currentWorkoutCardStates[cardIndex].totalSetCount {
+                let nextSet = currentWorkout.sets[nextSetIndex]
                 
                 currentWorkoutCardStates[cardIndex].setIndex = nextSetIndex
                 currentWorkoutCardStates[cardIndex].currentSetNumber = nextSetIndex + 1
+                currentWorkoutCardStates[cardIndex].currentWeight = nextSet.weight
+                currentWorkoutCardStates[cardIndex].currentUnit = nextSet.unit
+                currentWorkoutCardStates[cardIndex].currentReps = nextSet.reps
                 currentWorkoutCardStates[cardIndex].setProgressAmount += 1
-                
+
                 /// 변경된 카드 State!
                 let updatedCardState = currentWorkoutCardStates[cardIndex]
                 
