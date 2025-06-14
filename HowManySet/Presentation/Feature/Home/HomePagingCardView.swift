@@ -110,7 +110,7 @@ final class HomePagingCardView: UIView {
         $0.textColor = .white
     }
     
-    lazy var remaingRestTimeLabel = UILabel().then {
+    lazy var remainingRestTimeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 28, weight: .medium)
         $0.isHidden = true
     }
@@ -155,16 +155,17 @@ private extension HomePagingCardView {
     
     func setViewHiearchy() {
         
-        self.addSubview(mainContentVStack)
+        self.addSubviews(
+            mainContentVStack,
+            restProgressBar,
+            remainingRestTimeLabel,
+        )
         
         mainContentVStack.addArrangedSubviews(
             topLineHStack,
             topConentsVStack,
             weightRepscontainerView,
-            setCompleteButton,
-            // 휴식 시 나타나는 뷰
-            restProgressBar,
-            remaingRestTimeLabel
+            setCompleteButton
         )
         
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
@@ -208,10 +209,10 @@ private extension HomePagingCardView {
         
         restProgressBar.snp.makeConstraints {
             $0.height.equalTo(60)
-            $0.horizontalEdges.equalToSuperview()
+            $0.edges.equalTo(setCompleteButton)
         }
         
-        remaingRestTimeLabel.snp.makeConstraints {
+        remainingRestTimeLabel.snp.makeConstraints {
             $0.center.equalTo(restProgressBar)
         }
     }
@@ -224,19 +225,20 @@ extension HomePagingCardView {
     // TODO: 추후에 통합하여 리팩토링
     func showExerciseUI() {
         print(#function)
-        [restProgressBar, remaingRestTimeLabel].forEach {
+        [restProgressBar, remainingRestTimeLabel].forEach {
             $0.isHidden = true
         }
-        setCompleteButton.isHidden = false
+        setCompleteButton.isUserInteractionEnabled = true
+        setCompleteButton.alpha = 1
     }
     
     func showRestUI() {
         print(#function)
-        [restProgressBar, remaingRestTimeLabel].forEach {
+        [restProgressBar, remainingRestTimeLabel].forEach {
             $0.isHidden = false
         }
-        setCompleteButton.isHidden = true
-        
+        setCompleteButton.isUserInteractionEnabled = false
+        setCompleteButton.alpha = 0
     }
     
 }
