@@ -429,8 +429,6 @@ private extension HomeViewReactor {
                     return .concat([
                         .just(.setResting(false)),
                         .just(.setRestTimeInProgress(restTime)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                        .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
                         .just(.updateWorkoutCardState(updatedCardState)),
                         .just(.changeExerciseIndex(nextExerciseIndex))
                     ])
