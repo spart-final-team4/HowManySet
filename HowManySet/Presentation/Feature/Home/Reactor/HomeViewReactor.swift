@@ -124,17 +124,14 @@ final class HomeViewReactor: Reactor {
     
     let initialState: State
     
-    
     init(saveRecordUseCase: SaveRecordUseCase) {
         self.saveRecordUseCase = saveRecordUseCase
         
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routineMockData
-        
         // 초기 운동 카드 뷰들 state 초기화
         var initialWorkoutCardStates: [WorkoutCardState] = []
-        
         // 현재 루틴의 모든 정보를 workoutCardStates에 저장
         for (i, workout) in initialRoutine.workouts.enumerated() {
             initialWorkoutCardStates.append(WorkoutCardState(
@@ -153,9 +150,7 @@ final class HomeViewReactor: Reactor {
                 allSetsCompleted: false
             ))
         }
-        
-        
-        
+ 
         self.initialState = State(
             workoutRoutine: initialRoutine,
             workoutCardStates: initialWorkoutCardStates,
@@ -178,15 +173,6 @@ final class HomeViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         
         print(#function)
-        
-        /// 현재 루틴의 모든 운동카드들의 State
-//        var currentWorkoutCardStates = currentState.workoutCardStates
-        //        /// 현재 운동종목 인덱스
-        //        let currentExerciseIndex = currentState.currentExerciseIndex
-        //        /// 현재 운동종목 카드의 State
-        //        let currentCardState = currentWorkoutCardStates[currentExerciseIndex]
-        //        /// 현재 운동종목의 정보
-        //        let currentWorkout = currentState.workoutRoutine.workouts[currentExerciseIndex]
         
         switch action {
             
@@ -239,166 +225,15 @@ final class HomeViewReactor: Reactor {
                 .take(tickCount)
                 .map { _ in Mutation.restRemainingSecondsUpdating }
             
-            let nextSetIndex = currentState.workoutCardStates[cardIndex].setIndex + 1
-            let currentWorkout = currentState.workoutRoutine.workouts[cardIndex]
-            var currentCardState = currentState.workoutCardStates[cardIndex]
-            
-            // 다음 세트가 있는 경우 (휴식 시작)
-            if nextSetIndex < currentCardState.totalSetCount {
-                
-                let nextSet = currentWorkout.sets[nextSetIndex]
-                
-                currentCardState.setIndex = nextSetIndex
-                currentCardState.currentSetNumber = nextSetIndex + 1
-                currentCardState.currentWeight = nextSet.weight
-                currentCardState.currentUnit = nextSet.unit
-                currentCardState.currentReps = nextSet.reps
-                currentCardState.setProgressAmount += 1
-                
-                /// 변경된 카드 State!
-                let updatedCardState = currentCardState
-                
-                print("현재 세트 정보: \(updatedCardState)")
-                
-                return .concat([
-                    .just(.setResting(restTime > 0)),
-                    .just(.setRestTimeInProgress(restTime)),
-                    .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
-                    // 카드 정보 업데이트
-                    .just(.updateWorkoutCardState(updatedCardState)),
-                    restTimer
-                ])
-            } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
-                                
-                var nextExerciseIndex = 0
-                let currentExerciseIndex = currentState.currentExerciseIndex
-                var currentCardState = currentState.workoutCardStates[cardIndex]
-                
-                // 인덱스 뿐 아니라 allSetsCompleted로도 조건을 걸어야함!
-                // 뷰 제거시에 나중에 운동완료시 WorkoutCardStates를 쓸 수도 있으니 뷰만 삭제되도록 하였음.
-                if currentState.workoutCardStates.indices.contains(currentExerciseIndex + 1),
-                   !currentState.workoutCardStates[currentExerciseIndex + 1].allSetsCompleted {
-                    nextExerciseIndex = currentExerciseIndex + 1
-                } else if  currentState.workoutCardStates.indices.contains(currentExerciseIndex - 1),
-                           !currentState.workoutCardStates[currentExerciseIndex - 1].allSetsCompleted {
-                    nextExerciseIndex = currentExerciseIndex - 1
-                }
-                
-                print("현재 index: \(currentState.currentExerciseIndex), 다음 index: \(nextExerciseIndex)")
-                
-                if nextExerciseIndex < currentState.workoutRoutine.workouts.count {
-                    
-                    currentCardState.setProgressAmount += 1
-                    
-                    let updatedCardState = currentCardState
-                    
-                    // 휴식 관련된 설정 먼저
-                    // 현재 카드 뷰 세트 완료 처리
-                    // 다음 세트로 이동
-                    // 현재 카드뷰 프로그레스 바 풀로 채움
-                    // currentExerciseIndex 변경
-                    return .concat([
-                        .just(.setResting(false)),
-                        .just(.setRestTimeInProgress(restTime)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                        .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
-                        .just(.updateWorkoutCardState(updatedCardState)),
-                        .just(.changeExerciseIndex(nextExerciseIndex))
-                    ])
-                } else { // 모든 운동 루틴 완료
-                    
-                    let allCompleted = currentState.workoutCardStates
-                        .allSatisfy { $0.allSetsCompleted }
-                    
-                    if allCompleted {
-                        // TODO: 운동 완료 화면 이동 또는 Alert 처리
-                        print("--- 모든 운동 루틴 완료! ---")
-                        return .concat([
-                            .just(.setWorkingout(false)),
-                            .just(.setResting(false)),
-                            .just(.setRestTime(0))
-                        ])
-                    } else {
-                        return .concat([
-                            .just(.setResting(false))
-                        ])
-                    }
-                }
-            }
-            
+            return handleWorkoutFlow(cardIndex, restTime, restTimer)
             
         // MARK: -  Skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
         case let .forwardButtonClicked(cardIndex):
             
-            let currentWorkoutCardStates = currentState.workoutCardStates
-            let nextSetIndex = currentWorkoutCardStates[cardIndex].setIndex + 1
-            let currentWorkout = currentState.workoutRoutine.workouts[cardIndex]
-            var currentCardState = currentWorkoutCardStates[cardIndex]
-            let nextSet = currentWorkout.sets[nextSetIndex]
+            let restTime = 0
+            let restTimer: Observable<HomeViewReactor.Mutation> = .empty()
+            return handleWorkoutFlow(cardIndex, restTime, restTimer)
             
-            if nextSetIndex < currentWorkoutCardStates[cardIndex].totalSetCount {
-                // 휴식 중이고 다음 세트가 있는 경우
-                currentCardState.setIndex = nextSetIndex
-                currentCardState.currentSetNumber = nextSetIndex + 1
-                currentCardState.currentWeight = nextSet.weight
-                currentCardState.currentUnit = nextSet.unit
-                currentCardState.currentReps = nextSet.reps
-                currentCardState.setProgressAmount += 1
-                
-                /// 변경된 카드 State!
-                let updatedCardState = currentCardState
-                
-                return .concat([
-                    .just(.setResting(false)),
-                    .just(.setRestTimeInProgress(currentState.restTime)),
-                    .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
-                    // 카드 정보 업데이트
-                    .just(.updateWorkoutCardState(updatedCardState))
-                ])
-            } else { // 현재 운동의 마지막 세트에서 건너뛰는 경우
-                                
-                var nextExerciseIndex = 0
-                let currentExerciseIndex = currentState.currentExerciseIndex
-                var currentCardState = currentState.workoutCardStates[cardIndex]
-                
-                // 인덱스 뿐 아니라 allSetsCompleted로도 조건을 걸어야함!
-                // 뷰 제거시에 나중에 운동완료시 WorkoutCardStates를 쓸 수도 있으니 뷰만 삭제되도록 하였음.
-                if currentState.workoutCardStates.indices.contains(currentExerciseIndex + 1),
-                   !currentState.workoutCardStates[currentExerciseIndex + 1].allSetsCompleted {
-                    nextExerciseIndex = currentExerciseIndex + 1
-                } else if  currentState.workoutCardStates.indices.contains(currentExerciseIndex - 1),
-                           !currentState.workoutCardStates[currentExerciseIndex - 1].allSetsCompleted {
-                    nextExerciseIndex = currentExerciseIndex - 1
-                }
-                
-                print("현재 index: \(currentState.currentExerciseIndex), 다음 index: \(nextExerciseIndex)")
-                
-                if nextExerciseIndex < currentState.workoutRoutine.workouts.count {
-                    
-                    currentCardState.setProgressAmount += 1
-
-                    let updatedCardState = currentCardState
-                    
-                    return .concat([
-                        .just(.setResting(false)),
-                        .just(.setRestTimeInProgress(currentState.restTime)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                        .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
-                        .just(.updateWorkoutCardState(updatedCardState)),
-                        .just(.changeExerciseIndex(nextExerciseIndex))
-                    ])
-                    
-                } else { // 모든 운동 루틴 완료
-                    // TODO: 운동 완료 화면 이동 또는 Alert 처리
-                    
-                    print("--- 모든 운동 루틴 완료! (Forward Button) ---")
-                    return .concat([
-                        .just(.setWorkingout(false)),
-                        .just(.setResting(false)),
-                        .just(.setRestTime(0))
-                    ])
-                }
-            }
         case .workoutPauseButtonClicked:
             return .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
             
@@ -472,22 +307,19 @@ final class HomeViewReactor: Reactor {
                 // MARK: - TODO: 운동 완료 후 기록 저장 등의 추가 작업
                 
             } else if state.currentExerciseAllSetsCompleted { // 현재 운동만 완료
-                
                 // 현재 세트 완료 false로 재설정!
                 state.currentExerciseAllSetsCompleted = false
                 print("현재 운동 완료")
-                
             } else { // 다음 세트로
-                
                 print("다음 세트로 - \(currentState.workoutCardStates[currentState.currentExerciseIndex].setIndex)")
             }
             
         case let .updateWorkoutCardState(cardState):
             let index = cardState.exerciseIndex
-            print("현재 카드 index: \(index)")
+            print("업데이트된 카드 index: \(index)")
             // 현재 카드 상태 업데이트
             state.workoutCardStates[index] = cardState
-            print("Reactor의 현재 카드 State \(state.workoutCardStates[index])\n")
+            print("업데이트된 카드 State \(state.workoutCardStates[index])\n")
             
         case let .initializeWorkoutCardStates(cardStates):
             state.workoutCardStates = cardStates
@@ -527,6 +359,104 @@ final class HomeViewReactor: Reactor {
         
         return state
     }
+}
+
+// MARK: - Private Methods
+private extension HomeViewReactor {
+    
+    func handleWorkoutFlow(
+        _ cardIndex: Int,
+        _ restTime: Int,
+        _ restTimer: Observable<HomeViewReactor.Mutation>) -> Observable<HomeViewReactor.Mutation> {
+            
+            let nextSetIndex = currentState.workoutCardStates[cardIndex].setIndex + 1
+            let currentWorkout = currentState.workoutRoutine.workouts[cardIndex]
+            var currentCardState = currentState.workoutCardStates[cardIndex]
+            
+            // 다음 세트가 있는 경우 (휴식 시작)
+            if nextSetIndex < currentCardState.totalSetCount {
+                
+                let nextSet = currentWorkout.sets[nextSetIndex]
+                
+                currentCardState.setIndex = nextSetIndex
+                currentCardState.currentSetNumber = nextSetIndex + 1
+                currentCardState.currentWeight = nextSet.weight
+                currentCardState.currentUnit = nextSet.unit
+                currentCardState.currentReps = nextSet.reps
+                currentCardState.setProgressAmount += 1
+                
+                /// 변경된 카드 State!
+                let updatedCardState = currentCardState
+                
+                print("현재 세트 정보: \(updatedCardState)")
+                
+                return .concat([
+                    .just(.setResting(restTime > 0)),
+                    .just(.setRestTimeInProgress(restTime)),
+                    .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
+                    // 카드 정보 업데이트
+                    .just(.updateWorkoutCardState(updatedCardState)),
+                    restTimer
+                ])
+            } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
+                
+                var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
+                var currentCardState = currentState.workoutCardStates[cardIndex]
+                
+                // 다음,이전 인덱스가 존재하고 다음,이전 카드 모든 세트 완료 시
+                // 뷰 제거시에 나중에 운동완료시 WorkoutCardStates를 쓸 수도 있으니 뷰만 삭제되도록 하였음.
+                if currentState.workoutCardStates.indices.contains(cardIndex + 1),
+                   !currentState.workoutCardStates[cardIndex + 1].allSetsCompleted {
+                    nextExerciseIndex += 1
+                } else if  currentState.workoutCardStates.indices.contains(cardIndex - 1),
+                           !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
+                    nextExerciseIndex -= 1
+                }
+                
+                print("현재 index: \(currentState.currentExerciseIndex), 다음 index: \(nextExerciseIndex)")
+                
+                if nextExerciseIndex < currentState.workoutRoutine.workouts.count {
+                    
+                    // 마지막 프로그레스바 하나 채우고, 모든 세트 완료 처리
+                    currentCardState.setProgressAmount += 1
+                    currentCardState.allSetsCompleted = true
+                    
+                    let updatedCardState = currentCardState
+                    
+                    // 휴식 관련된 설정 먼저
+                    // 현재 카드 뷰 세트 완료 처리
+                    // 다음 세트로 이동
+                    // 현재 카드뷰 프로그레스 바 풀로 채움
+                    // currentExerciseIndex 변경
+                    return .concat([
+                        .just(.setResting(false)),
+                        .just(.setRestTimeInProgress(restTime)),
+                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
+                        .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
+                        .just(.updateWorkoutCardState(updatedCardState)),
+                        .just(.changeExerciseIndex(nextExerciseIndex))
+                    ])
+                } else { // 모든 운동 루틴 완료
+                    
+                    let allCompleted = currentState.workoutCardStates
+                        .allSatisfy { $0.allSetsCompleted }
+                    
+                    if allCompleted {
+                        // TODO: 운동 완료 화면 이동 또는 Alert 처리
+                        print("--- 모든 운동 루틴 완료! ---")
+                        return .concat([
+                            .just(.setWorkingout(false)),
+                            .just(.setResting(false)),
+                            .just(.setRestTime(0))
+                        ])
+                    } else {
+                        return .concat([
+                            .just(.setResting(false))
+                        ])
+                    }
+                }
+            }
+        }
 }
 
 
