@@ -176,7 +176,7 @@ final class HomeViewReactor: Reactor {
         
         switch action {
             
-            // 초기 루틴 선택 시
+        // 초기 루틴 선택 시
         case .routineSelected:
             // 모든 카드 뷰의 상태를 초기화하고, 첫 운동의 첫 세트를 보여줌
             let updatedCardStates = currentState.workoutRoutine.workouts.enumerated().map { (i, workout) in
@@ -212,9 +212,8 @@ final class HomeViewReactor: Reactor {
                 
             ])
             
-        // MARK: - 세트 완료 버튼 클릭 시 로직
+        // 세트 완료 버튼 클릭 시 로직
         case let .setCompleteButtonClicked(cardIndex):
-            
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             let restTime = currentState.restTime
             let interval = 0.01
@@ -227,9 +226,8 @@ final class HomeViewReactor: Reactor {
             
             return handleWorkoutFlow(cardIndex, restTime, restTimer)
             
-        // MARK: -  Skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
+        // skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
         case let .forwardButtonClicked(cardIndex):
-            
             let restTime = 0
             let restTimer: Observable<HomeViewReactor.Mutation> = .empty()
             return handleWorkoutFlow(cardIndex, restTime, restTimer)
@@ -413,7 +411,7 @@ private extension HomeViewReactor {
                     nextExerciseIndex -= 1
                 }
                 
-                print("현재 index: \(currentState.currentExerciseIndex), 다음 index: \(nextExerciseIndex)")
+                print("🗂️ 현재 index: \(currentState.currentExerciseIndex), 🗂️ 다음 index: \(nextExerciseIndex)")
                 
                 if nextExerciseIndex < currentState.workoutRoutine.workouts.count {
                     
