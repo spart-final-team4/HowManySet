@@ -514,7 +514,6 @@ extension HomeViewController {
                     
                     cardView.configure(with: reactor.currentState.workoutCardStates[index])
                 }
-                
             }).disposed(by: disposeBag)
         
         // 운동 시간 업데이트
@@ -525,8 +524,7 @@ extension HomeViewController {
                 
                 self.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
                 
-            })
-            .disposed(by: disposeBag)
+            }).disposed(by: disposeBag)
         
         reactor.state.map { ($0.restTime, $0.isResting) }
             .distinctUntilChanged { $0 == $1 }
@@ -546,7 +544,6 @@ extension HomeViewController {
                     }
                     self.restInfoView.showRestInfo()
                 }
-                
             }.disposed(by: disposeBag)
         
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
@@ -590,7 +587,6 @@ extension HomeViewController {
                     cardView.showRestUI()
                     
                 } else {
-                    
                     cardView.restProgressBar.setProgress(0, animated: false)
                     cardView.configure(with: cardState)
                     cardView.showExerciseUI()
@@ -605,7 +601,6 @@ extension HomeViewController {
                 guard let self else { return }
                 
                 self.pagingCardViewContainer.forEach {
-                    
                     if isRestPaused {
                         // 정지처럼 보이게
                         let currentProgress = $0.restProgressBar.progress
@@ -636,7 +631,6 @@ extension HomeViewController {
                     let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                     $0.restPlayPauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
                 }
-                
             }.disposed(by: disposeBag)
         
         
@@ -649,7 +643,9 @@ extension HomeViewController {
         .bind(onNext: { [weak self] _, index in
             guard let self else { return }
             
-            let removingView = self.pagingCardViewContainer[index]
+            var newPage = self.pagingCardViewContainer.indices.contains(index) ? index : 0
+            
+            let removingView = self.pagingCardViewContainer[newPage]
 
             // 애니메이션 실행 후 끝나면 삭제
             UIView.animate(withDuration: 0.2, animations: {
@@ -657,15 +653,14 @@ extension HomeViewController {
                 removingView.alpha = 0.0
             }) { _ in
                 
-                self.pagingCardViewContainer.remove(at: index)
+                self.pagingCardViewContainer.remove(at: newPage)
                 removingView.removeFromSuperview()
 
                 let newCount = self.pagingCardViewContainer.count
-                var newPage = 0
-                if self.pagingCardViewContainer.indices.contains(index + 1) {
-                    newPage = index
-                } else if self.pagingCardViewContainer.indices.contains(index - 1) {
-                    newPage = index - 1
+                if self.pagingCardViewContainer.indices.contains(newPage + 1) {
+                    newPage += 1
+                } else if self.pagingCardViewContainer.indices.contains(newPage - 1) {
+                    newPage -= 1
                 }
                 
                 // 나머지 카드 뷰 레이아웃 재조정
@@ -674,12 +669,8 @@ extension HomeViewController {
                     newCount: newCount,
                     newPage: newPage
                 )
-                
-                
             }
-            
             print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
-            
         })
         .disposed(by: disposeBag)
             
