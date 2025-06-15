@@ -287,6 +287,9 @@ private extension HomeViewController {
         pageController.numberOfPages = cardStates.count
         
         print(pagingCardViewContainer.count)
+        
+        // 초기에도 애니메이션 적용되도록
+        handlePageChanged()
     }
     
     /// 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화
@@ -628,6 +631,12 @@ extension HomeViewController {
             .bind(with: self) { view, isWorkoutPaused in
                 let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
+                
+                view.pagingCardViewContainer.forEach {
+                    let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
+                    $0.restPlayPauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
+                }
+                
             }.disposed(by: disposeBag)
         
         
@@ -637,10 +646,8 @@ extension HomeViewController {
         )
         .distinctUntilChanged { $0 == $1 }
         .filter { $0.0 }
-        .throttle(.milliseconds(1000), scheduler: MainScheduler.instance) // 0.8초 내 중복 방지
         .bind(onNext: { [weak self] _, index in
             guard let self else { return }
-            guard self.pagingCardViewContainer.indices.contains(index) else { return }
             
             let removingView = self.pagingCardViewContainer[index]
 
@@ -655,7 +662,7 @@ extension HomeViewController {
 
                 let newCount = self.pagingCardViewContainer.count
                 var newPage = 0
-                if self.pagingCardViewContainer.indices.contains(index) {
+                if self.pagingCardViewContainer.indices.contains(index + 1) {
                     newPage = index
                 } else if self.pagingCardViewContainer.indices.contains(index - 1) {
                     newPage = index - 1
