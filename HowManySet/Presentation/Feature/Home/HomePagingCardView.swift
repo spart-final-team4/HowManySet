@@ -21,7 +21,7 @@ final class HomePagingCardView: UIView {
     var disposeBag = DisposeBag()
     
     /// 현재 카드 뷰의 index
-    /// WorkoutCardState의 index와 동일해야 함!
+    /// WorkoutCardState의 index와 동일해야 함
     var index: Int
     
     // MARK: - UI Components

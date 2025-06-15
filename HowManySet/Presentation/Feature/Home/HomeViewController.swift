@@ -295,10 +295,12 @@ private extension HomeViewController {
     /// 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화
     func setExerciseCardViewslayout(
         cardContainer: [HomePagingCardView],
-        newCount: Int,
         newPage: Int) {
         
-        for (i, cardView) in cardContainer.enumerated() {
+        // hidden이 아닌 카드들만
+        let visibleCards = cardContainer.filter { !$0.isHidden }
+            
+        for (i, cardView) in visibleCards.enumerated() {
             
             cardView.snp.remakeConstraints {
                 $0.top.bottom.equalToSuperview()
@@ -313,13 +315,12 @@ private extension HomeViewController {
             }
         }
                 
-        if let lastCard = pagingCardViewContainer.last {
+        if let lastCard = visibleCards.last {
             pagingScrollContentView.snp.makeConstraints {
                 // 첫 번째에 leading+20을 했으니 여기서 trailing+20 추가
                 $0.trailing.equalTo(lastCard.snp.trailing).offset(cardInset)
             }
         }
-        
             
         // 페이지 업데이트
         print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
@@ -327,7 +328,7 @@ private extension HomeViewController {
         self.previousPage = newPage
         self.currentPage = newPage
         self.pageController.currentPage = newPage
-        self.pageController.numberOfPages = newCount
+        self.pageController.numberOfPages = visibleCards.count
         
         print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
                 
@@ -335,8 +336,7 @@ private extension HomeViewController {
         let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
         self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
             
-        
-        print(pagingCardViewContainer.count)
+        print(visibleCards.count)
     }
     
     // MARK: - Animation
@@ -633,7 +633,7 @@ extension HomeViewController {
                 }
             }.disposed(by: disposeBag)
         
-        
+        // 모든 세트 완료 시 카드 삭제 및 레이아웃 재설정
         Observable.combineLatest(
             reactor.state.map { $0.currentExerciseAllSetsCompleted },
             reactor.state.map { $0.currentExerciseIndex }
@@ -653,10 +653,8 @@ extension HomeViewController {
                 removingView.alpha = 0.0
             }) { _ in
                 
-                self.pagingCardViewContainer.remove(at: newPage)
-                removingView.removeFromSuperview()
+                self.pagingCardViewContainer[newPage].isHidden = true
 
-                let newCount = self.pagingCardViewContainer.count
                 if self.pagingCardViewContainer.indices.contains(newPage + 1) {
                     newPage += 1
                 } else if self.pagingCardViewContainer.indices.contains(newPage - 1) {
@@ -666,14 +664,11 @@ extension HomeViewController {
                 // 나머지 카드 뷰 레이아웃 재조정
                 self.setExerciseCardViewslayout(
                     cardContainer: self.pagingCardViewContainer,
-                    newCount: newCount,
-                    newPage: newPage
+                    newPage: index
                 )
             }
             print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
         })
         .disposed(by: disposeBag)
-            
-        
     }
 }
