@@ -463,8 +463,16 @@ private extension HomeViewReactor {
                             .just(.setRestTime(0))
                         ])
                     } else {
+                        // nextExerciseIndex == cardIndex일때 (마지막 카드만 남았을 때)
+                        print("남은 카드 1개")
                         return .concat([
-                            .just(.setResting(false))
+                            .just(.setResting(false)),
+                            .just(.setRestTimeInProgress(restTime)),
+                            .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
+                            .just(.updateWorkoutCardState(
+                                newState: currentState.workoutCardStates[cardIndex])),
+                            .just(.changeExerciseIndex(cardIndex)),
+                            .just(.moveToNextSetOrExercise(isRoutineCompleted: false))
                         ])
                     }
                 }
