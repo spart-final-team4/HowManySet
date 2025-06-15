@@ -65,7 +65,7 @@ final class EditExcerciseContentView: UIView {
                                  alignment: .center)
         
         $0.addArrangedSubviews(setLabel, unitLabel, countLabel, emptyLabel)
-        $0.configureLayoutArrangeSubViews() // 커스텀 정렬 설정
+        $0.configureContentLayoutArrangeSubViews() // 커스텀 정렬 설정
     }
     
     /// 세트를 추가하는 버튼입니다.
