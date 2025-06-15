@@ -287,11 +287,9 @@ private extension HomeViewController {
         pageController.numberOfPages = cardStates.count
         
         print(pagingCardViewContainer.count)
-        
-        handlePageChanged()
     }
     
-    /// 현재 운동 카드 삭제 시 레이아웃 조정
+    /// 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화
     func setExerciseCardViewslayout(
         cardContainer: [HomePagingCardView],
         newCount: Int,
@@ -304,6 +302,11 @@ private extension HomeViewController {
                 $0.width.equalTo(cardWidth)
                 $0.leading.equalToSuperview()
                     .offset(cardInset + CGFloat(i) * screenWidth)
+            }
+            
+            UIView.performWithoutAnimation {
+                cardView.transform = .identity
+                cardView.alpha = 1
             }
         }
                 
@@ -324,9 +327,7 @@ private extension HomeViewController {
         self.pageController.numberOfPages = newCount
         
         print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-        
-        handlePageChanged(currentPage: newPage)
-        
+                
         // 현재 페이지 업데이트 후 offsetX 조정
         let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
         self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
@@ -461,9 +462,7 @@ extension HomeViewController {
             }
             .bind(onNext: { [weak self] newPage in
                 guard let self else { return }
-                
                 self.handlePageChanged(currentPage: newPage)
-                
                 reactor.action.onNext(.pageChanged(to: newPage))
             })
             .disposed(by: disposeBag)
@@ -641,31 +640,36 @@ extension HomeViewController {
         .throttle(.milliseconds(1000), scheduler: MainScheduler.instance) // 0.8초 내 중복 방지
         .bind(onNext: { [weak self] _, index in
             guard let self else { return }
+            guard self.pagingCardViewContainer.indices.contains(index) else { return }
+            
+            let removingView = self.pagingCardViewContainer[index]
 
-            var newPage = index
-            // 모든 세트 완료된 카드뷰 Hidden
-            let removingView = self.pagingCardViewContainer.remove(at: index)
-            let newCount = self.pagingCardViewContainer.count
-            
-            UIView.animate(withDuration: 1) {
+            // 애니메이션 실행 후 끝나면 삭제
+            UIView.animate(withDuration: 0.2, animations: {
                 removingView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
-                removingView.alpha = 0.4
+                removingView.alpha = 0.0
+            }) { _ in
+                
+                self.pagingCardViewContainer.remove(at: index)
+                removingView.removeFromSuperview()
+
+                let newCount = self.pagingCardViewContainer.count
+                var newPage = 0
+                if self.pagingCardViewContainer.indices.contains(index) {
+                    newPage = index
+                } else if self.pagingCardViewContainer.indices.contains(index - 1) {
+                    newPage = index - 1
+                }
+                
+                // 나머지 카드 뷰 레이아웃 재조정
+                self.setExerciseCardViewslayout(
+                    cardContainer: self.pagingCardViewContainer,
+                    newCount: newCount,
+                    newPage: newPage
+                )
+                
+                
             }
-            
-            removingView.removeFromSuperview()
-            
-            if self.pagingCardViewContainer.indices.contains(index + 1) {
-                newPage += 1
-            } else if self.pagingCardViewContainer.indices.contains(index - 1) {
-                newPage -= 1
-            }
-            
-            self.setExerciseCardViewslayout(
-                cardContainer: self.pagingCardViewContainer,
-                newCount: newCount,
-                newPage: newPage)
-            
-            print("첫번째 카드 정보:  \(reactor.currentState.workoutCardStates.first), 마지막 카드 정보: \(reactor.currentState.workoutCardStates.last)")
             
             print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
             
