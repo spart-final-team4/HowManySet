@@ -9,7 +9,7 @@ final class RoutineListViewController: UIViewController, View {
     var disposeBag = DisposeBag()
 
     let routineListView = RoutineListView()
-    private weak var coordinator: RoutineListCoordinatorProtocol?
+    private var coordinator: RoutineListCoordinatorProtocol?
 
     // DiffableDataSource 정의
     private var dataSource: UITableViewDiffableDataSource<Section, WorkoutRoutine>!
@@ -46,15 +46,10 @@ final class RoutineListViewController: UIViewController, View {
 
     // MARK: - Bind
     func bind(reactor: RoutineListViewReactor) {
-        // routines -> tableView 바인딩
-        reactor.state
-            .map(\.routines)
-            .distinctUntilChanged() // optional 같은 값 방지
-            .bind(to: routineListView.publicRoutineTableView.rx.items(
-                cellIdentifier: RoutineCell.identifier,
-                cellType: RoutineCell.self
-            )) { _, routine, cell in
-                cell.configure(with: routine)
+        // "새 루틴 추가" 버튼이 눌렸을 때 화면이 전환되고 reactor에 바인딩
+        routineListView.publicAddNewRoutineButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.coordinator?.presentEditRoutineView()
             }
             .disposed(by: disposeBag)
     }
