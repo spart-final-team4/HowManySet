@@ -79,12 +79,12 @@ private extension SavedExcerciseView {
     func setConstraints() {
         excerciseNameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalTo(self.safeAreaLayoutGuide)
+            $0.leading.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(4)
         }
         setCountLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(self.safeAreaLayoutGuide).inset(20)
+            $0.trailing.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(4)
         }
     }

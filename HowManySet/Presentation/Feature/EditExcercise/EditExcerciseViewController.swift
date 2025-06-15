@@ -154,7 +154,7 @@ private extension EditExcerciseViewController {
         currentView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.width.equalToSuperview()
-            $0.top.equalTo(contentBorderLineView.snp.bottom).offset(20)
+            $0.top.equalTo(contentBorderLineView.snp.bottom).offset(32)
             $0.bottom.equalToSuperview()
         }
         
