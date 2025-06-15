@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RoutineListCoordinatorProtocol: Coordinator {
-    
+    func presentEditRoutineView()
 }
 
 /// 루틴 리스트 화면 관련 coordinator
@@ -44,12 +44,17 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         navigationController.present(routineListVC, animated: true)
     }
     
-    /// 루틴 편집 화면으로 푸시
-    func pushEditRoutineView() {
+    /// 루틴명 편집 화면으로 모달 표시
+    func presentEditRoutineView() {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
-        
-        navigationController.pushViewController(editRoutineVC, animated: true)
+
+        if let sheet = editRoutineVC.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        navigationController.present(editRoutineVC, animated: true)
     }
     
     /// 운동 편집 화면 모달 표시
