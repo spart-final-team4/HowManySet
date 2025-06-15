@@ -297,6 +297,7 @@ private extension HomeViewController {
         if let reactor = self.reactor {
             self.bindSetCompleteButtons(reactor: reactor)
         }
+        
     }
     
     // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화, 리바인딩
@@ -304,59 +305,56 @@ private extension HomeViewController {
         cardContainer: [HomePagingCardView],
         newPage: Int) {
             
-            // hidden이 아닌 카드들만
-            let visibleCards = cardContainer.filter { !$0.isHidden }
-            
-            for (i, cardView) in visibleCards.enumerated() {
-                
-                cardView.snp.remakeConstraints {
-                    $0.top.bottom.equalToSuperview()
-                    $0.width.equalTo(cardWidth)
-                    $0.leading.equalToSuperview()
-                        .offset(cardInset + CGFloat(i) * screenWidth)
-                }
-                
-                UIView.performWithoutAnimation {
-                    cardView.transform = .identity
-                    cardView.alpha = 1
-                }
+        // hidden이 아닌 카드들만
+        let visibleCards = cardContainer.filter { !$0.isHidden }
+
+        for (i, cardView) in visibleCards.enumerated() {
+            cardView.snp.remakeConstraints {
+                $0.top.bottom.equalToSuperview()
+                $0.width.equalTo(cardWidth)
+                $0.leading.equalToSuperview()
+                    .offset(cardInset + CGFloat(i) * screenWidth)
             }
-            
-            if let lastCard = visibleCards.last,
-               lastCard != visibleCards.first {
-                pagingScrollContentView.snp.remakeConstraints {
-                    $0.leading.equalToSuperview()
-                    $0.height.equalToSuperview()
-                    $0.trailing.equalTo(lastCard.snp.trailing).offset(cardInset)
-                }
-            } else { // 카드가 하나뿐일때!, 여유있게 cardInset*2도 추가
-                pagingScrollContentView.snp.remakeConstraints {
-                    $0.width.equalToSuperview().offset(cardInset * 2)
-                    $0.height.equalToSuperview()
-                }
-            }
-            
-            // 페이지 업데이트
-            print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-            
-            self.previousPage = newPage
-            self.currentPage = newPage
-            self.pageController.currentPage = newPage
-            self.pageController.numberOfPages = visibleCards.count
-            
-            print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-            
-            // 현재 페이지 업데이트 후 offsetX 조정
-            let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
-            self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
-            
-            // 카드 재정렬 후 버튼 바인딩 재설정 (약간의 지연 추가)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                guard let self = self, let reactor = self.reactor else { return }
-                print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
-                self.bindSetCompleteButtons(reactor: reactor)
+            UIView.performWithoutAnimation {
+                cardView.transform = .identity
+                cardView.alpha = 1
             }
         }
+
+        pagingScrollContentView.snp.remakeConstraints {
+            $0.height.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+            
+            if visibleCards.last != visibleCards.first {
+                $0.width.equalToSuperview().multipliedBy(visibleCards.count)
+            } else {
+                $0.width.equalToSuperview()
+            }
+        }
+        
+//        pagingScrollView.layoutIfNeeded()
+
+        // 페이지 업데이트
+        print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+
+        self.previousPage = newPage
+        self.currentPage = newPage
+        self.pageController.currentPage = newPage
+        self.pageController.numberOfPages = visibleCards.count
+
+        print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+
+        // 현재 페이지 업데이트 후 offsetX 조정
+        let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
+        self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
+
+        // 카드 재정렬 후 버튼 바인딩 재설정 (약간의 지연 추가)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self, let reactor = self.reactor else { return }
+            print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
+            self.bindSetCompleteButtons(reactor: reactor)
+        }
+    }
     
     // MARK: - Animation
     /// 페이징 시 애니메이션 및 내부 콘텐츠 offset 수정
@@ -755,7 +753,7 @@ extension HomeViewController {
                     let visibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
                     if visibleCards.isEmpty {
                         print("🎉 모든 운동 완료!")
-                        let workoutEnded = self.coordinator?.popUpEndWorkoutAlert()
+                        let workoutEnded = self.coordinator?.popUpCompletedWorkoutAlert()
                         reactor.action.onNext(.stopButtonClicked(with: workoutEnded ?? false))
                         return
                     }

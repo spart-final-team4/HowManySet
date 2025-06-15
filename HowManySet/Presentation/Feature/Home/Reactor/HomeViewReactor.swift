@@ -455,7 +455,6 @@ private extension HomeViewReactor {
                         .allSatisfy { $0.allSetsCompleted }
                     
                     if allCompleted {
-                        // TODO: 운동 완료 화면 이동 또는 Alert 처리
                         print("--- 모든 운동 루틴 완료! ---")
                         return .concat([
                             .just(.setWorkingout(false)),
