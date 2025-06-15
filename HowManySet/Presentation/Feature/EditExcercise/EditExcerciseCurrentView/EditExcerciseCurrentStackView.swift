@@ -48,7 +48,9 @@ final class EditExcerciseCurrentStackView: UIStackView {
         setupUI()
         axis = .vertical
         spacing = 20
-        distribution = .equalSpacing
+        distribution = .fill
+        isLayoutMarginsRelativeArrangement = true
+        layoutMargins = .init(top: 0, left: 20, bottom: 0, right: 20)
     }
     
     /// 스토리보드 사용 불가
@@ -99,12 +101,6 @@ private extension EditExcerciseCurrentStackView {
     
     /// SnapKit을 사용하여 오토레이아웃 제약을 설정합니다.
     func setConstraints() {
-        titleLabel.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(self.safeAreaLayoutGuide).inset(20)
-        }
-        emptyTextLabel.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(self.safeAreaLayoutGuide).inset(20)
-        }
         excerciseCountLabel.snp.makeConstraints {
             $0.trailing.equalTo(titleLabel.snp.trailing).inset(40)
             $0.top.equalToSuperview().offset(4)
