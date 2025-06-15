@@ -27,6 +27,10 @@ final class HomeViewController: UIViewController, View {
     private var currentPage = 0
     private var previousPage = 0
     
+    private let screenWidth = UIScreen.main.bounds.width
+    private let cardInset: CGFloat = 20
+    private let cardWidth = UIScreen.main.bounds.width - 40
+    
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
         $0.text = homeText
@@ -245,15 +249,11 @@ private extension HomeViewController {
     }
     
     // MARK: -  운동 카드뷰들 생성, 레이아웃 적용, Binding
-    func configureRoutineCardViews(cardStates: [WorkoutCardState]) {
+    func configureExerciseCardViews(cardStates: [WorkoutCardState]) {
         
         // 기존 카드뷰 컨테이너 제거
         pagingCardViewContainer.forEach { $0.removeFromSuperview() }
         pagingCardViewContainer.removeAll()
-        
-        let screenWidth = UIScreen.main.bounds.width
-        let cardInset: CGFloat = 20
-        let cardWidth = screenWidth - (cardInset * 2)
         
         for (i, cardState) in cardStates.enumerated() {
             
@@ -291,6 +291,50 @@ private extension HomeViewController {
         handlePageChanged()
     }
     
+    /// 현재 운동 카드 삭제 시 레이아웃 조정
+    func setExerciseCardViewslayout(
+        cardContainer: [HomePagingCardView],
+        newCount: Int,
+        newPage: Int) {
+        
+        for (i, cardView) in cardContainer.enumerated() {
+            
+            cardView.snp.remakeConstraints {
+                $0.top.bottom.equalToSuperview()
+                $0.width.equalTo(cardWidth)
+                $0.leading.equalToSuperview()
+                    .offset(cardInset + CGFloat(i) * screenWidth)
+            }
+        }
+                
+        if let lastCard = pagingCardViewContainer.last {
+            pagingScrollContentView.snp.makeConstraints {
+                // 첫 번째에 leading+20을 했으니 여기서 trailing+20 추가
+                $0.trailing.equalTo(lastCard.snp.trailing).offset(cardInset)
+            }
+        }
+        
+            
+        // 페이지 업데이트
+        print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+        
+        self.previousPage = newPage
+        self.currentPage = newPage
+        self.pageController.currentPage = newPage
+        self.pageController.numberOfPages = newCount
+        
+        print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+        
+        handlePageChanged(currentPage: newPage)
+        
+        // 현재 페이지 업데이트 후 offsetX 조정
+        let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
+        self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
+            
+        
+        print(pagingCardViewContainer.count)
+    }
+    
     // MARK: - Animation
     /// 페이징 시 애니메이션 및 내부 콘텐츠 offset 수정
     func handlePageChanged(currentPage: Int = 0) {
@@ -307,25 +351,22 @@ private extension HomeViewController {
             
             let currentCard = self.pagingCardViewContainer[currentPage]
             
-            UIView.animate(withDuration: 0.1) {
+            UIView.performWithoutAnimation {
                 currentCard.transform = .identity
                 currentCard.alpha = 1
             }
         }
         
-        // 이전/다음 카드: 살짝 축소 + 흐리게
         if previousPage >= 0,
            pagingCardViewContainer.indices.contains(previousPage) {
             
             let previousCard = self.pagingCardViewContainer[previousPage]
             
-            UIView.animate(withDuration: 0.1) {
-                
+            UIView.performWithoutAnimation {
                 previousCard.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 previousCard.alpha = 0.8
             }
         }
-        
         
         if nextPage <= pagingCardViewContainer.count - 1,
            pagingCardViewContainer.indices.contains(nextPage){
@@ -370,7 +411,7 @@ extension HomeViewController {
         
         forwardButton.rx.tap
             .map {
-                Reactor.Action.forwardButtonClicked(at: reactor.currentState.exerciseIndex)
+                Reactor.Action.forwardButtonClicked(at: reactor.currentState.currentExerciseIndex)
             }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -400,10 +441,10 @@ extension HomeViewController {
                 
                 // 페이지가 변경 되었을 때만 조정
                 if newPage != previousPage {
-
+                    handlePageChanged(currentPage: newPage)
                     reactor.action.onNext(.pageChanged(to: newPage))
                 }
-             
+                
             })
             .bind(to: pageController.rx.currentPage)
             .disposed(by: disposeBag)
@@ -448,7 +489,7 @@ extension HomeViewController {
                 self.showStartRoutineUI()
                 
                 // 내부 카드 뷰들 세팅
-                self.configureRoutineCardViews(cardStates: reactor.currentState.workoutCardStates)
+                self.configureExerciseCardViews(cardStates: reactor.currentState.workoutCardStates)
                 
                 // MARK: -  각 카드 뷰 버튼 바인딩, UI 정보 설정
                 for (index, cardView) in self.pagingCardViewContainer.enumerated() {
@@ -461,7 +502,8 @@ extension HomeViewController {
                             reactor.action.onNext($0)
                         }).disposed(by: cardView.disposeBag)
                     
-                   cardView.restPlayPauseButton.rx.tap
+                    cardView.restPlayPauseButton.rx.tap
+                        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                         .bind { [weak cardView] in
                             guard let cardView else { return }
                             cardView.restPlayPauseButton.isSelected.toggle()
@@ -483,7 +525,7 @@ extension HomeViewController {
                 
             })
             .disposed(by: disposeBag)
-    
+        
         reactor.state.map { ($0.restTime, $0.isResting) }
             .distinctUntilChanged { $0 == $1 }
             .bind { [weak self] restTime, isResting in
@@ -508,7 +550,7 @@ extension HomeViewController {
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         Observable.combineLatest(
             reactor.state.map { $0.isResting },
-            reactor.state.map { $0.exerciseIndex },
+            reactor.state.map { $0.currentExerciseIndex },
             reactor.state.map { $0.restTime },
             reactor.state.map { $0.restSecondsRemaining },
             reactor.state.map { $0.restStartTime },
@@ -523,7 +565,7 @@ extension HomeViewController {
             restStartTime,
             isWorkingout in
             guard let self else { return }
-
+            
             self.pagingCardViewContainer.enumerated().forEach { index, cardView in
                 
                 let cardState = reactor.currentState.workoutCardStates[cardView.index]
@@ -533,7 +575,7 @@ extension HomeViewController {
                     cardView.configure(with: cardState)
                     return
                 }
-
+                
                 if isResting && restTime > 0 && Int(restSecondsRemaining) > 0 {
                     
                     print("남은 휴식 시간: \(restSecondsRemaining)")
@@ -570,11 +612,11 @@ extension HomeViewController {
                         // 다시 재생 - 현재 시간 기반 비율로 애니메이션 적용
                         let cardIndex = $0.index
                         let state = reactor.currentState
-                        guard state.exerciseIndex == cardIndex,
+                        guard state.currentExerciseIndex == cardIndex,
                               state.isResting,
                               let totalRest = state.restStartTime,
                               totalRest > 0 else { return }
-
+                        
                         let elapsed = Float(totalRest) - Float(state.restSecondsRemaining)
                         let progress = max(min(elapsed / Float(totalRest), 1), 0)
                         $0.restProgressBar.setProgress(progress, animated: true)
@@ -589,20 +631,47 @@ extension HomeViewController {
                 view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
             }.disposed(by: disposeBag)
         
-        reactor.state.map { $0.currentExerciseCompleted }
-            .filter { $0 }
-            .bind { [weak self] _ in
-                guard let self else { return }
-                self.pagingCardViewContainer.remove(at: reactor.currentState.exerciseIndex)
-            }.disposed(by: disposeBag)
         
-        reactor.state.map { $0.exerciseIndex }
-            .bind { [weak self] page in
-                guard let self else { return }
-                
-                self.handlePageChanged(currentPage: page)
-                self.pageController.currentPage = page
-                
-            }.disposed(by: disposeBag)
+        Observable.combineLatest(
+            reactor.state.map { $0.currentExerciseAllSetsCompleted },
+            reactor.state.map { $0.currentExerciseIndex }
+        )
+        .distinctUntilChanged { $0 == $1 }
+        .filter { $0.0 }
+        .throttle(.milliseconds(1000), scheduler: MainScheduler.instance) // 0.8초 내 중복 방지
+        .bind(onNext: { [weak self] _, index in
+            guard let self else { return }
+
+            var newPage = index
+            // 모든 세트 완료된 카드뷰 Hidden
+            let removingView = self.pagingCardViewContainer.remove(at: index)
+            let newCount = self.pagingCardViewContainer.count
+            
+            UIView.animate(withDuration: 1) {
+                removingView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
+                removingView.alpha = 0.4
+            }
+            
+            removingView.removeFromSuperview()
+            
+            if self.pagingCardViewContainer.indices.contains(index + 1) {
+                newPage += 1
+            } else if self.pagingCardViewContainer.indices.contains(index - 1) {
+                newPage -= 1
+            }
+            
+            self.setExerciseCardViewslayout(
+                cardContainer: self.pagingCardViewContainer,
+                newCount: newCount,
+                newPage: newPage)
+            
+            print("첫번째 카드 정보:  \(reactor.currentState.workoutCardStates.first), 마지막 카드 정보: \(reactor.currentState.workoutCardStates.last)")
+            
+            print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
+            
+        })
+        .disposed(by: disposeBag)
+            
+        
     }
 }
