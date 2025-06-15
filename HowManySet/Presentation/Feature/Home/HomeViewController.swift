@@ -292,7 +292,7 @@ private extension HomeViewController {
         handlePageChanged()
     }
     
-    // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화
+    // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화, 리바인딩
     func setExerciseCardViewslayout(
         cardContainer: [HomePagingCardView],
         newPage: Int) {
@@ -301,7 +301,7 @@ private extension HomeViewController {
             let visibleCards = cardContainer.filter { !$0.isHidden }
             
             for (i, cardView) in visibleCards.enumerated() {
-                
+    
                 cardView.snp.remakeConstraints {
                     $0.top.bottom.equalToSuperview()
                     $0.width.equalTo(cardWidth)
@@ -315,10 +315,17 @@ private extension HomeViewController {
                 }
             }
             
-            if let lastCard = visibleCards.last {
-                pagingScrollContentView.snp.updateConstraints {
-                    // 첫 번째에 leading+20을 했으니 여기서 trailing+20 추가
+            if let lastCard = visibleCards.last,
+               lastCard != visibleCards.first {
+                pagingScrollContentView.snp.remakeConstraints {
+                    $0.leading.equalToSuperview()
+                    $0.height.equalToSuperview()
                     $0.trailing.equalTo(lastCard.snp.trailing).offset(cardInset)
+                }
+            } else {
+                pagingScrollContentView.snp.remakeConstraints {
+                    $0.edges.equalToSuperview()
+                    $0.height.equalToSuperview()
                 }
             }
             
@@ -334,8 +341,12 @@ private extension HomeViewController {
             
             // 현재 페이지 업데이트 후 offsetX 조정
             let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
-            self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
-            
+            self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
+          
+            // 카드 재정렬 후 버튼 바인딩 재설정
+            if let reactor = self.reactor {
+                bindSetCompleteButtons(reactor: reactor)
+            }
             print(visibleCards.count)
         }
     
@@ -347,10 +358,13 @@ private extension HomeViewController {
         let nextPage = currentPage + 1
         let offsetX = Int(UIScreen.main.bounds.width) * currentPage
         
+        // hidden이 아닌 카드들만
+        let visibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
+        
         pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
         
         // 애니메이션
-        if pagingCardViewContainer.indices.contains(currentPage) {
+        if visibleCards.indices.contains(currentPage) {
             
             let currentCard = self.pagingCardViewContainer[currentPage]
             
@@ -361,7 +375,7 @@ private extension HomeViewController {
         }
         
         if previousPage >= 0,
-           pagingCardViewContainer.indices.contains(previousPage) {
+           visibleCards.indices.contains(previousPage) {
             
             let previousCard = self.pagingCardViewContainer[previousPage]
             
@@ -369,10 +383,12 @@ private extension HomeViewController {
                 previousCard.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 previousCard.alpha = 0.8
             }
+        } else {
+            print("⚠️ 이전 페이지 없음!")
         }
         
         if nextPage <= pagingCardViewContainer.count - 1,
-           pagingCardViewContainer.indices.contains(nextPage){
+           visibleCards.indices.contains(nextPage){
             
             let nextCard = self.pagingCardViewContainer[nextPage]
             
@@ -380,16 +396,31 @@ private extension HomeViewController {
                 nextCard.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 nextCard.alpha = 0.8
             }
+        } else {
+            print("⚠️ 다음 페이지 없음!")
         }
         
-        // 이전 페이지 업데이트
-        self.previousPage = currentPage
-        // 현재 페이지 업데이트
+        self.previousPage = previousPage
         self.currentPage = currentPage
         self.pageController.currentPage = currentPage
+        self.pageController.numberOfPages = visibleCards.count
         print("currentPage: \(self.currentPage)")
         
         print(previousPage, currentPage, nextPage)
+    }
+    
+
+    /// 세트 완료 버튼을 Reactor에 바인딩
+    func bindSetCompleteButtons(reactor: HomeViewReactor) {
+        // Clear previous bindings
+        for cardView in pagingCardViewContainer {
+            cardView.disposeBag = DisposeBag()
+            // Rebind button tap for current index
+            cardView.setCompleteButton.rx.tap
+                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
+                .subscribe(onNext: { reactor.action.onNext($0) })
+                .disposed(by: cardView.disposeBag)
+        }
     }
 }
 
@@ -440,7 +471,7 @@ extension HomeViewController {
             .do(onNext: { [weak self] newPage in
                 guard let self else { return }
                 
-                print("변경된 페이지: \(newPage)")
+                print("🔍 변경된 페이지: \(newPage)")
                 
                 // 페이지가 변경 되었을 때만 조정
                 if newPage != previousPage {
@@ -497,7 +528,7 @@ extension HomeViewController {
                     print("버튼 바인딩: \(index)")
                     
                     cardView.setCompleteButton.rx.tap
-                        .map { Reactor.Action.setCompleteButtonClicked(at: index) }
+                        .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
                         .subscribe(onNext: {
                             reactor.action.onNext($0)
                         }).disposed(by: cardView.disposeBag)
@@ -631,76 +662,59 @@ extension HomeViewController {
                 }
             }.disposed(by: disposeBag)
         
-        
-        Observable.combineLatest(
-            reactor.state.map { $0.currentExerciseIndex },
-            reactor.state.map { $0.isWorkingout }.filter { $0 }
-        )
-        .bind { [weak self] page, _ in
-            guard let self else { return }
-            
-            self.handlePageChanged(currentPage: page)
-            
-            let button = self.pagingCardViewContainer[page].setCompleteButton
-            let cardState = reactor.currentState.workoutCardStates[page]
-            
-            if cardState.allSetsCompleted {
-                button.isEnabled = false
-                button.backgroundColor = .gray
-            }
-            
-        }
-        .disposed(by: disposeBag)
-        
         // TODO: - 추후에 해결
         // 모든 세트 완료 시 카드 삭제 및 레이아웃 재설정
-        //        Observable.combineLatest(
-        //            reactor.state.map { $0.currentExerciseAllSetsCompleted },
-        //            reactor.state.map { $0.currentExerciseIndex }
-        //        )
-        //        .distinctUntilChanged { $0 == $1 }
-        //        .filter { $0.0 }
-        //        .bind(onNext: { [weak self] _, index in
-        //            guard let self else { return }
-        //
-        //            if pagingCardViewContainer.indices.contains(index) {
-        //
-        //                let currentCard = self.pagingCardViewContainer[index]
-        //                // 현재 카드뷰의 인덱스 가져옴 - State 인덱스와 동일해야하기에
-        //                currentCardIndex = currentCard.index
-        //
-        //                UIView.performWithoutAnimation {
-        //                    currentCard.transform = .identity
-        //                    currentCard.alpha = 1
-        //                }
-        //            }
-        //
-        //            var newPage = self.pagingCardViewContainer.indices.contains(index) ? index : 0
-        //
-        //            let hiddenView = self.pagingCardViewContainer[newPage]
-        //
-        //            // 애니메이션 실행 후 끝나면 hidden
-        //            UIView.animate(withDuration: 0.3, animations: {
-        //                hiddenView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
-        //                hiddenView.alpha = 0.0
-        //            }) { _ in
-        //
-        //                self.pagingCardViewContainer[newPage].isHidden = true
-        //
-        //                if self.pagingCardViewContainer.indices.contains(newPage + 1) {
-        //                    newPage += 1
-        //                } else if self.pagingCardViewContainer.indices.contains(newPage - 1) {
-        //                    newPage -= 1
-        //                }
-        //
-        //                // 나머지 카드 뷰 레이아웃 재조정
-        //                self.setExerciseCardViewslayout(
-        //                    cardContainer: self.pagingCardViewContainer,
-        //                    newPage: newPage
-        //                )
-        //            }
-        //            print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
-        //        })
-        //        .disposed(by: disposeBag)
+        reactor.state
+            .map { $0.currentExerciseAllSetsCompleted }
+            .distinctUntilChanged()        // true가 될 때만
+            .filter { $0 }                 // true인 경우만
+            .withLatestFrom(
+                reactor.state.map { $0.currentExerciseIndex }
+            )
+            .bind(onNext: { [weak self] index in
+                guard let self else { return }
+                
+                var newPage = 0
+                
+                if pagingCardViewContainer.indices.contains(index) {
+                    
+                    let currentCard = self.pagingCardViewContainer[index]
+                    // 현재 카드뷰의 인덱스 가져옴 - State 인덱스와 동일해야하기에
+                    
+                    if self.pagingCardViewContainer.indices.contains(newPage + 1) {
+                        newPage += 1
+                    } else if self.pagingCardViewContainer.indices.contains(newPage - 1) {
+                        newPage -= 1
+                    }
+                    
+                    UIView.performWithoutAnimation {
+                        currentCard.transform = .identity
+                        currentCard.alpha = 1
+                    }
+                }
+                
+                let hiddenView = self.pagingCardViewContainer[index]
+                
+                // 애니메이션 실행 후 끝나면 hidden
+                UIView.animate(withDuration: 0.3, animations: {
+                    hiddenView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
+                    hiddenView.alpha = 0.0
+                }) { _ in
+                    
+                    self.pagingCardViewContainer[index].isHidden = true
+                    
+                    print("💻 newPage: \(newPage), stateIndex: \(reactor.currentState.currentExerciseIndex)")
+                    
+                    // 나머지 카드 뷰 레이아웃 재조정
+                    self.setExerciseCardViewslayout(
+                        cardContainer: self.pagingCardViewContainer,
+                        newPage: newPage
+                    )
+                    
+                }
+                print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
+                
+            })
+            .disposed(by: disposeBag)
     }
 }
