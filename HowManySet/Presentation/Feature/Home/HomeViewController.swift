@@ -461,7 +461,7 @@ private extension HomeViewController {
                     }
                     .disposed(by: cardView.disposeBag)
                 
-                cardView.optionButton.rx.tap
+                cardView.editButton.rx.tap
                     .map { Reactor.Action.editOptionButtonClicked(at: cardView.index) }
                     .bind(onNext: { action in
                         print("🚀 Reactor로 편집 액션 전송: \(action)")
@@ -786,7 +786,7 @@ extension HomeViewController {
             .filter { $0 }
             .bind { [weak self] prepared in
                 guard let self else { return }
-                self.coordinator?.presentWorkoutOptionView()
+                self.coordinator?.presentEditAndMemoView()
             }.disposed(by: disposeBag)
         
     }//bind

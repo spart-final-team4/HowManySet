@@ -8,7 +8,7 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-    func presentWorkoutOptionView()
+    func presentEditAndMemoView()
     func presentEditRoutineView()
     func pushRoutineCompleteView()
     func popUpEndWorkoutAlert() -> Bool
@@ -47,15 +47,15 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     }
 
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
-    func presentWorkoutOptionView() {
-        let workoutOptionVC = WorkoutOptionViewController(coordinator: self)
+    func presentEditAndMemoView() {
+        let editAndMemoVC = EditAndMemoViewController(coordinator: self)
         
-        if let sheet = workoutOptionVC.sheetPresentationController {
+        if let sheet = editAndMemoVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
                 
-        navigationController.present(workoutOptionVC, animated: true)
+        navigationController.present(editAndMemoVC, animated: true)
     }
 
     /// 옵션 bottom sheet에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 push
