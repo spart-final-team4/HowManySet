@@ -7,7 +7,9 @@ final class RoutineListViewReactor: Reactor {
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let saveRoutineUseCase: SaveRoutineUseCase
-    
+
+    var publicSaveRoutineUseCase: SaveRoutineUseCase { saveRoutineUseCase }
+
     // MARK: - Action is an user interaction
     enum Action {
 
