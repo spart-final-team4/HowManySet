@@ -13,10 +13,10 @@ final class AppCoordinator: Coordinator {
     
     /// 앱의 최상위 UIWindow
     var window: UIWindow
-
+    
     /// 현재 자식 Coordinator들을 보관
     private var childCoordinators: [Coordinator] = []
-
+    
     /// 의존성 주입 컨테이너
     private let container: DIContainer
     
@@ -25,58 +25,80 @@ final class AppCoordinator: Coordinator {
         self.window = window
         self.container = container
     }
-
+    
     /// 앱 시작 시 호출됨 - 로그인/온보딩 상태에 따라 적절한 플로우를 보여줌
     func start() {
-        let isLoggedIn = false // TODO: 로그인 상태 확인 로직 추가 필요
-        let hasCompletedOnboarding = true // TODO: 온보딩 완료 여부 확인 로직 추가 필요
-
-        if !hasCompletedOnboarding {
-            showOnboardingFlow()
-        } else if !isLoggedIn {
+        let isLoggedIn = checkLoginStatus()
+        let hasCompletedOnboarding = checkOnboardingStatus()
+        
+        if !isLoggedIn {
             showAuthFlow()
+        } else if !hasCompletedOnboarding {
+            showOnboardingFlow()
         } else {
             showTabBarFlow()
         }
     }
     
+    /// 상태 체크 함수 분리
+    private func checkLoginStatus() -> Bool {
+        // TODO: 실제 로그인 상태(Firebase 등) 연동
+        return false
+    }
+    
+    private func checkOnboardingStatus() -> Bool {
+        return UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    }
+    
     /// 온보딩 흐름 시작
     private func showOnboardingFlow() {
-        let onBoardingCoordinator = OnBoardingCoordinator(navigationController: UINavigationController(), container: container)
-        onBoardingCoordinator.finishFlow = { [weak self, weak onBoardingCoordinator] in
-            // 온보딩 완료 후 처리 (예: 온보딩 완료 상태 저장, 로그인 흐름으로 전환)
-            guard let onBoardingCoordinator, let self else { return }
-            self.childDidFinish(onBoardingCoordinator)
-            onBoardingCoordinator.completeOnBoarding()
-            self.showAuthFlow()
-        }
-        onBoardingCoordinator.start()
+        let onboardingCoordinator = OnBoardingCoordinator(navigationController: UINavigationController(), container: container)
+        childCoordinators.append(onboardingCoordinator)
         
-        window.rootViewController = onBoardingCoordinator.navigationController
+        onboardingCoordinator.finishFlow = { [weak self, weak onboardingCoordinator] in
+            guard let self, let onboardingCoordinator else { return }
+            self.showTabBarFlow()
+            self.childDidFinish(onboardingCoordinator)
+        }
+        
+        onboardingCoordinator.start()
+        window.rootViewController = onboardingCoordinator.navigationController
         window.makeKeyAndVisible()
     }
-
+    
     /// 로그인/회원가입 흐름 시작
     private func showAuthFlow() {
         let authCoordinator = AuthCoordinator(navigationController: UINavigationController(), container: container)
-        authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
-            // 로그인/회원가입 완료 후 처리 (예: 로그인 상태 저장, 메인 흐름으로 전환)
-            guard let authCoordinator, let self else { return }
-            self.childDidFinish(authCoordinator)
-            self.showTabBarFlow()
-        }
-        authCoordinator.start()
+        childCoordinators.append(authCoordinator)
         
+        authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
+            guard let self, let authCoordinator else { return }
+            self.childDidFinish(authCoordinator)
+            
+            let hasCompletedOnboarding = self.checkOnboardingStatus()
+            if hasCompletedOnboarding {
+                self.showTabBarFlow()
+            } else {
+                self.showOnboardingFlow()
+            }
+        }
+        
+        authCoordinator.start()
         window.rootViewController = authCoordinator.navigationController
         window.makeKeyAndVisible()
     }
-
+    
     /// 메인 탭바 흐름 시작
     private func showTabBarFlow() {
         let tabBarCoordinator = TabBarCoordinator(tabBarController: UITabBarController(), container: container)
-    
-        tabBarCoordinator.start()
         
+        tabBarCoordinator.finishFlow = { [weak self, weak tabBarCoordinator] in
+            guard let self, let tabBarCoordinator else { return }
+            self.childDidFinish(tabBarCoordinator)
+        }
+        
+        tabBarCoordinator.start()
+        childCoordinators.append(tabBarCoordinator)
         window.rootViewController = tabBarCoordinator.tabBarController
         window.makeKeyAndVisible()
     }
