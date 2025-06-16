@@ -31,4 +31,52 @@ final class OnBoardingViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - LifeCycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        
+        /// 각 UIView 초기 상태
+        onboardingView.isHidden = false
+        nicknameInputView.isHidden = true
+    }
+}
+
+private extension OnBoardingViewController {
+    func setupUI() {
+        setAppearance()
+        setActions()
+        setDelegates()
+        setViewHierarchy()
+        setConstraints()
+    }
+    
+    func setAppearance() {
+        view.backgroundColor = UIColor(named: "Background")
+    }
+    
+    func setActions() {
+        nicknameInputView.nextButton.addTarget(self, action: #selector(nicknameInputViewNextButtonAction), for: .touchUpInside)
+    }
+    
+    func setDelegates() {
+        // TODO: NicknameInputView.textField.delegate = self
+    }
+    
+    func setViewHierarchy() {
+        view.addSubviews(nicknameInputView, onboardingView)
+    }
+    
+    func setConstraints() {
+        onboardingView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        nicknameInputView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+}
 }
