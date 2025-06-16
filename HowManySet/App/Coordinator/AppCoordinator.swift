@@ -69,14 +69,21 @@ final class AppCoordinator: Coordinator {
     /// 로그인/회원가입 흐름 시작
     private func showAuthFlow() {
         let authCoordinator = AuthCoordinator(navigationController: UINavigationController(), container: container)
+        childCoordinators.append(authCoordinator)
+
         authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
-            // 로그인/회원가입 완료 후 처리 (예: 로그인 상태 저장, 메인 흐름으로 전환)
-            guard let authCoordinator, let self else { return }
+            guard let self, let authCoordinator else { return }
             self.childDidFinish(authCoordinator)
-            self.showTabBarFlow()
+
+            let hasCompletedOnboarding = self.checkOnboardingStatus()
+            if hasCompletedOnboarding {
+                self.showTabBarFlow()
+            } else {
+                self.showOnboardingFlow()
+            }
         }
+
         authCoordinator.start()
-        
         window.rootViewController = authCoordinator.navigationController
         window.makeKeyAndVisible()
     }
