@@ -147,6 +147,21 @@ extension EditAndMemoViewController: UITextViewDelegate {
     }
 }
 
+extension EditAndMemoViewController {
+    
+    func bind(reactor: HomeViewReactor) {
+        
+        reactor.state.map { $0.currentExerciseIndex }
+            .distinctUntilChanged()
+            .bind { [weak self] index in
+                guard let self else { return }
+                let memoText = reactor.currentState.workoutCardStates[index].memoInExercise
+                self.memoTextView.text = memoText
+            }
+            .disposed(by: disposeBag)
+    }
+}
+
 // MARK: - Rx Methods
 private extension EditAndMemoViewController {
     

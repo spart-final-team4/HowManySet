@@ -787,6 +787,7 @@ extension HomeViewController {
             .bind { [weak self] prepared in
                 guard let self else { return }
                 self.coordinator?.presentEditAndMemoView()
+                self.pagingCardViewContainer[reactor.currentState.currentExerciseIndex]
             }.disposed(by: disposeBag)
         
     }//bind

@@ -11,7 +11,6 @@ import ReactorKit
 
 /// 사용자에게 보여지는 운동 종목 카드 뷰의 정보를 담은 구조체
 struct WorkoutCardState {
-    
     // UI에 직접 표시될 값들 (Reactor에서 미리 계산하여 제공)
     var currentExerciseName: String
     var currentWeight: Double
@@ -21,7 +20,6 @@ struct WorkoutCardState {
     var setIndex: Int
     /// 현재 루틴 안 운동종목의 인덱스
     var exerciseIndex: Int
-    
     /// 전체 운동 개수
     var totalExerciseCount: Int
     /// 현재 운동의 전체 세트 개수
@@ -32,10 +30,8 @@ struct WorkoutCardState {
     var currentSetNumber: Int
     /// 세트 프로그레스바
     var setProgressAmount: Int
-    
     /// 현재 운동 종목의 메모
-    var commentInExercise: String?
-    
+    var memoInExercise: String?
     var allSetsCompleted: Bool
 }
 
@@ -95,9 +91,8 @@ final class HomeViewReactor: Reactor {
         /// 페이징 시 currentExerciseIndex 즉시 변경!
         case changeExerciseIndex(Int)
         /// 편집, 메모 모달창
-        case presentEditAndMemo
+        case presentEditAndMemo(with: String?)
         case clearPreparedEditAndMemo
-
     }
     
     // MARK: - State is a current view state
@@ -106,7 +101,6 @@ final class HomeViewReactor: Reactor {
         var workoutRoutine: WorkoutRoutine
         /// 현재 루틴의 전체 각 운동의 State
         var workoutCardStates: [WorkoutCardState]
-        
         /// 현재 진행 중인 루틴 안 운동의 인덱스
         var currentExerciseIndex: Int
         /// 운동 시작 시 운동 중
@@ -114,7 +108,6 @@ final class HomeViewReactor: Reactor {
         /// 운동 중지 시
         var isWorkoutPaused: Bool
         var workoutTime: Int
-        
         var isResting: Bool
         var isRestPaused: Bool
         /// 프로그레스바에 사용될 현재 휴식 시간
@@ -123,9 +116,8 @@ final class HomeViewReactor: Reactor {
         var restTime: Int
         /// 휴식이 시작될 때의 값 (프로그레스바 용)
         var restStartTime: Int?
-        
         var date: Date
-        var commentInRoutine: String?
+        var memoInRoutine: String?
         var currentExerciseAllSetsCompleted: Bool
         var preparedEditAndMemo: Bool
     }
@@ -154,7 +146,7 @@ final class HomeViewReactor: Reactor {
                 currentExerciseNumber: i + 1,
                 currentSetNumber: 1,
                 setProgressAmount: 0,
-                commentInExercise: workout.comment,
+                memoInExercise: workout.comment,
                 allSetsCompleted: false
             ))
         }
@@ -162,8 +154,7 @@ final class HomeViewReactor: Reactor {
         self.initialState = State(
             workoutRoutine: initialRoutine,
             workoutCardStates: initialWorkoutCardStates,
-            currentExerciseIndex: 0, // 첫 운동 인덱스
-            
+            currentExerciseIndex: 0,
             isWorkingout: false,
             isWorkoutPaused: false,
             workoutTime: 0,
@@ -172,7 +163,7 @@ final class HomeViewReactor: Reactor {
             restSecondsRemaining: 0,
             restTime: 0,
             date: Date(),
-            commentInRoutine: nil,
+            memoInRoutine: nil,
             currentExerciseAllSetsCompleted: false,
             preparedEditAndMemo: false
         )
@@ -184,8 +175,7 @@ final class HomeViewReactor: Reactor {
         print(#function)
         
         switch action {
-            
-            // 초기 루틴 선택 시
+        // 초기 루틴 선택 시
         case .routineSelected:
             // 모든 카드 뷰의 상태를 초기화하고, 첫 운동의 첫 세트를 보여줌
             let updatedCardStates = currentState.workoutRoutine.workouts.enumerated().map { (i, workout) in
@@ -202,7 +192,7 @@ final class HomeViewReactor: Reactor {
                     currentExerciseNumber: i + 1,
                     currentSetNumber: 1,
                     setProgressAmount: 0,
-                    commentInExercise: workout.comment,
+                    memoInExercise: workout.comment,
                     allSetsCompleted: false
                 )
             }
@@ -261,8 +251,11 @@ final class HomeViewReactor: Reactor {
             return .just(.endCurrentWorkout(with: isEnded))
             
         case .editOptionButtonClicked:
+            let currentExerciseIndex = currentState.currentExerciseIndex
+            let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
+            let currentExerciseMemo = currentExercise.memoInExercise
             return .concat([
-                .just(.presentEditAndMemo),
+                .just(.presentEditAndMemo(with: currentExerciseMemo)),
                 .just(.clearPreparedEditAndMemo)
             ])
         }
@@ -375,13 +368,12 @@ final class HomeViewReactor: Reactor {
                 }
             }
             
-            
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             state.currentExerciseIndex = newIndex
             
-        case .presentEditAndMemo:
-            print("옵션 모달 presented!")
+        case let .presentEditAndMemo(exerciseMemo):
+            print("옵션 모달 presented!\n기존 메모: \(exerciseMemo ?? "메모없음")")
             state.preparedEditAndMemo = true
             
         case .clearPreparedEditAndMemo:
@@ -395,6 +387,7 @@ final class HomeViewReactor: Reactor {
 // MARK: - Private Methods
 private extension HomeViewReactor {
     
+    /// 세트완료 클릭, 스킵 버튼 클릭 시 루틴 진행 로직
     func handleWorkoutFlow(
         _ cardIndex: Int,
         _ restTime: Int,
