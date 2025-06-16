@@ -186,10 +186,9 @@ private extension OnBoardingViewController {
         if nextIndex < onboardingPages.count {
             currentPageIndex = nextIndex
         } else {
-            // TODO: 마지막 페이지 도달 시 다음 화면으로 이동 로직
-            
-            // TODO: 온보딩 화면 종료 상태 저장
-            
+            print("goToNextPage() - else")
+            /// coordinator의 completeOnBoarding만 호출
+            (coordinator as? OnBoardingCoordinator)?.completeOnBoarding()
         }
     }
 }
