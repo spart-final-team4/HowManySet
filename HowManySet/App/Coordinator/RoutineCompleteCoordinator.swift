@@ -34,7 +34,7 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
         // TODO: 운동 상태 초기화 코드
         
         let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
-        let homeVC = container.makeHomeViewController(coordinator: homeCoordinator)
+        let (homeVC, _) = container.makeHomeViewController(coordinator: homeCoordinator)
         
         // navigation 스택을 홈으로 초기화
         navigationController.setViewControllers([homeVC], animated: false)

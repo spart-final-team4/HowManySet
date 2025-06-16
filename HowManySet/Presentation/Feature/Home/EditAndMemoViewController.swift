@@ -10,8 +10,9 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import ReactorKit
 
-final class EditAndMemoViewController: UIViewController {
+final class EditAndMemoViewController: UIViewController, View {
     
     // MARK: - Properties
     var disposeBag = DisposeBag()
@@ -22,7 +23,7 @@ final class EditAndMemoViewController: UIViewController {
     private let memoPlaceHolderText = "메모를 입력해주세요."
     
     private weak var coordinator: HomeCoordinatorProtocol?
-
+    
     // MARK: - UI Components
     private lazy var containerView = UIView()
     
@@ -45,7 +46,7 @@ final class EditAndMemoViewController: UIViewController {
         $0.font = .systemFont(ofSize: 20, weight: .semibold)
     }
     
-    private lazy var memoTextView = UITextView().then {
+    lazy var memoTextView = UITextView().then {
         $0.backgroundColor = .bsInputFieldBG
         $0.text = memoPlaceHolderText
         $0.textColor = .lightGray
@@ -56,10 +57,10 @@ final class EditAndMemoViewController: UIViewController {
     
     
     // MARK: - Initializer
-    init(coordinator: HomeCoordinatorProtocol) {
+    init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
-
+        self.reactor = reactor
     }
     
     required init?(coder: NSCoder) {

@@ -24,6 +24,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// DI 컨테이너
     private let container: DIContainer
+    
+    // EditAndMemoView에 동일한 reactor 주입 위해 보관
+    private var homeViewReactor: HomeViewReactor?
 
     /// coordinator 생성자
     /// - Parameters:
@@ -36,8 +39,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
 
     /// 홈 뷰 시작
     func start() {
-        let homeVC = container.makeHomeViewController(coordinator: self)
+        let (homeVC, reactor) = container.makeHomeViewController(coordinator: self)
         navigationController.pushViewController(homeVC, animated: true)
+        homeViewReactor = reactor
     }
 
     /// 빈 화면에서 버튼 클릭 시 루틴 편집 창 present
@@ -48,7 +52,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
 
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
     func presentEditAndMemoView() {
-        let editAndMemoVC = EditAndMemoViewController(coordinator: self)
+        guard let homeViewReactor else { return }
+        let editAndMemoVC = EditAndMemoViewController(reactor: homeViewReactor, coordinator: self)
         
         if let sheet = editAndMemoVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
@@ -91,7 +96,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
                 // HomeVC 초기화
                 self.navigationController.popToRootViewController(animated: false)
-                let newHomeVC = self.container.makeHomeViewController(coordinator: self)
+                let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
                 
                 workoutEnded = true
@@ -121,7 +126,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
                 // HomeVC 초기화
                 self.navigationController.popToRootViewController(animated: false)
-                let newHomeVC = self.container.makeHomeViewController(coordinator: self)
+                let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
                 
                 workoutEnded = true
