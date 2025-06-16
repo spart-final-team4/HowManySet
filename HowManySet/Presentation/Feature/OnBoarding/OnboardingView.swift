@@ -9,9 +9,31 @@ import UIKit
 import SnapKit
 import Then
 
+/**
+ 온보딩(앱 첫 실행 시 사용자에게 기능 및 안내를 제공하는) 화면의 View 레이아웃을 담당하는 클래스.
+
+ - 주요 UI 구성:
+    - 오른쪽 상단 닫기(X) 버튼
+    - 중앙 상단 타이틀 및 서브타이틀 라벨
+    - 중앙 이미지 뷰(온보딩 안내 이미지)
+    - 이미지 하단 페이지 인디케이터(UIPageControl)
+    - 하단 "다음"/"시작하기" 버튼
+
+ - 특징:
+    - SnapKit을 이용한 오토레이아웃 적용
+    - Then 라이브러리로 UI 요소 선언 및 속성 초기화
+    - 배경색, 버튼 컬러 등은 Asset Catalog의 명명 규칙을 따름
+    - MVVM 구조에서 View 역할만 담당하며, 상태/이벤트 처리는 ViewController 또는 ViewModel에서 수행
+
+ - 사용 예시:
+    ```
+    let onboardingView = OnboardingView()
+    // ViewController에서 addSubview 및 레이아웃 설정 후 사용
+    ```
+ */
 final class OnboardingView: UIView {
     
-    // MARK: - UI 요소
+    /// 오른쪽 상단 닫기(X) 버튼. 온보딩 화면을 종료할 때 사용.
     let closeButton = UIButton(type: .system).then {
         $0.setImage(UIImage(systemName: "xmark"), for: .normal)
         $0.tintColor = .white
@@ -19,27 +41,26 @@ final class OnboardingView: UIView {
         $0.contentVerticalAlignment = .top
     }
  
+    /// 온보딩 안내 타이틀 라벨. 중앙 상단에 위치.
     let titleLabel = UILabel().then {
-        $0.text = "운동 이름부터 세트 수까지"
         $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
+    /// 온보딩 안내 서브타이틀 라벨. 타이틀 하단에 위치.
     let subTitleLabel = UILabel().then {
-        $0.text = "내 루틴에 맞게 직접 설정해보세요"
         $0.font = .boldSystemFont(ofSize: 20)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
-    // 중앙부 이미지
+    /// 온보딩 안내 이미지를 표시하는 이미지 뷰. 중앙에 배치.
     let centerImageView = UIImageView().then {
-        $0.image = UIImage(named: "Onboard_SetRoutine")
         $0.contentMode = .scaleAspectFit
     }
     
-    // 인디케이터 (UIPageControl)
+    /// 온보딩 진행 상황을 표시하는 페이지 인디케이터(UIPageControl).
     let pageIndicator = UIPageControl().then {
         $0.numberOfPages = 5
         $0.currentPage = 0
@@ -48,6 +69,7 @@ final class OnboardingView: UIView {
         $0.isUserInteractionEnabled = false
     }
 
+    /// 하단 "다음"/"시작하기" 버튼. 온보딩 단계 이동 또는 완료 시 사용.
     let nextButton = UIButton(type: .system).then {
         $0.setTitle("다음", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
@@ -58,6 +80,9 @@ final class OnboardingView: UIView {
     }
     
     // MARK: - Init
+    /**
+     온보딩 뷰를 초기화하고 UI 요소를 배치합니다.
+     */
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -69,20 +94,24 @@ final class OnboardingView: UIView {
 }
 
 private extension OnboardingView {
+    /// 전체 UI 구성(색상, 계층, 제약조건) 설정
     func setupUI() {
         setAppearance()
         setViewHierarchy()
         setConstraints()
     }
     
+    /// 배경색 등 Appearance 설정
     func setAppearance() {
         self.backgroundColor = UIColor(named: "Background")
     }
     
+    /// 서브뷰 계층 구조 설정
     func setViewHierarchy() {
         self.addSubviews(closeButton, titleLabel, subTitleLabel, centerImageView, pageIndicator, nextButton)
     }
     
+    /// SnapKit을 활용한 오토레이아웃 제약조건 설정
     func setConstraints() {
         closeButton.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(12)

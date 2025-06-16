@@ -18,7 +18,7 @@ final class AuthView: UIView {
         $0.backgroundColor = .clear
     }
 
-    let logoTitle = UILabel().then {
+    private let logoTitle = UILabel().then {
         $0.font = .boldSystemFont(ofSize: 16)
         $0.textColor = .white
         $0.textAlignment = .center
