@@ -79,4 +79,22 @@ private extension OnBoardingViewController {
         }
     }
 }
+
+private extension OnBoardingViewController {
+    @objc func nicknameInputViewNextButtonAction() {
+        nicknameInputView.isHidden = true
+        onboardingView.isHidden = false
+    }
+    
+    // 버튼 활성화 / 비활성화 로직
+    func updateNextButtonState(isEnabled: Bool) {
+        nicknameInputView.nextButton.isEnabled = isEnabled
+        if isEnabled {
+            nicknameInputView.nextButton.backgroundColor = UIColor(named: "brand")
+            nicknameInputView.nextButton.setTitleColor(.black, for: .normal)
+        } else {
+            nicknameInputView.nextButton.backgroundColor = .darkGray
+            nicknameInputView.nextButton.setTitleColor(.lightGray, for: .normal)
+        }
+    }
 }
