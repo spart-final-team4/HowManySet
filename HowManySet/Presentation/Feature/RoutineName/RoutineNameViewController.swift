@@ -4,17 +4,17 @@ import RxSwift
 import RxCocoa
 import ReactorKit
 
-final class RoutineNameViewController: UIViewController {
-
+final class RoutineNameViewController: UIViewController, View {
+    // MARK: - Properties
     let routineNameView = RoutineNameView()
-    private let reactor: RoutineNameReactor
     private weak var coordinator: RoutineListCoordinatorProtocol?
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
 
+    // MARK: - Init
     init(reactor: RoutineNameReactor, coordinator: RoutineListCoordinatorProtocol) {
+        super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
-        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -28,14 +28,13 @@ final class RoutineNameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        bindTextField()
-        bindButtonTapped()
     }
 }
 
 // MARK: - extension
-private extension RoutineNameViewController {
-    func bindTextField() {
+extension RoutineNameViewController {
+    func bind(reactor: RoutineNameReactor) {
+        // 텍스트 필드 입력에 따른 버튼 활성화
         routineNameView.publicRoutineNameTF.rx.text.orEmpty
             .map { !$0.isEmpty }
             .distinctUntilChanged()
@@ -46,11 +45,13 @@ private extension RoutineNameViewController {
                 button.setTitleColor(isEnabled ? .black : .dbTypo, for: .normal)
             }
             .disposed(by: disposeBag)
-    }
 
-    func bindButtonTapped() {
+        // 버튼 탭 이벤트
         routineNameView.publicNextButton.rx.tap
-            .bind(with: self) { owner, _ in
+            .withLatestFrom(routineNameView.publicRoutineNameTF.rx.text.orEmpty)
+            .bind(with: self) { owner, text in
+                reactor.action.onNext(.setRoutineName(text))
+                reactor.action.onNext(.saveRoutine)
                 owner.dismiss(animated: true) {
                     owner.coordinator?.pushEditExcerciseView()
                 }

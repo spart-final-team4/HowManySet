@@ -47,7 +47,14 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     /// 루틴명 편집 화면으로 모달 표시
     func presentRoutineNameView() {
-        let reactor = RoutineNameReactor()
+        // RoutineListVC에 있는 saveRoutineUseCase를 재사용하기 위해 인스턴스를 찾고 없으면 리턴
+        guard let routineListVC = navigationController.viewControllers.first(
+            where: { $0 is RoutineListViewController }
+        ) as? RoutineListViewController else { return }
+        let saveRoutineUseCase = routineListVC.reactor?.publicSaveRoutineUseCase
+        guard let saveRoutineUseCase = saveRoutineUseCase else { return }
+        
+        let reactor = RoutineNameReactor(saveRoutineUseCase: saveRoutineUseCase)
         let routineNameVC = RoutineNameViewController(reactor: reactor, coordinator: self)
 
         if let sheet = routineNameVC.sheetPresentationController {
