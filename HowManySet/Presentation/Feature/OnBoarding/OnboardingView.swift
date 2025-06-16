@@ -35,7 +35,7 @@ final class OnboardingView: UIView {
     
     // 중앙부 이미지
     let centerImageView = UIImageView().then {
-        $0.image = UIImage(named: "onboarding_sample") // 실제 이미지명으로 교체
+        $0.image = UIImage(named: "Onboard_SetRoutine")
         $0.contentMode = .scaleAspectFit
     }
     
@@ -51,7 +51,7 @@ final class OnboardingView: UIView {
     let nextButton = UIButton(type: .system).then {
         $0.setTitle("다음", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
-        $0.backgroundColor = UIColor(named: "brand") ?? UIColor.systemGreen
+        $0.backgroundColor = UIColor(named: "brand")
         $0.setTitleColor(.black, for: .normal)
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
