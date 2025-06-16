@@ -59,8 +59,10 @@ final class HomeViewReactor: Reactor {
         case restPauseButtonClicked
         /// 운동 종료 버튼 클릭 시
         case stopButtonClicked(with: Bool)
-        /// 카드의 운동 옵션 버튼 클릭 시
-        case editOptionButtonClicked(at: Int)
+        /// 카드의 운동 옵션 버튼 클릭으로 editAndMemoView present시
+        case editAndMemoViewPresented(at: Int)
+        /// MemoTextView의 메모로 업데이트
+        case updateCurrentMemo(with: String)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -90,9 +92,9 @@ final class HomeViewReactor: Reactor {
         case setTrueCurrentCardViewCompleted(at: Int)
         /// 페이징 시 currentExerciseIndex 즉시 변경!
         case changeExerciseIndex(Int)
-        /// 편집, 메모 모달창
-        case presentEditAndMemo(with: String?)
-        case clearPreparedEditAndMemo
+        // 편집, 메모 모달창 관련
+        case setEditAndMemoViewPresented(Bool)
+        case updateExerciseMemo(with: String?)
     }
     
     // MARK: - State is a current view state
@@ -119,7 +121,7 @@ final class HomeViewReactor: Reactor {
         var date: Date
         var memoInRoutine: String?
         var currentExerciseAllSetsCompleted: Bool
-        var preparedEditAndMemo: Bool
+        var isEditAndMemoViewPresented: Bool
     }
     
     let initialState: State
@@ -165,7 +167,7 @@ final class HomeViewReactor: Reactor {
             date: Date(),
             memoInRoutine: nil,
             currentExerciseAllSetsCompleted: false,
-            preparedEditAndMemo: false
+            isEditAndMemoViewPresented: false
         )
     }
     
@@ -175,7 +177,7 @@ final class HomeViewReactor: Reactor {
         print(#function)
         
         switch action {
-        // 초기 루틴 선택 시
+            // 초기 루틴 선택 시
         case .routineSelected:
             // 모든 카드 뷰의 상태를 초기화하고, 첫 운동의 첫 세트를 보여줌
             let updatedCardStates = currentState.workoutRoutine.workouts.enumerated().map { (i, workout) in
@@ -225,7 +227,7 @@ final class HomeViewReactor: Reactor {
             
             return handleWorkoutFlow(cardIndex, restTime, restTimer)
             
-            // skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
+        // skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
         case let .forwardButtonClicked(cardIndex):
             let restTime = 0
             let restTimer: Observable<HomeViewReactor.Mutation> = .empty()
@@ -250,16 +252,18 @@ final class HomeViewReactor: Reactor {
         case .stopButtonClicked(let isEnded):
             return .just(.endCurrentWorkout(with: isEnded))
             
-        case .editOptionButtonClicked:
+        case .editAndMemoViewPresented:
             let currentExerciseIndex = currentState.currentExerciseIndex
             let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
             let currentExerciseMemo = currentExercise.memoInExercise
-            return .concat([
-                .just(.presentEditAndMemo(with: currentExerciseMemo)),
-                .just(.clearPreparedEditAndMemo)
-            ])
+            print("📋 현재메모: \(String(describing: currentExerciseMemo))")
+            
+            return .just(.setEditAndMemoViewPresented(true))
+            
+        case .updateCurrentMemo(let newMemo):
+            return .just(.updateExerciseMemo(with: newMemo))
         }
-    }
+    }//mutate
     
     
     // MARK: - Mutation -> State (Reduce)
@@ -372,16 +376,16 @@ final class HomeViewReactor: Reactor {
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             state.currentExerciseIndex = newIndex
             
-        case let .presentEditAndMemo(exerciseMemo):
-            print("옵션 모달 presented!\n기존 메모: \(exerciseMemo ?? "메모없음")")
-            state.preparedEditAndMemo = true
+        case let .setEditAndMemoViewPresented(presented):
+            state.isEditAndMemoViewPresented = presented
             
-        case .clearPreparedEditAndMemo:
-            state.preparedEditAndMemo = false
+        case let .updateExerciseMemo(newMemo):
+            let currentExerciseIndex = currentState.currentExerciseIndex
+            state.workoutCardStates[currentExerciseIndex].memoInExercise = newMemo
+            print("📋 변경된메모: \(String(describing: newMemo)), \(String(describing: state.workoutCardStates[currentExerciseIndex].memoInExercise))")
         }
-        
         return state
-    }
+    }//reduce
 }
 
 // MARK: - Private Methods
@@ -488,5 +492,3 @@ private extension HomeViewReactor {
             }
         }
 }
-
-
