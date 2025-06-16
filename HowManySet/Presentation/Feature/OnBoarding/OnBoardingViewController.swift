@@ -22,6 +22,8 @@ final class OnBoardingViewController: UIViewController {
     
     private let nicknameInputView = NicknameInputView()
     
+    private var disposeBag = DisposeBag()
+    
     init(reactor: OnBoardingViewReactor, coordinator: OnBoardingCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
@@ -39,8 +41,8 @@ final class OnBoardingViewController: UIViewController {
         setupUI()
         
         /// 각 UIView 초기 상태
-        onboardingView.isHidden = false
-        nicknameInputView.isHidden = true
+        onboardingView.isHidden = true
+        nicknameInputView.isHidden = false
     }
 }
 
@@ -55,11 +57,14 @@ private extension OnBoardingViewController {
     
     func setAppearance() {
         view.backgroundColor = UIColor(named: "Background")
+        
+        onboardingView.pageIndicator.numberOfPages = onboardingPages.count
     }
     
     func setActions() {
         nicknameInputView.nextButton.addTarget(self, action: #selector(nicknameInputViewNextButtonAction), for: .touchUpInside)
         onboardingView.nextButton.addTarget(self, action: #selector(onboardingViewNextButtonAction), for: .touchUpInside)
+        onboardingView.closeButton.addTarget(self, action: #selector(onboardingViewCloseButtonAction), for: .touchUpInside)
     }
     
     func setDelegates() {
@@ -85,6 +90,8 @@ private extension OnBoardingViewController {
     @objc func nicknameInputViewNextButtonAction() {
         nicknameInputView.isHidden = true
         onboardingView.isHidden = false
+        
+        currentPageIndex = 0
     }
     
     // 버튼 활성화 / 비활성화 로직
@@ -104,6 +111,29 @@ private extension OnBoardingViewController {
     @objc func onboardingViewNextButtonAction() {
         goToNextPage()
     }
+    
+    @objc func onboardingViewCloseButtonAction() {
+        // TODO: 화면 전환 로직
+        
+        // TODO: 온보딩 화면 종료 상태 저장
+    }
+}
+
+// MARK: OnboardingView.nicknameTextField
+private extension OnBoardingViewController {
+    func bindNicknameValidation() {
+        nicknameInputView.nicknameTextField.rx.text.orEmpty
+            .map { [weak self] text in
+                self?.isValidNickname(text) ?? false
+            }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] isValid in
+                self?.updateNextButtonState(isEnabled: isValid)
+            }
+            .disposed(by: disposeBag)
+    }
+    
 }
 
 // MARK: - OnbordingView PageIndicator
@@ -152,7 +182,9 @@ private extension OnBoardingViewController {
             currentPageIndex = nextIndex
         } else {
             // TODO: 마지막 페이지 도달 시 다음 화면으로 이동 로직
-                // TODO: 마지막 페이지 도달 시 OnboardingView.nextButton.setTitle("다음", for: .normal) -> setTitle("시작하기", for: .normal)로 변경
+            
+            // TODO: 온보딩 화면 종료 상태 저장
+            
         }
     }
 }
