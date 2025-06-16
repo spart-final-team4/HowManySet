@@ -39,6 +39,7 @@ final class OnBoardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        bindNicknameValidation()
         
         /// 각 UIView 초기 상태
         onboardingView.isHidden = true
