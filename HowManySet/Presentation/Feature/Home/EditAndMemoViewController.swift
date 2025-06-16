@@ -1,5 +1,5 @@
 //
-//  WorkoutOptionViewController.swift
+//  EditAndMemoViewController.swift
 //  HowManySet
 //
 //  Created by 정근호 on 6/5/25.
@@ -11,7 +11,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class WorkoutOptionViewController: UIViewController {
+final class EditAndMemoViewController: UIViewController {
     
     // MARK: - Properties
     var disposeBag = DisposeBag()
@@ -79,7 +79,7 @@ final class WorkoutOptionViewController: UIViewController {
 }
 
 // MARK: - UI Methods
-private extension WorkoutOptionViewController {
+private extension EditAndMemoViewController {
     
     func setupUI() {
         view.backgroundColor = .bottomSheetBG
@@ -129,7 +129,7 @@ private extension WorkoutOptionViewController {
 }
 
 // MARK: - UITextViewDelegate
-extension WorkoutOptionViewController: UITextViewDelegate {
+extension EditAndMemoViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == memoPlaceHolderText {
@@ -147,7 +147,7 @@ extension WorkoutOptionViewController: UITextViewDelegate {
 }
 
 // MARK: - Rx Methods
-private extension WorkoutOptionViewController {
+private extension EditAndMemoViewController {
     
     func bindUIEvents() {
         

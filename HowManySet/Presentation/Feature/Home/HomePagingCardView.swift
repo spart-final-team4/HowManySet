@@ -58,7 +58,7 @@ final class HomePagingCardView: UIView {
         $0.textColor = .textSecondary
     }
     
-    lazy var optionButton = UIButton().then {
+    lazy var editButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.tintColor = .label
@@ -181,7 +181,7 @@ private extension HomePagingCardView {
         )
         
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
-        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
+        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, editButton)
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
         weightRepscontainerView.addSubview(weightRepsHStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
