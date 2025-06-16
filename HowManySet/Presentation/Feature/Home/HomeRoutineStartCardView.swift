@@ -116,8 +116,3 @@ private extension HomeRoutineStartCardView {
         }
     }
 }
-
-// MARK: Internal Methods
-extension HomeRoutineStartCardView {
-
-}
