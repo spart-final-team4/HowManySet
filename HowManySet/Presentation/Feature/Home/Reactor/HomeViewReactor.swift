@@ -95,7 +95,9 @@ final class HomeViewReactor: Reactor {
         /// 페이징 시 currentExerciseIndex 즉시 변경!
         case changeExerciseIndex(Int)
         /// 편집, 메모 모달창
-        case presentWorkoutOptionView
+        case presentEditAndMemo
+        case clearPreparedEditAndMemo
+
     }
     
     // MARK: - State is a current view state
@@ -259,7 +261,10 @@ final class HomeViewReactor: Reactor {
             return .just(.endCurrentWorkout(with: isEnded))
             
         case .editOptionButtonClicked:
-            return .just(.presentWorkoutOptionView)
+            return .concat([
+                .just(.presentEditAndMemo),
+                .just(.clearPreparedEditAndMemo)
+            ])
         }
     }
     
@@ -375,9 +380,12 @@ final class HomeViewReactor: Reactor {
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             state.currentExerciseIndex = newIndex
             
-        case .presentWorkoutOptionView:
+        case .presentEditAndMemo:
             print("옵션 모달 presented!")
             state.preparedEditAndMemo = true
+            
+        case .clearPreparedEditAndMemo:
+            state.preparedEditAndMemo = false
         }
         
         return state
@@ -426,7 +434,7 @@ private extension HomeViewReactor {
             } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
                 
                 var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
-                var currentCardState = currentState.workoutCardStates[cardIndex]
+                let currentCardState = currentState.workoutCardStates[cardIndex]
                 print("🗂️🗂️ 초기 nextExerciseIndex: \(nextExerciseIndex)")
                 
                 // 다음,이전 인덱스가 존재하고 다음,이전 카드 모든 세트 완료 시
