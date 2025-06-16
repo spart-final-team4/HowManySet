@@ -18,6 +18,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+            
+            // 스플래시 화면 노출 2초
+            Thread.sleep(forTimeInterval: 2.0)
+            
             // Firebase 초기화
             FirebaseApp.configure()
             
