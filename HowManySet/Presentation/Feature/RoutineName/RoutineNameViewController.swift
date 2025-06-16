@@ -29,6 +29,12 @@ final class RoutineNameViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 커서 자동 위치
+        routineNameView.publicRoutineNameTF.becomeFirstResponder()
+    }
 }
 
 // MARK: - extension

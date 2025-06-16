@@ -51,9 +51,6 @@ private extension RoutineNameView {
             $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 0))
             $0.leftViewMode = .always
 
-            // 커서 자동 위치
-            $0.becomeFirstResponder()
-
             // 키보드 관련
             $0.autocorrectionType = .no // 자동 수정 끔
             $0.spellCheckingType = .no // 맞춤법 검사 끔
