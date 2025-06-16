@@ -68,7 +68,7 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .cardBackground
     }
 
-    private lazy var weightRepscontainerView = UIView().then {
+    lazy var weightRepsButton = UIButton().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
@@ -176,14 +176,14 @@ private extension HomePagingCardView {
         mainContentVStack.addArrangedSubviews(
             topLineHStack,
             topConentsVStack,
-            weightRepscontainerView,
+            weightRepsButton,
             setCompleteButton
         )
         
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
         topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, editButton)
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
-        weightRepscontainerView.addSubview(weightRepsHStack)
+        weightRepsButton.addSubview(weightRepsHStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
                                              repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
@@ -206,7 +206,7 @@ private extension HomePagingCardView {
             $0.height.equalTo(16)
         }
         
-        weightRepscontainerView.snp.makeConstraints {
+        weightRepsButton.snp.makeConstraints {
             $0.horizontalEdges.equalTo(mainContentVStack)
             $0.height.equalToSuperview().multipliedBy(0.4)
         }

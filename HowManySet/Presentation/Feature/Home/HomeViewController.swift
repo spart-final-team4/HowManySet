@@ -102,7 +102,6 @@ final class HomeViewController: UIViewController, View {
     
     private lazy var pagingScrollContentView = UIView()
     
-    
     // MARK: - Initializer
     init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
         super.init(nibName: nil, bundle: nil)
@@ -422,7 +421,7 @@ private extension HomeViewController {
         }
     }
     
-    // MARK: - Visible한 카드들만 리바인딩
+    // MARK: - Visible한 카드들만 바인딩
     func bindCardViewsButton(reactor: HomeViewReactor) {
         // visible한 카드들만 필터링
         let visibleCards = pagingCardViewContainer.filter { !$0.isHidden }
@@ -443,7 +442,16 @@ private extension HomeViewController {
                         print("🟢 세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     })
                     .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
-                    .subscribe(onNext: { action in
+                    .bind(onNext: { [weak self] action in
+                        guard let self else { return }
+                        UIView.animate(withDuration: 0.1, animations: {
+                            cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                        }, completion: { _ in
+                            UIView.animate(withDuration: 0.1) {
+                                cardView.setCompleteButton.transform = .identity
+                            }
+                        })
+                        
                         print("🚀 Reactor로 세트 완료 액션 전송: \(action)")
                         reactor.action.onNext(action)
                     })
@@ -471,6 +479,24 @@ private extension HomeViewController {
                         self.coordinator?.presentEditAndMemoView()
                         reactor.action.onNext(action)
                     })
+                    .disposed(by: disposeBag)
+                
+                cardView.weightRepsButton.rx.tap
+                    .observe(on: MainScheduler.asyncInstance)
+                    .bind { [weak self] in
+                        guard let self else { return }
+
+                        // 클릭 애니메이션
+                        UIView.animate(withDuration: 0.1, animations: {
+                            cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                        }, completion: { _ in
+                            UIView.animate(withDuration: 0.1) {
+                                cardView.weightRepsButton.transform = .identity
+                            }
+                        })
+
+                        self.coordinator?.presentEditRoutineView()
+                    }
                     .disposed(by: disposeBag)
             }
             print("✅ 버튼 바인딩 완료 - \(visibleCards)")

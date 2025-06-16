@@ -63,6 +63,8 @@ final class HomeViewReactor: Reactor {
         case editAndMemoViewPresented(at: Int)
         /// MemoTextView의 메모로 업데이트
         case updateCurrentMemo(with: String)
+        /// 무게, 횟수 컨테이너 버튼 클릭 시
+        case weightRepsButtonClicked
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -95,6 +97,9 @@ final class HomeViewReactor: Reactor {
         // 편집, 메모 모달창 관련
         case setEditAndMemoViewPresented(Bool)
         case updateExerciseMemo(with: String?)
+        /// 무게 횟수 버튼 클릭 시 데이터 전달
+        case sendCurrentCardStates(WorkoutCardState)
+        
     }
     
     // MARK: - State is a current view state
@@ -262,7 +267,14 @@ final class HomeViewReactor: Reactor {
             
         case .updateCurrentMemo(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
-        }
+            
+        case .weightRepsButtonClicked:
+            let currentExerciseIndex = currentState.currentExerciseIndex
+            let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
+            
+            return .just(.sendCurrentCardStates(currentExercise))
+            
+        }//action
     }//mutate
     
     
@@ -383,7 +395,12 @@ final class HomeViewReactor: Reactor {
             let currentExerciseIndex = currentState.currentExerciseIndex
             state.workoutCardStates[currentExerciseIndex].memoInExercise = newMemo
             print("📋 변경된메모: \(String(describing: newMemo)), \(String(describing: state.workoutCardStates[currentExerciseIndex].memoInExercise))")
-        }
+            
+        case let .sendCurrentCardStates(currentCardState):
+            // MARK: - TODO: 현재 운동 카드 편집위해 데이터 전달
+            print("🦾 편집될 운동 카드 데이터: \(currentCardState)")
+            
+        }//mutation
         return state
     }//reduce
 }
