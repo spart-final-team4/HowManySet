@@ -29,7 +29,6 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         $0.contentHorizontalAlignment = .leading
         $0.contentEdgeInsets = .init(top: 13, left: 12, bottom: 13, right: 12)
         $0.backgroundColor = .disabledButton
-        $0.backgroundColor = .disabledButton
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
     }
@@ -40,7 +39,6 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         $0.titleLabel?.textColor = .textTertiary
         $0.contentHorizontalAlignment = .leading
         $0.contentEdgeInsets = .init(top: 13, left: 12, bottom: 13, right: 12)
-        $0.backgroundColor = .disabledButton
         $0.backgroundColor = .disabledButton
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
