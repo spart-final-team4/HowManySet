@@ -28,7 +28,7 @@ final class DIContainer {
     }
     
     /// 홈 화면을 생성하여 반환
-    func makeHomeViewController(coordinator: HomeCoordinator) -> UIViewController {
+    func makeHomeViewController(coordinator: HomeCoordinator) -> (UIViewController, HomeViewReactor) {
         let realmService: RealmServiceProtocol = RealmService()
         let recordRepository = RecordRepositoryImpl(realmService: realmService)
         
@@ -38,7 +38,7 @@ final class DIContainer {
             saveRecordUseCase: saveRecordUseCase
         )
         
-        return HomeViewController(reactor: reactor, coordinator: coordinator)
+        return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
     }
     
     /// 루틴 리스트 화면을 생성하여 반환
