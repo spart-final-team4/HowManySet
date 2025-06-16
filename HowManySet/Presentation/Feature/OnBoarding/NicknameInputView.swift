@@ -18,7 +18,7 @@ final class NicknameInputView: UIView {
         $0.textAlignment = .left
     }
     
-    private let nicknameTextField = UITextField().then {
+    let nicknameTextField = UITextField().then {
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.textColor = .white
         $0.backgroundColor = .darkGray
@@ -55,11 +55,6 @@ final class NicknameInputView: UIView {
     }
 }
 
-// MARK: - Button 활성화/비활성화 (기본 비활성화) - ViewModel로 옮길 예정
-extension NicknameInputView {
-    
-}
-
 // MARK: - UI
 private extension NicknameInputView {
     func setupUI() {
@@ -88,8 +83,8 @@ private extension NicknameInputView {
         }
         nextButton.snp.makeConstraints {
             $0.directionalHorizontalEdges.equalToSuperview().inset(20)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(24)
-            $0.height.equalTo(52)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(28)
+            $0.height.equalTo(56)
         }
     }
 }
