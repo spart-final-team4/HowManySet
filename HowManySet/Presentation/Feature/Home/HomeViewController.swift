@@ -469,9 +469,7 @@ private extension HomeViewController {
                     })
                     .disposed(by: disposeBag)
             }
-            
             print("✅ 버튼 바인딩 완료")
-        
     }
 }
 
