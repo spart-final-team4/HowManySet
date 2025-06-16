@@ -8,6 +8,7 @@ final class RoutineNameViewController: UIViewController {
 
     let routineNameView = RoutineNameView()
     private let reactor: RoutineNameReactor
+    private let disposeBag = DisposeBag()
 
     init(reactor: RoutineNameReactor) {
         self.reactor = reactor
@@ -25,6 +26,22 @@ final class RoutineNameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindTextField()
     }
+}
 
+// MARK: - extension
+private extension RoutineNameViewController {
+    func bindTextField() {
+        routineNameView.publicRoutineNameTF.rx.text.orEmpty
+            .map { !$0.isEmpty }
+            .distinctUntilChanged()
+            .bind(with: self) { owner, isEnabled in
+                let button = owner.routineNameView.publicNextButton
+                button.isEnabled = isEnabled
+                button.backgroundColor = isEnabled ? .brand : .disabledButton
+                button.setTitleColor(isEnabled ? .black : .dbTypo, for: .normal)
+            }
+            .disposed(by: disposeBag)
+    }
 }

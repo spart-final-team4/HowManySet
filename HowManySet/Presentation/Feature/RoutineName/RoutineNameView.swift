@@ -20,6 +20,7 @@ final class RoutineNameView: UIView {
 
     // MARK: - Computed Property
     var publicNextButton: UIButton { nextButton }
+    var publicRoutineNameTF: UITextField { routineNameTF }
 }
 
 // MARK: - EditRoutineView UI 관련 extension
@@ -60,10 +61,8 @@ private extension RoutineNameView {
         }
 
         nextButton.do {
-            $0.backgroundColor = .disabledButton
             $0.setTitle("다음", for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .regular)
-            $0.setTitleColor(.dbTypo, for: .normal)
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
         }
