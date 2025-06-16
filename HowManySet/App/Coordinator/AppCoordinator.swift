@@ -34,7 +34,7 @@ final class AppCoordinator: Coordinator {
         if !hasCompletedOnboarding {
             showOnboardingFlow()
         } else if !isLoggedIn {
-            showAuthFlow()
+            showTabBarFlow()
         } else {
             showTabBarFlow()
         }
@@ -46,6 +46,7 @@ final class AppCoordinator: Coordinator {
         onBoardingCoordinator.finishFlow = { [weak self, weak onBoardingCoordinator] in
             // 온보딩 완료 후 처리 (예: 온보딩 완료 상태 저장, 로그인 흐름으로 전환)
             guard let onBoardingCoordinator, let self else { return }
+            childCoordinators.append(onBoardingCoordinator)
             self.childDidFinish(onBoardingCoordinator)
             onBoardingCoordinator.completeOnBoarding()
             self.showAuthFlow()
@@ -62,6 +63,7 @@ final class AppCoordinator: Coordinator {
         authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
             // 로그인/회원가입 완료 후 처리 (예: 로그인 상태 저장, 메인 흐름으로 전환)
             guard let authCoordinator, let self else { return }
+            childCoordinators.append(authCoordinator)
             self.childDidFinish(authCoordinator)
             self.showTabBarFlow()
         }
@@ -76,6 +78,8 @@ final class AppCoordinator: Coordinator {
         let tabBarCoordinator = TabBarCoordinator(tabBarController: UITabBarController(), container: container)
     
         tabBarCoordinator.start()
+        
+        childCoordinators.append(tabBarCoordinator)
         
         window.rootViewController = tabBarCoordinator.tabBarController
         window.makeKeyAndVisible()

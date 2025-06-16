@@ -26,6 +26,9 @@ final class RoutineCompleteViewController: UIViewController, View {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
+        
+        self.hidesBottomBarWhenPushed = true
+//        self.navigationItem.hidesBackButton = true
     }
     
     required init?(coder: NSCoder) {
@@ -34,6 +37,7 @@ final class RoutineCompleteViewController: UIViewController, View {
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
+       
         super.viewDidLoad()
     }
     
