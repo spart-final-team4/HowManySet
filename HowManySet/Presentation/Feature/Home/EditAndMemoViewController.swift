@@ -80,15 +80,8 @@ final class EditAndMemoViewController: UIViewController, View {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        let newMemo = self.memoTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let shouldSave = !(newMemo?.isEmpty ?? true) && (newMemo != self.memoPlaceHolderText)
-        
-        if shouldSave {
-            reactor?.action.onNext(.updateCurrentMemo(with: newMemo ?? memoPlaceHolderText))
-        } else {
-            print("❌ 메모 저장 조건 불충분: 입력 없음 or placeholder 그대로")
-        }
-        print("📋 입력된 새메모: \(String(describing: newMemo))")
+        let newMemo = self.memoTextView.text
+        reactor?.action.onNext(.updateCurrentMemo(with: newMemo ?? ""))
     }
     
 }
@@ -148,7 +141,7 @@ extension EditAndMemoViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .placeholderText {
-            textView.textColor = .black
+            textView.textColor = .white
         } else {
             return
         }
@@ -157,9 +150,10 @@ extension EditAndMemoViewController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = memoPlaceHolderText
-            textView.textColor = .placeholderText
+            textView.textColor = .lightGray
         } else {
             let text = textView.text
+            textView.textColor = .white
             print("📋 입력된 메모: \(String(describing: text))")
         }
     }
