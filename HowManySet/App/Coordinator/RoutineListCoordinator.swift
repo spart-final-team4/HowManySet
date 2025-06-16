@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RoutineListCoordinatorProtocol: Coordinator {
-    func presentEditRoutineView()
+    func presentRoutineNameView()
 }
 
 /// 루틴 리스트 화면 관련 coordinator
@@ -45,11 +45,11 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     }
     
     /// 루틴명 편집 화면으로 모달 표시
-    func presentEditRoutineView() {
-        let reactor = EditRoutinViewReactor()
-        let editRoutineVC = EditRoutineViewController(reactor: reactor)
+    func presentRoutineNameView() {
+        let reactor = RoutineNameReactor()
+        let routineNameVC = RoutineNameViewController(reactor: reactor)
 
-        if let sheet = editRoutineVC.sheetPresentationController {
+        if let sheet = routineNameVC.sheetPresentationController {
             let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
 
             sheet.detents = [.custom(resolver: { _ in
@@ -62,7 +62,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
             sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
         }
 
-        navigationController.present(editRoutineVC, animated: true)
+        navigationController.present(routineNameVC, animated: true)
     }
     
     /// 운동 편집 화면 모달 표시

@@ -49,7 +49,7 @@ final class RoutineListViewController: UIViewController, View {
         // "새 루틴 추가" 버튼이 눌렸을 때 화면이 전환되고 reactor에 바인딩
         routineListView.publicAddNewRoutineButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.coordinator?.presentEditRoutineView()
+                owner.coordinator?.presentRoutineNameView()
             }
             .disposed(by: disposeBag)
     }

@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class EditRoutineView: UIView {
+final class RoutineNameView: UIView {
     // MARK: - Properties
     private let titleLabel = UILabel()
     private let routineNameTF = UITextField()
@@ -13,7 +13,7 @@ final class EditRoutineView: UIView {
         super.init(frame: frame)
         setupUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -23,7 +23,7 @@ final class EditRoutineView: UIView {
 }
 
 // MARK: - EditRoutineView UI 관련 extension
-private extension EditRoutineView {
+private extension RoutineNameView {
     func setupUI() {
         backgroundColor = .background
         setAppearance()
@@ -80,13 +80,13 @@ private extension EditRoutineView {
         routineNameTF.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(28)
-            $0.height.equalTo(56)
+            $0.height.equalToSuperview().multipliedBy(0.09)
         }
 
         nextButton.snp.makeConstraints {
             $0.top.equalTo(routineNameTF.snp.bottom).offset(38)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(56)
+            $0.height.equalToSuperview().multipliedBy(0.09)
         }
     }
 }
