@@ -50,8 +50,16 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
 
         if let sheet = editRoutineVC.sheetPresentationController {
-            sheet.detents = [.medium()]
+            let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
+
+            sheet.detents = [.custom(resolver: { _ in
+                fixedHeight
+            })]
             sheet.prefersGrabberVisible = true
+
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheet.prefersEdgeAttachedInCompactHeight = true // iPhone에서 전체화면 방지
+            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
         }
 
         navigationController.present(editRoutineVC, animated: true)
