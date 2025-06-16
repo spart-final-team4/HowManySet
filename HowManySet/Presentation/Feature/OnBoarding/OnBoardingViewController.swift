@@ -98,3 +98,49 @@ private extension OnBoardingViewController {
         }
     }
 }
+
+private extension OnBoardingViewController {
+    
+    struct OnboardingPageData {
+        let title: String
+        let subtitle: String
+        let imageName: String
+    }
+
+    var onboardingPages: [OnboardingPageData] {
+        return [
+            .init(title: "운동 이름부터 세트 수까지", subtitle: " 내 루틴에 맞게 직접 설정해보세요", imageName: "Onboard_SetRoutine"),
+            .init(title: "오늘은 어떤 운동할까?", subtitle: "원하는 루틴만 골라 시작하세요", imageName: "Onboard_RoutineList"),
+            .init(title: "운동을 완료하면 세트 완료를 클릭하고,", subtitle: "휴식 시간을 미리 설정해보세요", imageName: "Onboard_BreakTime"),
+            .init(title: "운동 중 화면에서 무게, 횟수 클릭 시", subtitle: "세트 수, 무게를 변경할 수 있어요", imageName: "Onboard_WorkOutSetting"),
+            .init(title: "휴식 타이머를 확인하고,", subtitle: "물 한 잔으로 리프레시해요!", imageName: "Onboard_Water"),
+            .init(title: "운동 중엔 앱을 꺼도 OK!", subtitle: "잠금화면에서 운동 완료, 휴식까지 한 번에", imageName: "Onboard_LiveActivity")
+        ]
+    }
+
+    var currentPageIndex: Int {
+        get { onboardingView.pageIndicator.currentPage }
+        set {
+            onboardingView.pageIndicator.currentPage = newValue
+            updatePageContent(index: newValue)
+        }
+    }
+
+    func updatePageContent(index: Int) {
+        guard onboardingPages.indices.contains(index) else { return }
+        let page = onboardingPages[index]
+        onboardingView.titleLabel.text = page.title
+        onboardingView.subTitleLabel.text = page.subtitle
+        onboardingView.centerImageView.image = UIImage(named: page.imageName)
+    }
+
+    func goToNextPage() {
+        let nextIndex = currentPageIndex + 1
+        if nextIndex < onboardingPages.count {
+            currentPageIndex = nextIndex
+        } else {
+            // TODO: 마지막 페이지 도달 시 다음 화면으로 이동 로직
+        }
+    }
+}
+
