@@ -248,7 +248,7 @@ private extension HomeViewController {
         }
     }
     
-    // MARK: -  운동 카드뷰들 생성, 레이아웃 적용
+    // MARK: -  초기에 운동 카드뷰들 생성, 레이아웃 적용, 각 버튼 바인딩
     func configureExerciseCardViews(cardStates: [WorkoutCardState]) {
         
         // 기존 카드뷰 컨테이너 제거
@@ -295,7 +295,7 @@ private extension HomeViewController {
         
         // 카드뷰 생성 후 버튼 바인딩
         if let reactor = self.reactor {
-            self.bindSetCompleteButtons(reactor: reactor)
+            self.bindCardViewsButton(reactor: reactor)
         }
         
     }
@@ -332,8 +332,6 @@ private extension HomeViewController {
             }
         }
         
-//        pagingScrollView.layoutIfNeeded()
-
         // 페이지 업데이트
         print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
 
@@ -352,7 +350,7 @@ private extension HomeViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self = self, let reactor = self.reactor else { return }
             print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
-            self.bindSetCompleteButtons(reactor: reactor)
+            self.bindCardViewsButton(reactor: reactor)
         }
     }
     
@@ -425,7 +423,7 @@ private extension HomeViewController {
     }
     
     /// 세트 완료 버튼을 Reactor에 바인딩 (visible한 카드만)
-    func bindSetCompleteButtons(reactor: HomeViewReactor) {
+    func bindCardViewsButton(reactor: HomeViewReactor) {
         // visible한 카드들만 필터링
         let visibleCards = pagingCardViewContainer.filter { !$0.isHidden }
         
@@ -445,7 +443,7 @@ private extension HomeViewController {
                     })
                     .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
                     .subscribe(onNext: { action in
-                        print("🚀 Reactor로 액션 전송: \(action)")
+                        print("🚀 Reactor로 세트 완료 액션 전송: \(action)")
                         reactor.action.onNext(action)
                     })
                     .disposed(by: cardView.disposeBag)
@@ -462,6 +460,14 @@ private extension HomeViewController {
                         reactor.action.onNext(.restPauseButtonClicked)
                     }
                     .disposed(by: cardView.disposeBag)
+                
+                cardView.optionButton.rx.tap
+                    .map { Reactor.Action.editOptionButtonClicked(at: cardView.index) }
+                    .bind(onNext: { action in
+                        print("🚀 Reactor로 편집 액션 전송: \(action)")
+                        reactor.action.onNext(action)
+                    })
+                    .disposed(by: disposeBag)
             }
             
             print("✅ 버튼 바인딩 완료")
@@ -777,6 +783,14 @@ extension HomeViewController {
                 }
                 print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
             }).disposed(by: disposeBag)
-    }
+        
+        reactor.state.map { $0.preparedEditAndMemo }
+            .filter { $0 }
+            .bind { [weak self] prepared in
+                guard let self else { return }
+                self.coordinator?.presentWorkoutOptionView()
+            }.disposed(by: disposeBag)
+        
+    }//bind
     
 }
