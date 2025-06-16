@@ -8,10 +8,12 @@ final class RoutineNameViewController: UIViewController {
 
     let routineNameView = RoutineNameView()
     private let reactor: RoutineNameReactor
+    private weak var coordinator: RoutineListCoordinatorProtocol?
     private let disposeBag = DisposeBag()
 
-    init(reactor: RoutineNameReactor) {
+    init(reactor: RoutineNameReactor, coordinator: RoutineListCoordinatorProtocol) {
         self.reactor = reactor
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -27,6 +29,7 @@ final class RoutineNameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         bindTextField()
+        bindButtonTapped()
     }
 }
 
@@ -41,6 +44,16 @@ private extension RoutineNameViewController {
                 button.isEnabled = isEnabled
                 button.backgroundColor = isEnabled ? .brand : .disabledButton
                 button.setTitleColor(isEnabled ? .black : .dbTypo, for: .normal)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    func bindButtonTapped() {
+        routineNameView.publicNextButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.dismiss(animated: true) {
+                    owner.coordinator?.pushEditExcerciseView()
+                }
             }
             .disposed(by: disposeBag)
     }
