@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import FirebaseFirestore
+
+/// Firestore에 저장되는 운동 DTO
+struct FSWorkoutDTO: Codable {
+    let name: String
+    let sets: [FSWorkoutSetDTO]
+    let comment: String?
+}
