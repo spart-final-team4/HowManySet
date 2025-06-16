@@ -81,13 +81,13 @@ private extension RoutineNameView {
         routineNameTF.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(28)
-            $0.height.equalToSuperview().multipliedBy(0.09)
+            $0.height.equalTo(56)
         }
 
         nextButton.snp.makeConstraints {
             $0.top.equalTo(routineNameTF.snp.bottom).offset(38)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.09)
+            $0.height.equalTo(56)
         }
     }
 }
