@@ -9,6 +9,7 @@ import UIKit
 
 protocol RoutineListCoordinatorProtocol: Coordinator {
     func presentRoutineNameView()
+    func pushEditExcerciseView()
 }
 
 /// 루틴 리스트 화면 관련 coordinator
@@ -47,7 +48,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     /// 루틴명 편집 화면으로 모달 표시
     func presentRoutineNameView() {
         let reactor = RoutineNameReactor()
-        let routineNameVC = RoutineNameViewController(reactor: reactor)
+        let routineNameVC = RoutineNameViewController(reactor: reactor, coordinator: self)
 
         if let sheet = routineNameVC.sheetPresentationController {
             let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
@@ -65,16 +66,11 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         navigationController.present(routineNameVC, animated: true)
     }
     
-    /// 운동 편집 화면 모달 표시
-    func presentEditExcerciseView() {
+    /// 운동 편집 화면 전체 화면으로 push
+    func pushEditExcerciseView() {
         let reactor = EditExcerciseViewReactor()
         let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
         
-        if let sheet = editExcerciseVC.sheetPresentationController {
-            sheet.detents = [.medium()]
-            sheet.prefersGrabberVisible = true
-        }
-        
-        navigationController.present(editExcerciseVC, animated: true)
+        navigationController.pushViewController(editExcerciseVC, animated: true)
     }
 }
