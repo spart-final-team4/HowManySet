@@ -2,17 +2,25 @@
 //  OnBoardingViewController.swift
 //  HowManySet
 //
-//  Created by 정근호 on 6/3/25.
+//  Created by GO on 6/3/25.
 //
 
 import UIKit
-import SnapKit
+import ReactorKit
+import RxSwift
+import RxCocoa
 
 final class OnBoardingViewController: UIViewController {
+    
+    // MARK: - Properties
     
     private weak var coordinator: OnBoardingCoordinatorProtocol?
     
     private var reactor: OnBoardingViewReactor
+    
+    private let onboardingView = OnboardingView()
+    
+    private let nicknameInputView = NicknameInputView()
     
     init(reactor: OnBoardingViewReactor, coordinator: OnBoardingCoordinatorProtocol) {
         self.reactor = reactor
