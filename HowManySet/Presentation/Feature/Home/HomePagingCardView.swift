@@ -188,7 +188,6 @@ private extension HomePagingCardView {
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
                                              repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
-        
         repsInfoVStack.addArrangedSubviews(repsImageView, repsLabel)
     }
     
