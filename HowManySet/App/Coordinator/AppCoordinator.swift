@@ -40,6 +40,16 @@ final class AppCoordinator: Coordinator {
         }
     }
     
+    /// 상태 체크 함수 분리
+    private func checkLoginStatus() -> Bool {
+        // TODO: 실제 로그인 상태(Firebase 등) 연동
+        return false
+    }
+
+    private func checkOnboardingStatus() -> Bool {
+        return UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    }
+    
     /// 온보딩 흐름 시작
     private func showOnboardingFlow() {
         let onBoardingCoordinator = OnBoardingCoordinator(navigationController: UINavigationController(), container: container)
