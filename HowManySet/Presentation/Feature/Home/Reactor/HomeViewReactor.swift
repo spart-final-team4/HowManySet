@@ -63,8 +63,8 @@ final class HomeViewReactor: Reactor {
         case restPauseButtonClicked
         /// 운동 종료 버튼 클릭 시
         case stopButtonClicked(with: Bool)
-        
-        //        case option
+        /// 카드의 운동 옵션 버튼 클릭 시
+        case editOptionButtonClicked(at: Int)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -94,6 +94,8 @@ final class HomeViewReactor: Reactor {
         case setTrueCurrentCardViewCompleted(at: Int)
         /// 페이징 시 currentExerciseIndex 즉시 변경!
         case changeExerciseIndex(Int)
+        /// 편집, 메모 모달창
+        case presentWorkoutOptionView
     }
     
     // MARK: - State is a current view state
@@ -122,8 +124,8 @@ final class HomeViewReactor: Reactor {
         
         var date: Date
         var commentInRoutine: String?
-        
         var currentExerciseAllSetsCompleted: Bool
+        var preparedEditAndMemo: Bool
     }
     
     let initialState: State
@@ -169,7 +171,8 @@ final class HomeViewReactor: Reactor {
             restTime: 0,
             date: Date(),
             commentInRoutine: nil,
-            currentExerciseAllSetsCompleted: false
+            currentExerciseAllSetsCompleted: false,
+            preparedEditAndMemo: false
         )
     }
     
@@ -255,6 +258,8 @@ final class HomeViewReactor: Reactor {
         case .stopButtonClicked(let isEnded):
             return .just(.endCurrentWorkout(with: isEnded))
             
+        case .editOptionButtonClicked:
+            return .just(.presentWorkoutOptionView)
         }
     }
     
@@ -369,6 +374,10 @@ final class HomeViewReactor: Reactor {
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             state.currentExerciseIndex = newIndex
+            
+        case .presentWorkoutOptionView:
+            print("옵션 모달 presented!")
+            state.preparedEditAndMemo = true
         }
         
         return state
