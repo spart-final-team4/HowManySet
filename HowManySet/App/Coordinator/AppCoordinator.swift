@@ -28,13 +28,13 @@ final class AppCoordinator: Coordinator {
 
     /// 앱 시작 시 호출됨 - 로그인/온보딩 상태에 따라 적절한 플로우를 보여줌
     func start() {
-        let isLoggedIn = false // TODO: 로그인 상태 확인 로직 추가 필요
-        let hasCompletedOnboarding = true // TODO: 온보딩 완료 여부 확인 로직 추가 필요
+        let isLoggedIn = checkLoginStatus()
+        let hasCompletedOnboarding = checkOnboardingStatus()
 
-        if !hasCompletedOnboarding {
-            showOnboardingFlow()
-        } else if !isLoggedIn {
+        if !isLoggedIn {
             showAuthFlow()
+        } else if !hasCompletedOnboarding {
+            showOnboardingFlow()
         } else {
             showTabBarFlow()
         }
