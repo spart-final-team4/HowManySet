@@ -58,7 +58,7 @@ final class HomePagingCardView: UIView {
         $0.textColor = .textSecondary
     }
     
-    private lazy var optionButton = UIButton().then {
+    lazy var optionButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.tintColor = .label

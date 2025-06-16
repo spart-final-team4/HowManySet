@@ -15,7 +15,7 @@ final class WorkoutOptionViewController: UIViewController {
     
     // MARK: - Properties
     var disposeBag = DisposeBag()
-    
+        
     private let editText = "편집"
     private let editRoutineButtonText = "운동 목록 변경"
     private let memoText = "메모"
@@ -33,6 +33,9 @@ final class WorkoutOptionViewController: UIViewController {
         $0.backgroundColor = .disabledButton
         $0.layer.cornerRadius = 12
         $0.setTitle(editRoutineButtonText, for: .normal)
+        // 버튼 타이틀 정렬
+        $0.contentHorizontalAlignment = .leading
+        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
     }
     
     private lazy var memoLabel = UILabel().then {
@@ -75,9 +78,10 @@ final class WorkoutOptionViewController: UIViewController {
 private extension WorkoutOptionViewController {
     
     func setupUI() {
+        view.backgroundColor = .bottomSheetBG
+
         setViewHierarchy()
         setConstraints()
-        view.backgroundColor = .systemBackground
     }
     
     func setViewHierarchy() {
@@ -88,9 +92,11 @@ private extension WorkoutOptionViewController {
     }
     
     func setConstraints() {
+        
         containerView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(28)
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(68)
         }
 
         editLabel.snp.makeConstraints {
