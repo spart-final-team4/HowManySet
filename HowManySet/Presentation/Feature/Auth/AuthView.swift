@@ -13,7 +13,7 @@ import AuthenticationServices
 final class AuthView: UIView {
 
     // MARK: - UI 요소
-    let logoView = UIImageView().then {
+    private let logoView = UIImageView().then {
         $0.image = UIImage(named: "MainIcon")
         $0.backgroundColor = .clear
     }
