@@ -7,20 +7,22 @@ final class RoutineListViewReactor: Reactor {
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let saveRoutineUseCase: SaveRoutineUseCase
-    
+
+    var publicSaveRoutineUseCase: SaveRoutineUseCase { saveRoutineUseCase }
+
     // MARK: - Action is an user interaction
     enum Action {
-        case viewDidLoad
+
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
-        case setRoutines([WorkoutRoutine])
+
     }
     
     // MARK: - State is a current view state
     struct State {
-        var routines: [WorkoutRoutine] = []
+
     }
     
     let initialState: State
@@ -36,21 +38,11 @@ final class RoutineListViewReactor: Reactor {
     
     // MARK: - Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
-        switch action {
-        case .viewDidLoad:
-            return Observable.just(.setRoutines(WorkoutRoutine.mockData))
-        }
+
     }
 
     // MARK: - Mutation -> State
     func reduce(state: State, mutation: Mutation) -> State {
-        var newState = state
 
-        switch mutation {
-        case let .setRoutines(routines):
-            newState.routines = routines
-        }
-
-        return newState
     }
 }

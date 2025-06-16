@@ -10,7 +10,7 @@ import Foundation
 /// 운동 세트 하나를 나타내는 구조체입니다.
 ///
 /// 세트별 무게, 단위, 반복 횟수를 포함합니다.
-struct WorkoutSet {
+struct WorkoutSet: Hashable {
     
     /// 세트에서 사용한 무게입니다.
     ///
