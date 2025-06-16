@@ -59,6 +59,7 @@ private extension OnBoardingViewController {
     
     func setActions() {
         nicknameInputView.nextButton.addTarget(self, action: #selector(nicknameInputViewNextButtonAction), for: .touchUpInside)
+        onboardingView.nextButton.addTarget(self, action: #selector(onboardingViewNextButtonAction), for: .touchUpInside)
     }
     
     func setDelegates() {
@@ -99,6 +100,13 @@ private extension OnBoardingViewController {
     }
 }
 
+private extension OnBoardingViewController {
+    @objc func onboardingViewNextButtonAction() {
+        goToNextPage()
+    }
+}
+
+// MARK: - OnbordingView PageIndicator
 private extension OnBoardingViewController {
     
     struct OnboardingPageData {
