@@ -9,7 +9,7 @@ import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
     func presentWorkoutOptionView()
-    func pushEditRoutineView()
+    func presentEditRoutineView()
     func pushRoutineCompleteView()
     func popUpEndWorkoutAlert() -> Bool
     func popUpCompletedWorkoutAlert() -> Bool
@@ -40,7 +40,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         navigationController.pushViewController(homeVC, animated: true)
     }
 
-    /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 present
+    /// 빈 화면에서 버튼 클릭 시 루틴 편집 창 present
     func presentRoutineListView() {
         let routineListCoordinator = RoutineListCoordinator(navigationController: navigationController, container: container)
         routineListCoordinator.startModal()
@@ -48,29 +48,26 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
 
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
     func presentWorkoutOptionView() {
-        let workoutOptionVC = WorkoutOptionViewController()
+        let workoutOptionVC = WorkoutOptionViewController(coordinator: self)
         
         if let sheet = workoutOptionVC.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
-        
+                
         navigationController.present(workoutOptionVC, animated: true)
     }
 
-    /// 루틴 수정 버튼 클릭 시 루틴 편집 화면 push
-    func pushEditRoutineView() {
+    /// 옵션 bottom sheet에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 push
+    func presentEditRoutineView() {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
-        // TODO: present로 할지 push로 할지 결정 필요
-//        if let sheet = editRoutineVC.sheetPresentationController {
-//            sheet.detents = [.large()]
-//            sheet.prefersGrabberVisible = true
-//        }
-//        navigationController.present(editRoutineVC, animated: true)
-        
-        navigationController.pushViewController(editRoutineVC, animated: true)
+        if let sheet = editRoutineVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        navigationController.present(editRoutineVC, animated: true)
     }
 
     /// 운동 완료 화면으로 이동
@@ -92,7 +89,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             okAction: { [weak self] in
                 guard let self else { return }
                 
-//                 HomeVC 초기화
+                // HomeVC 초기화
                 self.navigationController.popToRootViewController(animated: false)
                 let newHomeVC = self.container.makeHomeViewController(coordinator: self)
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
@@ -122,7 +119,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             okAction: { [weak self] in
                 guard let self else { return }
                 
-//                 HomeVC 초기화
+                // HomeVC 초기화
                 self.navigationController.popToRootViewController(animated: false)
                 let newHomeVC = self.container.makeHomeViewController(coordinator: self)
                 self.navigationController.setViewControllers([newHomeVC], animated: false)

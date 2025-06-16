@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
-import ReactorKit
+import RxCocoa
 
 final class WorkoutOptionViewController: UIViewController {
     
@@ -21,6 +21,8 @@ final class WorkoutOptionViewController: UIViewController {
     private let memoText = "메모"
     private let memoPlaceHolderText = "메모를 입력해주세요."
     
+    private weak var coordinator: HomeCoordinatorProtocol?
+
     // MARK: - UI Components
     private lazy var containerView = UIView()
     
@@ -54,7 +56,8 @@ final class WorkoutOptionViewController: UIViewController {
     
     
     // MARK: - Initializer
-    init() {
+    init(coordinator: HomeCoordinatorProtocol) {
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
 
     }
@@ -68,6 +71,7 @@ final class WorkoutOptionViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        bindUIEvents()
         
         memoTextView.delegate = self
     }
@@ -126,6 +130,7 @@ private extension WorkoutOptionViewController {
 
 // MARK: - UITextViewDelegate
 extension WorkoutOptionViewController: UITextViewDelegate {
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == memoPlaceHolderText {
             textView.text = ""
@@ -138,5 +143,21 @@ extension WorkoutOptionViewController: UITextViewDelegate {
             textView.text = memoPlaceHolderText
             textView.textColor = .lightGray
         }
+    }
+}
+
+// MARK: - Rx Methods
+private extension WorkoutOptionViewController {
+    
+    func bindUIEvents() {
+        
+        editRoutineButton.rx.tap
+            .bind(onNext: { [weak self] _ in
+                guard let self else { return }
+                print("루틴 수정 버튼 클릭")
+                self.dismiss(animated: true) {
+                    self.coordinator?.presentEditRoutineView()
+                }
+            }).disposed(by: disposeBag)
     }
 }
