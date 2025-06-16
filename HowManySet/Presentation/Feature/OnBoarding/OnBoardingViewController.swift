@@ -134,6 +134,10 @@ private extension OnBoardingViewController {
             .disposed(by: disposeBag)
     }
     
+    func isValidNickname(_ nickname: String) -> Bool {
+        let regex = "^[가-힣a-zA-Z]{2,8}$"
+        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: nickname)
+    }
 }
 
 // MARK: - OnbordingView PageIndicator
