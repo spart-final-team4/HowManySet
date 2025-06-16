@@ -140,6 +140,10 @@ private extension OnBoardingViewController {
         onboardingView.titleLabel.text = page.title
         onboardingView.subTitleLabel.text = page.subtitle
         onboardingView.centerImageView.image = UIImage(named: page.imageName)
+
+        let isLastPage = index == onboardingPages.count - 1
+        let buttonTitle = isLastPage ? "시작하기" : "다음"
+        onboardingView.nextButton.setTitle(buttonTitle, for: .normal)
     }
 
     func goToNextPage() {
@@ -148,6 +152,7 @@ private extension OnBoardingViewController {
             currentPageIndex = nextIndex
         } else {
             // TODO: 마지막 페이지 도달 시 다음 화면으로 이동 로직
+                // TODO: 마지막 페이지 도달 시 OnboardingView.nextButton.setTitle("다음", for: .normal) -> setTitle("시작하기", for: .normal)로 변경
         }
     }
 }
