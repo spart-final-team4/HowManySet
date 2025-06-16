@@ -16,7 +16,7 @@ final class EditAndMemoViewController: UIViewController, View {
     
     // MARK: - Properties
     var disposeBag = DisposeBag()
-        
+    
     private let editText = "편집"
     private let editRoutineButtonText = "운동 목록 변경"
     private let memoText = "메모"
@@ -48,8 +48,7 @@ final class EditAndMemoViewController: UIViewController, View {
     
     lazy var memoTextView = UITextView().then {
         $0.backgroundColor = .bsInputFieldBG
-        $0.text = memoPlaceHolderText
-        $0.textColor = ($0.text == memoPlaceHolderText ? .lightGray : .white)
+        $0.textColor = .lightGray
         $0.font = .systemFont(ofSize: 16)
         $0.layer.cornerRadius = 12
         $0.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
@@ -83,7 +82,7 @@ final class EditAndMemoViewController: UIViewController, View {
         
         let newMemo = self.memoTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines)
         let shouldSave = !(newMemo?.isEmpty ?? true) && (newMemo != self.memoPlaceHolderText)
-
+        
         if shouldSave {
             reactor?.action.onNext(.updateCurrentMemo(with: newMemo ?? memoPlaceHolderText))
         } else {
@@ -99,7 +98,7 @@ private extension EditAndMemoViewController {
     
     func setupUI() {
         view.backgroundColor = .bottomSheetBG
-
+        
         setViewHierarchy()
         setConstraints()
     }
@@ -118,23 +117,23 @@ private extension EditAndMemoViewController {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(68)
         }
-
+        
         editLabel.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
         }
-
+        
         editRoutineButton.snp.makeConstraints {
             $0.top.equalTo(editLabel.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(48)
         }
-
+        
         memoLabel.snp.makeConstraints {
             $0.top.equalTo(editRoutineButton.snp.bottom).offset(24)
             $0.leading.equalToSuperview()
         }
-
+        
         memoTextView.snp.makeConstraints {
             $0.top.equalTo(memoLabel.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview()
@@ -148,16 +147,17 @@ private extension EditAndMemoViewController {
 extension EditAndMemoViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == memoPlaceHolderText {
-            textView.text = ""
-            textView.textColor = .white
+        if textView.textColor == .placeholderText {
+            textView.textColor = .black
+        } else {
+            return
         }
     }
-
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = memoPlaceHolderText
-            textView.textColor = .lightGray
+            textView.textColor = .placeholderText
         } else {
             let text = textView.text
             print("📋 입력된 메모: \(String(describing: text))")
