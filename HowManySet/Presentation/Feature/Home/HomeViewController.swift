@@ -300,60 +300,6 @@ private extension HomeViewController {
         
     }
     
-    // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화, 리바인딩
-    func setExerciseCardViewslayout(
-        cardContainer: [HomePagingCardView],
-        newPage: Int) {
-            
-        // hidden이 아닌 카드들만
-        let visibleCards = cardContainer.filter { !$0.isHidden }
-
-        for (i, cardView) in visibleCards.enumerated() {
-            cardView.snp.remakeConstraints {
-                $0.top.bottom.equalToSuperview()
-                $0.width.equalTo(cardWidth)
-                $0.leading.equalToSuperview()
-                    .offset(cardInset + CGFloat(i) * screenWidth)
-            }
-            UIView.performWithoutAnimation {
-                cardView.transform = .identity
-                cardView.alpha = 1
-            }
-        }
-
-        pagingScrollContentView.snp.remakeConstraints {
-            $0.height.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview()
-            
-            if visibleCards.last != visibleCards.first {
-                $0.width.equalToSuperview().multipliedBy(visibleCards.count)
-            } else {
-                $0.width.equalToSuperview()
-            }
-        }
-        
-        // 페이지 업데이트
-        print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-
-        self.previousPage = newPage
-        self.currentPage = newPage
-        self.pageController.currentPage = newPage
-        self.pageController.numberOfPages = visibleCards.count
-
-        print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-
-        // 현재 페이지 업데이트 후 offsetX 조정
-        let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
-        self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
-
-        // 카드 재정렬 후 버튼 바인딩 재설정 (약간의 지연 추가)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            guard let self = self, let reactor = self.reactor else { return }
-            print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
-            self.bindCardViewsButton(reactor: reactor)
-        }
-    }
-    
     // MARK: - Animation
     /// 페이징 시 애니메이션 및 내부 콘텐츠 offset 수정
     func handlePageChanged(currentPage: Int = 0) {
@@ -422,7 +368,61 @@ private extension HomeViewController {
         return visibleCards[currentPage].index
     }
     
-    /// 세트 완료 버튼을 Reactor에 바인딩 (visible한 카드만)
+    // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화, 리바인딩
+    func setExerciseCardViewslayout(
+        cardContainer: [HomePagingCardView],
+        newPage: Int) {
+            
+        // hidden이 아닌 카드들만
+        let visibleCards = cardContainer.filter { !$0.isHidden }
+
+        for (i, cardView) in visibleCards.enumerated() {
+            cardView.snp.remakeConstraints {
+                $0.top.bottom.equalToSuperview()
+                $0.width.equalTo(cardWidth)
+                $0.leading.equalToSuperview()
+                    .offset(cardInset + CGFloat(i) * screenWidth)
+            }
+            UIView.performWithoutAnimation {
+                cardView.transform = .identity
+                cardView.alpha = 1
+            }
+        }
+
+        pagingScrollContentView.snp.remakeConstraints {
+            $0.height.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+            
+            if visibleCards.last != visibleCards.first {
+                $0.width.equalToSuperview().multipliedBy(visibleCards.count)
+            } else {
+                $0.width.equalToSuperview()
+            }
+        }
+        
+        // 페이지 업데이트
+        print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+
+        self.previousPage = newPage
+        self.currentPage = newPage
+        self.pageController.currentPage = newPage
+        self.pageController.numberOfPages = visibleCards.count
+
+        print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+
+        // 현재 페이지 업데이트 후 offsetX 조정
+        let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
+        self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
+
+        // 카드 재정렬 후 버튼 바인딩 재설정 (약간의 지연 추가)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self, let reactor = self.reactor else { return }
+            print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
+            self.bindCardViewsButton(reactor: reactor)
+        }
+    }
+    
+    // MARK: - Visible한 카드들만 리바인딩
     func bindCardViewsButton(reactor: HomeViewReactor) {
         // visible한 카드들만 필터링
         let visibleCards = pagingCardViewContainer.filter { !$0.isHidden }
@@ -438,6 +438,7 @@ private extension HomeViewController {
                 
                 // 세트 완료 버튼
                 cardView.setCompleteButton.rx.tap
+                    .observe(on: MainScheduler.asyncInstance)
                     .do(onNext: {
                         print("🟢 세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     })
@@ -450,6 +451,7 @@ private extension HomeViewController {
                 
                 // 휴식 재생/일시정지 버튼
                 cardView.restPlayPauseButton.rx.tap
+                    .observe(on: MainScheduler.asyncInstance)
                     .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .do(onNext: {
                         print("🟡 휴식 버튼 탭 감지 - index: \(cardView.index)")
@@ -462,14 +464,16 @@ private extension HomeViewController {
                     .disposed(by: cardView.disposeBag)
                 
                 cardView.editButton.rx.tap
-                    .map { Reactor.Action.editOptionButtonClicked(at: cardView.index) }
-                    .bind(onNext: { action in
-                        print("🚀 Reactor로 편집 액션 전송: \(action)")
+                    .observe(on: MainScheduler.asyncInstance)
+                    .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
+                    .bind(onNext: { [weak self] action in
+                        guard let self else { return }
+                        self.coordinator?.presentEditAndMemoView()
                         reactor.action.onNext(action)
                     })
                     .disposed(by: disposeBag)
             }
-            print("✅ 버튼 바인딩 완료")
+            print("✅ 버튼 바인딩 완료 - \(visibleCards)")
     }
 }
 
@@ -483,16 +487,19 @@ extension HomeViewController {
         // 루틴 시작 버튼 클릭 시
         routineStartCardView.routineSelectButton.rx.tap
             .map { Reactor.Action.routineSelected }
+            .observe(on: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
             .map { Reactor.Action.workoutPauseButtonClicked }
+            .observe(on: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         // 수정: forwardButton 클릭 시 현재 visible한 카드의 실제 exerciseIndex 사용
         forwardButton.rx.tap
+            .observe(on: MainScheduler.asyncInstance)
             .map { [weak self] in
                 guard let self = self else { return Reactor.Action.forwardButtonClicked(at: 0) }
                 let currentExerciseIndex = self.getCurrentVisibleExerciseIndex()
@@ -503,6 +510,7 @@ extension HomeViewController {
         
         stopButton.rx.tap
             .map { Reactor.Action.stopButtonClicked }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { [weak self] stop in
                 guard let self else { return }
                 let workoutEnded = self.coordinator?.popUpEndWorkoutAlert()
@@ -781,15 +789,5 @@ extension HomeViewController {
                 }
                 print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
             }).disposed(by: disposeBag)
-        
-        reactor.state.map { $0.preparedEditAndMemo }
-            .filter { $0 }
-            .bind { [weak self] prepared in
-                guard let self else { return }
-                self.coordinator?.presentEditAndMemoView()
-                self.pagingCardViewContainer[reactor.currentState.currentExerciseIndex]
-            }.disposed(by: disposeBag)
-        
     }//bind
-    
 }
