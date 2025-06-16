@@ -10,9 +10,8 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
-import ReactorKit
 
-final class HomePagingCardView: UIView, View {
+final class HomePagingCardView: UIView {
     
     // MARK: - Properties
     private let setCompleteText = "세트 완료"
@@ -21,118 +20,133 @@ final class HomePagingCardView: UIView, View {
     
     var disposeBag = DisposeBag()
     
+    /// 현재 카드 뷰의 index
+    /// WorkoutCardState의 index와 동일해야 함
+    var index: Int
+    
     // MARK: - UI Components
-    lazy var topLineHStack = UIStackView().then {
+    private lazy var mainContentVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .equalSpacing
+        $0.alignment = .fill
+    }
+    
+    private lazy var topLineHStack = UIStackView().then {
         $0.axis = .horizontal
     }
     
-    lazy var topConentsVStack = UIStackView().then {
+    private lazy var topConentsVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 16
+        $0.spacing = 20
     }
     
-    lazy var spacer = UIView().then {
+    private lazy var spacer = UIView().then {
         $0.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
     
-    lazy var exerciseInfoHStack = UIStackView().then {
+    private lazy var exerciseInfoHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 12
     }
     
-    lazy var exerciseNameLabel = UILabel().then {
+    private lazy var exerciseNameLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
-    lazy var exerciseSetLabel = UILabel().then {
+    private lazy var exerciseSetLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 14)
         $0.textColor = .textSecondary
     }
     
-    lazy var optionButton = UIButton().then {
+    private lazy var optionButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         $0.tintColor = .label
     }
     
-    lazy var setProgressBar = SetProgressBarView().then {
+    private lazy var setProgressBar = SetProgressBarView().then {
         $0.backgroundColor = .cardBackground
     }
-    
-    
-    lazy var currentSetLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 16)
-        $0.textAlignment = .left
-    }
-    
-    lazy var containerView = UIView().then {
+
+    private lazy var weightRepscontainerView = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
     
-    lazy var weightRepsHStack = UIStackView().then {
+    private lazy var weightRepsHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 70
     }
     
-    lazy var weightInfoVStack = UIStackView().then {
+    private lazy var weightInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
-    lazy var weightImageView = UIImageView().then {
+    private lazy var weightImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
         $0.tintColor = .brand
     }
     
-    lazy var weightLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 24)
+    private lazy var weightLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
         $0.textColor = .white
     }
     
-    lazy var repsInfoVStack = UIStackView().then {
+    private lazy var repsInfoVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
-    lazy var repsImageView = UIImageView().then {
+    private lazy var repsImageView = UIImageView().then {
         let config = UIImage.SymbolConfiguration(pointSize: 40)
         $0.image = UIImage(systemName: "repeat", withConfiguration: config)
         $0.tintColor = .white
     }
     
-    lazy var repsLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 24)
+    private lazy var repsLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 20, weight: .semibold)
         $0.textColor = .white
     }
     
-    lazy var remaingRestTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 28, weight: .medium)
+    lazy var remainingRestTimeLabel = UILabel().then {
+        $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
+        $0.isHidden = true
     }
     
     lazy var setCompleteButton = UIButton().then {
         $0.backgroundColor = .brand
-        $0.setTitle(accessibilityElementsHidden ? "" : setCompleteText, for: .normal)
+        $0.setTitle(setCompleteText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         $0.titleLabel?.textColor = .black
         $0.layer.cornerRadius = 12
+    }
+    
+    lazy var restPlayPauseButton = UIButton().then {
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        $0.setImage(UIImage(systemName: "play.fill"), for: .selected)
+        $0.isUserInteractionEnabled = false
+        $0.alpha = 0
+        $0.tintColor = .white
     }
     
     lazy var restProgressBar = UIProgressView().then {
         $0.progressTintColor = .brand
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
+        $0.isHidden = true
+        $0.setProgress(0, animated: false)
     }
     
     // MARK: - Initializer
-    init(frame: CGRect, reactor: HomePagingCardViewReactor) {
+    init(frame: CGRect, index: Int) {
+        self.index = index
         super.init(frame: frame)
-        self.reactor = reactor
-        
         setupUI()
     }
     
@@ -151,22 +165,25 @@ private extension HomePagingCardView {
     }
     
     func setViewHiearchy() {
+        
         self.addSubviews(
-            topLineHStack,
-            topConentsVStack,
-            currentSetLabel,
-            containerView,
-            setCompleteButton,
-            
+            mainContentVStack,
             restProgressBar,
-            remaingRestTimeLabel
+            remainingRestTimeLabel,
+            restPlayPauseButton
         )
         
-        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar, currentSetLabel)
-        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
+        mainContentVStack.addArrangedSubviews(
+            topLineHStack,
+            topConentsVStack,
+            weightRepscontainerView,
+            setCompleteButton
+        )
         
+        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
+        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, optionButton)
         exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
-        containerView.addSubview(weightRepsHStack)
+        weightRepscontainerView.addSubview(weightRepsHStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
                                              repsInfoVStack)
         weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
@@ -176,109 +193,97 @@ private extension HomePagingCardView {
     
     func setConstraints() {
         
-        topConentsVStack.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(28)
+        mainContentVStack.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
         }
         
-        containerView.snp.makeConstraints {
-            $0.top.equalTo(topConentsVStack.snp.bottom).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.39)
+        topLineHStack.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(mainContentVStack)
         }
         
         setProgressBar.snp.makeConstraints {
             $0.height.equalTo(16)
         }
         
+        weightRepscontainerView.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(mainContentVStack)
+            $0.height.equalToSuperview().multipliedBy(0.4)
+        }
+        
         weightRepsHStack.snp.makeConstraints {
-            $0.height.equalTo(containerView.snp.height).multipliedBy(0.5)
             $0.center.equalToSuperview()
         }
         
-        currentSetLabel.snp.makeConstraints {
-            $0.height.equalTo(16)
-        }
-        
         setCompleteButton.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.bottom).offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
         }
         
         restProgressBar.snp.makeConstraints {
-            $0.top.equalTo(containerView.snp.bottom).offset(24)
-            $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(60)
+            $0.edges.equalTo(setCompleteButton)
         }
         
-        remaingRestTimeLabel.snp.makeConstraints {
+        remainingRestTimeLabel.snp.makeConstraints {
             $0.center.equalTo(restProgressBar)
+        }
+        
+        restPlayPauseButton.snp.makeConstraints {
+            $0.centerY.equalTo(remainingRestTimeLabel)
+            $0.trailing.equalTo(remainingRestTimeLabel.snp.leading).offset(-12)
         }
     }
 }
 
-// MARK: UI Methods
-private extension HomePagingCardView {
-    func updateContainerViewConstraint() {
-        containerView.snp.updateConstraints {
-            let offset: CGFloat = currentSetLabel.isHidden ? 38 : 24
-            $0.top.equalTo(topConentsVStack.snp.bottom).offset(offset)
-            $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalToSuperview().multipliedBy(0.39)
-        }
-    }
-}
 
 // MARK: Internal Methods
 extension HomePagingCardView {
     
     // TODO: 추후에 통합하여 리팩토링
     func showExerciseUI() {
-        print(#function)
-        setCompleteButton.isHidden = false
-        [restProgressBar, remaingRestTimeLabel].forEach {
+
+        [restProgressBar,
+         remainingRestTimeLabel].forEach {
             $0.isHidden = true
         }
-        updateContainerViewConstraint()
+        restPlayPauseButton.isUserInteractionEnabled = false
+        restPlayPauseButton.alpha = 0
+        setCompleteButton.isUserInteractionEnabled = true
+        setCompleteButton.alpha = 1
+        
     }
     
     func showRestUI() {
-        print(#function)
-        setCompleteButton.isHidden = true
-        [restProgressBar, remaingRestTimeLabel].forEach {
+
+        [restProgressBar,
+         remainingRestTimeLabel].forEach {
             $0.isHidden = false
         }
-        updateContainerViewConstraint()
+        restPlayPauseButton.isUserInteractionEnabled = true
+        restPlayPauseButton.alpha = 1
+        setCompleteButton.isUserInteractionEnabled = false
+        setCompleteButton.alpha = 0
     }
     
 }
 
-// MARK: - Reactor Binding
+// MARK: - Internal Methods
 extension HomePagingCardView {
     
-    func bind(reactor: HomePagingCardViewReactor) {
+    func configure(with state: WorkoutCardState) {
         
-        // MARK: - State
-        reactor.state.map { $0.cardState }
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] state in
-                guard let self else { return }
-                self.exerciseNameLabel.text = state.currentExerciseName
-                self.exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
-                self.currentSetLabel.text = "\(state.currentSetNumber)\(self.setText)"
-                self.weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
-                self.repsLabel.text = "\(state.currentReps)\(self.repsText)"
-                
-                self.setProgressBar.updateProgress(currentSet: state.setProgressAmount)
-                
-                if state.currentSetNumber == 1 {
-                    self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
-                }
-            })
-            .disposed(by: disposeBag)
+//        print("카드 뷰: \(state.currentExerciseName), \(state.currentSetNumber)세트")
+        
+        exerciseNameLabel.text = state.currentExerciseName
+        exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
+        weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
+        repsLabel.text = "\(state.currentReps)\(repsText)"
+        setProgressBar.updateProgress(currentSet: state.setProgressAmount)
+        
+        if state.currentSetNumber == 1 {
+            self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
+        }
     }
 }
-
 
 
