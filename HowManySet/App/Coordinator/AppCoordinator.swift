@@ -96,6 +96,8 @@ final class AppCoordinator: Coordinator {
         
         tabBarCoordinator.start()
         
+        childCoordinators.append(tabBarCoordinator)
+        
         window.rootViewController = tabBarCoordinator.tabBarController
         window.makeKeyAndVisible()
     }
