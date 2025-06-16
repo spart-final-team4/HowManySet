@@ -409,10 +409,10 @@ private extension HomeViewReactor {
                 return .concat([
                     .just(.setResting(restTime > 0)),
                     .just(.setRestTimeInProgress(restTime)),
-                    .just(.moveToNextSetOrExercise(isRoutineCompleted: false)),
+                    restTimer,
                     // 카드 정보 업데이트
                     .just(.updateWorkoutCardState(newState: updatedCardState)),
-                    restTimer
+                    .just(.moveToNextSetOrExercise(isRoutineCompleted: false))
                 ])
             } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
                 
