@@ -48,11 +48,10 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
 
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
     func presentWorkoutOptionView() {
-        let reactor = WorkoutOptionViewReactor()
-        let workoutOptionVC = WorkoutOptionViewController(reactor: reactor)
+        let workoutOptionVC = WorkoutOptionViewController()
         
         if let sheet = workoutOptionVC.sheetPresentationController {
-            sheet.detents = [.medium()]
+            sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
         }
         
