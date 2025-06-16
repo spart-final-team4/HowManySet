@@ -9,8 +9,17 @@ import UIKit
 import SnapKit
 import Then
 
+/// 운동 루틴 편집 화면에서 나타나는 바텀시트 뷰 컨트롤러입니다.
+/// 사용자는 이 뷰에서 다음 작업을 수행할 수 있습니다:
+/// - 운동 정보 변경
+/// - 선택된 운동 삭제
+/// - 운동 목록 순서 변경
+///
+/// 버튼은 좌측 정렬된 텍스트와 패딩을 포함한 스타일로 구성됩니다.
+/// iOS 15 이상에서 deprecated된 `contentEdgeInsets`는 추후 `UIButton.Configuration` 기반으로 전환 권장됩니다.
 final class EditRoutineBottomSheetViewController: UIViewController {
     
+    /// 운동 정보 변경 버튼
     private lazy var excerciseChangeButton = UIButton().then {
         $0.setTitle("운동 정보 변경", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
@@ -22,6 +31,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         $0.layer.cornerRadius = 12
     }
     
+    /// 선택된 운동 삭제 버튼
     private lazy var removeExcerciseButton = UIButton().then {
         $0.setTitle("선택 운동 삭제", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
@@ -33,6 +43,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         $0.layer.cornerRadius = 12
     }
     
+    /// 운동 목록 순서 변경 버튼
     private lazy var changeExcerciseListButton = UIButton().then {
         $0.setTitle("목록 순서 변경", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
@@ -44,6 +55,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         $0.layer.cornerRadius = 12
     }
     
+    /// 버튼들을 수직으로 배치하는 스택 뷰
     private lazy var stackView = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .fillEqually
@@ -55,22 +67,29 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
     }
-    
 }
 
+// MARK: - UI 설정
 private extension EditRoutineBottomSheetViewController {
+    
+    /// 전체 UI 설정을 수행합니다.
     func setupUI() {
         setAppearance()
         setViewHierarchy()
         setConstraints()
     }
     
+    /// 뷰의 기본 배경 색상 설정
     func setAppearance() {
         view.backgroundColor = .background
     }
+    
+    /// 서브뷰 계층 설정
     func setViewHierarchy() {
         view.addSubviews(stackView)
     }
+    
+    /// 오토레이아웃 제약 설정
     func setConstraints() {
         stackView.snp.makeConstraints {
             $0.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
