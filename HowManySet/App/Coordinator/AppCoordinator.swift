@@ -57,10 +57,8 @@ final class AppCoordinator: Coordinator {
         
         onboardingCoordinator.finishFlow = { [weak self, weak onboardingCoordinator] in
             guard let self, let onboardingCoordinator else { return }
-            self.childDidFinish(onboardingCoordinator)
-            
-            onboardingCoordinator.completeOnBoarding()
             self.showTabBarFlow()
+            self.childDidFinish(onboardingCoordinator)
         }
         
         onboardingCoordinator.start()
@@ -94,10 +92,13 @@ final class AppCoordinator: Coordinator {
     private func showTabBarFlow() {
         let tabBarCoordinator = TabBarCoordinator(tabBarController: UITabBarController(), container: container)
         
+        tabBarCoordinator.finishFlow = { [weak self, weak tabBarCoordinator] in
+            guard let self, let tabBarCoordinator else { return }
+            self.childDidFinish(tabBarCoordinator)
+        }
+        
         tabBarCoordinator.start()
-        
         childCoordinators.append(tabBarCoordinator)
-        
         window.rootViewController = tabBarCoordinator.tabBarController
         window.makeKeyAndVisible()
     }

@@ -11,6 +11,9 @@ import UIKit
 /// 각 탭별 네비게이션 및 코디네이터 관리 담당
 final class TabBarCoordinator: Coordinator {
     
+    /// 완료 시 호출 클로저
+    var finishFlow: (() -> Void)?
+    
     let tabBarController: UITabBarController
     private let container: DIContainer
     
