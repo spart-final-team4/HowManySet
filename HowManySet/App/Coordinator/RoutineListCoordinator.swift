@@ -8,7 +8,9 @@
 import UIKit
 
 protocol RoutineListCoordinatorProtocol: Coordinator {
-    
+    func presentRoutineNameView()
+    func pushEditExcerciseView()
+    func pushEditRoutineView(with: WorkoutRoutine)
 }
 
 /// 루틴 리스트 화면 관련 coordinator
@@ -44,24 +46,47 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         navigationController.present(routineListVC, animated: true)
     }
     
-    /// 루틴 편집 화면으로 푸시
-    func pushEditRoutineView() {
+    /// 루틴명 편집 화면으로 모달 표시
+    func presentRoutineNameView() {
+        // RoutineListVC에 있는 saveRoutineUseCase를 재사용하기 위해 인스턴스를 찾고 없으면 리턴
+        guard let routineListVC = navigationController.viewControllers.first(
+            where: { $0 is RoutineListViewController }
+        ) as? RoutineListViewController else { return }
+        let saveRoutineUseCase = routineListVC.reactor?.publicSaveRoutineUseCase
+        guard let saveRoutineUseCase = saveRoutineUseCase else { return }
+        
+        let reactor = RoutineNameReactor(saveRoutineUseCase: saveRoutineUseCase)
+        let routineNameVC = RoutineNameViewController(reactor: reactor, coordinator: self)
+
+        if let sheet = routineNameVC.sheetPresentationController {
+            let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
+
+            sheet.detents = [.custom(resolver: { _ in
+                fixedHeight
+            })]
+            sheet.prefersGrabberVisible = true
+
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheet.prefersEdgeAttachedInCompactHeight = true // iPhone에서 전체화면 방지
+            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
+        }
+
+        navigationController.present(routineNameVC, animated: true)
+    }
+    
+    /// 운동 편집 화면 전체 화면으로 push
+    func pushEditExcerciseView() {
+        let reactor = EditExcerciseViewReactor()
+        let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
+        
+        navigationController.pushViewController(editExcerciseVC, animated: true)
+    }
+
+    /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
+    func pushEditRoutineView(with routine: WorkoutRoutine) {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
         navigationController.pushViewController(editRoutineVC, animated: true)
-    }
-    
-    /// 운동 편집 화면 모달 표시
-    func presentEditExcerciseView() {
-        let reactor = EditExcerciseViewReactor()
-        let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
-        
-        if let sheet = editExcerciseVC.sheetPresentationController {
-            sheet.detents = [.medium()]
-            sheet.prefersGrabberVisible = true
-        }
-        
-        navigationController.present(editExcerciseVC, animated: true)
     }
 }

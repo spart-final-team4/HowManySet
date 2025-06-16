@@ -6,6 +6,7 @@ final class RoutineCell: UITableViewCell {
     static let identifier = "RoutineCell"
 
     // MARK: - UI Components
+    private let labelStackView = UIStackView()
     private let nameLabel = UILabel()
     private let totalWorkoutsLabel = UILabel()
     private let totalSetsLabel = UILabel()
@@ -50,6 +51,13 @@ private extension RoutineCell {
             $0.clipsToBounds = true
         }
 
+        labelStackView.do {
+            $0.axis = .vertical
+            $0.alignment = .fill
+            $0.distribution = .fillEqually
+            $0.spacing = 12
+        }
+
         nameLabel.do {
             $0.textColor = .white
             $0.font = .systemFont(ofSize: 20, weight: .semibold)
@@ -67,29 +75,25 @@ private extension RoutineCell {
     }
 
     func setViewHierarchy() {
+        contentView.addSubview(labelStackView)
+
         [
             nameLabel,
             totalWorkoutsLabel,
             totalSetsLabel
-        ].forEach { contentView.addSubview($0) }
+        ].forEach { labelStackView.addArrangedSubview($0) }
     }
 
     func setConstraints() {
-         nameLabel.snp.makeConstraints {
-             $0.top.equalToSuperview().inset(16)
-             $0.horizontalEdges.equalToSuperview().inset(20)
-         }
+        contentView.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(8)
+            $0.horizontalEdges.equalToSuperview()
+        }
 
-         totalWorkoutsLabel.snp.makeConstraints {
-             $0.top.equalTo(nameLabel.snp.bottom).offset(12)
-             $0.horizontalEdges.equalToSuperview().inset(20)
-         }
-
-         totalSetsLabel.snp.makeConstraints {
-             $0.top.equalTo(totalWorkoutsLabel.snp.bottom).offset(12)
-             $0.horizontalEdges.equalToSuperview().inset(20)
-             $0.bottom.equalToSuperview().inset(16)
-         }
+        labelStackView.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+        }
     }
 
     ///UITableViewCell에서 clear하게 setting하여 깔끔하게 보여주는 UI
