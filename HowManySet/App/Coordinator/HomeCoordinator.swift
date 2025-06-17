@@ -96,15 +96,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 /// 종료 버튼 누를 시에 해당 클로저(reactor.action) 즉시 실행
                 let workoutSummary = onConfirm()
                 
-                // 약간의 지연을 두고 데이터 업데이트 완료 후 화면 전환
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    // HomeVC 초기화
-                    self.navigationController.popToRootViewController(animated: false)
-                    let newHomeVC = self.container.makeHomeViewController(coordinator: self)
-                    self.navigationController.setViewControllers([newHomeVC], animated: false)
-                    
-                    self.pushRoutineCompleteView(with: workoutSummary)
-                }
+                // HomeVC 초기화
+                self.navigationController.popToRootViewController(animated: false)
+                let newHomeVC = self.container.makeHomeViewController(coordinator: self)
+                self.navigationController.setViewControllers([newHomeVC], animated: false)
+                
+                self.pushRoutineCompleteView(with: workoutSummary)
             })
         
         navigationController.present(endWorkoutVC, animated: true)
