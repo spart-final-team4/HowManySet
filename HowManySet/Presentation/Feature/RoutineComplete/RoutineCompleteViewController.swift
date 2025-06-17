@@ -292,7 +292,7 @@ private extension RoutineCompleteViewController {
         let routineMemo = workoutSummary.routineMemo
         
         exerciseInfoLabel.text = "\(routineName) | \(todayDate) \(exerciseRecordSavedText)"
-        progressView.progress = CGFloat(routineDidProgress)
+        progressView.setProgress(CGFloat(routineDidProgress))
         percentageLabel.text = "\(Int(routineDidProgress * 100))%"
         exerciseTimeLabel.text = totalTime
         exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
