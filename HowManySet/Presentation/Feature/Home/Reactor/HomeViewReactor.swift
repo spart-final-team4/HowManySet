@@ -273,9 +273,9 @@ final class HomeViewReactor: Reactor {
         case let .setCompleteButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             let restTime = currentState.restTime
-            let interval = 0.01
+            let interval = 0.1 // 0.1초마다 동작
             let tickCount = Int(Double(restTime) / interval)
-            let restTimer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.asyncInstance)
+            let restTimer = Observable<Int>.interval(.milliseconds(Int(interval*1000)), scheduler: MainScheduler.asyncInstance)
                 .withLatestFrom(self.state) { _, state in state }
                 .filter { $0.isResting && !$0.isWorkoutPaused && !$0.isRestPaused }
                 .take(tickCount)
@@ -414,7 +414,8 @@ final class HomeViewReactor: Reactor {
                !newState.isWorkoutPaused,
                !newState.isRestPaused {
                 
-                newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.01, 0)
+                // 0.1초씩 감소
+                newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.1, 0)
                 if newState.restSecondsRemaining == 0.0 {
                     newState.isResting = false
                 }
