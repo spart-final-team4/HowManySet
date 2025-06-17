@@ -17,6 +17,7 @@ final class EditExcerciseViewReactor: Reactor {
         case saveRoutineButtonTapped
         case changeExerciseName(String)
         case changeUnit(String)
+        case changeExcerciseWeightSet([[Int]])
     }
     
     // Mutate is a state manipulator which is not exposed to a view
@@ -25,6 +26,7 @@ final class EditExcerciseViewReactor: Reactor {
         case saveRoutine
         case changeExcerciseName(String)
         case changeUnit(String)
+        case changeExcerciseWeightSet([[Int]])
     }
     
     // State is a current view state
@@ -32,6 +34,7 @@ final class EditExcerciseViewReactor: Reactor {
         var currentRoutine: WorkoutRoutine
         var currentExcerciseName: String = ""
         var currentUnit: String = "kg"
+        var currentWeightSet: [[Int]] = []
     }
     
     let initialState: State
@@ -51,6 +54,8 @@ final class EditExcerciseViewReactor: Reactor {
             return .just(.changeExcerciseName(name))
         case .changeUnit(let unit):
             return .just(.changeUnit(unit))
+        case .changeExcerciseWeightSet(let newWeightSet):
+            return .just(.changeExcerciseWeightSet(newWeightSet))
         }
     }
     
@@ -69,6 +74,9 @@ final class EditExcerciseViewReactor: Reactor {
         case .changeUnit(let unit):
             print(unit)
             newState.currentUnit = unit
+        case .changeExcerciseWeightSet(let newWeightSet):
+            newState.currentWeightSet = newWeightSet
+            print(newWeightSet)
         }
         return newState
     }
