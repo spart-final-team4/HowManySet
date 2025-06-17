@@ -363,12 +363,18 @@ private extension RoutineCompleteViewController {
         // 공유할 텍스트 생성
         let shareText = createShareText(from: workoutSummary)
         // 공유할 아이템들
-        let activityItems: [Any] = [shareText]
+        var activityItems: [Any] = [shareText]
         
         let activityViewController = UIActivityViewController(
             activityItems: activityItems,
             applicationActivities: nil
         )
+        
+        // 공유 버튼 누를 시 자동으로 운동 카드 부분 캡쳐
+        // 실기기 테스트 필요
+        if let screenshot = captureWorkoutSummaryScreenshot() {
+            activityItems.append(screenshot)
+        }
         
         // 제외할 정보들
         activityViewController.excludedActivityTypes = [
@@ -402,5 +408,10 @@ private extension RoutineCompleteViewController {
         """
         
         return shareText
+    }
+    
+    func captureWorkoutSummaryScreenshot() -> UIImage? {
+        // 운동 요약 카드 부분만 캡처
+        return cardContentsContainer.asImage()
     }
 }
