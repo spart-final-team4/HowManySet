@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxRelay
 import ReactorKit
 
 final class EditExcerciseViewReactor: Reactor {
@@ -22,7 +23,7 @@ final class EditExcerciseViewReactor: Reactor {
     
     // Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
-        case addExcercise
+        case addExcercise(Workout)
         case saveRoutine
         case changeExcerciseName(String)
         case changeUnit(String)
@@ -37,7 +38,12 @@ final class EditExcerciseViewReactor: Reactor {
         var currentWeightSet: [[Int]] = []
     }
     
+    enum VaildWorkout {
+        case success
+        case failure
+    }
     let initialState: State
+    let alertRelay = PublishRelay<VaildWorkout>()
     
     init(routineName: String) {
         self.initialState = State(currentRoutine: WorkoutRoutine(name: routineName, workouts: []))
@@ -47,7 +53,27 @@ final class EditExcerciseViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .addExcerciseButtonTapped:
-            return .just(.addExcercise)
+            return Observable<Mutation>.create { [unowned self] observer in
+                var currentWeightSet = self.currentState.currentWeightSet
+                currentWeightSet.removeFirst()
+                let sets = currentWeightSet.map{
+                    WorkoutSet(weight: Double($0[0]),
+                               unit: self.currentState.currentUnit,
+                               reps: $0[1])
+                }
+                let newWorkout = Workout(name: self.currentState.currentExcerciseName,
+                                         sets: sets,
+                                         comment: nil)
+                
+                if self.validationWorkout(workout: newWorkout) {
+                    observer.onNext(.addExcercise(newWorkout))
+                    self.alertRelay.accept(.success)
+                } else {
+                    self.alertRelay.accept(.failure)
+                }
+                observer.onCompleted()
+                return Disposables.create()
+            }
         case .saveRoutineButtonTapped:
             return .just(.saveRoutine)
         case .changeExerciseName(let name):
@@ -64,9 +90,10 @@ final class EditExcerciseViewReactor: Reactor {
         var newState = state
         
         switch mutation {
-        case .addExcercise:
-            print(newState.currentRoutine.name)
+        case .addExcercise(let workout):
+            newState.currentRoutine.workouts.append(workout)
         case .saveRoutine:
+            // TODO: Realm Routine 저장
             print(newState.currentRoutine)
         case .changeExcerciseName(let newName):
             print(newName)
@@ -79,5 +106,12 @@ final class EditExcerciseViewReactor: Reactor {
             print(newWeightSet)
         }
         return newState
+    }
+    
+    func validationWorkout(workout: Workout) -> Bool {
+        if workout.name == "" || workout.sets.filter{ $0.reps < 0 || $0.weight < 0 }.count > 0 {
+            return false
+        }
+        return true
     }
 }
