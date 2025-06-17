@@ -130,21 +130,29 @@ final class EditExcerciseViewController: UIViewController, View {
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, vaild in
                 switch vaild {
-                case .failure:
+                case .excerciseSavefailure:
                     let alert = UIAlertController(title: "입력 오류", message: "운동 항목을 올바르게 입력해 주세요.", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "확인", style: .default))
                     owner.present(alert, animated: true)
-                case .success:
+                case .excerciseSaveSuccess:
                     let alert = UIAlertController(title: "저장 완료", message: "운동이 저장되었습니다", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "확인", style: .default))
                     owner.present(alert, animated: true) {
                         owner.headerView.returnInitialState()
                         owner.contentView.returnInitialState()
                     }
+                case .saveRoutineFailure:
+                    let alert = UIAlertController(title: "저장 실패", message: "현재 저장된 운동목록이 없습니다.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    owner.present(alert, animated: true)
                 }
-                
-            }
->>>>>>> 56816b2 (feat: #62 - 운동 추가 버튼 클릭시 입력된 운동 정보를 저장하고 UI그리도록 리액터 연결 / 빈 텍스트필드가 있는 경우 alert 표시 / 성공해도 alert 표시)
+            }.disposed(by: disposeBag)
+        
+        reactor.dismissRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }.disposed(by: disposeBag)
     }
 }
 
