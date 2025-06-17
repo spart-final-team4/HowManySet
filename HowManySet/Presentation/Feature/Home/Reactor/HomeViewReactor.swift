@@ -579,8 +579,10 @@ private extension HomeViewReactor {
                             .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
                             .just(.manageForwardFlow(isRoutineCompleted: false)),
                             .just(.updateWorkoutCardState(
-                                updatedCardState: currentState.workoutCardStates[cardIndex])),
-                            .just(.changeExerciseIndex(cardIndex)),
+                                updatedCardState: currentState.workoutCardStates[nextExerciseIndex],
+                                oldCardState: currentCardState,
+                                oldCardIndex: cardIndex)),
+                            .just(.changeExerciseIndex(nextExerciseIndex))
                         ])
                     }
                 }
