@@ -103,6 +103,7 @@ final class EditExcerciseViewController: UIViewController, View {
             .map{ Reactor.Action.changeExcerciseWeightSet($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+<<<<<<< HEAD
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
 
@@ -113,6 +114,37 @@ final class EditExcerciseViewController: UIViewController, View {
                 self.view.endEditing(true)
             }
             .disposed(by: disposeBag)
+=======
+        
+        reactor.state
+            .map{ $0.currentRoutine.workouts }
+            .distinctUntilChanged()
+            .skip(1)
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, workout in
+                guard let workout = workout.last else { return  }
+                owner.currentView.addExcercise(workout: workout)
+            }.disposed(by: disposeBag)
+        
+        reactor.alertRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, vaild in
+                switch vaild {
+                case .failure:
+                    let alert = UIAlertController(title: "입력 오류", message: "운동 항목을 올바르게 입력해 주세요.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    owner.present(alert, animated: true)
+                case .success:
+                    let alert = UIAlertController(title: "저장 완료", message: "운동이 저장되었습니다", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    owner.present(alert, animated: true) {
+                        owner.headerView.returnInitialState()
+                        owner.contentView.returnInitialState()
+                    }
+                }
+                
+            }
+>>>>>>> 56816b2 (feat: #62 - 운동 추가 버튼 클릭시 입력된 운동 정보를 저장하고 UI그리도록 리액터 연결 / 빈 텍스트필드가 있는 경우 alert 표시 / 성공해도 alert 표시)
     }
 }
 
