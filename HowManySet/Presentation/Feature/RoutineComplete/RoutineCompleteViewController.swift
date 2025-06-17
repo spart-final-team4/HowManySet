@@ -312,6 +312,13 @@ private extension RoutineCompleteViewController {
                 self.navigationController?.popToRootViewController(animated: true)
             }
             .disposed(by: disposeBag)
+        
+        shareButton.rx.tap
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.presentShareActivity()
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -343,5 +350,57 @@ private extension RoutineCompleteViewController {
                 }
             })
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Share Methods
+private extension RoutineCompleteViewController {
+    
+    func presentShareActivity() {
+        
+        guard let workoutSummary else { return }
+        
+        // 공유할 텍스트 생성
+        let shareText = createShareText(from: workoutSummary)
+        // 공유할 아이템들
+        let activityItems: [Any] = [shareText]
+        
+        let activityViewController = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: nil
+        )
+        
+        // 제외할 정보들
+        activityViewController.excludedActivityTypes = [
+            .addToReadingList,
+            .assignToContact
+        ]
+        
+        present(activityViewController, animated: true)
+    }
+    
+    
+    func createShareText(from summary: WorkoutSummary) -> String {
+        
+        let routineName = summary.routineName
+        let date = summary.date.toDateLabelWithYear()
+        let totalTime = summary.totalTime.toWorkOutTimeLabel()
+        let progress = Int(summary.routineDidProgress * 100)
+        let exerciseCount = summary.exerciseDidCount
+        let setCount = summary.setDidCount
+        
+        let shareText = """
+        운동 완료!
+        
+        📋 루틴: \(routineName)
+        📅 날짜: \(date)
+        ⏱️ 운동시간: \(totalTime)
+        📊 진행률: \(progress)%
+        💪 \(exerciseCount)개 운동, \(setCount)세트
+        
+        #운동 #헬스 #HowManySet
+        """
+        
+        return shareText
     }
 }
