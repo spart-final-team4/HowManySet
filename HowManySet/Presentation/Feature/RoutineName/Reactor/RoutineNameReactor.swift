@@ -4,12 +4,9 @@ import ReactorKit
 
 final class RoutineNameReactor: Reactor {
 
-    private let saveRoutineUseCase: SaveRoutineUseCase
-
     // MARK: - Action is an user interaction
     enum Action {
         case setRoutineName(String)
-        case saveRoutine
     }
 
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -25,8 +22,7 @@ final class RoutineNameReactor: Reactor {
     let initialState: State
 
     // MARK: - Init
-    init(saveRoutineUseCase: SaveRoutineUseCase) {
-        self.saveRoutineUseCase = saveRoutineUseCase
+    init() {
         self.initialState = State()
     }
 
@@ -35,11 +31,6 @@ final class RoutineNameReactor: Reactor {
         switch action {
         case let .setRoutineName(name):
             return .just(.setRoutineName(name))
-        case .saveRoutine:
-            let routine = WorkoutRoutine(name: currentState.routineName, workouts: [])
-            saveRoutineUseCase.execute(uid: "test-user", item: routine)
-            print("루틴명 저장 성공: \(routine.name)")
-            return .empty()
         }
     }
 
