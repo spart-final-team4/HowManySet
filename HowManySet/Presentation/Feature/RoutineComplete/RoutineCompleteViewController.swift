@@ -26,6 +26,8 @@ final class RoutineCompleteViewController: UIViewController {
     private let confirmText = "확인"
     
     // MARK: - UI Components
+    private lazy var mainContentsContainer = UIView()
+    
     private lazy var topLabelVStack = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 14
@@ -167,11 +169,14 @@ private extension RoutineCompleteViewController {
         
         setViewHiearchy()
         setConstraints()
+        configureKeyboardNotifications()
     }
     
     func setViewHiearchy() {
         
-        view.addSubviews(
+        view.addSubview(mainContentsContainer)
+        
+        mainContentsContainer.addSubviews(
             topLabelVStack,
             cardContentsContainer,
             percentageLabel,
@@ -188,15 +193,20 @@ private extension RoutineCompleteViewController {
     
     func setConstraints() {
         
+        mainContentsContainer.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         topLabelVStack.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.top.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         cardContentsContainer.snp.makeConstraints {
             $0.top.equalTo(topLabelVStack.snp.bottom).offset(14)
-            $0.height.equalToSuperview().multipliedBy(0.43)
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.height.equalTo(view).multipliedBy(0.43)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         shareButton.snp.makeConstraints {
@@ -239,13 +249,13 @@ private extension RoutineCompleteViewController {
         
         memoTextView.snp.makeConstraints {
             $0.top.equalTo(cardContentsContainer.snp.bottom).offset(16)
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(cardContentsContainer.snp.height).multipliedBy(0.39)
         }
         
         confirmButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(56)
         }
     }
@@ -301,6 +311,37 @@ private extension RoutineCompleteViewController {
                 
                 self.navigationController?.popToRootViewController(animated: true)
             }
+            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Keyboard
+private extension RoutineCompleteViewController {
+    
+    private func configureKeyboardNotifications() {
+        
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+            .compactMap { $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect }
+            .map { $0.height }
+            .bind(onNext: { [weak self] keyboardHeight in
+                guard let self else { return }
+                print("키보드 나타남")
+        
+                UIView.animate(withDuration: 0.3) {
+                    self.mainContentsContainer.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight/2)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+            .bind(onNext: { [weak self] _ in
+                guard let self else { return }
+                print("키보드 사라짐")
+
+                UIView.animate(withDuration: 0.3) {
+                    self.mainContentsContainer.transform = .identity
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
