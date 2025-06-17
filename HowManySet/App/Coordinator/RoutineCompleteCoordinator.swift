@@ -25,12 +25,8 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     }
     
     func start() {
-        let routineCompleteVC = container.makeRoutineCompleteViewController(coordinator: self)
-        
-        if let routineCompleteVC = routineCompleteVC as? RoutineCompleteViewController {
-            routineCompleteVC.configure(with: workoutSummary)
-        }
-        
+        let routineCompleteVC = container.makeRoutineCompleteViewController(coordinator: self, workoutSummary: workoutSummary)
+
         navigationController.pushViewController(routineCompleteVC, animated: false)
     }
     

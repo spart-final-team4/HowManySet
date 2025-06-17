@@ -11,8 +11,8 @@ protocol HomeCoordinatorProtocol: Coordinator {
     func presentWorkoutOptionView()
     func pushEditRoutineView()
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
-    func popUpEndWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool
-    func popUpCompletedWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool
+    func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
+    func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
 }
 
 /// 홈 흐름 담당 coordinator
@@ -25,9 +25,6 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     /// DI 컨테이너
     private let container: DIContainer
     
-    // EditAndMemoView에 동일한 reactor 주입 위해 보관
-    private var homeViewReactor: HomeViewReactor?
-
     /// coordinator 생성자
     /// - Parameters:
     ///   - navigationController: 홈 흐름용 navigation
@@ -36,20 +33,20 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         self.navigationController = navigationController
         self.container = container
     }
-
+    
     /// 홈 뷰 시작
     func start() {
         let (homeVC, reactor) = container.makeHomeViewController(coordinator: self)
         navigationController.pushViewController(homeVC, animated: true)
         homeViewReactor = reactor
     }
-
-    /// 빈 화면에서 버튼 클릭 시 루틴 편집 창 present
+    
+    /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 present
     func presentRoutineListView() {
         let routineListCoordinator = RoutineListCoordinator(navigationController: navigationController, container: container)
         routineListCoordinator.startModal()
     }
-
+    
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
     func presentEditAndMemoView() {
         guard let homeViewReactor else { return }
@@ -62,28 +59,30 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
         navigationController.present(editAndMemoVC, animated: true)
     }
-
-    /// 옵션 bottom sheet에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 push
-    func presentEditRoutineView() {
+    
+    /// 루틴 수정 버튼 클릭 시 루틴 편집 화면 push
+    func pushEditRoutineView() {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
-        if let sheet = editRoutineVC.sheetPresentationController {
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = true
-        }
-        navigationController.present(editRoutineVC, animated: true)
+        // TODO: present로 할지 push로 할지 결정 필요
+        //        if let sheet = editRoutineVC.sheetPresentationController {
+        //            sheet.detents = [.large()]
+        //            sheet.prefersGrabberVisible = true
+        //        }
+        //        navigationController.present(editRoutineVC, animated: true)
+        
+        navigationController.pushViewController(editRoutineVC, animated: true)
     }
-
+    
     /// 운동 완료 화면으로 이동
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary) {
         let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container, workoutSummary: workoutSummary)
         routineCompleteCoordinator.start()
     }
     
-    func popUpEndWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool {
-        
-        var workoutEnded = false
+    /// 유저가 직접 종료 버튼을 눌러서 종료 시
+    func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary) {
         
         let endWorkoutVC = DefaultPopupViewController(
             title: "운동 종료",
@@ -94,26 +93,25 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             okAction: { [weak self] in
                 guard let self else { return }
                 
-                // HomeVC 초기화
-                self.navigationController.popToRootViewController(animated: false)
-                let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
-                self.navigationController.setViewControllers([newHomeVC], animated: false)
+                /// 종료 버튼 누를 시에 해당 클로저(reactor.action) 즉시 실행
+                let workoutSummary = onConfirm()
                 
-                workoutEnded = true
-                
-                self.pushRoutineCompleteView(with: workoutSummary)
-                
+                // 약간의 지연을 두고 데이터 업데이트 완료 후 화면 전환
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    // HomeVC 초기화
+                    self.navigationController.popToRootViewController(animated: false)
+                    let newHomeVC = self.container.makeHomeViewController(coordinator: self)
+                    self.navigationController.setViewControllers([newHomeVC], animated: false)
+                    
+                    self.pushRoutineCompleteView(with: workoutSummary)
+                }
             })
         
         navigationController.present(endWorkoutVC, animated: true)
-        
-        return workoutEnded
     }
     
-    
-    func popUpCompletedWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool {
-        
-        var workoutEnded = false
+    /// 유저가 루틴을 모두 완료했을 시
+    func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary) {
         
         let endWorkoutVC = DefaultPopupViewController(
             title: "오늘의 모든 운동 완료!",
@@ -124,19 +122,16 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             okAction: { [weak self] in
                 guard let self else { return }
                 
-                // HomeVC 초기화
+                let workoutSummary = onConfirm()
+                
                 self.navigationController.popToRootViewController(animated: false)
                 let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
-                
-                workoutEnded = true
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
             })
         
         navigationController.present(endWorkoutVC, animated: true)
-        
-        return workoutEnded
     }
-
+    
 }

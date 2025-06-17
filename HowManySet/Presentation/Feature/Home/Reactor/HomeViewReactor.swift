@@ -314,6 +314,7 @@ final class HomeViewReactor: Reactor {
     
     
     // MARK: - Mutation -> State (Reduce)
+    /// state를 바꿀 수 있는 유일한 곳
     func reduce(state: State, mutation: Mutation) -> State {
         
         var state = state
