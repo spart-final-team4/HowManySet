@@ -6,7 +6,6 @@ final class SummaryInfoCell: UICollectionViewCell {
     // MARK: - Properties
     static let identifier = "SummaryInfoCell"
 
-    // 첫번째 그룹
     private let headerHStackView = UIStackView()
     private let routineNameLabel = UILabel()
     private let editButton = UIButton()
@@ -14,11 +13,11 @@ final class SummaryInfoCell: UICollectionViewCell {
     private let headerVStackView = UIStackView()
     private let startToEndLabel = UILabel()
 
-    // 두번째 그룹
     private let totalSummaryStackView = UIStackView()
 
-    // 세번째 그룹
     private let dividerView = UIView()
+
+    private let workoutDetailTitleLabel = UILabel()
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -41,7 +40,7 @@ final class SummaryInfoCell: UICollectionViewCell {
         let startTime = endTime.startTime(fromTotalTime: record.totalTime)
         startToEndLabel.text = "\(startTime.toTimeLabel()) ~ \(endTime.toTimeLabel())"
 
-        // 두 번째 그룹: summary stack (기존 항목 제거 후 재구성)
+        // summary stack (기존 항목 제거 후 재구성)
         totalSummaryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         let totalSets = record.workoutRoutine.workouts.flatMap { $0.sets }.count
@@ -71,7 +70,7 @@ private extension SummaryInfoCell {
     }
 
     func setAppearance() {
-        // 첫번째 그룹
+        // 첫번째
         headerHStackView.do {
             $0.axis = .horizontal
             $0.alignment = .center
@@ -103,16 +102,23 @@ private extension SummaryInfoCell {
             $0.textAlignment = .center
         }
 
-        // 두번째 그룹
+        // 두번째
         totalSummaryStackView.do {
             $0.axis = .horizontal
             $0.spacing = 10
             $0.distribution = .fillEqually
         }
 
-        // 세번째 그룹
+        // 세번째
         dividerView.do {
             $0.backgroundColor = .systemGray5
+        }
+
+        // 네번째
+        workoutDetailTitleLabel.do {
+            $0.text = "운동 상세"
+            $0.textColor = .white
+            $0.font = .systemFont(ofSize: 20, weight: .semibold)
         }
     }
 
@@ -123,7 +129,8 @@ private extension SummaryInfoCell {
         contentView.addSubviews(
             headerVStackView,
             totalSummaryStackView,
-            dividerView
+            dividerView,
+            workoutDetailTitleLabel
         )
     }
 
@@ -141,6 +148,12 @@ private extension SummaryInfoCell {
         dividerView.snp.makeConstraints {
             $0.horizontalEdges.bottom.equalToSuperview()
             $0.height.equalTo(1)
+        }
+
+        workoutDetailTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(dividerView.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(36)
         }
     }
 
