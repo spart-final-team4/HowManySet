@@ -40,3 +40,20 @@ extension Workout {
                             comment: self.comment)
     }
 }
+
+// MARK: - WorkoutRoutine Mapper
+extension FSWorkoutRoutineDTO {
+    func toDomain() -> WorkoutRoutine {
+        return WorkoutRoutine(name: self.name,
+                              workouts: self.workouts.map { $0.toDomain() })
+    }
+}
+
+extension WorkoutRoutine {
+    func toFSDTO(userId: String) -> FSWorkoutRoutineDTO {
+        return FSWorkoutRoutineDTO(id: nil,
+                                   userId: userId,
+                                   name: self.name,
+                                   workouts: self.workouts.map { $0.toFSDTO() })
+    }
+}
