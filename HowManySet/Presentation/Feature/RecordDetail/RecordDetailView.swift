@@ -33,6 +33,12 @@ private extension RecordDetailView {
         collectionView.do {
             $0.backgroundColor = .clear
             $0.showsVerticalScrollIndicator = false
+
+            $0.register(
+                WorkoutDetailHeaderView.self,
+                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: WorkoutDetailHeaderView.identifier
+            )
         }
     }
 
@@ -50,16 +56,16 @@ private extension RecordDetailView {
 // MARK: - UICollectionViewCompositionalLayout
 private extension RecordDetailView {
     static func createLayout() -> UICollectionViewCompositionalLayout {
-        return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            switch sectionIndex {
-            case 0:
-                return makeSummarySection()
-            default:
-                return nil
+        return UICollectionViewCompositionalLayout { sectionIndex, environment in
+            if sectionIndex == 0 {
+                return makeSummarySection() // 요약 섹션
+            } else {
+                return makeWorkoutSection() // 운동 상세 섹션
             }
         }
     }
 
+    /// 첫 번째 섹션: SummaryInfoCell 단일 셀
     static func makeSummarySection() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
@@ -67,6 +73,7 @@ private extension RecordDetailView {
                 heightDimension: .estimated(150)
             )
         )
+
         let group = NSCollectionLayoutGroup.vertical(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
@@ -79,9 +86,50 @@ private extension RecordDetailView {
         section.contentInsets = .init(top: 28, leading: 28, bottom: 20, trailing: 28)
         return section
     }
+
+    /// 두 번째 섹션부터: 운동 상세 (가로 스크롤)
+    static func makeWorkoutSection() -> NSCollectionLayoutSection {
+        // 세트 하나 (아이템) 크기
+        let item = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .estimated(80),
+                heightDimension: .estimated(80)
+            )
+        )
+
+        // 수평 그룹: 한 줄에 여러 세트들
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .estimated(500),
+                heightDimension: .estimated(100)
+            ),
+            subitems: [item]
+        )
+
+        // 섹션: 운동 1개, 수평 스크롤
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        section.contentInsets = .init(top: 0, leading: 28, bottom: 16, trailing: 28)
+        section.interGroupSpacing = 8
+
+        // 섹션 헤더: 운동 이름
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(30)
+        )
+
+        let header = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+
+        section.boundarySupplementaryItems = [header]
+        return section
+    }
 }
 
-// Expose the collectionView if needed
+// MARK: - Computed Property
 extension RecordDetailView {
     var publicCollectionView: UICollectionView { collectionView }
 }
