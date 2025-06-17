@@ -484,7 +484,7 @@ private extension HomeViewController {
                 
                 cardView.weightRepsButton.rx.tap
                     .observe(on: MainScheduler.instance)
-                    .map { Reactor.Action.workoutPauseButtonClicked }
+                    .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
                     .bind { [weak self] action in
                         guard let self else { return }
 
@@ -497,7 +497,7 @@ private extension HomeViewController {
                             }
                         })
                         reactor.action.onNext(action)
-                        self.coordinator?.presentEditRoutineView()
+                        self.coordinator?.presentEditExerciseView()
                     }
                     .disposed(by: disposeBag)
             }
