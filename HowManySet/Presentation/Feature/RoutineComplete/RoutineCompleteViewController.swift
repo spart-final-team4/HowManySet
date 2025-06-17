@@ -59,6 +59,11 @@ final class RoutineCompleteViewController: UIViewController {
         $0.contentMode = .scaleAspectFit
     }
     
+    private lazy var routineStatisticsVStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+    }
+    
     private lazy var percentageLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 36, weight: .semibold)
         $0.textColor = .white
@@ -68,13 +73,15 @@ final class RoutineCompleteViewController: UIViewController {
     private lazy var exerciseTimeLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 20, weight: .regular)
         $0.textColor = .white
-        $0.textAlignment = .center
+        $0.textAlignment = .left
+        $0.adjustsFontSizeToFitWidth = true
     }
     
     private lazy var exerciseAndSetInfoLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 20, weight: .regular)
         $0.textColor = .white
-        $0.textAlignment = .center
+        $0.textAlignment = .left
+        $0.adjustsFontSizeToFitWidth = true
     }
     
     private lazy var timeIcon = UIImageView().then {
@@ -186,7 +193,8 @@ private extension RoutineCompleteViewController {
         
         topLabelVStack.addArrangedSubviews(exerciseCompletedLabel, exerciseInfoLabel)
         cardContentsContainer.addSubviews(progressView, routineStatisticsContainer, shareButton)
-        routineStatisticsContainer.addSubviews(timeInfoHStack, exerciseInfoHStack)
+        routineStatisticsContainer.addSubview(routineStatisticsVStack)
+        routineStatisticsVStack.addArrangedSubviews(timeInfoHStack, exerciseInfoHStack)
         timeInfoHStack.addArrangedSubviews(timeIcon, exerciseTimeLabel)
         exerciseInfoHStack.addArrangedSubviews(exerciseIcon, exerciseAndSetInfoLabel)
     }
@@ -208,16 +216,11 @@ private extension RoutineCompleteViewController {
             $0.height.equalTo(view).multipliedBy(0.43)
             $0.horizontalEdges.equalToSuperview()
         }
-        
-        shareButton.snp.makeConstraints {
-            $0.top.trailing.equalToSuperview().inset(28)
-            $0.width.height.equalTo(44)
-        }
-        
+
         progressView.snp.makeConstraints {
+            $0.top.equalTo(shareButton.snp.bottom).offset(-20)
+            $0.width.height.equalTo(cardContentsContainer.snp.height).multipliedBy(0.63)
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(72)
-            $0.width.height.equalTo(cardContentsContainer.snp.width).multipliedBy(0.63)
         }
                 
         percentageLabel.snp.makeConstraints {
@@ -225,18 +228,19 @@ private extension RoutineCompleteViewController {
             $0.centerY.equalTo(progressView).offset(-10)
         }
         
-        timeInfoHStack.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(24)
-        }
-        
-        exerciseInfoHStack.snp.makeConstraints {
-            $0.bottom.leading.equalToSuperview().inset(24)
+        shareButton.snp.makeConstraints {
+            $0.top.trailing.equalToSuperview().inset(28)
+            $0.width.height.equalTo(44)
         }
         
         routineStatisticsContainer.snp.makeConstraints {
-            $0.height.equalTo(cardContentsContainer.snp.height).multipliedBy(0.31)
-            $0.horizontalEdges.equalTo(cardContentsContainer).inset(28)
-            $0.bottom.equalTo(cardContentsContainer.snp.bottom).inset(28)
+            $0.height.equalToSuperview().multipliedBy(0.31)
+            $0.horizontalEdges.equalToSuperview().inset(28)
+            $0.bottom.equalToSuperview().inset(28)
+        }
+        
+        routineStatisticsVStack.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(24)
         }
         
         timeIcon.snp.makeConstraints {
