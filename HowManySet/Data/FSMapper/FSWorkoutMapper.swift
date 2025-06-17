@@ -57,3 +57,26 @@ extension WorkoutRoutine {
                                    workouts: self.workouts.map { $0.toFSDTO() })
     }
 }
+
+// MARK: - WorkoutRecord Mapper
+extension FSWorkoutRecordDTO {
+    func toDomain(with routine: WorkoutRoutine) -> WorkoutRecord {
+        return WorkoutRecord(workoutRoutine: routine,
+                             totalTime: self.totalTime,
+                             workoutTime: self.workoutTime,
+                             comment: self.comment,
+                             date: self.date)
+    }
+}
+
+extension WorkoutRecord {
+    func toFSDTO(userId: String, routineId: String) -> FSWorkoutRecordDTO {
+        return FSWorkoutRecordDTO(id: nil,
+                                  userId: userId,
+                                  routineId: routineId,
+                                  totalTime: self.totalTime,
+                                  workoutTime: self.workoutTime,
+                                  comment: self.comment,
+                                  date: self.date)
+    }
+}
