@@ -98,6 +98,11 @@ final class EditExcerciseViewController: UIViewController, View {
             .map{ Reactor.Action.changeUnit($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        contentView.excerciseInfoRelay
+            .map{ Reactor.Action.changeExcerciseWeightSet($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
 
