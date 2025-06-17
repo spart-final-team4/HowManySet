@@ -25,4 +25,12 @@ extension UIView {
         self.layer.shadowRadius = shadowRad
         self.layer.shadowOpacity = shadowOpacity
     }
+    
+    /// 스크린샷 캡쳐용
+    func asImage() -> UIImage? {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
 }
