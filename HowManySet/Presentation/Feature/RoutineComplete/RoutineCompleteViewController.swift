@@ -114,10 +114,8 @@ final class RoutineCompleteViewController: UIViewController {
     
     private lazy var memoTextView = UITextView().then {
         $0.backgroundColor = .black
-        $0.textColor = .placeholderText
         $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.layer.cornerRadius = 12
-        $0.text = memoPlaceHolderText
         $0.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
     }
     
@@ -270,8 +268,8 @@ extension RoutineCompleteViewController: UITextViewDelegate {
     }
 }
 
-// MARK: - Internal Methods
-extension RoutineCompleteViewController {
+// MARK: - Private Methods
+private extension RoutineCompleteViewController {
  
     func configure(with workoutSummary: WorkoutSummary) {
         let routineName = workoutSummary.routineName
@@ -284,7 +282,7 @@ extension RoutineCompleteViewController {
         
         exerciseInfoLabel.text = "\(routineName) | \(todayDate) \(exerciseRecordSavedText)"
         progressView.progress = CGFloat(routineDidProgress)
-        percentageLabel.text = "\(Int(routineDidProgress))%"
+        percentageLabel.text = "\(Int(routineDidProgress * 100))%"
         exerciseTimeLabel.text = totalTime
         exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
         memoTextView.text = routineMemo
