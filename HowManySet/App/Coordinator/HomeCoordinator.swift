@@ -10,6 +10,7 @@ import UIKit
 protocol HomeCoordinatorProtocol: Coordinator {
     func presentRoutineListView()
     func presentEditAndMemoView()
+    func presentEditExerciseView()
     func presentEditRoutineView()
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
@@ -64,7 +65,20 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         navigationController.present(editAndMemoVC, animated: true)
     }
     
-    /// 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
+    /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
+    func presentEditExerciseView() {
+        let reactor = EditExcerciseViewReactor()
+        let editExerciseVC = EditExcerciseViewController(reactor: reactor)
+        
+        if let sheet = editExerciseVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        navigationController.present(editExerciseVC, animated: true)
+    }
+        
+    /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
     func presentEditRoutineView() {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
@@ -73,6 +87,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             sheet.detents = [.large()]
             sheet.prefersGrabberVisible = true
         }
+        
         navigationController.present(editRoutineVC, animated: true)
     }
     
