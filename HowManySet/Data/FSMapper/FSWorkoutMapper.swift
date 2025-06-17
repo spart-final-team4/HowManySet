@@ -80,3 +80,22 @@ extension WorkoutRecord {
                                   date: self.date)
     }
 }
+
+// MARK: - WorkoutSession Mapper
+extension FSWorkoutSessionDTO {
+    func toDomain(with record: WorkoutRecord) -> WorkoutSession {
+        return WorkoutSession(workoutRecord: record,
+                              startDate: self.startDate,
+                              endDate: self.endDate)
+    }
+}
+
+extension WorkoutSession {
+    func toFSDTO(userId: String, recordId: String) -> FSWorkoutSessionDTO {
+        return FSWorkoutSessionDTO(id: nil,
+                                   userId: userId,
+                                   recordId: recordId,
+                                   startDate: self.startDate,
+                                   endDate: self.endDate)
+    }
+}
