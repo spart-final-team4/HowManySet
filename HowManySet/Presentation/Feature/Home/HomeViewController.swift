@@ -438,7 +438,7 @@ private extension HomeViewController {
                 
                 // 세트 완료 버튼
                 cardView.setCompleteButton.rx.tap
-                    .observe(on: MainScheduler.asyncInstance)
+                    .observe(on: MainScheduler.instance)
                     .do(onNext: {
                         print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     })
@@ -460,7 +460,7 @@ private extension HomeViewController {
                 
                 // 휴식 재생/일시정지 버튼
                 cardView.restPlayPauseButton.rx.tap
-                    .observe(on: MainScheduler.asyncInstance)
+                    .observe(on: MainScheduler.instance)
                     .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .do(onNext: {
                         print("휴식 버튼 탭 감지 - index: \(cardView.index)")
@@ -473,7 +473,7 @@ private extension HomeViewController {
                     .disposed(by: cardView.disposeBag)
                 
                 cardView.editButton.rx.tap
-                    .observe(on: MainScheduler.asyncInstance)
+                    .observe(on: MainScheduler.instance)
                     .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
                     .bind(onNext: { [weak self] action in
                         guard let self else { return }
@@ -483,8 +483,9 @@ private extension HomeViewController {
                     .disposed(by: disposeBag)
                 
                 cardView.weightRepsButton.rx.tap
-                    .observe(on: MainScheduler.asyncInstance)
-                    .bind { [weak self] in
+                    .observe(on: MainScheduler.instance)
+                    .map { Reactor.Action.workoutPauseButtonClicked }
+                    .bind { [weak self] action in
                         guard let self else { return }
 
                         // 클릭 애니메이션
@@ -495,7 +496,7 @@ private extension HomeViewController {
                                 cardView.weightRepsButton.transform = .identity
                             }
                         })
-
+                        reactor.action.onNext(action)
                         self.coordinator?.presentEditRoutineView()
                     }
                     .disposed(by: disposeBag)

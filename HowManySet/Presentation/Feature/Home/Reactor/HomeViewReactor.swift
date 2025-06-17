@@ -76,7 +76,7 @@ final class HomeViewReactor: Reactor {
         /// MemoTextView의 메모로 업데이트
         case updateCurrentMemo(with: String)
         /// 무게, 횟수 컨테이너 버튼 클릭 시
-        case weightRepsButtonClicked
+        case weightRepsButtonClicked(at: Int)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -308,7 +308,7 @@ final class HomeViewReactor: Reactor {
         case .stopButtonClicked(let isEnded):
             return .just(.manageWorkoutData(isEnded: isEnded))
 
-        case .editAndMemoViewPresented:
+        case let .editAndMemoViewPresented(cardIndex):
             let currentExerciseIndex = currentState.currentExerciseIndex
             let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
             let currentExerciseMemo = currentExercise.memoInExercise
@@ -319,7 +319,7 @@ final class HomeViewReactor: Reactor {
         case .updateCurrentMemo(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
             
-        case .weightRepsButtonClicked:
+        case let .weightRepsButtonClicked(cardIndex):
             let currentExerciseIndex = currentState.currentExerciseIndex
             let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
             
