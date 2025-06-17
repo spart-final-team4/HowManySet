@@ -15,6 +15,9 @@ final class RoutineCompleteViewController: UIViewController {
     // MARK: - Properties
     private weak var coordinator: RoutineCompleteCoordinatorProtocol?
     
+    // UI에 보여질 운동 통계 요약 데이터
+    var workoutSummary: WorkoutSummary?
+    
     var disposeBag = DisposeBag()
     
     private let exerciseCompletedText = "운동 완료! 수고했어요"
@@ -127,9 +130,10 @@ final class RoutineCompleteViewController: UIViewController {
     }
     
     // MARK: - Initializer
-    init(coordinator: RoutineCompleteCoordinatorProtocol) {
+    init(coordinator: RoutineCompleteCoordinatorProtocol, workoutSummary: WorkoutSummary) {
         super.init(nibName: nil, bundle: nil)
         self.coordinator = coordinator
+        self.workoutSummary = workoutSummary
         
         self.hidesBottomBarWhenPushed = true
         self.navigationItem.hidesBackButton = true
@@ -147,6 +151,12 @@ final class RoutineCompleteViewController: UIViewController {
         memoTextView.delegate = self
 
         setupUI()
+        
+        if let workoutSummary {
+            print("configure 호출")
+            print("🎬 [WorkoutSummary]: \(workoutSummary)")
+            configure(with: workoutSummary)
+        }
     }
 }
 

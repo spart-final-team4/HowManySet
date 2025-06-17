@@ -92,12 +92,12 @@ final class DIContainer {
     }
     
     /// 루틴 완료 화면을 생성하여 반환
-    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator) -> UIViewController {
+    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary) -> UIViewController {
         
         let realmService: RealmServiceProtocol = RealmService()
         let recordRepository = RecordRepositoryImpl(realmService: realmService)
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         
-        return RoutineCompleteViewController(coordinator: coordinator)
+        return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary)
     }
 }
