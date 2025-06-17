@@ -80,6 +80,7 @@ final class HomeViewReactor: Reactor {
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
         case pauseAndPlayRest(Bool)
+        /// 운동 종료
         case endCurrentWorkout(with: Bool)
         /// 스킵(다음) 버튼 클릭 시 다음 세트로
         case moveToNextSetOrExercise(isRoutineCompleted: Bool)
@@ -157,6 +158,14 @@ final class HomeViewReactor: Reactor {
                 allSetsCompleted: false
             ))
         }
+        
+        let initialWorkoutRecord = WorkoutRecord(
+            workoutRoutine: initialRoutine,
+            totalTime: 0,
+            workoutTime: 0,
+            comment: nil,
+            date: Date()
+        )
         
         self.initialState = State(
             workoutRoutine: initialRoutine,
@@ -373,6 +382,13 @@ final class HomeViewReactor: Reactor {
         case let .endCurrentWorkout(isEnded):
             if isEnded {
                 state.isWorkingout = false
+                
+                state.workoutRecord = WorkoutRecord(
+                    workoutRoutine: currentState.workoutRoutine,
+                    totalTime: currentState.workoutTime,
+                    workoutTime: currentState.workoutTime,
+                    comment: currentState.memoInRoutine,
+                    date: Date())
             }
             
         case let .setTrueCurrentCardViewCompleted(cardIndex):
