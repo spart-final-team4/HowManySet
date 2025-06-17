@@ -48,6 +48,12 @@ final class SavedExcerciseView: UIView {
         self.setCountLabel.text = "\(setCount)세트"
     }
     
+    convenience init(workout: Workout) {
+        self.init(frame: .zero)
+        self.excerciseNameLabel.text = workout.name
+        self.setCountLabel.text = "\(workout.sets.count)세트 * \(workout.sets.map{ $0.weight }.max()!)\(workout.sets[0].unit) * 총 \(workout.sets.map{ $0.reps }.reduce(0, +))회"
+    }
+    
     /// 스토리보드 사용 불가
     @available(*, unavailable)
     required init(coder: NSCoder) {
