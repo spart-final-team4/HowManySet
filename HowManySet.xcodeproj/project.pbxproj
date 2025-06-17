@@ -123,6 +123,14 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
+		66329E0B2E014961003405F2 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HowManySetUITests.swift,
+				HowManySetUITestsLaunchTests.swift,
+			);
+			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
 		667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -142,23 +150,21 @@
 		669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HowManySetUITests/HowManySetUITests.swift,
-				HowManySetUITests/HowManySetUITestsLaunchTests.swift,
 				Resources/Info.plist,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
-		AA2538932DF012BE00463BC6 /* Exceptions for "HowManySet" folder in "HowManySetUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				HowManySetUITests/HowManySetUITests.swift,
-				HowManySetUITests/HowManySetUITestsLaunchTests.swift,
-			);
-			target = 669358DA2DE9AA8E00956214 /* HowManySetUITests */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		66329E042E014905003405F2 /* HowManySetUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				66329E0B2E014961003405F2 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */,
+			);
+			path = HowManySetUITests;
+			sourceTree = "<group>";
+		};
 		668CB1202DE9BE7000924340 /* HowManySetWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -172,7 +178,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */,
-				AA2538932DF012BE00463BC6 /* Exceptions for "HowManySet" folder in "HowManySetUITests" target */,
 				667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */,
 			);
 			path = HowManySet;
@@ -253,6 +258,7 @@
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
 				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
+				66329E042E014905003405F2 /* HowManySetUITests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -310,6 +316,7 @@
 				668CB12F2DE9BE7300924340 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				66329E042E014905003405F2 /* HowManySetUITests */,
 				669358BD2DE9AA8C00956214 /* HowManySet */,
 			);
 			name = HowManySet;
@@ -372,6 +379,9 @@
 			);
 			dependencies = (
 				669358DD2DE9AA8E00956214 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				66329E042E014905003405F2 /* HowManySetUITests */,
 			);
 			name = HowManySetUITests;
 			packageProductDependencies = (
