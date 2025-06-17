@@ -118,7 +118,7 @@ final class EditExcerciseContentView: UIView {
         excerciseInfoRelay.accept(excerciseInfoRelay.value + [[-1, -1]])
         
         contentView.weightRepsRelay
-            .subscribe(with: self) { [order] owner, element in
+            .subscribe(with: self) { owner, element in
                 if owner.excerciseInfoRelay.value.count > contentView.order {
                     var newValue = owner.excerciseInfoRelay.value
                     newValue[contentView.order] = element
@@ -140,6 +140,16 @@ final class EditExcerciseContentView: UIView {
         for _ in 1...3 {
             addContentView()
         }
+    }
+    
+    func returnInitialState() {
+        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        verticalContentStackView.addArrangedSubviews(
+            horizontalContentTitleStackView,
+            addContentButton
+        )
+        excerciseInfoRelay.accept([[]])
+        setThreeCells()
     }
 }
 
