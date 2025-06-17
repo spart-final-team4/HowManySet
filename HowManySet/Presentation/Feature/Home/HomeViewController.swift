@@ -494,7 +494,7 @@ private extension HomeViewController {
                 cardView.setCompleteButton.rx.tap
                     .observe(on: MainScheduler.asyncInstance)
                     .do(onNext: {
-                        print("🟢 세트 완료 버튼 탭 감지 - index: \(cardView.index)")
+                        print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     })
                     .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
                     .bind(onNext: { [weak self] action in
@@ -517,7 +517,7 @@ private extension HomeViewController {
                     .observe(on: MainScheduler.asyncInstance)
                     .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .do(onNext: {
-                        print("🟡 휴식 버튼 탭 감지 - index: \(cardView.index)")
+                        print("휴식 버튼 탭 감지 - index: \(cardView.index)")
                     })
                     .bind { [weak cardView] in
                         guard let cardView else { return }
@@ -594,8 +594,13 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] stop in
                 guard let self else { return }
-                let workoutEnded = self.coordinator?.popUpEndWorkoutAlert(with: reactor.currentState.workoutSummary)
-                reactor.action.onNext(stop(workoutEnded ?? false))
+                
+                // 팝업 창에서 종료 버튼을 누를 때에만 액션 실행
+                self.coordinator?.popUpEndWorkoutAlert {
+                    reactor.action.onNext(stop(true))
+                    return reactor.currentState.workoutSummary
+                }
+                    
             })
             .disposed(by: disposeBag)
         
@@ -659,6 +664,7 @@ extension HomeViewController {
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
             .filter { $0 }
+            .take(1)
             .bind(onNext: { [weak self]  _ in
                 
                 guard let self else { return }
@@ -790,8 +796,8 @@ extension HomeViewController {
         // 모든 세트 완료 시 카드 삭제 및 레이아웃 재설정
         reactor.state
             .map { $0.currentExerciseAllSetsCompleted }
-            .distinctUntilChanged()        // true가 될 때만
-            .filter { $0 }                 // true인 경우만
+            .distinctUntilChanged() // true가 될 때만
+            .filter { $0 } // true인 경우만
             .withLatestFrom(
                 reactor.state.map { $0.currentExerciseIndex }
             )
@@ -846,9 +852,11 @@ extension HomeViewController {
                     let visibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
                     if visibleCards.isEmpty {
                         print("🎉 모든 운동 완료!")
-                        let workoutEnded = self.coordinator?.popUpCompletedWorkoutAlert(with: reactor.currentState.workoutSummary)
-                        reactor.action.onNext(.stopButtonClicked(with: workoutEnded ?? false))
-                        return
+
+                        self.coordinator?.popUpEndWorkoutAlert {
+                            reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                            return reactor.currentState.workoutSummary
+                        }
                     }
                     
                     // newPage가 유효한 범위 내에 있는지 확인
