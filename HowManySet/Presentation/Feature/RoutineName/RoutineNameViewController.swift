@@ -57,9 +57,8 @@ extension RoutineNameViewController {
             .withLatestFrom(routineNameView.publicRoutineNameTF.rx.text.orEmpty)
             .bind(with: self) { owner, text in
                 reactor.action.onNext(.setRoutineName(text))
-                reactor.action.onNext(.saveRoutine)
                 owner.dismiss(animated: true) {
-                    owner.coordinator?.pushEditExcerciseView()
+                    owner.coordinator?.pushEditExcerciseView(routineName: text)
                 }
             }
             .disposed(by: disposeBag)
