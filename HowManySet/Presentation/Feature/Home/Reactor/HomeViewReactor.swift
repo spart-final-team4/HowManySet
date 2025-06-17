@@ -256,7 +256,7 @@ final class HomeViewReactor: Reactor {
             }
             
             // 운동 시간 타이머 설정
-            let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+            let timer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.asyncInstance)
                 .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
                 .withLatestFrom(self.state.map{ $0.isWorkoutPaused }) { _, isPaused in return isPaused }
                 .filter { !$0 }
@@ -275,7 +275,7 @@ final class HomeViewReactor: Reactor {
             let restTime = currentState.restTime
             let interval = 0.01
             let tickCount = Int(Double(restTime) / interval)
-            let restTimer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.instance)
+            let restTimer = Observable<Int>.interval(.milliseconds(Int(interval * 1000)), scheduler: MainScheduler.asyncInstance)
                 .withLatestFrom(self.state) { _, state in state }
                 .filter { $0.isResting && !$0.isWorkoutPaused && !$0.isRestPaused }
                 .take(tickCount)
@@ -415,7 +415,7 @@ final class HomeViewReactor: Reactor {
                !newState.isRestPaused {
                 
                 newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.01, 0)
-                if Int(newState.restSecondsRemaining) == 0 {
+                if newState.restSecondsRemaining == 0.0 {
                     newState.isResting = false
                 }
             }

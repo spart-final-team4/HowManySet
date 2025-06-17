@@ -682,7 +682,7 @@ extension HomeViewController {
                     return
                 }
                 
-                if isResting && restTime > 0 && Int(restSecondsRemaining) > 0 {
+                if isResting && restTime >= 0 && Int(restSecondsRemaining) >= 0 {
                     
                     print("남은 휴식 시간: \(restSecondsRemaining)")
                     
