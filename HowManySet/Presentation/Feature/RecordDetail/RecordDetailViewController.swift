@@ -12,20 +12,48 @@ final class RecordDetailViewController: UIViewController, View {
     var disposeBag = DisposeBag()
 
     // MARK: - DataSource
-    private let dataSource = RxCollectionViewSectionedReloadDataSource<RecordDetailSectionModel> { dataSource, collectionView, indexPath, item in
-        switch dataSource.sectionModels[indexPath.section].model {
-        case .summary:
+    private let dataSource = RxCollectionViewSectionedReloadDataSource<RecordDetailSectionModel>(configureCell: { dataSource, collectionView, indexPath, item in
+        switch item {
+        case let .summary(record):
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: SummaryInfoCell.identifier,
                 for: indexPath
             ) as? SummaryInfoCell else {
                 return UICollectionViewCell()
             }
-            cell.configure(with: item)
+            cell.configure(with: record)
+            return cell
+
+        case let .set(index, set):
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: WorkoutDetailInfoCell.identifier,
+                for: indexPath
+            ) as? WorkoutDetailInfoCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(index: index, set: set)
             return cell
         }
+    },
+    configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        switch dataSource.sectionModels[indexPath.section].model {
+        case let .workoutDetail(workout) where kind == UICollectionView.elementKindSectionHeader:
+            guard let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: WorkoutDetailHeaderView.identifier,
+                for: indexPath
+            ) as? WorkoutDetailHeaderView else {
+                return UICollectionReusableView()
+            }
+            header.configure(title: workout.name)
+            return header
+        default:
+            return UICollectionReusableView()
+        }
     }
-    
+    )
+
+
     // MARK: - Initializer
     init(reactor: RecordDetailViewReactor) {
         super.init(nibName: nil, bundle: nil)
@@ -52,11 +80,28 @@ final class RecordDetailViewController: UIViewController, View {
 extension RecordDetailViewController {
     /// 리액터 Binding
     func bind(reactor: RecordDetailViewReactor) {
-        let sections: [RecordDetailSectionModel] = [
-            .init(model: .summary, items: [reactor.currentState.record])
-        ]
+        let record = reactor.currentState.record
 
-        Observable.just(sections)
+        // 요약뷰 구성
+        let summarySection = RecordDetailSectionModel(
+            model: .summary,
+            items: [.summary(record: record)]
+        )
+
+        // 운동 세부 정보 섹션
+        let workoutSections: [RecordDetailSectionModel] = record.workoutRoutine.workouts.enumerated().map { _, workout in
+            let items = workout.sets.enumerated().map { (index, set) in
+                RecordDetailSectionItem.set(index: index, set: set)
+            }
+            return RecordDetailSectionModel(
+                model: .workoutDetail(workout: workout),
+                items: items
+            )
+        }
+
+        let allSections = [summarySection] + workoutSections
+
+        Observable.just(allSections)
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
@@ -66,6 +111,18 @@ extension RecordDetailViewController {
         recordDetailView.publicCollectionView.register(
             SummaryInfoCell.self,
             forCellWithReuseIdentifier: SummaryInfoCell.identifier
+        )
+
+        recordDetailView.publicCollectionView.register(
+            WorkoutDetailInfoCell.self,
+            forCellWithReuseIdentifier: WorkoutDetailInfoCell.identifier
+        )
+
+        // 헤더 뷰
+        recordDetailView.publicCollectionView.register(
+            WorkoutDetailHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: WorkoutDetailHeaderView.identifier
         )
     }
 }
