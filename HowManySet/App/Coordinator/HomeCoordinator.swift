@@ -8,11 +8,11 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-    func presentEditAndMemoView()
-    func presentEditRoutineView()
-    func pushRoutineCompleteView()
-    func popUpEndWorkoutAlert() -> Bool
-    func popUpCompletedWorkoutAlert() -> Bool
+    func presentWorkoutOptionView()
+    func pushEditRoutineView()
+    func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
+    func popUpEndWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool
+    func popUpCompletedWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool
 }
 
 /// 홈 흐름 담당 coordinator
@@ -76,12 +76,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     }
 
     /// 운동 완료 화면으로 이동
-    func pushRoutineCompleteView() {
-        let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container)
+    func pushRoutineCompleteView(with workoutSummary: WorkoutSummary) {
+        let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container, workoutSummary: workoutSummary)
         routineCompleteCoordinator.start()
     }
     
-    func popUpEndWorkoutAlert() -> Bool {
+    func popUpEndWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool {
         
         var workoutEnded = false
         
@@ -101,7 +101,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
                 workoutEnded = true
                 
-                self.pushRoutineCompleteView()
+                self.pushRoutineCompleteView(with: workoutSummary)
                 
             })
         
@@ -111,7 +111,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     }
     
     
-    func popUpCompletedWorkoutAlert() -> Bool {
+    func popUpCompletedWorkoutAlert(with workoutSummary: WorkoutSummary) -> Bool {
         
         var workoutEnded = false
         
@@ -131,8 +131,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
                 workoutEnded = true
                 
-                self.pushRoutineCompleteView()
-                
+                self.pushRoutineCompleteView(with: workoutSummary)
             })
         
         navigationController.present(endWorkoutVC, animated: true)

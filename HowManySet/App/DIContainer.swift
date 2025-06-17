@@ -97,9 +97,7 @@ final class DIContainer {
         let realmService: RealmServiceProtocol = RealmService()
         let recordRepository = RecordRepositoryImpl(realmService: realmService)
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
-
-        let reactor = RoutineCompleteViewReactor(saveRecordUseCase: saveRecordUseCase)
         
-        return RoutineCompleteViewController(reactor: reactor, coordinator: coordinator)
+        return RoutineCompleteViewController(coordinator: coordinator)
     }
 }

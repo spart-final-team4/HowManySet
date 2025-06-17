@@ -16,14 +16,20 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
+    private let workoutSummary: WorkoutSummary
 
-    init(navigationController: UINavigationController, container: DIContainer) {
+    init(navigationController: UINavigationController, container: DIContainer, workoutSummary: WorkoutSummary) {
         self.navigationController = navigationController
         self.container = container
+        self.workoutSummary = workoutSummary
     }
     
     func start() {
         let routineCompleteVC = container.makeRoutineCompleteViewController(coordinator: self)
+        
+        if let routineCompleteVC = routineCompleteVC as? RoutineCompleteViewController {
+            routineCompleteVC.configure(with: workoutSummary)
+        }
         
         navigationController.pushViewController(routineCompleteVC, animated: false)
     }
