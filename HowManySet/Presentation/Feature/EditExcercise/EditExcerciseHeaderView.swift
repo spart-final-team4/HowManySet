@@ -8,11 +8,16 @@
 import UIKit
 import SnapKit
 import Then
+import RxCocoa
+import RxSwift
 
 /// 운동 이름을 입력받는 화면 상단 헤더 뷰입니다.
 ///
 /// `UILabel`과 `UITextField`를 포함하며, 사용자가 운동명을 입력할 수 있도록 구성되어 있습니다.
 final class EditExcerciseHeaderView: UIView {
+    
+    private let disposeBag = DisposeBag()
+    private(set) var exerciseNameRelay = BehaviorRelay<String>(value: "")
     
     /// 운동명 입력 안내 텍스트를 보여주는 라벨입니다.
     private let titleLabel = UILabel().then {
@@ -41,6 +46,7 @@ final class EditExcerciseHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        
     }
     
     /// 스토리보드나 XIB를 통한 초기화는 지원하지 않습니다.
@@ -59,6 +65,15 @@ private extension EditExcerciseHeaderView {
         setViewHierarchy()
         setConstraints()
         setAppearance()
+        bind()
+    }
+    
+    func bind() {
+        exerciseNameTextField.rx.text
+            .compactMap{ $0 }
+            .distinctUntilChanged()
+            .bind(to: exerciseNameRelay)
+            .disposed(by: disposeBag)
     }
     
     /// 뷰의 외형(배경색 등)을 설정합니다.
