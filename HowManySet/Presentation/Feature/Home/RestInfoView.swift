@@ -157,8 +157,8 @@ private extension RestInfoView {
         
         [restButton60, restButton30, restButton10, restResetButton].forEach {
             $0.snp.makeConstraints {
-                $0.width.equalTo(70)
-                $0.height.equalTo(36)
+                $0.width.equalTo(self).multipliedBy(0.19)
+                $0.height.equalTo(self).multipliedBy(0.27)
             }
         }
     }
