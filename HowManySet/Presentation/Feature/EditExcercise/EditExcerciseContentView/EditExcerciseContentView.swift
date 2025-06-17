@@ -31,6 +31,7 @@ final class EditExcerciseContentView: UIView {
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExcerciseContentHeaderView()
     private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
+    private(set) var excerciseInfoRelay = BehaviorRelay<[[Int]]>(value: [[]])
     
     /// 세트 정보와 추가 버튼을 포함하는 수직 스택뷰입니다.
     private let verticalContentStackView = UIStackView().then {
@@ -109,6 +110,20 @@ final class EditExcerciseContentView: UIView {
                 owner.verticalContentStackView.removeArrangedSubview(contentView)
                 contentView.removeFromSuperview()
                 owner.reorder()
+                var newValue = owner.excerciseInfoRelay.value
+                newValue.remove(at: contentView.order)
+                owner.excerciseInfoRelay.accept(newValue)
+            }.disposed(by: disposeBag)
+        
+        excerciseInfoRelay.accept(excerciseInfoRelay.value + [[-1, -1]])
+        
+        contentView.weightRepsRelay
+            .subscribe(with: self) { [order] owner, element in
+                if owner.excerciseInfoRelay.value.count > contentView.order {
+                    var newValue = owner.excerciseInfoRelay.value
+                    newValue[contentView.order] = element
+                    owner.excerciseInfoRelay.accept(newValue)
+                }
             }.disposed(by: disposeBag)
     }
     
