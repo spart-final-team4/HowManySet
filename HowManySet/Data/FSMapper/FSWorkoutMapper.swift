@@ -23,3 +23,20 @@ extension WorkoutSet {
                                reps: self.reps)
     }
 }
+
+// MARK: - Workout Mapper
+extension FSWorkoutDTO {
+    func toDomain() -> Workout {
+        return Workout(name: self.name,
+                       sets: self.sets.map { $0.toDomain() },
+                       comment: self.comment)
+    }
+}
+
+extension Workout {
+    func toFSDTO() -> FSWorkoutDTO {
+        return FSWorkoutDTO(name: self.name,
+                            sets: self.sets.map { $0.toFSDTO() },
+                            comment: self.comment)
+    }
+}
