@@ -36,7 +36,6 @@ final class RoutineCompleteViewController: UIViewController {
     }
     
     private lazy var exerciseInfoLabel = UILabel().then {
-        $0.text = "루틴명 | 2025.06.06 운동 기록 저장됨"
         $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .lightGray
         $0.textAlignment = .center
@@ -48,7 +47,7 @@ final class RoutineCompleteViewController: UIViewController {
     }
     
     private lazy var progressView = ArchProgressView().then {
-        $0.progress = 0.8
+        $0.progress = 0
         $0.trackColor = .textTertiary
         $0.progressColor = .brand
         $0.lineWidth = 22
@@ -56,21 +55,18 @@ final class RoutineCompleteViewController: UIViewController {
     }
     
     private lazy var percentageLabel = UILabel().then {
-        $0.text = "80%"
         $0.font = .systemFont(ofSize: 36, weight: .semibold)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
     private lazy var exerciseTimeLabel = UILabel().then {
-        $0.text = "40:38"
         $0.font = .systemFont(ofSize: 20, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
     private lazy var exerciseAndSetInfoLabel = UILabel().then {
-        $0.text = "5개 운동, 25세트"
         $0.font = .systemFont(ofSize: 20, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .center
@@ -269,12 +265,18 @@ extension RoutineCompleteViewController {
  
     func configure(with workoutSummary: WorkoutSummary) {
         let routineName = workoutSummary.routineName
-        let todayDate = workoutSummary.date
-        let totalTime = workoutSummary.totalTime
+        let todayDate = workoutSummary.date.toDateLabelWithYear()
+        let totalTime = workoutSummary.totalTime.toWorkOutTimeLabel()
+        let routineDidProgress = workoutSummary.routineDidProgress
         let exerciseDidCount = workoutSummary.exerciseDidCount
         let setDidCount = workoutSummary.setDidCount
         let routineMemo = workoutSummary.routineMemo
         
-        
+        exerciseInfoLabel.text = "\(routineName) | \(todayDate) \(exerciseRecordSavedText)"
+        progressView.progress = CGFloat(routineDidProgress)
+        percentageLabel.text = "\(Int(routineDidProgress))%"
+        exerciseTimeLabel.text = totalTime
+        exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
+        memoTextView.text = routineMemo
     }
 }
