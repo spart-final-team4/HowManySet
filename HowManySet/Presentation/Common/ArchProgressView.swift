@@ -24,13 +24,13 @@ final class ArchProgressView: UIView {
         }
     }
     
-    var progressColor: UIColor = UIColor.systemGreen {
+    var progressColor: UIColor = UIColor.brand {
         didSet {
             progressLayer.strokeColor = progressColor.cgColor
         }
     }
     
-    var lineWidth: CGFloat = 12 {
+    var lineWidth: CGFloat = 22 {
         didSet {
             trackLayer.lineWidth = lineWidth
             progressLayer.lineWidth = lineWidth
