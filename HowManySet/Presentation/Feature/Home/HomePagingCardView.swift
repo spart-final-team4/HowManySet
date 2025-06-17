@@ -250,7 +250,6 @@ extension HomePagingCardView {
         restPlayPauseButton.alpha = 0
         setCompleteButton.isUserInteractionEnabled = true
         setCompleteButton.alpha = 1
-        
     }
     
     func showRestUI() {
@@ -265,11 +264,6 @@ extension HomePagingCardView {
         setCompleteButton.alpha = 0
     }
     
-}
-
-// MARK: - Internal Methods
-extension HomePagingCardView {
-    
     func configure(with state: WorkoutCardState) {
                 
         exerciseNameLabel.text = state.currentExerciseName
@@ -282,6 +276,7 @@ extension HomePagingCardView {
             self.setProgressBar.setupSegments(totalSets: state.totalSetCount)
         }
     }
+    
 }
 
 

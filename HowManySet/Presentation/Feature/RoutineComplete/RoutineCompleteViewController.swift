@@ -149,6 +149,7 @@ final class RoutineCompleteViewController: UIViewController {
         memoTextView.delegate = self
 
         setupUI()
+        bindUIEvents()
         
         if let workoutSummary {
             print("configure 호출")
@@ -286,5 +287,20 @@ private extension RoutineCompleteViewController {
         exerciseTimeLabel.text = totalTime
         exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
         memoTextView.text = routineMemo
+    }
+}
+
+// MARK: - Rx Binding
+private extension RoutineCompleteViewController {
+    
+    func bindUIEvents() {
+        
+        confirmButton.rx.tap
+            .bind { [weak self] _ in
+                guard let self else { return }
+                
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 }
