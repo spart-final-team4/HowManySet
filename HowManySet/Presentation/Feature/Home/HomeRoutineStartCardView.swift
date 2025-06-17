@@ -46,6 +46,7 @@ final class HomeRoutineStartCardView: UIView {
         $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .brand
+        $0.contentMode = .scaleAspectFit
     }
     
     private lazy var initialTextLabel = UILabel().then {
