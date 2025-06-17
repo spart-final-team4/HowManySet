@@ -10,6 +10,7 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import ReactorKit
 
 /// 운동 루틴 편집 화면을 담당하는 뷰 컨트롤러입니다.
 ///
@@ -20,15 +21,14 @@ import RxCocoa
 /// - 하단 푸터 버튼 (`EditExcerciseFooterView`)
 ///
 /// 사용자가 세트를 추가하고, 운동을 저장하는 등 편집 기능을 제공합니다.
-final class EditExcerciseViewController: UIViewController {
+final class EditExcerciseViewController: UIViewController, View {
+    
+    typealias Reactor = EditExcerciseViewReactor
     
     // MARK: - Properties
     
-    /// ReactorKit 또는 MVVM 패턴을 위한 리액터 객체입니다.
-    private let reactor: EditExcerciseViewReactor
-    
     /// 메모리 해제를 위한 DisposeBag (RxSwift)
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     // MARK: - UI Components
     
@@ -61,8 +61,8 @@ final class EditExcerciseViewController: UIViewController {
     
     /// 외부에서 리액터를 주입받아 초기화합니다.
     init(reactor: EditExcerciseViewReactor) {
-        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
     }
     
     /// 스토리보드 초기화는 지원하지 않습니다.
@@ -77,29 +77,26 @@ final class EditExcerciseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bind()
     }
     
-    /// 버튼 등의 이벤트 바인딩 처리
-    func bind() {
-        // '운동 추가' 버튼 탭 시 임시 운동 추가 (추후 리액터와 연결 가능)
+    func bind(reactor: EditExcerciseViewReactor) {
         footerView.addExcerciseButtonTapped
-            .subscribe(with: self) { owner, _ in
-                print("addExcerciseButtonTapped")
-                owner.currentView.addExcercise(name: "Mock", setCount: 5)
-            }.disposed(by: disposeBag)
+            .map{ Reactor.Action.addExcerciseButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        // '루틴 저장' 버튼 탭 시 처리 로직 (현재는 print만)
         footerView.saveRoutineButtonTapped
-            .subscribe(with: self) { owner, _ in
-                print("saveRoutineButtonTapped")
-            }.disposed(by: disposeBag)
-        
-        // 화면 탭하면 키보드 내리기
+            .map { Reactor.Action.saveRoutineButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        headerView.exerciseNameRelay
+            .map{ Reactor.Action.changeExerciseName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
 
+        view.addGestureRecognizer(tapGesture)
         tapGesture.rx.event
             .bind { [weak self] _ in
                 guard let self else { return }
