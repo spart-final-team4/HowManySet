@@ -9,9 +9,8 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
-import ReactorKit
 
-final class RoutineCompleteViewController: UIViewController, View {
+final class RoutineCompleteViewController: UIViewController {
     
     // MARK: - Properties
     private weak var coordinator: RoutineCompleteCoordinatorProtocol?
@@ -132,9 +131,8 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     // MARK: - Initializer
-    init(reactor: RoutineCompleteViewReactor, coordinator: RoutineCompleteCoordinatorProtocol) {
+    init(coordinator: RoutineCompleteCoordinatorProtocol) {
         super.init(nibName: nil, bundle: nil)
-        self.reactor = reactor
         self.coordinator = coordinator
         
         self.hidesBottomBarWhenPushed = true
@@ -266,10 +264,17 @@ extension RoutineCompleteViewController: UITextViewDelegate {
     }
 }
 
-// MARK: - Reactor Binding
+// MARK: - Internal Methods
 extension RoutineCompleteViewController {
  
-    func bind(reactor: RoutineCompleteViewReactor) {
+    func configure(with workoutSummary: WorkoutSummary) {
+        let routineName = workoutSummary.routineName
+        let todayDate = workoutSummary.date
+        let totalTime = workoutSummary.totalTime
+        let exerciseDidCount = workoutSummary.exerciseDidCount
+        let setDidCount = workoutSummary.setDidCount
+        let routineMemo = workoutSummary.routineMemo
+        
         
     }
 }
