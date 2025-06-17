@@ -76,6 +76,7 @@ final class HomePagingCardView: UIView {
     private lazy var weightRepsHStack = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 70
+        $0.isUserInteractionEnabled = false
     }
     
     private lazy var weightInfoVStack = UIStackView().then {
