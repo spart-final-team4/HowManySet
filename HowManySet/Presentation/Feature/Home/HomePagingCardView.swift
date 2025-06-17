@@ -271,7 +271,7 @@ extension HomePagingCardView {
 extension HomePagingCardView {
     
     func configure(with state: WorkoutCardState) {
-        
+                
         exerciseNameLabel.text = state.currentExerciseName
         exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
         weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
