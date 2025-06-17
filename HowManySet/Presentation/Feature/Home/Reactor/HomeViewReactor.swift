@@ -35,6 +35,17 @@ struct WorkoutCardState {
     var allSetsCompleted: Bool
 }
 
+/// 운동 완료 UI에 보여질 운동 요약 통계 정보
+struct WorkoutSummary {
+    let routineName: String
+    let date: Date
+    let routineDidProgress: Float
+    let totalTime: Int
+    let exerciseDidCount: Int
+    let setDidCount: Int
+    let routineMemo: String?
+}
+
 final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
@@ -127,7 +138,11 @@ final class HomeViewReactor: Reactor {
         var date: Date
         var memoInRoutine: String?
         var currentExerciseAllSetsCompleted: Bool
-        var isEditAndMemoViewPresented: Bool
+        
+        /// 저장되는 운동 기록 정보
+        var workoutRecord: WorkoutRecord
+        /// UI에 보여질 운동 요약 정보
+        var workoutSummary: WorkoutSummary
     }
     
     let initialState: State
@@ -167,6 +182,16 @@ final class HomeViewReactor: Reactor {
             date: Date()
         )
         
+        let initialWorkoutSummary = WorkoutSummary(
+            routineName: initialRoutine.name,
+            date: Date(),
+            routineDidProgress: 0.0,
+            totalTime: 0,
+            exerciseDidCount: 0,
+            setDidCount: 0,
+            routineMemo: nil
+        )
+        
         self.initialState = State(
             workoutRoutine: initialRoutine,
             workoutCardStates: initialWorkoutCardStates,
@@ -181,7 +206,8 @@ final class HomeViewReactor: Reactor {
             date: Date(),
             memoInRoutine: nil,
             currentExerciseAllSetsCompleted: false,
-            isEditAndMemoViewPresented: false
+            workoutRecord: initialWorkoutRecord,
+            workoutSummary: initialWorkoutSummary
         )
     }
     
@@ -381,14 +407,38 @@ final class HomeViewReactor: Reactor {
             
         case let .endCurrentWorkout(isEnded):
             if isEnded {
-                state.isWorkingout = false
-                
                 state.workoutRecord = WorkoutRecord(
                     workoutRoutine: currentState.workoutRoutine,
                     totalTime: currentState.workoutTime,
                     workoutTime: currentState.workoutTime,
                     comment: currentState.memoInRoutine,
-                    date: Date())
+                    date: Date()
+                )
+                
+                var exerciseDidCount = 0
+                var setDidCount = 0
+                
+                // MARK: - TODO: 추후에 수정
+                currentState.workoutCardStates.forEach {
+                    if $0.allSetsCompleted {
+                        exerciseDidCount += 1
+                        setDidCount += $0.currentSetNumber
+                    }
+                }
+                
+                let routineDidProgress = currentState.workoutCardStates.count / exerciseDidCount
+                
+                state.workoutSummary = WorkoutSummary(
+                    routineName: currentState.workoutRoutine.name,
+                    date: Date(),
+                    routineDidProgress: 0,
+                    totalTime: state.workoutRecord.totalTime,
+                    exerciseDidCount: exerciseDidCount,
+                    setDidCount: setDidCount,
+                    routineMemo: currentState.memoInRoutine
+                )
+                
+                state.isWorkingout = false
             }
             
         case let .setTrueCurrentCardViewCompleted(cardIndex):
