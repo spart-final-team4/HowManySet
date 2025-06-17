@@ -39,14 +39,20 @@ final class EditExcerciseViewReactor: Reactor {
     }
     
     enum VaildWorkout {
-        case success
-        case failure
+        case excerciseSaveSuccess
+        case excerciseSavefailure
+        case saveRoutineFailure
     }
+    
     let initialState: State
     let alertRelay = PublishRelay<VaildWorkout>()
+    let dismissRelay = PublishRelay<Void>()
     
-    init(routineName: String) {
+    private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
+    
+    init(routineName: String, saveRoutineUseCase: SaveRoutineUseCaseProtocol) {
         self.initialState = State(currentRoutine: WorkoutRoutine(name: routineName, workouts: []))
+        self.saveRoutineUseCase = saveRoutineUseCase
     }
     
     // Action -> Mutation
@@ -67,15 +73,26 @@ final class EditExcerciseViewReactor: Reactor {
                 
                 if self.validationWorkout(workout: newWorkout) {
                     observer.onNext(.addExcercise(newWorkout))
-                    self.alertRelay.accept(.success)
+                    self.alertRelay.accept(.excerciseSaveSuccess)
                 } else {
-                    self.alertRelay.accept(.failure)
+                    self.alertRelay.accept(.excerciseSavefailure)
                 }
                 observer.onCompleted()
                 return Disposables.create()
             }
         case .saveRoutineButtonTapped:
-            return .just(.saveRoutine)
+            return Observable.create { [unowned self] observer in
+                let routine = self.currentState.currentRoutine
+                if routine.workouts.isEmpty {
+                    self.alertRelay.accept(.saveRoutineFailure)
+                } else {
+                    dismissRelay.accept(())
+                    observer.onNext(.saveRoutine)
+                }
+                observer.onCompleted()
+                
+                return Disposables.create()
+            }
         case .changeExerciseName(let name):
             return .just(.changeExcerciseName(name))
         case .changeUnit(let unit):
@@ -93,17 +110,14 @@ final class EditExcerciseViewReactor: Reactor {
         case .addExcercise(let workout):
             newState.currentRoutine.workouts.append(workout)
         case .saveRoutine:
-            // TODO: Realm Routine 저장
-            print(newState.currentRoutine)
+            // TODO: Realm Routine 저장 UID 입력 요구
+            saveRoutineUseCase.execute(uid: "", item: newState.currentRoutine)
         case .changeExcerciseName(let newName):
-            print(newName)
             newState.currentExcerciseName = newName
         case .changeUnit(let unit):
-            print(unit)
             newState.currentUnit = unit
         case .changeExcerciseWeightSet(let newWeightSet):
             newState.currentWeightSet = newWeightSet
-            print(newWeightSet)
         }
         return newState
     }
