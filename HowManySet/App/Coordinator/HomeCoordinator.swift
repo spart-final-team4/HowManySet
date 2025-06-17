@@ -8,8 +8,9 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-    func presentWorkoutOptionView()
-    func pushEditRoutineView()
+    func presentRoutineListView()
+    func presentEditAndMemoView()
+    func presentEditRoutineView()
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
     func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
@@ -24,6 +25,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// DI 컨테이너
     private let container: DIContainer
+    
+    // EditAndMemoView에 동일한 reactor 주입 위해 보관
+    private var homeViewReactor: HomeViewReactor?
     
     /// coordinator 생성자
     /// - Parameters:
@@ -60,19 +64,16 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         navigationController.present(editAndMemoVC, animated: true)
     }
     
-    /// 루틴 수정 버튼 클릭 시 루틴 편집 화면 push
-    func pushEditRoutineView() {
+    /// 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
+    func presentEditRoutineView() {
         let reactor = EditRoutinViewReactor()
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
-        // TODO: present로 할지 push로 할지 결정 필요
-        //        if let sheet = editRoutineVC.sheetPresentationController {
-        //            sheet.detents = [.large()]
-        //            sheet.prefersGrabberVisible = true
-        //        }
-        //        navigationController.present(editRoutineVC, animated: true)
-        
-        navigationController.pushViewController(editRoutineVC, animated: true)
+        if let sheet = editRoutineVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        navigationController.present(editRoutineVC, animated: true)
     }
     
     /// 운동 완료 화면으로 이동
@@ -98,7 +99,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
                 // HomeVC 초기화
                 self.navigationController.popToRootViewController(animated: false)
-                let newHomeVC = self.container.makeHomeViewController(coordinator: self)
+                let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)

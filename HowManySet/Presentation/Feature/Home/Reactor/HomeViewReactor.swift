@@ -70,7 +70,7 @@ final class HomeViewReactor: Reactor {
         /// 휴식 중지 버튼 클릭 시
         case restPauseButtonClicked
         /// 운동 종료 버튼 클릭 시
-        case stopButtonClicked(with: Bool)
+        case stopButtonClicked(isEnded: Bool)
         /// 카드의 운동 옵션 버튼 클릭으로 editAndMemoView present시
         case editAndMemoViewPresented(at: Int)
         /// MemoTextView의 메모로 업데이트
@@ -139,6 +139,7 @@ final class HomeViewReactor: Reactor {
         var date: Date
         var memoInRoutine: String?
         var currentExerciseAllSetsCompleted: Bool
+        var isEditAndMemoViewPresented: Bool
         
         // 기록 관련
         /// 저장되는 운동 기록 정보
@@ -216,6 +217,7 @@ final class HomeViewReactor: Reactor {
             date: Date(),
             memoInRoutine: initialWorkoutRecord.comment,
             currentExerciseAllSetsCompleted: false,
+            isEditAndMemoViewPresented: false,
             workoutRecord: initialWorkoutRecord,
             workoutSummary: initialWorkoutSummary,
             totalExerciseCount: initialWorkoutCardStates.count,
@@ -304,8 +306,8 @@ final class HomeViewReactor: Reactor {
             return .just(.pauseAndPlayRest(!currentState.isRestPaused))
             
         case .stopButtonClicked(let isEnded):
-            return .just(.endCurrentWorkout(with: isEnded))
-            
+            return .just(.manageWorkoutData(isEnded: isEnded))
+
         case .editAndMemoViewPresented:
             let currentExerciseIndex = currentState.currentExerciseIndex
             let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
@@ -461,22 +463,22 @@ final class HomeViewReactor: Reactor {
             
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
-            state.currentExerciseIndex = newIndex
+            newState.currentExerciseIndex = newIndex
             
         case let .setEditAndMemoViewPresented(presented):
-            state.isEditAndMemoViewPresented = presented
+            newState.isEditAndMemoViewPresented = presented
             
         case let .updateExerciseMemo(newMemo):
             let currentExerciseIndex = currentState.currentExerciseIndex
-            state.workoutCardStates[currentExerciseIndex].memoInExercise = newMemo
-            print("📋 변경된메모: \(String(describing: newMemo)), \(String(describing: state.workoutCardStates[currentExerciseIndex].memoInExercise))")
+            newState.workoutCardStates[currentExerciseIndex].memoInExercise = newMemo
+            print("📋 변경된메모: \(String(describing: newMemo)), \(String(describing: newState.workoutCardStates[currentExerciseIndex].memoInExercise))")
             
         case let .sendCurrentCardStates(currentCardState):
             // MARK: - TODO: 현재 운동 카드 편집위해 데이터 전달
             print("🦾 편집될 운동 카드 데이터: \(currentCardState)")
             
         }//mutation
-        return state
+        return newState
     }//reduce
 }
 

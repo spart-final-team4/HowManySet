@@ -38,6 +38,7 @@ final class HomeRoutineStartCardView: UIView {
     private lazy var containerVStack = UIStackView().then {
         $0.axis = .vertical
         $0.distribution = .fillProportionally
+        $0.alignment = .center
     }
 
     private lazy var initialImageView = UIImageView().then {
@@ -45,7 +46,6 @@ final class HomeRoutineStartCardView: UIView {
         $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .brand
-        $0.contentMode = .scaleAspectFit
     }
     
     private lazy var initialTextLabel = UILabel().then {
@@ -53,6 +53,7 @@ final class HomeRoutineStartCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 24, weight: .medium)
         $0.numberOfLines = 0
         $0.adjustsFontSizeToFitWidth = true
+        $0.textAlignment = .center
     }
     
     lazy var routineSelectButton = UIButton().then {
@@ -100,7 +101,7 @@ private extension HomeRoutineStartCardView {
         )
 
         containerView.addSubview(containerVStack)
-        containerVStack.addArrangedSubviews(initialTextLabel, initialImageView)
+        containerVStack.addArrangedSubviews(initialImageView, initialTextLabel)
     }
     
     func setConstraints() {

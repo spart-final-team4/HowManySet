@@ -350,7 +350,7 @@ private extension HomeViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self = self, let reactor = self.reactor else { return }
             print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
-            self.bindSetCompleteButtons(reactor: reactor)
+            self.bindCardViewsButton(reactor: reactor)
         }
     }
     
@@ -420,60 +420,6 @@ private extension HomeViewController {
             return visibleCards.first?.index ?? 0
         }
         return visibleCards[currentPage].index
-    }
-    
-    // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화, 리바인딩
-    func setExerciseCardViewslayout(
-        cardContainer: [HomePagingCardView],
-        newPage: Int) {
-            
-        // hidden이 아닌 카드들만
-        let visibleCards = cardContainer.filter { !$0.isHidden }
-
-        for (i, cardView) in visibleCards.enumerated() {
-            cardView.snp.remakeConstraints {
-                $0.top.bottom.equalToSuperview()
-                $0.width.equalTo(cardWidth)
-                $0.leading.equalToSuperview()
-                    .offset(cardInset + CGFloat(i) * screenWidth)
-            }
-            UIView.performWithoutAnimation {
-                cardView.transform = .identity
-                cardView.alpha = 1
-            }
-        }
-
-        pagingScrollContentView.snp.remakeConstraints {
-            $0.height.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview()
-            
-            if visibleCards.last != visibleCards.first {
-                $0.width.equalToSuperview().multipliedBy(visibleCards.count)
-            } else {
-                $0.width.equalToSuperview()
-            }
-        }
-        
-        // 페이지 업데이트
-        print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-
-        self.previousPage = newPage
-        self.currentPage = newPage
-        self.pageController.currentPage = newPage
-        self.pageController.numberOfPages = visibleCards.count
-
-        print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-
-        // 현재 페이지 업데이트 후 offsetX 조정
-        let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
-        self.pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
-
-        // 카드 재정렬 후 버튼 바인딩 재설정 (약간의 지연 추가)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            guard let self = self, let reactor = self.reactor else { return }
-            print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
-            self.bindCardViewsButton(reactor: reactor)
-        }
     }
     
     // MARK: - Visible한 카드들만 바인딩
