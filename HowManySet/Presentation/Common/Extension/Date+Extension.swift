@@ -19,4 +19,11 @@ extension Date {
         formatter.dateFormat = "MM.dd"
         return formatter.string(from: self)
     }
+    
+    /// Date에서 "yyyy.MM.dd" 형태의 String으로 반환하는 메서드
+    func toDateLabelWithYear() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        return formatter.string(from: self)
+    }
 }

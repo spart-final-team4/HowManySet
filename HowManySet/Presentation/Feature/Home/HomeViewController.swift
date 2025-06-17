@@ -594,7 +594,6 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] stop in
                 guard let self else { return }
-                let workoutRecord = reactor.currentState.workoutRecord
                 let workoutEnded = self.coordinator?.popUpEndWorkoutAlert(with: reactor.currentState.workoutSummary)
                 reactor.action.onNext(stop(workoutEnded ?? false))
             })
