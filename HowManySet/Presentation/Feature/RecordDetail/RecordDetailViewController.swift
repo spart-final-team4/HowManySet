@@ -33,6 +33,16 @@ final class RecordDetailViewController: UIViewController, View {
             }
             cell.configure(index: index, set: set)
             return cell
+
+        case let .memo(comment):
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: MemoInfoCell.identifier,
+                for: indexPath
+            ) as? MemoInfoCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(comment: comment)
+            return cell
         }
     },
     configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
@@ -53,7 +63,6 @@ final class RecordDetailViewController: UIViewController, View {
     }
     )
 
-
     // MARK: - Initializer
     init(reactor: RecordDetailViewReactor) {
         super.init(nibName: nil, bundle: nil)
@@ -73,7 +82,6 @@ final class RecordDetailViewController: UIViewController, View {
         super.viewDidLoad()
         setupCollectionView()
     }
-    
 }
 
 // MARK: - UI Methods
@@ -89,7 +97,7 @@ extension RecordDetailViewController {
         )
 
         // 운동 세부 정보 섹션
-        let workoutSections: [RecordDetailSectionModel] = record.workoutRoutine.workouts.enumerated().map { _, workout in
+        let workoutSections = record.workoutRoutine.workouts.enumerated().map { (_, workout) in
             let items = workout.sets.enumerated().map { (index, set) in
                 RecordDetailSectionItem.set(index: index, set: set)
             }
@@ -99,8 +107,19 @@ extension RecordDetailViewController {
             )
         }
 
-        let allSections = [summarySection] + workoutSections
+        // 메모 섹션
+        let memoSection = RecordDetailSectionModel(
+            model: .memo(comment: record.comment),
+            items: [.memo(comment: record.comment)]
+        )
 
+        // 전체 섹션
+        let allSections = [summarySection] + workoutSections + [memoSection]
+
+        // 레이아웃 업데이트
+        recordDetailView.updateLayout(with: allSections)
+
+        // 이후에 collecitonView에 데이터 바인딩
         Observable.just(allSections)
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
@@ -108,23 +127,31 @@ extension RecordDetailViewController {
 
     /// 컬랙션 뷰 Setup (셀 register)
     private func setupCollectionView() {
+        let collectionView = recordDetailView.publicCollectionView
+
         // 첫번째 section cell
-        recordDetailView.publicCollectionView.register(
+        collectionView.register(
             SummaryInfoCell.self,
             forCellWithReuseIdentifier: SummaryInfoCell.identifier
         )
 
         // 두번째 section cell
-        recordDetailView.publicCollectionView.register(
+        collectionView.register(
             WorkoutDetailInfoCell.self,
             forCellWithReuseIdentifier: WorkoutDetailInfoCell.identifier
         )
 
         // 두번째 section 헤더 뷰
-        recordDetailView.publicCollectionView.register(
+        collectionView.register(
             WorkoutDetailHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: WorkoutDetailHeaderView.identifier
+        )
+
+        // 세번째 section cell
+        collectionView.register(
+            MemoInfoCell.self,
+            forCellWithReuseIdentifier: MemoInfoCell.identifier
         )
     }
 }
