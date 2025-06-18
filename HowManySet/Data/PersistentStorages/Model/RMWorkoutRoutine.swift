@@ -42,7 +42,7 @@ extension RMWorkoutRoutine {
 extension RMWorkoutRoutine {
     convenience init(dto: WorkoutRoutineDTO) {
         self.init()
-        self.name = name
+        self.name = dto.name
         self.workoutArray = dto.workouts.map { RMWorkout(dto: $0) }
     }
 }
