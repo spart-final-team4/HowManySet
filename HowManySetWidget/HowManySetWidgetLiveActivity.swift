@@ -74,29 +74,33 @@ struct HowManySetWidgetLiveActivity: Widget {
                             Spacer()
                             
                             HStack(spacing: 10) {
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.brand)
-                                        .fontWeight(.bold)
-                                        .font(.title3)
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: SetCompleteIntent()) {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(.brand)
+                                            .fontWeight(.bold)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(Circle().fill(Color("brandBackground")))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
                                 }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(Circle().fill(Color("brandBackground")))
-                                .buttonStyle(.borderless)
                                 
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "xmark")
-                                        .foregroundStyle(.white)
-                                        .fontWeight(.bold)
-                                        .font(.title3)
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: StopWorkoutIntent()) {
+                                        Image(systemName: "xmark")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.bold)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(Circle().fill(Color("RoundButtonBG")))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
                                 }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(Circle().fill(Color("RoundButtonBG")))
-                                .buttonStyle(.borderless)
                             }
                         }
                     }
@@ -118,29 +122,33 @@ struct HowManySetWidgetLiveActivity: Widget {
                             Spacer()
                             
                             HStack(spacing: 10) {
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "forward.end.fill")
-                                        .foregroundStyle(.brand)
-                                        .fontWeight(.semibold)
-                                        .font(.title3)
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: SkipRestIntent()) {
+                                        Image(systemName: "forward.end.fill")
+                                            .foregroundStyle(.brand)
+                                            .fontWeight(.semibold)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(Circle().fill(Color("brandBackground")))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
                                 }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(Circle().fill(Color("brandBackground")))
-                                .buttonStyle(.borderless)
                                 
-                                Button(action: {
-                                    
-                                }) {
-                                    Image(systemName: "pause.fill")
-                                        .foregroundStyle(.white)
-                                        .fontWeight(.semibold)
-                                        .font(.title3)
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: PlayAndPauseRoutineIntent()) {
+                                        Image(systemName: "pause.fill")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.semibold)
+                                            .font(.title3)
+                                    }
+                                    .frame(width: buttonSize, height: buttonSize)
+                                    .background(Circle().fill(Color("RoundButtonBG")))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
                                 }
-                                .frame(width: buttonSize, height: buttonSize)
-                                .background(Circle().fill(Color("RoundButtonBG")))
-                                .buttonStyle(.borderless)
 
                             }
                         }
@@ -158,7 +166,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                 }//VStack
             }//VStack
             .padding(.all, 18)
-            .frame(height: 180)
+            .frame(height: 170)
             .background(Color("Background"))
             
         } dynamicIsland: { context in
