@@ -476,8 +476,53 @@ private extension HomeViewController {
                     self.coordinator?.presentEditExerciseView(routineName: "")
                 }
                 .disposed(by: disposeBag)
-        }
-        print("✅ 버튼 바인딩 완료 - \(visibleCards)")
+                
+                // 휴식 재생/일시정지 버튼
+                cardView.restPlayPauseButton.rx.tap
+                    .observe(on: MainScheduler.asyncInstance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
+                    .do(onNext: {
+                        print("휴식 버튼 탭 감지 - index: \(cardView.index)")
+                    })
+                    .bind { [weak cardView] in
+                        guard let cardView else { return }
+                        cardView.restPlayPauseButton.isSelected.toggle()
+                        reactor.action.onNext(.restPauseButtonClicked)
+                    }
+                    .disposed(by: cardView.disposeBag)
+                
+                cardView.editButton.rx.tap
+                    .observe(on: MainScheduler.instance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+                    .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
+                    .bind(onNext: { [weak self] action in
+                        guard let self else { return }
+                        self.coordinator?.presentEditAndMemoView()
+                        reactor.action.onNext(action)
+                    })
+                    .disposed(by: disposeBag)
+                
+                cardView.weightRepsButton.rx.tap
+                    .observe(on: MainScheduler.instance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+                    .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
+                    .bind { [weak self] action in
+                        guard let self else { return }
+
+                        // 클릭 애니메이션
+                        UIView.animate(withDuration: 0.1, animations: {
+                            cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                        }, completion: { _ in
+                            UIView.animate(withDuration: 0.1) {
+                                cardView.weightRepsButton.transform = .identity
+                            }
+                        })
+                        reactor.action.onNext(action)
+                        self.coordinator?.presentEditExerciseView(routineName: "")
+                    }
+                    .disposed(by: disposeBag)
+            }
+            print("✅ 버튼 바인딩 완료 - \(visibleCards)")
     }
 }
 
