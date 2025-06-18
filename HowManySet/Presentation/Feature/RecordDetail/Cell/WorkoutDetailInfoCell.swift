@@ -61,9 +61,8 @@ private extension WorkoutDetailInfoCell {
     func setAppearance() {
         setInfoStackView.do {
             $0.axis = .horizontal
-            $0.spacing = 12
             $0.alignment = .center
-            $0.distribution = .equalSpacing
+            $0.distribution = .fill
         }
     }
 
