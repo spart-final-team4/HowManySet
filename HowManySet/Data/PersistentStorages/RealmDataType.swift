@@ -32,13 +32,13 @@ enum RealmDataType<T: Object>: RealmDataTypeProtocol {
     var type: T.Type {
         switch self {
         case .workoutSet:
-            return WorkoutSetDTO.self as! T.Type
+            return RMWorkoutSet.self as! T.Type
         case .workout:
-            return WorkoutDTO.self as! T.Type
+            return RMWorkout.self as! T.Type
         case .workoutRoutine:
-            return WorkoutRoutineDTO.self as! T.Type
+            return RMWorkoutRoutine.self as! T.Type
         case .workoutRecord:
-            return WorkoutRecordDTO.self as! T.Type
+            return RMWorkoutRecord.self as! T.Type
         }
     }
 }

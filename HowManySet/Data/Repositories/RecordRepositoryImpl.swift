@@ -27,7 +27,7 @@ final class RecordRepositoryImpl: RecordRepository {
     ///   - item: 저장할 운동 기록 모델 (`WorkoutRecord`)
     func saveRecord(uid: String, item: WorkoutRecord) {
         // TODO: 운동 기록 저장 구현
-        let record = WorkoutRecordDTO(entity: item)
+        let record = RMWorkoutRecord(dto: WorkoutRecordDTO(entity: item))
         realmService.create(item: record)
     }
 
@@ -37,11 +37,12 @@ final class RecordRepositoryImpl: RecordRepository {
     /// - Returns: 운동 기록 배열을 성공 시 반환, 실패 시 `RealmErrorType.dataNotFound` 발생
     func fetchRecord(uid: String) -> Single<[WorkoutRecord]> {
         return Single.create { [weak self] observer in
-            guard let records = self?.realmService.read(type: .workoutRecord) as? [WorkoutRecordDTO] else {
+            guard let records = self?.realmService.read(type: .workoutRecord) else {
                 observer(.failure(RealmErrorType.dataNotFound))
                 return Disposables.create()
             }
-            observer(.success(records.map { $0.toEntity() }))
+            let recordDTO = records.map{ ($0 as! RMWorkoutRecord).toDTO() }
+            observer(.success(recordDTO.map { $0.toEntity() }))
             return Disposables.create()
         }
     }
@@ -51,7 +52,8 @@ final class RecordRepositoryImpl: RecordRepository {
     ///   - uid: 사용자 식별자 (현재 사용되지 않음)
     ///   - item: 삭제할 운동 기록 모델
     func deleteRecord(uid: String, item: WorkoutRecord) {
-        realmService.delete(item: WorkoutRecordDTO(entity: item))
+        let record = RMWorkoutRecord(dto: WorkoutRecordDTO(entity: item))
+        realmService.delete(item: record)
     }
 
     /// 모든 운동 루틴(기록 포함)을 삭제합니다.
