@@ -86,7 +86,7 @@ final class RecordDetailViewController: UIViewController, View {
     }
 }
 
-// MARK: - UI Methods
+// MARK: - UI Methods & Reactor Bind
 extension RecordDetailViewController {
     /// 리액터 Binding
     func bind(reactor: RecordDetailViewReactor) {
@@ -124,6 +124,27 @@ extension RecordDetailViewController {
         // 이후에 collecitonView에 데이터 바인딩
         Observable.just(allSections)
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+
+        // SummaryInfoCell의 확인 버튼 바인딩
+        recordDetailView.publicCollectionView.rx
+            .willDisplayCell
+            .compactMap { $0.cell as? SummaryInfoCell }
+            .flatMap { cell in
+                cell.publicConfirmButton.rx.tap
+                    .map { RecordDetailViewReactor.Action.tapConfirm }
+            }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        // Action 처리 결과에 따라 모달 닫기
+        reactor.state
+            .map { $0.shouldDismiss }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind(with: self) { owner, _ in
+                owner.dismiss(animated: true)
+            }
             .disposed(by: disposeBag)
     }
 
