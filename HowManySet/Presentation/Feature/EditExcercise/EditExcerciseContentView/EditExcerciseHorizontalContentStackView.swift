@@ -16,7 +16,7 @@ import RxCocoa
 /// 구성 요소:
 /// - 순서 라벨 (`orderLabel`)
 /// - 무게 입력 필드 (`weightTextField`)
-/// - 횟수 입력 필드 (`countTextField`)
+/// - 횟수 입력 필드 (`repsTextField`)
 /// - 삭제 버튼 (`removeButton`)
 ///
 /// Rx로 삭제 버튼의 탭 이벤트를 외부에 전달할 수 있도록 `removeButtonTap`을 제공합니다.
@@ -27,6 +27,9 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
     
     /// 삭제 버튼이 탭되었을 때 이벤트를 방출하는 PublishRelay입니다.
     private(set) var removeButtonTap = PublishRelay<Void>()
+    private(set) var weightRepsRelay = BehaviorRelay<[Int]>(value: [-1, -1])
+    
+    var order: Int = 0
     
     /// 현재 세트의 순서를 표시하는 라벨입니다.
     private let orderLabel = UILabel().then {
@@ -45,18 +48,20 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
         $0.textColor = .white
+        $0.keyboardType = .numberPad
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
     }
     
     /// 반복 횟수를 입력받는 텍스트 필드입니다.
-    private let countTextField = UITextField().then {
+    private let repsTextField = UITextField().then {
         $0.placeholder = "입력"
         $0.backgroundColor = .bottomSheetBG
         $0.clipsToBounds = true
         $0.textColor = .white
         $0.layer.cornerRadius = 12
+        $0.keyboardType = .numberPad
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
@@ -80,11 +85,6 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
         isLayoutMarginsRelativeArrangement = true
         layoutMargins = .init(top: 8, left: 0, bottom: 8, right: 0)
         setupUI()
-        
-        // 삭제 버튼 탭 이벤트 바인딩
-        removeButton.rx.tap
-            .bind(to: removeButtonTap)
-            .disposed(by: disposeBag)
     }
     
     /// XIB/Storyboard 초기화는 지원하지 않습니다.
@@ -99,6 +99,7 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
     convenience init(order: Int) {
         self.init(frame: .zero)
         self.orderLabel.text = "\(order)"
+        self.order = order
     }
     
     /// 외부에서 순서를 재설정할 때 사용하는 메서드입니다.
@@ -106,6 +107,7 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
     /// - Parameter order: 변경할 순서 값
     func reOrderLabel(order: Int) {
         self.orderLabel.text = "\(order)"
+        self.order = order
     }
 }
 
@@ -118,6 +120,23 @@ private extension EditExcerciseHorizontalContentStackView {
         setViewHierarchy()
         setConstraints()
         setAppearance()
+        bind()
+    }
+    
+    func bind() {
+        Observable
+            .combineLatest(
+                weightTextField.rx.text.orEmpty,
+                repsTextField.rx.text.orEmpty
+            )
+            .map{ [Int($0) ?? -1, Int($1) ?? -1] }
+            .bind(to: weightRepsRelay)
+            .disposed(by: disposeBag)
+
+        // 삭제 버튼 탭 이벤트 바인딩
+        removeButton.rx.tap
+            .bind(to: removeButtonTap)
+            .disposed(by: disposeBag)
     }
     
     /// 배경색 등 외형 스타일을 설정합니다.
@@ -127,7 +146,7 @@ private extension EditExcerciseHorizontalContentStackView {
     
     /// 스택뷰에 포함될 서브뷰들을 추가합니다.
     func setViewHierarchy() {
-        self.addArrangedSubviews(orderLabel, weightTextField, countTextField, removeButton)
+        self.addArrangedSubviews(orderLabel, weightTextField, repsTextField, removeButton)
     }
     
     /// 스택뷰 내부 컴포넌트에 대한 오토레이아웃을 설정합니다.

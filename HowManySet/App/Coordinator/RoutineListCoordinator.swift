@@ -9,7 +9,7 @@ import UIKit
 
 protocol RoutineListCoordinatorProtocol: Coordinator {
     func presentRoutineNameView()
-    func pushEditExcerciseView()
+    func pushEditExcerciseView(routineName: String)
     func pushEditRoutineView(with: WorkoutRoutine)
 }
 
@@ -52,10 +52,8 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         guard let routineListVC = navigationController.viewControllers.first(
             where: { $0 is RoutineListViewController }
         ) as? RoutineListViewController else { return }
-        let saveRoutineUseCase = routineListVC.reactor?.publicSaveRoutineUseCase
-        guard let saveRoutineUseCase = saveRoutineUseCase else { return }
         
-        let reactor = RoutineNameReactor(saveRoutineUseCase: saveRoutineUseCase)
+        let reactor = RoutineNameReactor()
         let routineNameVC = RoutineNameViewController(reactor: reactor, coordinator: self)
 
         if let sheet = routineNameVC.sheetPresentationController {
@@ -75,8 +73,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     }
     
     /// 운동 편집 화면 전체 화면으로 push
-    func pushEditExcerciseView() {
-        let reactor = EditExcerciseViewReactor()
+    func pushEditExcerciseView(routineName: String) {
+        let realmService: RealmServiceProtocol = RealmService()
+        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+        
+        let reactor = EditExcerciseViewReactor(routineName: routineName, saveRoutineUseCase: saveRoutineUseCase)
         let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
         
         navigationController.pushViewController(editExcerciseVC, animated: true)

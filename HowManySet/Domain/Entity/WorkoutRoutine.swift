@@ -20,7 +20,7 @@ struct WorkoutRoutine: Hashable {
     /// 루틴에 포함된 운동 목록입니다.
     ///
     /// 각 `Workout`은 루틴을 구성하는 개별 운동을 나타냅니다.
-    let workouts: [Workout]
+    var workouts: [Workout]
 }
 
 extension WorkoutRoutine {
