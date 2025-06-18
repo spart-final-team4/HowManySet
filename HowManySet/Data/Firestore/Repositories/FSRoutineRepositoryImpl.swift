@@ -28,7 +28,7 @@ final class FSRoutineRepositoryImpl: RoutineRepository {
             
             Task {
                 do {
-                    let fsRoutines = try await self.firestoreService.read(userId: uid, type: .workoutRoutine)
+                    let fsRoutines = try await self.firestoreService.read(userId: uid, type: FirestoreDataType<FSWorkoutRoutine>.workoutRoutine)
                     let routines = fsRoutines.map { $0.toDTO().toEntity() }
                     observer(.success(routines))
                 } catch {
@@ -59,7 +59,7 @@ final class FSRoutineRepositoryImpl: RoutineRepository {
             do {
                 let dto = WorkoutRoutineDTO(entity: item)
                 let fsRoutine = dto.toFSModel(userId: uid)
-                _ = try await firestoreService.create(item: fsRoutine, type: .workoutRoutine)
+                _ = try await firestoreService.create(item: fsRoutine, type: FirestoreDataType<FSWorkoutRoutine>.workoutRoutine)
                 print("Firestore 루틴 저장 성공")
             } catch {
                 print("Firestore 루틴 저장 실패: \(error)")
