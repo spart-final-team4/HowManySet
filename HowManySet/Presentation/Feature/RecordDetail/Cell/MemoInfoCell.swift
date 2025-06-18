@@ -14,7 +14,6 @@ final class MemoInfoCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        memoTextView.delegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -83,26 +82,4 @@ private extension MemoInfoCell {
 // MARK: - Computed Properties
 extension MemoInfoCell {
     var publicMemoTextView: UITextView { memoTextView }
-}
-
-// MARK: - UITextViewDelegate
-extension MemoInfoCell: UITextViewDelegate {
-    /// textView에 커서를 놓았을 때, 입력을 시작했을 때의 메서드
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == placeholderText {
-            textView.text = ""
-            textView.textColor = .white
-        }
-        textView.layer.borderColor = UIColor.systemGray.cgColor
-        textView.layer.borderWidth = 1
-    }
-
-    /// textView 밖에 커서를 놓았을 때, 입력을 끝냈을 때의 메서드
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            textView.text = placeholderText
-            textView.textColor = .systemGray3
-        }
-        textView.layer.borderWidth = 0
-    }
 }

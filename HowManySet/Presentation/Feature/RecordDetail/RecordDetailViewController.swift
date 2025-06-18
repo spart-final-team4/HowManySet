@@ -121,6 +121,7 @@ extension RecordDetailViewController {
         // 레이아웃 업데이트
         recordDetailView.updateLayout(with: allSections)
 
+        // MARK: - Data Binding
         // 이후에 collecitonView에 데이터 바인딩
         Observable.just(allSections)
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
@@ -144,6 +145,44 @@ extension RecordDetailViewController {
             .filter { $0 }
             .bind(with: self) { owner, _ in
                 owner.dismiss(animated: true)
+            }
+            .disposed(by: disposeBag)
+
+        // MemoInfoCell에 있는 TextView와 상호작용
+        recordDetailView.publicCollectionView.rx
+            .willDisplayCell
+            .compactMap { $0.cell as? MemoInfoCell }
+            .bind(with: self) { (owner: RecordDetailViewController, cell: MemoInfoCell) in
+                let textView = cell.publicMemoTextView
+
+                // 1. placeholder 로직
+                textView.rx.didBeginEditing
+                    .bind(with: owner) { _, _ in
+                        if textView.text == "메모를 입력해주세요." {
+                            textView.text = ""
+                            textView.textColor = .white
+                        }
+                        textView.layer.borderColor = UIColor.systemGray.cgColor
+                        textView.layer.borderWidth = 1
+                    }
+                    .disposed(by: owner.disposeBag)
+
+                textView.rx.didEndEditing
+                    .bind(with: owner) { _, _ in
+                        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            textView.text = "메모를 입력해주세요."
+                            textView.textColor = .systemGray3
+                        }
+                        textView.layer.borderWidth = 0
+                    }
+                    .disposed(by: owner.disposeBag)
+
+                // 2. 텍스트 업데이트 리액터로 전달
+                textView.rx.text.orEmpty
+                    .distinctUntilChanged()
+                    .map { RecordDetailViewReactor.Action.updateMemo($0) }
+                    .bind(to: owner.reactor!.action)
+                    .disposed(by: owner.disposeBag)
             }
             .disposed(by: disposeBag)
     }
