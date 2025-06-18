@@ -24,7 +24,7 @@ final class FSRecordRepositoryImpl: RecordRepository {
             do {
                 let dto = WorkoutRecordDTO(entity: item)
                 let fsRecord = dto.toFSModel(userId: uid)
-                _ = try await firestoreService.create(item: fsRecord, type: .workoutRecord)
+                _ = try await firestoreService.create(item: fsRecord, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
                 print("Firestore 기록 저장 성공")
             } catch {
                 print("Firestore 기록 저장 실패: \(error)")
@@ -42,7 +42,7 @@ final class FSRecordRepositoryImpl: RecordRepository {
             
             Task {
                 do {
-                    let fsRecords = try await self.firestoreService.read(userId: uid, type: .workoutRecord)
+                    let fsRecords = try await self.firestoreService.read(userId: uid, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
                     let records = fsRecords.map { $0.toDTO().toEntity() }
                     observer(.success(records))
                 } catch {
@@ -59,7 +59,7 @@ final class FSRecordRepositoryImpl: RecordRepository {
         Task {
             do {
                 // TODO: WorkoutRecord에 documentId 필드 추가 필요
-                // try await firestoreService.delete(id: item.documentId, type: .workoutRecord)
+                // try await firestoreService.delete(id: item.documentId, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
                 print("Firestore 기록 삭제 - 구현 필요")
             } catch {
                 print("Firestore 기록 삭제 실패: \(error)")
@@ -71,7 +71,7 @@ final class FSRecordRepositoryImpl: RecordRepository {
     func deleteAllRecord(uid: String) {
         Task {
             do {
-                try await firestoreService.deleteAll(userId: uid, type: .workoutRecord)
+                try await firestoreService.deleteAll(userId: uid, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
                 print("Firestore 모든 기록 삭제 성공")
             } catch {
                 print("Firestore 모든 기록 삭제 실패: \(error)")

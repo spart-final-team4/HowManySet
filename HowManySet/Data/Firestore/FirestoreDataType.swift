@@ -28,6 +28,8 @@ enum FirestoreDataType<T: Codable>: FirestoreDataTypeProtocol {
     case workoutRoutine
     /// WorkoutRecordDTO 타입
     case workoutRecord
+    /// UserSettingDTO 타입
+//    case userSetting
 
     /// 각 케이스에 해당하는 Firestore 문서 타입 반환
     var type: T.Type {
