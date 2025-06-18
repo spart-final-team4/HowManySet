@@ -914,11 +914,11 @@ private extension HomeViewController {
         
         // 세트 완료
         NotificationCenter.default.addObserver(
-            forName: .setCompletedFromLiveActivity,
+            forName: .setCompleteFromLiveActivity,
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let self else { return }
+            guard let self, let reactor else { return }
             let index = (notification.userInfo?["index"] as? Int) ?? 0
             reactor.action.onNext(.setCompleteButtonClicked(at: index))
         }
@@ -929,7 +929,7 @@ private extension HomeViewController {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let self else { return }
+            guard let self, let reactor else { return }
             self.coordinator?.popUpEndWorkoutAlert {
                 reactor.action.onNext(.stopButtonClicked(isEnded: true))
                 return reactor.currentState.workoutSummary
@@ -942,7 +942,7 @@ private extension HomeViewController {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let self else { return }
+            guard let self, let reactor else { return }
             let index = (notification.userInfo?["index"] as? Int) ?? 0
             reactor.action.onNext(.forwardButtonClicked(at: index))
         }
@@ -953,9 +953,8 @@ private extension HomeViewController {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let self else { return }
-            let index = (notification.userInfo?["index"] as? Int) ?? 0
-            reactor.action.onNext(.restPauseButtonClicked(at: index))
+            guard let self, let reactor else { return }
+            reactor.action.onNext(.restPauseButtonClicked)
         }
     }
 }
