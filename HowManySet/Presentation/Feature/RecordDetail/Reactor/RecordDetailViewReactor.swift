@@ -1,44 +1,48 @@
-//
-//  RecordDetailViewReactor.swift
-//  HowManySet
-//
-//  Created by 정근호 on 6/4/25.
-//
-
 import Foundation
 import RxSwift
 import ReactorKit
 
 final class RecordDetailViewReactor: Reactor {
     
-    // Action is an user interaction
+    // MARK: - Action is an user interaction
     enum Action {
-        
+        case tapConfirm
     }
     
-    // Mutate is a state manipulator which is not exposed to a view
+    // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
-        
+        case setDismiss(Bool)
     }
     
-    // State is a current view state
+    // MARK: - State is a current view state
     struct State {
         let record: WorkoutRecord
+        var shouldDismiss = false
     }
-    
+
+    // MARK: - Properties
     let initialState: State
-    
+
+    // MARK: - Init
     init(record: WorkoutRecord) {
         self.initialState = State(record: record)
     }
     
-    //    // Action -> Mutation
-    //    func mutate(action: Action) -> Observable<Mutation> {
-    //
-    //    }
-    //
-    //    // Mutation -> State
-    //    func reduce(state: State, mutation: Mutation) -> State {
-    //
-    //    }
+    // MARK: - Mutate(Action -> Mutation)
+    func mutate(action: Action) -> Observable<Mutation> {
+        switch action {
+        case .tapConfirm:
+            return .just(.setDismiss(true))
+        }
+    }
+
+    // MARK: - Reduce(Mutation -> State)
+    func reduce(state: State, mutation: Mutation) -> State {
+        var newState = state
+        switch mutation {
+        case let .setDismiss(value):
+            newState.shouldDismiss = value
+        }
+        return newState
+    }
 }
