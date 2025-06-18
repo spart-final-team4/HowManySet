@@ -40,11 +40,13 @@ final class RestInfoView: UIView, View {
     private lazy var restLabel = UILabel().then {
         $0.text = restText
         $0.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.adjustsFontForContentSizeCategory = true
     }
     
     lazy var restTimeLabel = UILabel().then {
         $0.text = "00:00"
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .medium)
+        $0.adjustsFontForContentSizeCategory = true
     }
     
     lazy var restButtonHStack = UIStackView().then {
@@ -220,7 +222,7 @@ extension RestInfoView {
         reactor.state.map { $0.restTime }
             .bind(onNext: { [weak self] restTime in
                 guard let self else { return }
-                self.restTimeLabel.text = restTime.toRestTimeLabel()
+                self.restTimeLabel.text = Int(restTime).toRestTimeLabel()
             })
             .disposed(by: disposeBag)
     }
