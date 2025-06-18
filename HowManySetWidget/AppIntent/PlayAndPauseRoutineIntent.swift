@@ -13,14 +13,13 @@ import ActivityKit
 struct PlayAndPauseRoutineIntent: AppIntent {
     static var title: LocalizedStringResource = "휴식 중지 재개"
     @Parameter(title: "현재 운동 인덱스") var index: Int
-
+    
     func perform() async throws -> some IntentResult {
         
-        NotificationCenter.default.post(
-            name: .playAndPauseRestFromLiveActivity,
-            object: nil,
-            userInfo: ["index":index]
-        )
+        let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
+        sharedDefaults?.set(index, forKey: "PlayAndPauseRestIndex")
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "PlayAndPauseRestTimestamp")
+        sharedDefaults?.synchronize()
         return .result()
     }
 }

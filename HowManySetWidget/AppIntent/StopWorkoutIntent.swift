@@ -13,14 +13,13 @@ import ActivityKit
 struct StopWorkoutIntent: AppIntent {
     static var title: LocalizedStringResource = "운동 종료"
     @Parameter(title: "현재 운동 인덱스") var index: Int
-
+    
     func perform() async throws -> some IntentResult {
         
-        NotificationCenter.default.post(
-            name: .stopWorkoutFromLiveActivity,
-            object: nil,
-            userInfo: ["index":index]
-        )
+        let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
+        sharedDefaults?.set(index, forKey: "CurrentIndex")
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "CurrentTimeStamp") 
+        sharedDefaults?.synchronize()
         return .result()
     }
 }
