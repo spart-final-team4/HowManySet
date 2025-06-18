@@ -85,7 +85,9 @@ extension MemoInfoCell {
     var publicMemoTextView: UITextView { memoTextView }
 }
 
+// MARK: - UITextViewDelegate
 extension MemoInfoCell: UITextViewDelegate {
+    /// textView에 커서를 놓았을 때, 입력을 시작했을 때의 메서드
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == placeholderText {
             textView.text = ""
@@ -95,6 +97,7 @@ extension MemoInfoCell: UITextViewDelegate {
         textView.layer.borderWidth = 1
     }
 
+    /// textView 밖에 커서를 놓았을 때, 입력을 끝냈을 때의 메서드
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = placeholderText
