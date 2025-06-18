@@ -538,7 +538,6 @@ extension HomeViewController {
                 return newPage
             }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
             .do(onNext: { [weak self] newPage in
                 guard let self else { return }
                 print("🔍 변경된 페이지: \(newPage)")
@@ -563,7 +562,6 @@ extension HomeViewController {
                 return currentPage
             }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] newPage in
                 guard let self else { return }
                 self.handlePageChanged(newCurrentPage: newPage)
@@ -697,14 +695,14 @@ extension HomeViewController {
         .disposed(by: disposeBag)
         
         // 중지 시 휴식 버튼, 프로그레스바 동작 관련
-        reactor.state.map { $0.isRestPaused }
-            .distinctUntilChanged()
+        reactor.state.map { ($0.isRestPaused, $0.isWorkoutPaused) }
+            .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.asyncInstance)
-            .bind { [weak self] isRestPaused in
+            .bind { [weak self] isRestPaused, isWorkoutPaused in
                 guard let self else { return }
                 
                 self.pagingCardViewContainer.forEach {
-                    if isRestPaused {
+                    if isRestPaused || isWorkoutPaused {
                         $0.restPlayPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
                         // 정지처럼 보이게
                         let currentProgress = $0.restProgressBar.progress
