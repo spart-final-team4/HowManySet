@@ -122,7 +122,7 @@ private extension RecordDetailView {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.contentInsets = .init(top: 0, leading: 28, bottom: 8, trailing: 28)
-        section.interGroupSpacing = 12
+        section.interGroupSpacing = 16
 
         // 섹션 헤더: 운동 이름
         let header = NSCollectionLayoutBoundarySupplementaryItem(
