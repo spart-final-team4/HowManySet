@@ -10,38 +10,42 @@ import FirebaseFirestore
 
 struct FSWorkoutRecord: Codable {
     @DocumentID var id: String?
-    var workoutId: String
-    var workoutName: String
-    var sets: [FSWorkoutSet]
-    var totalDuration: TimeInterval
+    var workoutRoutineId: String?
+    var workoutRoutineName: String?
+    var workouts: [FSWorkout]  // 개별 운동들이 아닌 전체 루틴
+    var totalTime: Int
+    var workoutTime: Int
     var completedAt: Date
     var userId: String
     var comment: String?
     
     private enum CodingKeys: String, CodingKey {
         case id
-        case workoutId = "workout_id"
-        case workoutName = "workout_name"
-        case sets
-        case totalDuration = "total_duration"
+        case workoutRoutineId = "workout_routine_id"
+        case workoutRoutineName = "workout_routine_name"
+        case workouts
+        case totalTime = "total_time"
+        case workoutTime = "workout_time"
         case completedAt = "completed_at"
         case userId = "user_id"
         case comment
     }
     
     init(
-        workoutId: String,
-        workoutName: String,
-        sets: [FSWorkoutSet],
-        totalDuration: TimeInterval,
+        workoutRoutineId: String?,
+        workoutRoutineName: String?,
+        workouts: [FSWorkout],
+        totalTime: Int,
+        workoutTime: Int,
         userId: String,
         comment: String? = nil
     ) {
         self.id = nil
-        self.workoutId = workoutId
-        self.workoutName = workoutName
-        self.sets = sets
-        self.totalDuration = totalDuration
+        self.workoutRoutineId = workoutRoutineId
+        self.workoutRoutineName = workoutRoutineName
+        self.workouts = workouts
+        self.totalTime = totalTime
+        self.workoutTime = workoutTime
         self.completedAt = Date()
         self.userId = userId
         self.comment = comment
@@ -50,27 +54,31 @@ struct FSWorkoutRecord: Codable {
 
 extension FSWorkoutRecord {
     func toDTO() -> WorkoutRecordDTO {
+        let routine = WorkoutRoutineDTO(
+            name: self.workoutRoutineName ?? "Unknown",
+            workouts: self.workouts.map { $0.toDTO() }
+        )
+        
         return WorkoutRecordDTO(
-            workoutId: self.workoutId,
-            workoutName: self.workoutName,
-            sets: self.sets.map { $0.toDTO() },
-            totalDuration: self.totalDuration,
-            completedAt: self.completedAt,
-            userId: self.userId,
-            comment: self.comment
+            workoutRoutine: routine,
+            totalTime: self.totalTime,
+            workoutTime: self.workoutTime,
+            comment: self.comment,
+            date: self.completedAt
         )
     }
 }
 
 extension FSWorkoutRecord {
-    init(dto: WorkoutRecordDTO) {
+    init(dto: WorkoutRecordDTO, userId: String) {
         self.id = nil
-        self.workoutId = dto.workoutId
-        self.workoutName = dto.workoutName
-        self.sets = dto.sets.map { FSWorkoutSet(dto: $0) }
-        self.totalDuration = dto.totalDuration
-        self.completedAt = dto.completedAt
-        self.userId = dto.userId
+        self.workoutRoutineId = nil // DTO에는 ID 정보가 없음
+        self.workoutRoutineName = dto.workoutRoutine?.name
+        self.workouts = dto.workoutRoutine?.workouts.map { $0.toFSModel() } ?? []
+        self.totalTime = dto.totalTime
+        self.workoutTime = dto.workoutTime
+        self.completedAt = dto.date
+        self.userId = userId
         self.comment = dto.comment
     }
 }
