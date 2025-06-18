@@ -128,9 +128,8 @@ final class HomePagingCardView: UIView {
     }
     
     lazy var restPlayPauseButton = UIButton().then {
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-        $0.setImage(UIImage(systemName: "play.fill"), for: .selected)
         $0.isUserInteractionEnabled = false
         $0.alpha = 0
         $0.tintColor = .white
