@@ -50,6 +50,11 @@ private extension MemoInfoCell {
             $0.clipsToBounds = true
             $0.font = .systemFont(ofSize: 16, weight: .regular)
             $0.textContainerInset = UIEdgeInsets(top: 16, left: 12, bottom: 16, right: 12)
+
+            // 키보드 관련
+            $0.autocorrectionType = .no // 자동 수정 끔
+            $0.spellCheckingType = .no // 맞춤법 검사 끔
+            $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
         }
     }
 
