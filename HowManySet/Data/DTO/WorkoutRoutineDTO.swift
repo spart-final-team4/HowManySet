@@ -34,3 +34,22 @@ extension WorkoutRoutineDTO {
         self.workouts = model.workouts.map{ WorkoutDTO(from: $0) }
     }
 }
+
+extension WorkoutRoutineDTO {
+    init(from fsModel: FSWorkoutRoutine) {
+        self.name = fsModel.name
+        self.workouts = fsModel.workouts.map { WorkoutDTO(from: $0) }
+    }
+}
+
+extension WorkoutRoutineDTO {
+    func toFSModel(userId: String, description: String? = nil, tags: [String] = []) -> FSWorkoutRoutine {
+        return FSWorkoutRoutine(
+            dto: self,
+            userId: userId,
+            description: description,
+            tags: tags
+        )
+    }
+}
+
