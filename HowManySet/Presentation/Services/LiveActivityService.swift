@@ -19,16 +19,7 @@ final class LiveActivityService {
     func start(with data: WorkoutDataForLiveActivity) {
         guard activity == nil else { return }
         let attributes = HowManySetWidgetAttributes()
-        let contentState = HowManySetWidgetAttributes.ContentState(
-            workoutTime: data.workoutTime,
-            isWorkingout: data.isWorkingout,
-            exerciseName: data.exerciseName,
-            exerciseInfo: data.exerciseInfo,
-            isResting: data.isResting,
-            restSecondsRemaining: Int(data.restSecondsRemaining),
-            isRestPaused: data.isRestPaused,
-            currentSet: data.currentSet,
-            totalSet: data.totalSet)
+        let contentState = HowManySetWidgetAttributes.ContentState(from: data)
         
         do {
             let activityContent = ActivityContent(state: contentState, staleDate: nil)
