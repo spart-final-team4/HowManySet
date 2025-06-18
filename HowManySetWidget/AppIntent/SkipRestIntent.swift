@@ -11,13 +11,11 @@ import ActivityKit
 
 @available(iOSApplicationExtension 17.0, *)
 struct SkipRestIntent: AppIntent {
-    static var title: LocalizedStringResource = "Skip Rest"
+    static var title: LocalizedStringResource = "휴식 스킵"
 
     func perform() async throws -> some IntentResult {
-        print("SkipRestIntent")
         
-        // [휴식 스킵 메서드]
-        
+        NotificationCenter.default.post(name: .skipRestFromLiveActivity, object: nil)
         return .result()
     }
 }
