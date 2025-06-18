@@ -12,10 +12,15 @@ import ActivityKit
 @available(iOSApplicationExtension 17.0, *)
 struct SetCompleteIntent: AppIntent {
     static var title: LocalizedStringResource = "세트 완료"
+    @Parameter(title: "현재 운동 인덱스") var index: Int
 
     func perform() async throws -> some IntentResult {
         
-        NotificationCenter.default.post(name: .setCompleteFromLiveActivity, object: nil)
+        NotificationCenter.default.post(
+            name: .setCompleteFromLiveActivity,
+            object: nil,
+            userInfo: ["index":index]
+        )
         return .result()
     }
 }
