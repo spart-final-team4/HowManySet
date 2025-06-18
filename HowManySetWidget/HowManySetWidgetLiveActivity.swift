@@ -10,7 +10,7 @@ import WidgetKit
 import SwiftUI
 
 struct HowManySetWidgetAttributes: ActivityAttributes {
-            
+    
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         // state
@@ -26,12 +26,12 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var isResting: Bool
         var restSecondsRemaining: Int
         var isRestPaused: Bool
-       
+        
         // 세트 관련
         var currentSet: Int
         var totalSet: Int
     }
-
+    
     // Fixed non-changing properties about your activity go here!
     // attributes
 }
@@ -39,7 +39,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 struct HowManySetWidgetLiveActivity: Widget {
     
     private let buttonSize: CGFloat = 50
-    private let restSecondsRemainigLabelSize: CGFloat = 50
+    private let restSecondsRemainigLabelSize: CGFloat = 46
     private let restLabel = "휴식"
     
     var body: some WidgetConfiguration {
@@ -47,114 +47,119 @@ struct HowManySetWidgetLiveActivity: Widget {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack() {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Image(systemName: "timer")
                             .foregroundStyle(.brand)
                         Text(String(context.state.workoutTime.toWorkOutTimeLabel()))
                             .foregroundStyle(.white)
-                            .font(.body)
-                            .fontWeight(.bold)
+                            .font(.system(size: 14))
+                            .fontWeight(.semibold)
+                            .monospacedDigit()
                     }
-                    Group {
-                        // MARK: - 운동 중 contents
-                        if context.state.isWorkingout {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text(context.state.exerciseName)
-                                        .font(.title)
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(.white)
-                                    Text(context.state.exerciseInfo)
-                                        .font(.title3)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.gray)
-                                }
-                                
-                                Spacer()
-                                
-                                HStack(spacing: 10) {
-                                    Button(action: {
-                                        
-                                    }) {
-                                        Image(systemName: "checkmark")
-                                            .foregroundStyle(.brand)
-                                            .fontWeight(.heavy)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(.brandBackground)
-                                    .clipShape(Circle())
-                                    
-                                    Button(action: {
-                                        
-                                    }) {
-                                        Image(systemName: "xmark")
-                                            .foregroundStyle(.white)
-                                            .fontWeight(.heavy)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(.gray)
-                                    .clipShape(Circle())
-                                }
+                    // MARK: - 운동 중 contents
+                    if context.state.isWorkingout {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(context.state.exerciseName)
+                                    .font(.system(size: 20))
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.white)
+                                Text(context.state.exerciseInfo)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.regular)
+                                    .foregroundStyle(Color("DBTypo"))
                             }
-                            .frame(height: 50)
-                        }
-                        // MARK: - 휴식 중 contents
-                        else if context.state.isResting {
-                            HStack {
-                                HStack(alignment: .lastTextBaseline, spacing: 5) {
-                                    Text(restLabel)
-                                        .font(.body)
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 10) {
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "checkmark")
                                         .foregroundStyle(.brand)
-                                    Text(context.state.restSecondsRemaining.toRestTimeLabel())
-                                        .font(.system(size: restSecondsRemainigLabelSize))
                                         .fontWeight(.bold)
-                                        .foregroundStyle(.white)
+                                        .font(.title3)
                                 }
+                                .frame(width: buttonSize, height: buttonSize)
+                                .background(Circle().fill(Color("brandBackground")))
+                                .buttonStyle(.borderless)
                                 
-                                Spacer()
-                                
-                                HStack(spacing: 10) {
-                                    Button(action: {
-                                        
-                                    }) {
-                                        Image(systemName: "forward.end.fill")
-                                            .foregroundStyle(.brand)
-                                            .fontWeight(.semibold)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(.brandBackground)
-                                    .clipShape(Circle())
+                                Button(action: {
                                     
-                                    Button(action: {
-                                        
-                                    }) {
-                                        Image(systemName: "pause.fill")
-                                            .foregroundStyle(.white)
-                                            .fontWeight(.semibold)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(.gray)
-                                    .clipShape(Circle())
+                                }) {
+                                    Image(systemName: "xmark")
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.bold)
+                                        .font(.title3)
                                 }
+                                .frame(width: buttonSize, height: buttonSize)
+                                .background(Circle().fill(Color("RoundButtonBG")))
+                                .buttonStyle(.borderless)
                             }
-                            .frame(height: 50)
-                        } else {
-                            EmptyView()
                         }
-                    }//Group
+                    }
+                    // MARK: - 휴식 중 contents
+                    else if context.state.isResting {
+                        HStack {
+                            HStack(alignment: .lastTextBaseline, spacing: 5) {
+                                Text(restLabel)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.brand)
+                                Text(context.state.restSecondsRemaining.toRestTimeLabel())
+                                    .font(.system(size: restSecondsRemainigLabelSize))
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                    .monospacedDigit()
+                            }
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 10) {
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "forward.end.fill")
+                                        .foregroundStyle(.brand)
+                                        .fontWeight(.semibold)
+                                        .font(.title3)
+                                }
+                                .frame(width: buttonSize, height: buttonSize)
+                                .background(Circle().fill(Color("brandBackground")))
+                                .buttonStyle(.borderless)
+                                
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "pause.fill")
+                                        .foregroundStyle(.white)
+                                        .fontWeight(.semibold)
+                                        .font(.title3)
+                                }
+                                .frame(width: buttonSize, height: buttonSize)
+                                .background(Circle().fill(Color("RoundButtonBG")))
+                                .buttonStyle(.borderless)
+
+                            }
+                        }
+                    } else {
+                        EmptyView()
+                    }
                     // MARK: - ProgressBar
-                    SetProgressBarRepresentable(totalSets: 5, currentSet: 2)
-                        .frame(maxWidth: .infinity, minHeight: 10, maxHeight: 10)
+                    SetProgressBarForLiveActivity(
+                        totalSets: context.state.totalSet,
+                        currentSet: context.state.currentSet
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: 17)
+                    .clipped()
+                    
                 }//VStack
             }//VStack
-            .padding(.all, 20)
-            .frame(height: 160)
-            .background(Color(.background))
+            .padding(.all, 18)
+            .frame(height: 180)
+            .background(Color("Background"))
             
         } dynamicIsland: { context in
             // MARK: - DynamicIsland
@@ -162,24 +167,29 @@ struct HowManySetWidgetLiveActivity: Widget {
                 // Expanded UI goes here.  Compose the expanded UI through
                 // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
+                    Image(systemName: "dumbbell")
+                        .foregroundStyle(.brand)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
+                    Image(systemName: "dumbbell")
+                        .foregroundStyle(.brand)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom")
+                    Image(systemName: "dumbbell")
+                        .foregroundStyle(.brand)
                     // more content
                 }
             } compactLeading: {
-                Text("L")
+                Image(systemName: "dumbbell")
+                    .foregroundStyle(.brand)
             } compactTrailing: {
-                Text("T")
+                Image(systemName: "dumbbell")
+                    .foregroundStyle(.brand)
             } minimal: {
-                Text("m")
+                Image(systemName: "dumbbell")
+                    .foregroundStyle(.brand)
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+            .keylineTint(.brand)
         }
     }
 }
@@ -219,21 +229,21 @@ extension HowManySetWidgetAttributes.ContentState {
             currentSet: 2,
             totalSet: 5
         )
-     }
-     
-     fileprivate static var rest: HowManySetWidgetAttributes.ContentState {
-         HowManySetWidgetAttributes.ContentState(
-             workoutTime: 5000,
-             isWorkingout: false,
-             exerciseName: "랫풀다운",
-             exerciseInfo: "60kg x 10회",
-             isResting: true,
-             restSecondsRemaining: 30,
-             isRestPaused: false,
-             currentSet: 2,
-             totalSet: 5
-         )
-     }
+    }
+    
+    fileprivate static var rest: HowManySetWidgetAttributes.ContentState {
+        HowManySetWidgetAttributes.ContentState(
+            workoutTime: 5000,
+            isWorkingout: false,
+            exerciseName: "랫풀다운",
+            exerciseInfo: "60kg x 10회",
+            isResting: true,
+            restSecondsRemaining: 30,
+            isRestPaused: false,
+            currentSet: 2,
+            totalSet: 5
+        )
+    }
 }
 
 @available(iOS 17.0, *)
