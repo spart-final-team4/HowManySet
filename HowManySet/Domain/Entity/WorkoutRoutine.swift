@@ -16,7 +16,7 @@ struct WorkoutRoutine: Hashable {
     ///
     /// 예: `"전신 루틴"`, `"상체 집중 루틴"` 등
     let name: String
-    
+    let uid = UUID()
     /// 루틴에 포함된 운동 목록입니다.
     ///
     /// 각 `Workout`은 루틴을 구성하는 개별 운동을 나타냅니다.
