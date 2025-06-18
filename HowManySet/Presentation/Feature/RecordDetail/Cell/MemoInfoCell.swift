@@ -5,6 +5,7 @@ import Then
 final class MemoInfoCell: UICollectionViewCell {
     // MARK: - Properties
     static let identifier = "MemoInfoCell"
+    private let placeholderText = "메모를 입력해주세요."
 
     private let memoTitleLabel = UILabel()
     private let memoTextView = UITextView()
@@ -13,6 +14,7 @@ final class MemoInfoCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        memoTextView.delegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -20,10 +22,11 @@ final class MemoInfoCell: UICollectionViewCell {
     }
 
     // MARK: - configure
-    /// WorkoutRecord의 데이터를 받아오는 메서드
     func configure(comment: String?) {
-        memoTextView.text = (comment?.isEmpty == false) ? comment : "메모를 입력해주세요."
-        memoTextView.textColor = (comment?.isEmpty == false) ? .white : .systemGray
+        let isEmpty = (comment?.isEmpty ?? true)
+        memoTextView.text = isEmpty ? placeholderText : comment
+        memoTextView.textColor = isEmpty ? .systemGray3 : .white
+        memoTextView.layer.borderWidth = 0
     }
 }
 
@@ -74,5 +77,29 @@ private extension MemoInfoCell {
             $0.bottom.equalToSuperview().inset(10)
             $0.height.equalTo(180)
         }
+    }
+}
+
+// MARK: - Computed Properties
+extension MemoInfoCell {
+    var publicMemoTextView: UITextView { memoTextView }
+}
+
+extension MemoInfoCell: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == placeholderText {
+            textView.text = ""
+            textView.textColor = .white
+        }
+        textView.layer.borderColor = UIColor.systemGray.cgColor
+        textView.layer.borderWidth = 1
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            textView.text = placeholderText
+            textView.textColor = .systemGray3
+        }
+        textView.layer.borderWidth = 0
     }
 }
