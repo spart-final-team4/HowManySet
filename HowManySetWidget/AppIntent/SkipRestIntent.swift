@@ -12,10 +12,15 @@ import ActivityKit
 @available(iOSApplicationExtension 17.0, *)
 struct SkipRestIntent: AppIntent {
     static var title: LocalizedStringResource = "휴식 스킵"
+    @Parameter(title: "현재 운동 인덱스") var index: Int
 
     func perform() async throws -> some IntentResult {
         
-        NotificationCenter.default.post(name: .skipRestFromLiveActivity, object: nil)
+        NotificationCenter.default.post(
+            name: .skipRestFromLiveActivity,
+            object: nil,
+            userInfo: ["index":index]
+        )
         return .result()
     }
 }
