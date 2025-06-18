@@ -161,24 +161,24 @@ private extension SummaryInfoCell {
     // MARK: - makeTotalVStackView
     /// 전체적인 Summary를 보여주는 스택뷰를 만드는 메서드 (스택뷰 재사용을 위함)
     func makeTotalVStackView(title: String, value: String) -> UIStackView {
-            let titleLabel = UILabel().then {
-                $0.text = title
-                $0.textColor = .white
-                $0.font = .systemFont(ofSize: 14, weight: .medium)
-                $0.textAlignment = .center
-            }
-
-            let valueLabel = UILabel().then {
-                $0.text = value
-                $0.textColor = .brand
-                $0.font = .systemFont(ofSize: 14, weight: .medium)
-                $0.textAlignment = .center
-            }
-
-            return UIStackView(arrangedSubviews: [titleLabel, valueLabel]).then {
-                $0.axis = .vertical
-                $0.spacing = 8
-                $0.alignment = .fill
-            }
+        let titleLabel = UILabel().then {
+            $0.text = title
+            $0.textColor = .white
+            $0.font = .systemFont(ofSize: 14, weight: .medium)
+            $0.textAlignment = .center
         }
+
+        let valueLabel = UILabel().then {
+            $0.text = value
+            $0.textColor = .brand
+            $0.font = .systemFont(ofSize: 14, weight: .medium)
+            $0.textAlignment = .center
+        }
+
+        return UIStackView(arrangedSubviews: [titleLabel, valueLabel]).then {
+            $0.axis = .vertical
+            $0.spacing = 8
+            $0.alignment = .fill
+        }
+    }
 }
