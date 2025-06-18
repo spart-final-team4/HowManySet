@@ -94,6 +94,18 @@ final class EditExcerciseViewController: UIViewController {
             .subscribe(with: self) { owner, _ in
                 print("saveRoutineButtonTapped")
             }.disposed(by: disposeBag)
+        
+        // 화면 탭하면 키보드 내리기
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+
+        tapGesture.rx.event
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
