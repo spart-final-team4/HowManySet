@@ -5,14 +5,35 @@ import RxDataSources
 enum RecordDetailSection: IdentifiableType, Equatable {
     case summary
     case workoutDetail(workout: Workout)
+    case memo(comment: String?)
 
     var identity: String {
         switch self {
         case .summary:
             return "summary"
-        case .workoutDetail(let workout):
+        case let .workoutDetail(workout):
             return workout.name
+        case .memo:
+            return "memo"
         }
+    }
+
+    /// 이 섹션이 summary 섹션인지 여부
+    var isSummary: Bool {
+        if case .summary = self { return true }
+        return false
+    }
+
+    /// 이 섹션이 운동 상세 섹션인지 여부
+    var isWorkoutDetail: Bool {
+        if case .workoutDetail = self { return true }
+        return false
+    }
+
+    /// 이 섹션이 메모 섹션인지 여부
+    var isMemo: Bool {
+        if case .memo = self { return true }
+        return false
     }
 }
 
@@ -20,6 +41,7 @@ enum RecordDetailSection: IdentifiableType, Equatable {
 enum RecordDetailSectionItem: IdentifiableType, Equatable {
     case summary(record: WorkoutRecord)
     case set(index: Int, set: WorkoutSet)
+    case memo(comment: String?)
 
     var identity: String {
         switch self {
@@ -27,6 +49,8 @@ enum RecordDetailSectionItem: IdentifiableType, Equatable {
             return "summary_\(record.date.timeIntervalSince1970)"
         case let .set(index, _):
             return "set_\(index)"
+        case .memo:
+            return "memo"
         }
     }
 }
