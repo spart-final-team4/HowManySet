@@ -11,6 +11,7 @@ import Then
 import RxSwift
 import RxCocoa
 import ReactorKit
+import ActivityKit
 
 final class HomeViewController: UIViewController, View {
     
@@ -20,6 +21,9 @@ final class HomeViewController: UIViewController, View {
     private let homeText = "홈"
     
     var disposeBag = DisposeBag()
+    
+    /// LiveActivity 관련 메서드가 있는 클래스
+    private var liveActivity = LiveActivityController()
     
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
@@ -865,5 +869,29 @@ extension HomeViewController {
                 }
                 print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
             }).disposed(by: disposeBag)
+        
+        // MARK: - LiveActivity 관련
+        reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
+            .distinctUntilChanged { $0 == $1 }
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] isWorkingout, liveData in
+                guard let self else { return }
+                
+                if isWorkingout {
+                    self.liveActivity.startLiveActivity(with: liveData)
+                } else {
+                    self.liveActivity.endLiveActivity()
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.forLiveActivity }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] liveData in
+                guard let self else { return }
+                self.liveActivity.updateLiveActivity(with: liveData)
+            }
+            .disposed(by: disposeBag)
     }//bind
 }
