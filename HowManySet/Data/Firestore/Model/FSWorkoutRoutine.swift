@@ -54,27 +54,21 @@ extension FSWorkoutRoutine {
     func toDTO() -> WorkoutRoutineDTO {
         return WorkoutRoutineDTO(
             name: self.name,
-            workouts: self.workouts.map { $0.toDTO() },
-            description: self.description,
-            isActive: self.isActive,
-            userId: self.userId,
-            createdAt: self.createdAt,
-            updatedAt: self.updatedAt,
-            tags: self.tags
+            workouts: self.workouts.map { $0.toDTO() }
         )
     }
 }
 
 extension FSWorkoutRoutine {
-    init(dto: WorkoutRoutineDTO) {
+    init(dto: WorkoutRoutineDTO, userId: String, description: String? = nil, tags: [String] = []) {
         self.id = nil
         self.name = dto.name
         self.workouts = dto.workouts.map { FSWorkout(dto: $0) }
-        self.description = dto.description
-        self.isActive = dto.isActive
-        self.userId = dto.userId
-        self.createdAt = dto.createdAt
+        self.description = description
+        self.isActive = true
+        self.userId = userId
+        self.createdAt = Date()
         self.updatedAt = Date()
-        self.tags = dto.tags
+        self.tags = tags
     }
 }
