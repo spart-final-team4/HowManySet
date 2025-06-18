@@ -4,8 +4,15 @@ import Then
 
 final class RecordDetailView: UIView {
 
+    /// 동적 레이아웃을 적용한 컬렉션 뷰
     private let collectionView: UICollectionView = {
-        let layout = RecordDetailView.createLayout()
+        let layout = UICollectionViewCompositionalLayout { _, _ in
+            return NSCollectionLayoutSection(group: .vertical(
+                layoutSize: .init(widthDimension: .fractionalWidth(1.0),
+                                  heightDimension: .absolute(1)),
+                subitems: []
+            ))
+        }
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
 
@@ -55,12 +62,18 @@ private extension RecordDetailView {
 
 // MARK: - UICollectionViewCompositionalLayout
 private extension RecordDetailView {
-    static func createLayout() -> UICollectionViewCompositionalLayout {
-        return UICollectionViewCompositionalLayout { sectionIndex, environment in
-            if sectionIndex == 0 {
-                return makeSummarySection() // 요약 섹션
-            } else {
-                return makeWorkoutSection() // 운동 상세 섹션
+    static func createLayout(sections: [RecordDetailSectionModel]) -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { sectionIndex, _ in
+            guard sectionIndex < sections.count else { return nil }
+            let section = sections[sectionIndex].model
+
+            switch section {
+            case .summary:
+                return makeSummarySection()
+            case .workoutDetail:
+                return makeWorkoutSection()
+            case .memo:
+                return makeMemoSection()
             }
         }
     }
@@ -68,16 +81,16 @@ private extension RecordDetailView {
     /// 첫 번째 섹션: SummaryInfoCell 단일 셀
     static func makeSummarySection() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(
+            layoutSize: .init(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(300)
+                heightDimension: .estimated(200)
             )
         )
 
         let group = NSCollectionLayoutGroup.vertical(
-            layoutSize: NSCollectionLayoutSize(
+            layoutSize: .init(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(350)
+                heightDimension: .estimated(250)
             ),
             subitems: [item]
         )
@@ -86,11 +99,11 @@ private extension RecordDetailView {
         return section
     }
 
-    /// 두 번째 섹션부터: 운동 상세 (가로 스크롤)
+    /// 두 번째 섹션: 운동 상세 (가로 스크롤)
     static func makeWorkoutSection() -> NSCollectionLayoutSection {
         // 세트 하나 (아이템) 크기
         let item = NSCollectionLayoutItem(
-            layoutSize: NSCollectionLayoutSize(
+            layoutSize: .init(
                 widthDimension: .estimated(80),
                 heightDimension: .estimated(80)
             )
@@ -98,7 +111,7 @@ private extension RecordDetailView {
 
         // 수평 그룹: 한 줄에 여러 세트들
         let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: NSCollectionLayoutSize(
+            layoutSize: .init(
                 widthDimension: .estimated(500),
                 heightDimension: .estimated(100)
             ),
@@ -112,13 +125,8 @@ private extension RecordDetailView {
         section.interGroupSpacing = 12
 
         // 섹션 헤더: 운동 이름
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(36)
-        )
-
         let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
+            layoutSize: .init(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(36)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
@@ -126,9 +134,41 @@ private extension RecordDetailView {
         section.boundarySupplementaryItems = [header]
         return section
     }
+
+    /// 세 번째 섹션: MemoInfoCell 단일 셀 (수직 방향)
+    static func makeMemoSection() -> NSCollectionLayoutSection {
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .estimated(160)
+            )
+        )
+
+        let group = NSCollectionLayoutGroup.vertical(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .estimated(160)
+            ),
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 0, leading: 28, bottom: 0, trailing: 28)
+        return section
+    }
 }
 
 // MARK: - Computed Property
 extension RecordDetailView {
     var publicCollectionView: UICollectionView { collectionView }
+}
+
+// MARK: - updateLayout
+extension RecordDetailView {
+    func updateLayout(with sections: [RecordDetailSectionModel]) {
+        collectionView.setCollectionViewLayout(
+            Self.createLayout(sections: sections),
+            animated: false
+        )
+    }
 }
