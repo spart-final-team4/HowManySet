@@ -34,6 +34,11 @@ final class RoutineListViewController: UIViewController, View {
     override func loadView() {
         view = routineListView
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reactor?.action.onNext(.viewWillAppear)
+        print("viewWillAppear")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +46,7 @@ final class RoutineListViewController: UIViewController, View {
         setRegisters()
         configureDataSource()
         // MockData 표시
-        applySnapshot(with: WorkoutRoutine.mockData)
+//        applySnapshot(with: WorkoutRoutine.mockData)
     }
 
     // MARK: - Bind
@@ -52,6 +57,15 @@ final class RoutineListViewController: UIViewController, View {
                 owner.coordinator?.presentRoutineNameView()
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .skip(1)
+            .map { $0.routines }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, items in
+                owner.applySnapshot(with: items)
+            }.disposed(by: disposeBag)
     }
 }
 
