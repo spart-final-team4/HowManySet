@@ -48,3 +48,33 @@ extension WorkoutRecordDTO {
         self.date = model.date
     }
 }
+
+extension WorkoutRecordDTO {
+    init(from fsModel: FSWorkoutRecord) {
+        let routine = WorkoutRoutineDTO(
+            name: fsModel.workoutRoutineName ?? "Unknown",
+            workouts: fsModel.workouts.map { WorkoutDTO(from: $0) }
+        )
+        
+        self.workoutRoutine = routine
+        self.totalTime = fsModel.totalTime
+        self.workoutTime = fsModel.workoutTime
+        self.comment = fsModel.comment
+        self.date = fsModel.completedAt
+    }
+}
+
+extension WorkoutRecordDTO {
+    func toFSModel(userId: String) -> FSWorkoutRecord {
+        return FSWorkoutRecord(
+            workoutRoutineId: nil,
+            workoutRoutineName: self.workoutRoutine?.name,
+            workouts: self.workoutRoutine?.workouts.map { $0.toFSModel() } ?? [],
+            totalTime: self.totalTime,
+            workoutTime: self.workoutTime,
+            userId: userId,
+            comment: self.comment
+        )
+    }
+}
+

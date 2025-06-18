@@ -36,3 +36,23 @@ extension WorkoutSetDTO {
         self.reps = model.reps
     }
 }
+
+extension WorkoutSetDTO {
+    init(from fsModel: FSWorkoutSet) {
+        self.weight = fsModel.weight
+        self.unit = fsModel.unit
+        self.reps = fsModel.reps
+    }
+}
+
+extension WorkoutSetDTO {
+    func toFSModel(restTime: Int = 60, isCompleted: Bool = false, order: Int = 0) -> FSWorkoutSet {
+        return FSWorkoutSet(
+            dto: self,
+            restTime: restTime,
+            isCompleted: isCompleted,
+            order: order
+        )
+    }
+}
+
