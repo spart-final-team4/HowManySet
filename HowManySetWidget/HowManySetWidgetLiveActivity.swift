@@ -10,7 +10,7 @@ import WidgetKit
 import SwiftUI
 
 struct HowManySetWidgetAttributes: ActivityAttributes {
-        
+            
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         // state
@@ -34,13 +34,13 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 
     // Fixed non-changing properties about your activity go here!
     // attributes
-    var restLabel = "휴식"
 }
 
 struct HowManySetWidgetLiveActivity: Widget {
     
     private let buttonSize: CGFloat = 50
     private let restSecondsRemainigLabelSize: CGFloat = 50
+    private let restLabel = "휴식"
     
     var body: some WidgetConfiguration {
         
@@ -105,7 +105,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         else if context.state.isResting {
                             HStack {
                                 HStack(alignment: .lastTextBaseline, spacing: 5) {
-                                    Text(context.attributes.restLabel)
+                                    Text(restLabel)
                                         .font(.body)
                                         .foregroundStyle(.brand)
                                     Text(context.state.restSecondsRemaining.toRestTimeLabel())
@@ -168,15 +168,15 @@ struct HowManySetWidgetLiveActivity: Widget {
                     Text("Trailing")
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.attributes.restLabel)")
+                    Text("Bottom")
                     // more content
                 }
             } compactLeading: {
                 Text("L")
             } compactTrailing: {
-                Text("T \(context.attributes.restLabel)")
+                Text("T")
             } minimal: {
-                Text(context.attributes.restLabel)
+                Text("m")
             }
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.red)
@@ -184,9 +184,25 @@ struct HowManySetWidgetLiveActivity: Widget {
     }
 }
 
+// MARK: - WorkoutDataForLiveActivity -> ContentState
+extension HowManySetWidgetAttributes.ContentState {
+    /// WorkoutDataForLiveActivity를 HowManySetWidgetAttributes.ContentState로 변환
+    init(from data: WorkoutDataForLiveActivity) {
+        self.workoutTime = data.workoutTime
+        self.isWorkingout = data.isWorkingout
+        self.exerciseName = data.exerciseName
+        self.exerciseInfo = data.exerciseInfo
+        self.isResting = data.isResting
+        self.restSecondsRemaining = Int(data.restSecondsRemaining)
+        self.isRestPaused = data.isRestPaused
+        self.currentSet = data.currentSet
+        self.totalSet = data.totalSet
+    }
+}
+
 extension HowManySetWidgetAttributes {
     fileprivate static var preview: HowManySetWidgetAttributes {
-        HowManySetWidgetAttributes(restLabel: "휴식")
+        HowManySetWidgetAttributes()
     }
 }
 

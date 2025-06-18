@@ -47,7 +47,7 @@ struct WorkoutSummary {
 }
 
 /// LiveActivity에 필요한 데이터
-struct WorkoutDataForLiveActivity: Equatable {
+struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     let workoutTime: Int
     var isWorkingout: Bool
     var exerciseName: String

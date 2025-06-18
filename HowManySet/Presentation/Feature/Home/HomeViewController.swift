@@ -22,9 +22,6 @@ final class HomeViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
-    /// LiveActivity 관련 메서드가 있는 클래스
-    private var liveActivity = LiveActivityController()
-    
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
     
@@ -874,13 +871,25 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] isWorkingout, liveData in
+            .bind { [weak self] isWorkingout, data in
                 guard let self else { return }
                 
+                let contentState = HowManySetWidgetAttributes.ContentState.init(
+                    workoutTime: data.workoutTime,
+                    isWorkingout: data.isWorkingout,
+                    exerciseName: data.exerciseName,
+                    exerciseInfo: data.exerciseInfo,
+                    isResting: data.isResting,
+                    restSecondsRemaining: Int(data.restSecondsRemaining),
+                    isRestPaused: data.isRestPaused,
+                    currentSet: data.currentSet,
+                    totalSet: data.totalSet
+                )
+            
                 if isWorkingout {
-                    self.liveActivity.startLiveActivity(with: liveData)
+                    LiveActivityService.shared.start(with: contentState)
                 } else {
-                    self.liveActivity.endLiveActivity()
+                    LiveActivityService.shared.end()
                 }
             }
             .disposed(by: disposeBag)
@@ -888,9 +897,20 @@ extension HomeViewController {
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] liveData in
+            .bind { [weak self] data in
                 guard let self else { return }
-                self.liveActivity.updateLiveActivity(with: liveData)
+                let contentState = HowManySetWidgetAttributes.ContentState.init(
+                    workoutTime: data.workoutTime,
+                    isWorkingout: data.isWorkingout,
+                    exerciseName: data.exerciseName,
+                    exerciseInfo: data.exerciseInfo,
+                    isResting: data.isResting,
+                    restSecondsRemaining: Int(data.restSecondsRemaining),
+                    isRestPaused: data.isRestPaused,
+                    currentSet: data.currentSet,
+                    totalSet: data.totalSet
+                )
+                LiveActivityService.shared.update(state: contentState)
             }
             .disposed(by: disposeBag)
     }//bind
