@@ -648,7 +648,12 @@ extension HomeViewReactor.State {
         
         let exercise = workoutCardStates[currentExerciseIndex]
         let reps = exercise.currentReps
-        let weight = exercise.currentWeight
+        let weight: String
+        if exercise.currentWeight.truncatingRemainder(dividingBy: 1) == 0 {
+            weight = String(Int(exercise.currentWeight))
+        } else {
+            weight = String(exercise.currentWeight)
+        }
         let unit = exercise.currentUnit
         let repsText = "회"
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"

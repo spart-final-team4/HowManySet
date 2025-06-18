@@ -888,8 +888,7 @@ extension HomeViewController {
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] data in
-                guard let self else { return }
+            .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
                     isWorkingout: data.isWorkingout,
