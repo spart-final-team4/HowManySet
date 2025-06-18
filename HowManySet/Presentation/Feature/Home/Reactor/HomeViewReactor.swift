@@ -46,19 +46,6 @@ struct WorkoutSummary {
     let routineMemo: String?
 }
 
-/// LiveActivity에 필요한 데이터
-struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
-    let workoutTime: Int
-    var isWorkingout: Bool
-    var exerciseName: String
-    var exerciseInfo: String
-    var isResting: Bool
-    var restSecondsRemaining: Float
-    var isRestPaused: Bool
-    var currentSet: Int
-    var totalSet: Int
-}
-
 final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
