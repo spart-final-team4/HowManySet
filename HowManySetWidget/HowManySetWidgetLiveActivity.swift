@@ -154,7 +154,7 @@ struct HowManySetWidgetLiveActivity: Widget {
             }//VStack
             .padding(.all, 20)
             .frame(height: 160)
-            .background(.black)
+            .background(Color("Background"))
             
         } dynamicIsland: { context in
             // MARK: - DynamicIsland
