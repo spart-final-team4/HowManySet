@@ -108,17 +108,19 @@ extension RecordDetailViewController {
 
     /// 컬랙션 뷰 Setup (셀 register)
     private func setupCollectionView() {
+        // 첫번째 section cell
         recordDetailView.publicCollectionView.register(
             SummaryInfoCell.self,
             forCellWithReuseIdentifier: SummaryInfoCell.identifier
         )
 
+        // 두번째 section cell
         recordDetailView.publicCollectionView.register(
             WorkoutDetailInfoCell.self,
             forCellWithReuseIdentifier: WorkoutDetailInfoCell.identifier
         )
 
-        // 헤더 뷰
+        // 두번째 section 헤더 뷰
         recordDetailView.publicCollectionView.register(
             WorkoutDetailHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
