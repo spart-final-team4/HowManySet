@@ -58,29 +58,33 @@ final class RestInfoView: UIView, View {
     lazy var restButton60 = UIButton().then {
         $0.backgroundColor = .darkGray
         $0.setTitle(restButtonText60, for: .normal)
-        $0.layer.cornerRadius = 20
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.layer.cornerRadius = 18
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.tag = 60
     }
     
     lazy var restButton30 = UIButton().then {
         $0.backgroundColor = .darkGray
         $0.setTitle(restButtonText30, for: .normal)
-        $0.layer.cornerRadius = 20
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.layer.cornerRadius = 18
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.tag = 30
     }
     
     lazy var restButton10 = UIButton().then {
         $0.backgroundColor = .darkGray
         $0.setTitle(restButtonText10, for: .normal)
-        $0.layer.cornerRadius = 20
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.layer.cornerRadius = 18
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.tag = 10
     }
     
     lazy var restResetButton = UIButton().then {
         $0.backgroundColor = .background
         $0.setTitle(restResetButtonText, for: .normal)
-        $0.layer.cornerRadius = 20
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.layer.cornerRadius = 18
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.tag = 0
     }
     
     private lazy var waterLabel = UILabel().then {
@@ -92,7 +96,7 @@ final class RestInfoView: UIView, View {
         $0.axis = .horizontal
         $0.spacing = 28
         
-        // MARK: - 내부 물 버튼 들 생성 및 바인딩
+        // MARK: - 내부 물 버튼들 생성 및 바인딩
         for _ in 0..<5 {
             let waterButton = UIButton().then {
                 $0.setImage(UIImage(systemName: "waterbottle"), for: .normal)
@@ -197,25 +201,22 @@ extension RestInfoView {
     func bind(reactor: HomeViewReactor) {
         
         // MARK: Action
-        restButton60.rx.tap
-            .map { Reactor.Action.setRestTime(60) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        restButton30.rx.tap
-            .map { Reactor.Action.setRestTime(30) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        restButton10.rx.tap
-            .map { Reactor.Action.setRestTime(10) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        restResetButton.rx.tap
-            .map { Reactor.Action.setRestTime(0)}
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
+        [restButton10, restButton30, restButton60, restResetButton].forEach { button in
+            button.rx.tap
+                .do(onNext: {
+                    UIView.animate(withDuration: 0.1,
+                                   animations: {
+                        button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                    }, completion: { _ in
+                        UIView.animate(withDuration: 0.1) {
+                            button.transform = .identity
+                        }
+                    })
+                })
+                .map { Reactor.Action.setRestTime(Float(button.tag)) }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        }
         
         // MARK: State
         // HomeViewReactor의 상태를 구독하여 RestInfoView의 UI를 업데이트

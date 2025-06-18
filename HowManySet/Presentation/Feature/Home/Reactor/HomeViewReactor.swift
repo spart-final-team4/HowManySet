@@ -309,7 +309,13 @@ final class HomeViewReactor: Reactor {
             return .just(.pauseAndPlayRest(!currentState.isRestPaused))
             
         case .stopButtonClicked(let isEnded):
-            return .just(.manageWorkoutData(isEnded: isEnded))
+            return .concat([
+                .just(.stopRestTimer(true)),
+                .just(.manageWorkoutData(isEnded: true)),
+                .just(.setWorkingout(false)),
+                .just(.setResting(false)),
+                .just(.setRestTime(0))
+            ])
             
         case let .editAndMemoViewPresented(cardIndex):
             let currentExerciseIndex = currentState.currentExerciseIndex
@@ -610,6 +616,7 @@ private extension HomeViewReactor {
                 if allCompleted { // 모든 운동 루틴 완료 시
                     print("--- 모든 운동 루틴 완료! ---")
                     return .concat([
+                        .just(.stopRestTimer(true)),
                         .just(.manageWorkoutData(isEnded: true)),
                         .just(.setWorkingout(false)),
                         .just(.setResting(false)),

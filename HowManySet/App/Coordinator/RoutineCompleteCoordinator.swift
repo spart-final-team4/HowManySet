@@ -27,7 +27,7 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     func start() {
         let routineCompleteVC = container.makeRoutineCompleteViewController(coordinator: self, workoutSummary: workoutSummary)
 
-        navigationController.pushViewController(routineCompleteVC, animated: false)
+        navigationController.pushViewController(routineCompleteVC, animated: true)
     }
     
     /// 메인 홈 화면으로 이동
