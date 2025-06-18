@@ -25,13 +25,14 @@ final class RoutineRepositoryImpl: RoutineRepository {
     /// - Returns: `Single`로 감싸진 `WorkoutRoutine` 배열, 조회 성공 시 배열을 방출하고 실패 시 에러를 방출합니다.
     func fetchRoutine(uid: String) -> Single<[WorkoutRoutine]> {
         return Single.create { [weak self] observer in
-            guard let routines = self?.realmService.read(type: .workoutRecord) as? [WorkoutRoutineDTO] else {
+            guard let routines = self?.realmService.read(type: .workoutRecord) else {
                 observer(.failure(RealmErrorType.dataNotFound))
                 return Disposables.create()
             }
-            
+             
+            let routineDTO: [WorkoutRoutineDTO] = routines.map{ ($0 as! RMWorkoutRoutine).toDTO()}
             // 예시: 빈 배열 반환
-            observer(.success(routines.map{$0.toEntity()}))
+            observer(.success(routineDTO.map{$0.toEntity()}))
             
             return Disposables.create()
         }
@@ -43,7 +44,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
     ///   - uid: 운동 루틴을 삭제할 사용자의 고유 식별자
     ///   - item: 삭제할 `WorkoutRoutine` 객체
     func deleteRoutine(uid: String, item: WorkoutRoutine) {
-        let routine = WorkoutRoutineDTO(entity: item)
+        let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
         realmService.delete(item: routine)
     }
     
@@ -53,7 +54,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
     ///   - uid: 운동 루틴을 저장할 사용자의 고유 식별자
     ///   - item: 저장할 `WorkoutRoutine` 객체
     func saveRoutine(uid: String, item: WorkoutRoutine) {
-        let routine = WorkoutRoutineDTO(entity: item)
+        let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
         realmService.create(item: routine)
     }
     
@@ -67,9 +68,9 @@ final class RoutineRepositoryImpl: RoutineRepository {
         let routines = realmService.read(type: .workoutRoutine)
         routines?.forEach{ object in
             realmService.update(item: object) { routine in
-                let data = routine as! WorkoutRoutineDTO
+                let data = routine as! RMWorkoutRoutine
                 if data.name == item.name {
-                    data.workoutArray = item.workouts.map{ WorkoutDTO(entity: $0) }
+                    data.workoutArray = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0)) }
                 }
             }
         }
