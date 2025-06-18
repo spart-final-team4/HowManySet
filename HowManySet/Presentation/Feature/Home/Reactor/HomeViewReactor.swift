@@ -46,6 +46,19 @@ struct WorkoutSummary {
     let routineMemo: String?
 }
 
+/// LiveActivity에 필요한 데이터
+struct WorkoutDataForLiveActivity {
+    let workoutTime: Int
+    var isWorkingout: Bool
+    var exerciseName: String
+    var exerciseInfo: String
+    var isResting: Bool
+    var restSecondsRemaining: Float
+    var isRestPaused: Bool
+    var currentSet: Int
+    var totalSet: Int
+}
+
 final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
@@ -638,5 +651,30 @@ private extension HomeViewReactor {
                 }
             }
         }
+    }
+}
+
+extension HomeViewReactor.State {
+    
+    var forLiveActivity: WorkoutDataForLiveActivity {
+        
+        let exercise = workoutCardStates[currentExerciseIndex]
+        let reps = exercise.currentReps
+        let weight = exercise.currentWeight
+        let unit = exercise.currentUnit
+        let repsText = "회"
+        let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
+        
+        return WorkoutDataForLiveActivity(
+            workoutTime: workoutTime,
+            isWorkingout: isWorkingout,
+            exerciseName: exercise.currentExerciseName,
+            exerciseInfo: exerciseInfo,
+            isResting: isResting,
+            restSecondsRemaining: restSecondsRemaining,
+            isRestPaused: isRestPaused,
+            currentSet: exercise.setProgressAmount,
+            totalSet: exercise.totalSetCount
+        )
     }
 }
