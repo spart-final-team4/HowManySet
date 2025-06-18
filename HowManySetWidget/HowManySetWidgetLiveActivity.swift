@@ -160,9 +160,8 @@ struct HowManySetWidgetLiveActivity: Widget {
                         totalSets: context.state.totalSet,
                         currentSet: context.state.currentSet
                     )
-                    .frame(maxWidth: .infinity, maxHeight: 17)
-                    .clipped()
-                    
+                    .frame(maxWidth: .infinity, maxHeight: 14)
+
                 }//VStack
             }//VStack
             .padding(.all, 18)
