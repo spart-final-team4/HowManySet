@@ -25,7 +25,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
     /// - Returns: `Single`로 감싸진 `WorkoutRoutine` 배열, 조회 성공 시 배열을 방출하고 실패 시 에러를 방출합니다.
     func fetchRoutine(uid: String) -> Single<[WorkoutRoutine]> {
         return Single.create { [weak self] observer in
-            guard let routines = self?.realmService.read(type: .workoutRecord) else {
+            guard let routines = self?.realmService.read(type: .workoutRoutine) else {
                 observer(.failure(RealmErrorType.dataNotFound))
                 return Disposables.create()
             }
