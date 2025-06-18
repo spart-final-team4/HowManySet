@@ -9,51 +9,6 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
-// MARK: - Firestore 데이터 모델
-
-/// Firestore에 저장되는 운동 세트 모델
-struct FSWorkoutSet: Codable {
-    let weight: Double         /// 세트의 무게
-    let unit: String           /// 무게 단위 (예: "kg", "lb")
-    let reps: Int              /// 반복 횟수
-}
-
-/// Firestore에 저장되는 운동 모델
-struct FSWorkout: Codable {
-    let name: String           /// 운동 이름
-    let restTime: Int          /// 세트 간 휴식 시간(초)
-    let comment: String?       /// 운동에 대한 메모 (옵션)
-    let sets: [FSWorkoutSet]   /// 세트 배열
-}
-
-/// Firestore에 저장되는 운동 루틴 모델
-struct FSWorkoutRoutine: Codable, Identifiable {
-    @DocumentID var id: String?    /// Firestore 문서 ID
-    let userId: String             /// 사용자 UID(외래키)
-    var name: String               /// 루틴 이름
-    let workouts: [FSWorkout]      /// 운동 목록
-}
-
-/// Firestore에 저장되는 운동 기록 모델
-struct FSWorkoutRecord: Codable, Identifiable {
-    @DocumentID var id: String?    /// Firestore 문서 ID
-    let userId: String             /// 사용자 UID(외래키)
-    let routineId: String          /// 연관된 루틴 문서 ID
-    let totalTime: Int             /// 전체 운동 시간(초)
-    let workoutTime: Int           /// 실제 운동 시간(초)
-    let comment: String?           /// 메모 (옵션)
-    let date: Date                 /// 운동 날짜
-}
-
-/// Firestore에 저장되는 운동 세션 모델
-struct FSWorkoutSession: Codable, Identifiable {
-    @DocumentID var id: String?    /// Firestore 문서 ID
-    let userId: String             /// 사용자 UID(외래키)
-    let recordId: String           /// 연관된 기록 문서 ID
-    let startDate: Date            /// 세션 시작 시각
-    let endDate: Date              /// 세션 종료 시각
-}
-
 // MARK: - FirestoreService (싱글톤)
 
 /// FirestoreService
