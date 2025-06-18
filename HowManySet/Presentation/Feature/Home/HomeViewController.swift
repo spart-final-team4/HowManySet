@@ -707,18 +707,21 @@ extension HomeViewController {
             }
         }).disposed(by: disposeBag)
          
-        // 휴식 중지 시
+        // 중지 시 휴식 버튼, 프로그레스바 동작 관련
         reactor.state.map { $0.isRestPaused }
+            .observe(on: MainScheduler.instance)
             .distinctUntilChanged()
             .bind { [weak self] isRestPaused in
                 guard let self else { return }
                 
                 self.pagingCardViewContainer.forEach {
                     if isRestPaused {
+                        $0.restPlayPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
                         // 정지처럼 보이게
                         let currentProgress = $0.restProgressBar.progress
                         $0.restProgressBar.setProgress(currentProgress, animated: false)
                     } else {
+                        $0.restPlayPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
                         // 다시 재생 - 현재 시간 기반 비율로 애니메이션 적용
                         let cardIndex = $0.index
                         let state = reactor.currentState
@@ -737,13 +740,8 @@ extension HomeViewController {
         // 운동 중지 시
         reactor.state.map { $0.isWorkoutPaused }
             .bind(with: self) { view, isWorkoutPaused in
-                let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
-                view.pauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
-                
-                view.pagingCardViewContainer.forEach {
-                    let buttonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
-                    $0.restPlayPauseButton.setImage(UIImage(systemName: buttonImageName), for: .normal)
-                }
+                let workoutButtonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
+                view.pauseButton.setImage(UIImage(systemName: workoutButtonImageName), for: .normal)
             }.disposed(by: disposeBag)
         
         // 모든 세트 완료 시 카드 삭제 및 레이아웃 재설정
