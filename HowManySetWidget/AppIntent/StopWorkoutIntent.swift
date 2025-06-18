@@ -11,13 +11,11 @@ import ActivityKit
 
 @available(iOSApplicationExtension 17.0, *)
 struct StopWorkoutIntent: AppIntent {
-    static var title: LocalizedStringResource = "Stop Routine"
+    static var title: LocalizedStringResource = "운동 종료"
 
     func perform() async throws -> some IntentResult {
-        print("StopWorkoutIntent")
         
-        // [운동 종료 메서드]
-        
+        NotificationCenter.default.post(name: .stopWorkoutFromLiveActivity, object: nil)
         return .result()
     }
 }

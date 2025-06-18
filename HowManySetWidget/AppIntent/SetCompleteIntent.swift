@@ -1,5 +1,5 @@
 //
-//  PlayRoutineIntent.swift
+//  SkipSetIntent.swift
 //  HowManySet
 //
 //  Created by 정근호 on 6/2/25.
@@ -10,14 +10,12 @@ import ActivityKit
 //import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-struct PlayRoutineIntent: AppIntent {
-    static var title: LocalizedStringResource = "Play Routine"
+struct SetCompleteIntent: AppIntent {
+    static var title: LocalizedStringResource = "세트 완료"
 
     func perform() async throws -> some IntentResult {
-        print("PlayRoutineIntent")
         
-        // [운동 재개 메서드]
-        
+        NotificationCenter.default.post(name: .setCompleteFromLiveActivity, object: nil)
         return .result()
     }
 }

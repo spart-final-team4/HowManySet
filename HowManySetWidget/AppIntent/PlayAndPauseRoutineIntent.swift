@@ -1,5 +1,5 @@
 //
-//  PauseRoutineIntent.swift
+//  PlayRoutineIntent.swift
 //  HowManySet
 //
 //  Created by 정근호 on 6/2/25.
@@ -10,14 +10,12 @@ import ActivityKit
 //import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-struct PauseRoutineIntent: AppIntent {
-    static var title: LocalizedStringResource = "Pause Routine"
+struct PlayAndPauseRoutineIntent: AppIntent {
+    static var title: LocalizedStringResource = "휴식 중지 재개"
 
     func perform() async throws -> some IntentResult {
-        print("PauseRoutineIntent")
         
-        // [운동 중지 메서드]
-        
+        NotificationCenter.default.post(name: .playAndPauseRestFromLiveActivity, object: nil)
         return .result()
     }
 }
