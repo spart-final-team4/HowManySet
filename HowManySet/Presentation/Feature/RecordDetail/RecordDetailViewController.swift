@@ -81,6 +81,8 @@ final class RecordDetailViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
+        bindKeyboardNotifications()
+        bindTapToDismissKeyboard()
     }
 }
 
@@ -156,3 +158,59 @@ extension RecordDetailViewController {
     }
 }
 
+// MARK: - Keyboard notification Method
+private extension RecordDetailViewController {
+    /// 키보드 이벤트 핸들링 메서드 추가
+    func bindKeyboardNotifications() {
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+            .compactMap { $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect }
+            .map { $0.height }
+            .bind(with: self) { owner, keyboardHeight in
+                owner.recordDetailView.publicCollectionView.contentInset.bottom = keyboardHeight + 20
+                owner.recordDetailView.publicCollectionView.verticalScrollIndicatorInsets.bottom = keyboardHeight + 20
+                owner.scrollToMemoCellIfNeeded()
+            }
+            .disposed(by: disposeBag)
+
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+            .bind(with: self) { owner, _ in
+                owner.recordDetailView.publicCollectionView.contentInset.bottom = 0
+                owner.recordDetailView.publicCollectionView.verticalScrollIndicatorInsets.bottom = 0
+            }
+            .disposed(by: disposeBag)
+    }
+
+    /// 키보드 외 화면 터치 시 키보드 내려가는 메서드
+    func bindTapToDismissKeyboard() {
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+
+        tapGesture.rx.event
+            .bind(with: self) { owner, _ in
+                owner.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - RecordDetailViewController
+private extension RecordDetailViewController {
+    /// TextView 전체를 자동으로 화면에 보여주는 메서드
+    func scrollToMemoCellIfNeeded() {
+        guard let sectionIndex = dataSource.sectionModels.firstIndex(where: {
+            if case .memo = $0.model { return true }
+            return false
+        }) else { return }
+
+        let indexPath = IndexPath(item: 0, section: sectionIndex)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            self.recordDetailView.publicCollectionView.scrollToItem(
+                at: indexPath,
+                at: .bottom,
+                animated: true
+            )
+        }
+    }
+}
