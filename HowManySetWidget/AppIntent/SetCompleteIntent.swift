@@ -16,11 +16,10 @@ struct SetCompleteIntent: AppIntent {
 
     func perform() async throws -> some IntentResult {
         
-        NotificationCenter.default.post(
-            name: .setCompleteFromLiveActivity,
-            object: nil,
-            userInfo: ["index":index]
-        )
+        let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
+        sharedDefaults?.set(index, forKey: "SetCompleteIndex")
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "SetCompleteTimestamp")
+        sharedDefaults?.synchronize()
         return .result()
     }
 }
