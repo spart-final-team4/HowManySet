@@ -288,7 +288,7 @@ final class HomeViewReactor: Reactor {
             
             return .concat([
                 .just(.stopRestTimer(true)),
-                handleWorkoutFlow(cardIndex, isResting: false, restTime: 0)
+                handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
             ])
             
         case .workoutPauseButtonClicked:
@@ -356,7 +356,7 @@ final class HomeViewReactor: Reactor {
             }
             print("휴식중? \(newState.isResting)")
             
-            // 휴식 버튼으로 휴식 시간 설정 시
+        // 휴식 버튼으로 휴식 시간 설정 시
         case let .setRestTime(restTime):
             // 초기화 버튼 클릭 시 0으로 설정
             if restTime == 0 {
@@ -527,6 +527,7 @@ private extension HomeViewReactor {
         var currentCardState = currentState.workoutCardStates[cardIndex]
         
         // 다음 세트가 있는 경우 (휴식 시작)
+        // 해당 상태에서 Forward 버튼을 누르면 휴식 스킵
         if nextSetIndex < currentCardState.totalSetCount {
             
             // 휴식 타이머
@@ -537,8 +538,8 @@ private extension HomeViewReactor {
                 let tickCount = restTime * 10 // 0.1초 간격으로 진행
                 // 휴식 타이머
                 restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
-                    .withLatestFrom(self.state) { _, currentState in currentState }
                     .take(Int(tickCount))
+                    .take(until: self.state.map { !$0.isResting || $0.isRestTimerStopped }.filter { $0 })
                     .map { _ in Mutation.restRemainingSecondsUpdating }
             }
             
