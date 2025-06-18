@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 final class DIContainer {
 
@@ -34,6 +35,10 @@ final class DIContainer {
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         
+        // Firestore 관련 로직 추가
+        let workoutRepository: WorkoutRepository = FSWorkoutRepositoryImpl()
+        let workoutUseCase = WorkoutUseCase(repository: workoutRepository)
+        
         let reactor = HomeViewReactor(
             saveRecordUseCase: saveRecordUseCase
         )
@@ -49,6 +54,10 @@ final class DIContainer {
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+        
+        // Firestore 관련 로직 추가
+        let workoutRepository: WorkoutRepository = FSWorkoutRepositoryImpl()
+        let workoutUseCase = WorkoutUseCase(repository: workoutRepository)
         
         let reactor = RoutineListViewReactor(
             deleteRoutineUseCase: deleteRoutineUseCase,
@@ -66,6 +75,10 @@ final class DIContainer {
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
+
+        // Firestore 관련 로직 추가
+        let workoutRepository: WorkoutRepository = FSWorkoutRepositoryImpl()
+        let workoutUseCase = WorkoutUseCase(repository: workoutRepository)
 
         let reactor = CalendarViewReactor(
             saveRecordUseCase: saveRecordUseCase,
@@ -97,6 +110,12 @@ final class DIContainer {
         let realmService: RealmServiceProtocol = RealmService()
         let recordRepository = RecordRepositoryImpl(realmService: realmService)
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+
+        // Firestore 관련 로직 추가
+        let workoutRepository: WorkoutRepository = FSWorkoutRepositoryImpl()
+        let workoutUseCase = WorkoutUseCase(repository: workoutRepository)
+
+        let reactor = RoutineCompleteViewReactor(saveRecordUseCase: saveRecordUseCase)
         
         return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary)
     }
