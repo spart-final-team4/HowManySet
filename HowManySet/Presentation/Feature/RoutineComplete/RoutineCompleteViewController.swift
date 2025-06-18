@@ -144,6 +144,8 @@ final class RoutineCompleteViewController: UIViewController {
         
         self.hidesBottomBarWhenPushed = true
         self.navigationItem.hidesBackButton = true
+        
+        self.transitioningDelegate = self
     }
     
     @available(*, unavailable)
@@ -201,6 +203,11 @@ private extension RoutineCompleteViewController {
     
     func setConstraints() {
         
+//        mainContentsContainer.snp.makeConstraints {
+//            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+//            $0.bottom.equalToSuperview()
+//            $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
+//        }
         mainContentsContainer.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
@@ -429,5 +436,16 @@ private extension RoutineCompleteViewController {
     func captureWorkoutSummaryScreenshot() -> UIImage? {
         // 운동 요약 카드 부분만 캡처
         return cardContentsContainer.asImage()
+    }
+}
+
+extension RoutineCompleteViewController: UIViewControllerTransitioningDelegate {
+    
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        return SlideUpAnimator()
     }
 }
