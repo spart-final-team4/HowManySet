@@ -142,18 +142,19 @@ private extension SummaryInfoCell {
 
         totalSummaryStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
-            $0.bottom.equalTo(dividerView.snp.top).offset(-20)
+            $0.top.equalTo(headerVStackView.snp.bottom).offset(20)
         }
 
         dividerView.snp.makeConstraints {
-            $0.horizontalEdges.bottom.equalToSuperview()
+            $0.top.equalTo(totalSummaryStackView.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(1)
         }
 
         workoutDetailTitleLabel.snp.makeConstraints {
             $0.top.equalTo(dividerView.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(36)
+            $0.bottom.equalToSuperview()
         }
     }
 

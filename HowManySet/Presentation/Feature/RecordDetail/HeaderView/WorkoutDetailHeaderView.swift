@@ -45,7 +45,7 @@ private extension WorkoutDetailHeaderView {
     func setConstraints() {
         titleLabel.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
-            $0.verticalEdges.equalToSuperview().inset(4)
+            $0.verticalEdges.equalToSuperview()
         }
     }
 }

@@ -70,19 +70,18 @@ private extension RecordDetailView {
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(150)
+                heightDimension: .estimated(300)
             )
         )
 
         let group = NSCollectionLayoutGroup.vertical(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(210)
+                heightDimension: .estimated(350)
             ),
             subitems: [item]
         )
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 16
         section.contentInsets = .init(top: 28, leading: 28, bottom: 20, trailing: 28)
         return section
     }
@@ -109,13 +108,13 @@ private extension RecordDetailView {
         // 섹션: 운동 1개, 수평 스크롤
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-        section.contentInsets = .init(top: 0, leading: 28, bottom: 16, trailing: 28)
-        section.interGroupSpacing = 8
+        section.contentInsets = .init(top: 0, leading: 28, bottom: 8, trailing: 28)
+        section.interGroupSpacing = 12
 
         // 섹션 헤더: 운동 이름
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(30)
+            heightDimension: .estimated(36)
         )
 
         let header = NSCollectionLayoutBoundarySupplementaryItem(
