@@ -871,25 +871,16 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] isWorkingout, data in
-                guard let self else { return }
-                
-                let contentState = HowManySetWidgetAttributes.ContentState.init(
-                    workoutTime: data.workoutTime,
-                    isWorkingout: data.isWorkingout,
-                    exerciseName: data.exerciseName,
-                    exerciseInfo: data.exerciseInfo,
-                    isResting: data.isResting,
-                    restSecondsRemaining: Int(data.restSecondsRemaining),
-                    isRestPaused: data.isRestPaused,
-                    currentSet: data.currentSet,
-                    totalSet: data.totalSet
-                )
+            .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
+                                 
+                let (isWorkingout, data) = state
+                                 
+                let contentState = data
             
                 if isWorkingout {
                     LiveActivityService.shared.start(with: contentState)
                 } else {
-                    LiveActivityService.shared.end()
+                    LiveActivityService.shared.stop()
                 }
             }
             .disposed(by: disposeBag)
