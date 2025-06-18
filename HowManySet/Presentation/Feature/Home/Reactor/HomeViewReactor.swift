@@ -47,7 +47,7 @@ struct WorkoutSummary {
 }
 
 /// LiveActivity에 필요한 데이터
-struct WorkoutDataForLiveActivity {
+struct WorkoutDataForLiveActivity: Equatable {
     let workoutTime: Int
     var isWorkingout: Bool
     var exerciseName: String
@@ -654,6 +654,7 @@ private extension HomeViewReactor {
     }
 }
 
+// LiveActivity State
 extension HomeViewReactor.State {
     
     var forLiveActivity: WorkoutDataForLiveActivity {
