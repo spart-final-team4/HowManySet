@@ -473,7 +473,7 @@ private extension HomeViewController {
                         }
                     })
                     reactor.action.onNext(action)
-                    self.coordinator?.presentEditExerciseView()
+                    self.coordinator?.presentEditExerciseView(routineName: "")
                 }
                 .disposed(by: disposeBag)
         }

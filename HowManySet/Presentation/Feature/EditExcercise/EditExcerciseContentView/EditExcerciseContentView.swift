@@ -30,6 +30,8 @@ final class EditExcerciseContentView: UIView {
     
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExcerciseContentHeaderView()
+    private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
+    private(set) var excerciseInfoRelay = BehaviorRelay<[[Int]]>(value: [[]])
     
     /// 세트 정보와 추가 버튼을 포함하는 수직 스택뷰입니다.
     private let verticalContentStackView = UIStackView().then {
@@ -82,12 +84,6 @@ final class EditExcerciseContentView: UIView {
         setupUI()
         setThreeCells()  // 기본 3개의 세트 생성
         
-        // "+ 세트 추가하기" 버튼 탭 시 새 세트 추가
-        addContentButton.rx.tap
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, _ in
-                owner.addContentView()
-            }.disposed(by: disposeBag)
     }
     
     /// XIB/Storyboard 초기화는 지원하지 않습니다.
@@ -114,6 +110,20 @@ final class EditExcerciseContentView: UIView {
                 owner.verticalContentStackView.removeArrangedSubview(contentView)
                 contentView.removeFromSuperview()
                 owner.reorder()
+                var newValue = owner.excerciseInfoRelay.value
+                newValue.remove(at: contentView.order)
+                owner.excerciseInfoRelay.accept(newValue)
+            }.disposed(by: disposeBag)
+        
+        excerciseInfoRelay.accept(excerciseInfoRelay.value + [[-1, -1]])
+        
+        contentView.weightRepsRelay
+            .subscribe(with: self) { owner, element in
+                if owner.excerciseInfoRelay.value.count > contentView.order {
+                    var newValue = owner.excerciseInfoRelay.value
+                    newValue[contentView.order] = element
+                    owner.excerciseInfoRelay.accept(newValue)
+                }
             }.disposed(by: disposeBag)
     }
     
@@ -131,6 +141,16 @@ final class EditExcerciseContentView: UIView {
             addContentView()
         }
     }
+    
+    func returnInitialState() {
+        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        verticalContentStackView.addArrangedSubviews(
+            horizontalContentTitleStackView,
+            addContentButton
+        )
+        excerciseInfoRelay.accept([[]])
+        setThreeCells()
+    }
 }
 
 // MARK: - UI 구성 메서드
@@ -142,6 +162,19 @@ private extension EditExcerciseContentView {
         setViewHierarchy()
         setConstraints()
         setAppearance()
+        bind()
+    }
+    func bind() {
+        // "+ 세트 추가하기" 버튼 탭 시 새 세트 추가
+        addContentButton.rx.tap
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, _ in
+                owner.addContentView()
+            }.disposed(by: disposeBag)
+        
+        headerView.unitSelectionRelay
+            .bind(to: unitSelectionRelay)
+            .disposed(by: disposeBag)
     }
     
     /// 배경색 등 외형을 설정합니다.

@@ -10,59 +10,58 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import ReactorKit
 
 /// 운동 루틴 편집 화면을 담당하는 뷰 컨트롤러입니다.
 ///
-/// 주요 구성 요소:
-/// - 상단 헤더 (`EditExcerciseHeaderView`)
-/// - 세트 편집 영역 (`EditExcerciseContentView`)
-/// - 현재 저장된 운동 목록 (`EditExcerciseCurrentStackView`)
-/// - 하단 푸터 버튼 (`EditExcerciseFooterView`)
-///
-/// 사용자가 세트를 추가하고, 운동을 저장하는 등 편집 기능을 제공합니다.
-final class EditExcerciseViewController: UIViewController {
+/// 주요 기능:
+/// - 운동 이름 입력
+/// - 세트(중량/횟수) 편집
+/// - 운동 항목 추가 및 루틴 저장
+/// - 유효성 검증 실패 시 Alert 표시
+final class EditExcerciseViewController: UIViewController, View {
+    
+    typealias Reactor = EditExcerciseViewReactor
     
     // MARK: - Properties
     
-    /// ReactorKit 또는 MVVM 패턴을 위한 리액터 객체입니다.
-    private let reactor: EditExcerciseViewReactor
-    
-    /// 메모리 해제를 위한 DisposeBag (RxSwift)
-    private let disposeBag = DisposeBag()
+    /// Rx 리소스 해제를 위한 DisposeBag입니다.
+    var disposeBag = DisposeBag()
     
     // MARK: - UI Components
     
-    /// 전체 콘텐츠를 스크롤 가능하게 하는 스크롤 뷰입니다.
+    /// 전체 화면을 스크롤 가능하게 만드는 스크롤 뷰입니다.
     private let scrollView = UIScrollView()
     
-    /// 상단 타이틀/설명 등을 포함하는 헤더 뷰입니다.
+    /// 운동명을 입력하는 헤더 뷰입니다.
     private let headerView = EditExcerciseHeaderView()
     
-    /// 헤더와 콘텐츠 사이 구분선
+    /// 헤더 하단 구분선입니다.
     private let headerBorderLineView = UIView().then {
         $0.backgroundColor = .systemGray3
     }
     
-    /// 세트 편집을 위한 콘텐츠 뷰입니다.
+    /// 세트 정보를 입력받는 콘텐츠 뷰입니다.
     private let contentView = EditExcerciseContentView()
     
-    /// 콘텐츠와 현재 운동 리스트 사이 구분선
+    /// 콘텐츠 하단 구분선입니다.
     private let contentBorderLineView = UIView().then {
         $0.backgroundColor = .systemGray3
     }
     
-    /// 현재 추가된 운동 목록을 보여주는 뷰입니다.
+    /// 현재까지 저장된 운동 리스트를 보여주는 뷰입니다.
     private let currentView = EditExcerciseCurrentStackView()
     
-    /// 하단 고정된 액션 버튼(운동 추가, 저장)을 포함하는 푸터 뷰입니다.
+    /// 운동 추가 및 저장 버튼을 포함하는 하단 푸터 뷰입니다.
     private let footerView = EditExcerciseFooterView()
     
     // MARK: - Initializer
     
-    /// 외부에서 리액터를 주입받아 초기화합니다.
+    /// 리액터를 주입받아 초기화합니다.
+    /// - Parameter reactor: 운동 편집 기능을 제어하는 Reactor
     init(reactor: EditExcerciseViewReactor) {
-        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
     }
     
     /// 스토리보드 초기화는 지원하지 않습니다.
@@ -73,58 +72,137 @@ final class EditExcerciseViewController: UIViewController {
     
     // MARK: - LifeCycle
     
-    /// 뷰 로드 후 UI 및 바인딩 설정을 수행합니다.
+    /// 뷰가 로드되었을 때 호출됩니다.
+    /// UI 구성 및 레이아웃을 설정합니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bind()
     }
     
-    /// 버튼 등의 이벤트 바인딩 처리
-    func bind() {
-        // '운동 추가' 버튼 탭 시 임시 운동 추가 (추후 리액터와 연결 가능)
+    // MARK: - Binding
+    
+    /// 리액터 바인딩을 통해 View와 Reactor를 연결합니다.
+    ///
+    /// 버튼 탭, 입력값 변경, 상태 변화에 따른 Alert 및 화면 dismiss 처리를 수행합니다.
+    func bind(reactor: EditExcerciseViewReactor) {
+        
+        // 운동 추가 버튼 탭
         footerView.addExcerciseButtonTapped
-            .subscribe(with: self) { owner, _ in
-                print("addExcerciseButtonTapped")
-                owner.currentView.addExcercise(name: "Mock", setCount: 5)
-            }.disposed(by: disposeBag)
+            .map { Reactor.Action.addExcerciseButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        // '루틴 저장' 버튼 탭 시 처리 로직 (현재는 print만)
+        // 루틴 저장 버튼 탭
         footerView.saveRoutineButtonTapped
-            .subscribe(with: self) { owner, _ in
-                print("saveRoutineButtonTapped")
-            }.disposed(by: disposeBag)
+            .map { Reactor.Action.saveRoutineButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        // 화면 탭하면 키보드 내리기
+        // 운동 이름 입력
+        headerView.exerciseNameRelay
+            .map { Reactor.Action.changeExerciseName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        // 단위 선택 변경
+        contentView.unitSelectionRelay
+            .map { Reactor.Action.changeUnit($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        // 세트 정보 변경
+        contentView.excerciseInfoRelay
+            .map { Reactor.Action.changeExcerciseWeightSet($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
 
+        view.addGestureRecognizer(tapGesture)
         tapGesture.rx.event
             .bind { [weak self] _ in
                 guard let self else { return }
                 self.view.endEditing(true)
             }
             .disposed(by: disposeBag)
+        
+        // 운동 항목이 추가되었을 때 현재 뷰에 반영
+        reactor.state
+            .map { $0.currentRoutine.workouts }
+            .distinctUntilChanged()
+            .skip(1)
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, workouts in
+                guard let workout = workouts.last else { return }
+                owner.currentView.addExcercise(workout: workout)
+            }
+            .disposed(by: disposeBag)
+        
+        // Alert 표시 (저장 성공/실패, 유효성 실패 등)
+        reactor.alertRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, alert in
+                switch alert {
+                case .excerciseSavefailure:
+                    let alert = UIAlertController(
+                        title: "입력 오류",
+                        message: "운동 항목을 올바르게 입력해 주세요.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    owner.present(alert, animated: true)
+                    
+                case .excerciseSaveSuccess:
+                    let alert = UIAlertController(
+                        title: "저장 완료",
+                        message: "운동이 저장되었습니다",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    owner.present(alert, animated: true) {
+                        owner.headerView.returnInitialState()
+                        owner.contentView.returnInitialState()
+                    }
+                    
+                case .saveRoutineFailure:
+                    let alert = UIAlertController(
+                        title: "저장 실패",
+                        message: "현재 저장된 운동 목록이 없습니다.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    owner.present(alert, animated: true)
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        // 저장 후 화면 닫기
+        reactor.dismissRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
-// MARK: - UI Methods
+// MARK: - UI Layout Methods
+
 private extension EditExcerciseViewController {
     
-    /// 전체 UI 구성 메서드
+    /// 전체 UI 구성 흐름을 설정합니다.
     func setupUI() {
         setViewHierarchy()
         setConstraints()
         setAppearance()
     }
     
-    /// 배경색 설정 등 외형 설정
+    /// 기본 배경색 등 외형을 설정합니다.
     func setAppearance() {
         view.backgroundColor = .background
     }
     
-    /// 뷰 계층 구성: 스크롤뷰 및 내부 요소, 푸터 뷰 추가
+    /// 서브뷰들을 뷰 계층에 추가합니다.
     func setViewHierarchy() {
         scrollView.addSubviews(
             headerView,
@@ -133,11 +211,10 @@ private extension EditExcerciseViewController {
             contentBorderLineView,
             currentView
         )
-        
         view.addSubviews(scrollView, footerView)
     }
     
-    /// SnapKit을 이용한 오토레이아웃 구성
+    /// SnapKit을 활용한 오토레이아웃 제약 조건 설정입니다.
     func setConstraints() {
         headerView.snp.makeConstraints {
             $0.horizontalEdges.top.equalToSuperview()
@@ -179,7 +256,7 @@ private extension EditExcerciseViewController {
         
         footerView.snp.makeConstraints {
             $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalToSuperview().multipliedBy(0.1125) // 약 1/9 높이
+            $0.height.equalToSuperview().multipliedBy(0.1125)
         }
     }
 }

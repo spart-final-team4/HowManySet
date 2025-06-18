@@ -76,6 +76,15 @@ final class EditExcerciseCurrentStackView: UIStackView {
         // 개수 라벨 갱신
         self.excerciseCountLabel.text = "\(self.arrangedSubviews.count - 1)개의 운동"
     }
+    
+    func addExcercise(workout: Workout) {
+        let view = SavedExcerciseView(workout: workout)
+        self.removeArrangedSubview(emptyTextLabel)
+        emptyTextLabel.removeFromSuperview()
+        
+        self.addArrangedSubviews(view)
+        self.excerciseCountLabel.text = "\(self.arrangedSubviews.count - 1)개의 운동"
+    }
 }
 
 // MARK: - UI 구성 관련 메서드
