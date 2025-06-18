@@ -60,6 +60,11 @@ final class SummaryInfoCell: UICollectionViewCell {
     }
 }
 
+// MARK: - Computed Properties
+extension SummaryInfoCell {
+    var publicConfirmButton: UIButton { confirmButton }
+}
+
 // MARK: - SummaryInfoCell UI 관련 extension
 private extension SummaryInfoCell {
     func setupUI() {
