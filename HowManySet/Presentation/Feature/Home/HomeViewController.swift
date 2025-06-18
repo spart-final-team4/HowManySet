@@ -905,3 +905,57 @@ extension HomeViewController {
             .disposed(by: disposeBag)
     }//bind
 }
+
+
+// MARK: - LiveActivity Notification Setting
+private extension HomeViewController {
+    
+    func setLiveActivityNotifications() {
+        
+        // 세트 완료
+        NotificationCenter.default.addObserver(
+            forName: .setCompletedFromLiveActivity,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            let index = (notification.userInfo?["index"] as? Int) ?? 0
+            reactor.action.onNext(.setCompleteButtonClicked(at: index))
+        }
+        
+        // 운동 종료
+        NotificationCenter.default.addObserver(
+            forName: .stopWorkoutFromLiveActivity,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            self.coordinator?.popUpEndWorkoutAlert {
+                reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                return reactor.currentState.workoutSummary
+            }
+        }
+        
+        // 휴식 스킵
+        NotificationCenter.default.addObserver(
+            forName: .skipRestFromLiveActivity,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            let index = (notification.userInfo?["index"] as? Int) ?? 0
+            reactor.action.onNext(.forwardButtonClicked(at: index))
+        }
+        
+        // 휴식 정지/재개
+        NotificationCenter.default.addObserver(
+            forName: .playAndPauseRestFromLiveActivity,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self else { return }
+            let index = (notification.userInfo?["index"] as? Int) ?? 0
+            reactor.action.onNext(.restPauseButtonClicked(at: index))
+        }
+    }
+}
