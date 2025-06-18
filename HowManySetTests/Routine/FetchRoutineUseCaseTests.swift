@@ -25,7 +25,7 @@ final class FetchRoutineUseCaseTests: XCTestCase {
     func test_저장된루틴이_정상적으로불러와지는가() {
         // given
         let routine = WorkoutRoutine(name: "test", workouts: [])
-        realmServiceStub.create(item: WorkoutRoutineDTO(entity: routine))
+        realmServiceStub.create(item: RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: routine)))
         
         // when
         let routines = realmServiceStub.read(type: .workoutRoutine)
