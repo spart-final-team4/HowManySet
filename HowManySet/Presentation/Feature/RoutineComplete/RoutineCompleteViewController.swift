@@ -323,6 +323,18 @@ private extension RoutineCompleteViewController {
                 self.presentShareActivity()
             }
             .disposed(by: disposeBag)
+        
+        // 화면 탭하면 키보드 내리기
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+
+        tapGesture.rx.event
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -338,7 +350,7 @@ private extension RoutineCompleteViewController {
                 guard let self else { return }
                 print("키보드 나타남")
         
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.1) {
                     self.mainContentsContainer.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight/2)
                 }
             })
@@ -349,7 +361,7 @@ private extension RoutineCompleteViewController {
                 guard let self else { return }
                 print("키보드 사라짐")
 
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.1) {
                     self.mainContentsContainer.transform = .identity
                 }
             })

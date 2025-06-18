@@ -52,6 +52,8 @@ final class OnBoardingViewController: UIViewController {
         bindNicknameValidation()
         onboardingView.isHidden = true
         nicknameInputView.isHidden = false
+        
+        bindUIEvents()
     }
 }
 
@@ -206,5 +208,23 @@ private extension OnBoardingViewController {
             print("goToNextPage() - else")
             (coordinator as? OnBoardingCoordinator)?.completeOnBoarding()
         }
+    }
+}
+
+private extension OnBoardingViewController {
+    
+    func bindUIEvents() {
+        
+        // 화면 탭하면 키보드 내리기
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+
+        tapGesture.rx.event
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
 }
