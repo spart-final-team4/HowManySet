@@ -42,7 +42,7 @@ final class HomeRoutineStartCardView: UIView {
     }
 
     private lazy var initialImageView = UIImageView().then {
-        let config = UIImage.SymbolConfiguration(pointSize: 40)
+        let config = UIImage.SymbolConfiguration(pointSize: 50)
         $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .brand
@@ -117,7 +117,7 @@ private extension HomeRoutineStartCardView {
         
         containerView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(mainContentVStack)
-            $0.height.equalToSuperview().multipliedBy(0.4)
+            $0.height.equalToSuperview().multipliedBy(0.6)
         }
         
         containerVStack.snp.makeConstraints {
