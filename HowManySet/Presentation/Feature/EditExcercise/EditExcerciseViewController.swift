@@ -115,7 +115,6 @@ final class EditExcerciseViewController: UIViewController, View {
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-<<<<<<< HEAD
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
 
@@ -126,7 +125,6 @@ final class EditExcerciseViewController: UIViewController, View {
                 self.view.endEditing(true)
             }
             .disposed(by: disposeBag)
-=======
         
         // 운동 항목이 추가되었을 때 현재 뷰에 반영
         reactor.state
