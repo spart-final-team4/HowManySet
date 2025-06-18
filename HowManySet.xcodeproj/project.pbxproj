@@ -608,7 +608,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C8K7T5GB89;
+				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HowManySet/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySet;
@@ -646,7 +646,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = C8K7T5GB89;
+				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HowManySet/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySet;
