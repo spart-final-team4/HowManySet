@@ -438,13 +438,13 @@ private extension HomeViewController {
                 
                 // 세트 완료 버튼
                 cardView.setCompleteButton.rx.tap
-                    .observe(on: MainScheduler.instance)
+                    .observe(on: MainScheduler.asyncInstance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
                     .do(onNext: {
                         print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     })
                     .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
-                    .bind(onNext: { [weak self] action in
-                        guard let self else { return }
+                    .bind(onNext: { action in
                         UIView.animate(withDuration: 0.1, animations: {
                             cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                         }, completion: { _ in
@@ -460,8 +460,8 @@ private extension HomeViewController {
                 
                 // 휴식 재생/일시정지 버튼
                 cardView.restPlayPauseButton.rx.tap
-                    .observe(on: MainScheduler.instance)
-                    .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+                    .observe(on: MainScheduler.asyncInstance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
                     .do(onNext: {
                         print("휴식 버튼 탭 감지 - index: \(cardView.index)")
                     })
@@ -474,6 +474,7 @@ private extension HomeViewController {
                 
                 cardView.editButton.rx.tap
                     .observe(on: MainScheduler.instance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
                     .bind(onNext: { [weak self] action in
                         guard let self else { return }
@@ -484,6 +485,7 @@ private extension HomeViewController {
                 
                 cardView.weightRepsButton.rx.tap
                     .observe(on: MainScheduler.instance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
                     .bind { [weak self] action in
                         guard let self else { return }
@@ -516,18 +518,21 @@ extension HomeViewController {
         routineStartCardView.routineSelectButton.rx.tap
             .map { Reactor.Action.routineSelected }
             .observe(on: MainScheduler.instance)
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
             .map { Reactor.Action.workoutPauseButtonClicked }
             .observe(on: MainScheduler.instance)
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         // 수정: forwardButton 클릭 시 현재 visible한 카드의 실제 exerciseIndex 사용
         forwardButton.rx.tap
             .observe(on: MainScheduler.asyncInstance)
+            .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
             .map { [weak self] in
                 guard let self = self else { return Reactor.Action.forwardButtonClicked(at: 0) }
                 let currentExerciseIndex = self.getCurrentVisibleExerciseIndex()
@@ -537,8 +542,9 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         stopButton.rx.tap
-            .map { Reactor.Action.stopButtonClicked }
             .observe(on: MainScheduler.instance)
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .map { Reactor.Action.stopButtonClicked }
             .bind(onNext: { [weak self] stop in
                 guard let self else { return }
                 
@@ -653,6 +659,7 @@ extension HomeViewController {
                 }
             }.disposed(by: disposeBag)
         
+        // TODO: 추후에 리팩토링
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
         Observable.combineLatest(
             reactor.state.map { $0.isResting },
@@ -682,7 +689,7 @@ extension HomeViewController {
                     return
                 }
                 
-                if isResting && restTime >= 0 && Int(restSecondsRemaining) >= 0 {
+                if isResting && restTime >= 0 && restSecondsRemaining >= 0.0 {
                     
                     print("남은 휴식 시간: \(restSecondsRemaining)")
                     
