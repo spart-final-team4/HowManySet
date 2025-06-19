@@ -7,6 +7,7 @@ final class RecordDetailViewReactor: Reactor {
     // MARK: - Action is an user interaction
     enum Action {
         case tapConfirm
+        case tapSave
         case updateMemo(String?)
     }
     
@@ -39,6 +40,9 @@ final class RecordDetailViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .tapConfirm:
+            return .just(.setDismiss(true))
+
+        case .tapSave:
             let trimmedCurrent = currentState.memo?.trimmingCharacters(in: .whitespacesAndNewlines)
             let current = (trimmedCurrent == "메모를 입력해주세요.") ? nil : trimmedCurrent
             let original = currentState.record.comment?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -49,17 +53,17 @@ final class RecordDetailViewReactor: Reactor {
             // 둘 다 nil 또는 공백이면 변경 없음
             if isCurrentEmpty && isOriginalEmpty {
                 print("변경된 값 없음")
-                return .just(.setDismiss(true))
+                return .empty()
             }
 
             // 값이 다르면 변경된 것으로 간주
             if current != original {
                 print("변경된 메모 저장: \(current ?? "")")
-                return .just(.setDismiss(true))
+                return .empty()
             }
 
             print("변경된 값 없음")
-            return .just(.setDismiss(true))
+            return .empty()
 
         case let .updateMemo(text):
             return .just(.setMemo(text))

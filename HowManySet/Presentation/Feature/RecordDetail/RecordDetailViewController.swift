@@ -140,12 +140,17 @@ extension RecordDetailViewController {
             }
             .disposed(by: disposeBag)
 
-        // 확인 버튼 탭 -> Reactor 액션 전달
+        // 저장 버튼, 확인 버튼 탭 -> Reactor 액션 전달
         recordDetailView.publicCollectionView.rx
             .willDisplayCell
             .compactMap { $0.cell as? SummaryInfoCell }
             .take(1)
             .bind(with: self) { (owner: RecordDetailViewController, cell: SummaryInfoCell) in
+                cell.publicSaveButton.rx.tap
+                    .map { RecordDetailViewReactor.Action.tapSave }
+                    .bind(to: reactor.action)
+                    .disposed(by: owner.disposeBag)
+
                 cell.publicConfirmButton.rx.tap
                     .map { RecordDetailViewReactor.Action.tapConfirm }
                     .bind(to: reactor.action)
