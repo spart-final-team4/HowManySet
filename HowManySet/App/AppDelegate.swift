@@ -30,6 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 fatalError("Check Your AppKey")
             }
+            
+            // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
+            LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
         
         return true
     }

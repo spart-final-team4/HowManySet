@@ -48,10 +48,22 @@ final class LiveActivityAppGroupEventBridge {
         let timestamp = defaults.double(forKey: timestampKey)
         let lastTimestamp = lastHandledTimestamps[indexKey] ?? 0
         print("[Bridge] 읽은 index: \(index), timestamp: \(timestamp)")
-        guard index > 0, timestamp > lastTimestamp else { return }
+        guard timestamp > lastTimestamp else { return }
         lastHandledTimestamps[indexKey] = timestamp
         completion(index)
-        defaults.removeObject(forKey: indexKey)
-        defaults.removeObject(forKey: timestampKey)
+    }
+    
+    /// 앱 시작 시 기존 운동 진행 정보 관련 defaults들 제거
+    func removeAppGroupEventValuesIfNeeded() {
+        if let defaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet") {
+            defaults.removeObject(forKey: "SetCompleteIndex")
+            defaults.removeObject(forKey: "SetCompleteTimestamp")
+            defaults.removeObject(forKey: "SkipRestIndex")
+            defaults.removeObject(forKey: "SkipRestTimestamp")
+            defaults.removeObject(forKey: "PlayAndPauseRestIndex")
+            defaults.removeObject(forKey: "PlayAndPauseRestTimestamp")
+            defaults.removeObject(forKey: "StopWorkout")
+            defaults.removeObject(forKey: "StopWorkoutTimestamp")
+        }
     }
 }
