@@ -62,12 +62,6 @@ struct WorkoutStateForEdit: Equatable {
 
 final class HomeViewReactor: Reactor {
     
-    private let saveRecordUseCase: SaveRecordUseCase
-    private let fsSaveRecordUseCase: FSSaveRecordUseCase
-
-    private let routineMockData = WorkoutRoutine.mockData[0]
-    private let recordMockData = WorkoutRecord.mockData[0]
-    
     // MARK: - Action is an user interaction
     enum Action {
         /// 루틴 선택 시 (현재는 바로 시작, but 추후에 루틴 선택 창 present)
@@ -176,11 +170,30 @@ final class HomeViewReactor: Reactor {
     
     let initialState: State
     
-    init(saveRecordUseCase: SaveRecordUseCase,
-         fsSaveRecordUseCase: FSSaveRecordUseCase) {
+    private let saveRecordUseCase: SaveRecordUseCaseProtocol
+    private let fsSaveRecordUseCase: FSSaveRecordUseCase
+    private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
+    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
+    private let fetchRecordUseCase: FetchRecordUseCaseProtocol
+    private let fsFetchRecordUseCase: FSFetchRecordUseCase
+
+    private let routineMockData = WorkoutRoutine.mockData[0]
+    private let recordMockData = WorkoutRecord.mockData[0]
+    
+    init(saveRecordUseCase: SaveRecordUseCaseProtocol,
+         fsSaveRecordUseCase: FSSaveRecordUseCase,
+         deleteRecordUseCase: DeleteRecordUseCaseProtocol,
+         fsDeleteRecordUseCase: FSDeleteRecordUseCase,
+         fetchRecordUseCase: FetchRecordUseCaseProtocol,
+         fsFetchRecordUseCase: FSFetchRecordUseCase
+    ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fsSaveRecordUseCase = fsSaveRecordUseCase
-        
+        self.deleteRecordUseCase = deleteRecordUseCase
+        self.fsDeleteRecordUseCase = fsDeleteRecordUseCase
+        self.fetchRecordUseCase = fetchRecordUseCase
+        self.fsFetchRecordUseCase = fsFetchRecordUseCase
+
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routineMockData
@@ -358,7 +371,10 @@ final class HomeViewReactor: Reactor {
             return .just(.setEditAndMemoViewPresented(true))
             
         case .updateCurrentMemo(let newMemo):
-            return .just(.updateExerciseMemo(with: newMemo))
+            return .concat([
+                .just(.updateExerciseMemo(with: newMemo)),
+                .just(.saveWorkoutData)
+            ])
             
         case let .weightRepsButtonClicked(cardIndex):
             return .just(.convertToEditData(at: cardIndex))
@@ -537,9 +553,12 @@ final class HomeViewReactor: Reactor {
                 newState.restSecondsRemaining = Float(newState.restTime)
                 newState.restStartTime = nil
             }
-            
+        
+        // MARK: - 현재 운동 데이터 저장
+        // 메모 창 dismiss시, 운동 완료 시 등등
+        // 기존 데이터 제거 후 저장
         case .saveWorkoutData:
-
+            
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
             

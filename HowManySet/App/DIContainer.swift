@@ -33,15 +33,19 @@ final class DIContainer {
         let recordRepository = RecordRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+        let deleteRecordUsecase = DeleteRecordUseCase(repository: recordRepository)
         
         // Firestore 로직 추가
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
         let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
         let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
+        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
         
         let reactor = HomeViewReactor(
             saveRecordUseCase: saveRecordUseCase,
-            fsSaveRecordUseCase: fsSaveRecordUseCase
+            fsSaveRecordUseCase: fsSaveRecordUseCase,
+            deleteRecordUseCase: deleteRecordUsecase,
+            fsDeleteRecordUseCase: fsDeleteRecordUseCase
         )
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
