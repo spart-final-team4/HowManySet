@@ -1071,11 +1071,6 @@
 			package = 668CB18C2DE9C52E00924340 /* XCRemoteSwiftPackageReference "RxDataSources" */;
 			productName = RxDataSources;
 		};
-		AAD440372DF690BB00B57C81 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
-		};
 		A53AD8512DEF0CFD003E1FE8 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A53AD8502DEF0CFD003E1FE8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
@@ -1095,6 +1090,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A53AD8562DEF154D003E1FE8 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		AAD440372DF690BB00B57C81 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
