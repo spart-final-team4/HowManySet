@@ -8,9 +8,9 @@
 import Foundation
 
 final class AuthRepositoryImpl: AuthRepository {
-    private let authService: FirebaseAuthService
+    private let authService: FirebaseAuthServiceProtocol
 
-    init(authService: FirebaseAuthService) {
+    init(authService: FirebaseAuthServiceProtocol) {
         self.authService = authService
     }
 
