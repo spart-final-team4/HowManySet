@@ -154,3 +154,12 @@ private extension EditExcerciseHorizontalContentStackView {
         self.configureContentLayoutArrangeSubViews()  // 이 함수는 외부에서 정의된 커스텀 메서드로 추정됩니다.
     }
 }
+
+// MARK: - Internal Methods
+extension EditExcerciseHorizontalContentStackView {
+    
+    func configure(weight: Int, reps: Int) {
+        self.weightTextField.text = "\(weight)"
+        self.repsTextField.text = "\(reps)"
+    }
+}

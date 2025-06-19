@@ -207,4 +207,28 @@ private extension EditExcerciseContentView {
     }
 }
 
-
+// MARK: - Internal Methods
+extension EditExcerciseContentView {
+    
+    func configureSets(with sets: [[Int]]) {
+        
+        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
+        
+        // 세트 개수만큼 세트 행 추가
+        for (index, set) in sets.enumerated() {
+            let hContentStackView = EditExcerciseHorizontalContentStackView(order: index)
+            
+            // (무게, 개수)
+            if set.count == 2 {
+                hContentStackView.configure(weight: set[0], reps: set[1])
+            }
+            verticalContentStackView.addArrangedSubview(hContentStackView)
+        }
+        
+        verticalContentStackView.addArrangedSubview(addContentButton)
+        
+        excerciseInfoRelay.accept(sets)
+    }
+}
