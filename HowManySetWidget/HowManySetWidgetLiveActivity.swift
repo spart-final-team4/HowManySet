@@ -91,19 +91,19 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     // Fallback on earlier versions
                                 }
                                 
-                                if #available(iOS 17.0, *) {
-                                    Button(intent: StopWorkoutIntent(index: context.state.currentIndex)) {
-                                        Image(systemName: "xmark")
-                                            .foregroundStyle(.white)
-                                            .fontWeight(.bold)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(Circle().fill(Color("RoundButtonBG")))
-                                    .buttonStyle(.borderless)
-                                } else {
-                                    // Fallback on earlier versions
-                                }
+//                                if #available(iOS 17.0, *) {
+//                                    Button(intent: StopWorkoutIntent(index: context.state.currentIndex)) {
+//                                        Image(systemName: "xmark")
+//                                            .foregroundStyle(.white)
+//                                            .fontWeight(.bold)
+//                                            .font(.title3)
+//                                    }
+//                                    .frame(width: buttonSize, height: buttonSize)
+//                                    .background(Circle().fill(Color("RoundButtonBG")))
+//                                    .buttonStyle(.borderless)
+//                                } else {
+//                                    // Fallback on earlier versions
+//                                }
                             }
                         }
                     }
