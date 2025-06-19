@@ -13,9 +13,8 @@ import ReactorKit
 struct WorkoutCardState {
     // UI에 직접 표시될 값들 (Reactor에서 미리 계산하여 제공)
     var currentExerciseName: String
-    var currentWeight: Double
-    var currentUnit: String
-    var currentReps: Int
+    /// 운동 세트 전체 정보
+    var setInfo: [WorkoutSet]
     /// 현재 진행 중인 세트 인덱스
     var setIndex: Int
     /// 현재 루틴 안 운동종목의 인덱스
@@ -33,6 +32,13 @@ struct WorkoutCardState {
     /// 현재 운동 종목의 메모
     var memoInExercise: String?
     var allSetsCompleted: Bool
+
+    /// 현재 세트의 무게
+    var currentWeight: Double { setInfo[setIndex].weight }
+    /// 현재 세트의 단위
+    var currentUnit: String { setInfo[setIndex].unit }
+    /// 현재 세트의 반복수
+    var currentReps: Int { setInfo[setIndex].reps }
 }
 
 /// 운동 완료 UI에 보여질 운동 요약 통계 정보
@@ -186,9 +192,7 @@ final class HomeViewReactor: Reactor {
         for (i, workout) in initialRoutine.workouts.enumerated() {
             initialWorkoutCardStates.append(WorkoutCardState(
                 currentExerciseName: workout.name,
-                currentWeight: workout.sets[0].weight,
-                currentUnit: workout.sets[0].unit,
-                currentReps: workout.sets[0].reps,
+                setInfo: workout.sets,
                 setIndex: 0,
                 exerciseIndex: i,
                 totalExerciseCount: initialRoutine.workouts.count,
@@ -271,14 +275,11 @@ final class HomeViewReactor: Reactor {
         case .routineSelected:
             // 모든 카드 뷰의 상태를 초기화하고, 첫 운동의 첫 세트를 보여줌
             let updatedCardStates = currentState.workoutRoutine.workouts.enumerated().map { (i, workout) in
-                let firstSet = workout.sets.first!
-                return WorkoutCardState(
+                WorkoutCardState(
                     currentExerciseName: workout.name,
-                    currentWeight: firstSet.weight,
-                    currentUnit: firstSet.unit,
-                    currentReps: firstSet.reps,
+                    setInfo: workout.sets,
                     setIndex: 0,
-                    exerciseIndex: 0,
+                    exerciseIndex: i,
                     totalExerciseCount: currentState.workoutRoutine.workouts.count,
                     totalSetCount: workout.sets.count,
                     currentExerciseNumber: i + 1,
@@ -538,6 +539,7 @@ final class HomeViewReactor: Reactor {
             }
             
         case .saveWorkoutData:
+            // TODO: - WorkoutRoutine 업데이트
             newState.workoutRecord = WorkoutRecord(
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
@@ -597,13 +599,9 @@ private extension HomeViewReactor {
                     .map { _ in Mutation.restRemainingSecondsUpdating }
             }
             
-            let nextSet = currentWorkout.sets[nextSetIndex]
-            
+            // 세트 이동 시 setIndex, setProgressAmount, currentSetNumber만 변경
             currentCardState.setIndex = nextSetIndex
             currentCardState.currentSetNumber = nextSetIndex + 1
-            currentCardState.currentWeight = nextSet.weight
-            currentCardState.currentUnit = nextSet.unit
-            currentCardState.currentReps = nextSet.reps
             currentCardState.setProgressAmount += 1
             
             /// 변경된 카드 State!
@@ -687,9 +685,20 @@ private extension HomeViewReactor {
             }
         }
     }
+    
+    /// [WorkoutCardState] -> [Workout] 로 변환
+    func convertWorkoutCardStatesToWorkouts(cardStates: [WorkoutCardState]) -> [Workout] {
+        return cardStates.map { card in
+            Workout(
+                name: card.currentExerciseName,
+                sets: card.setInfo,
+                comment: card.memoInExercise
+            )
+        }
+    }
 }
 
-// LiveActivity State
+// MARK: - LiveActivity State
 extension HomeViewReactor.State {
     
     var forLiveActivity: WorkoutDataForLiveActivity {
