@@ -137,7 +137,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 }
                                 
                                 if #available(iOS 17.0, *) {
-                                    Button(intent: PlayAndPauseRoutineIntent()) {
+                                    Button(intent: PlayAndPauseRestIntent()) {
                                         Image(systemName: "pause.fill")
                                             .foregroundStyle(.white)
                                             .fontWeight(.semibold)
