@@ -68,7 +68,7 @@ private extension OnBoardingViewController {
     
     /// 배경색 및 온보딩 페이지 인디케이터의 페이지 수 등 Appearance 관련 설정.
     func setAppearance() {
-        view.backgroundColor = UIColor(named: "Background")
+        view.backgroundColor = .background
         onboardingView.pageIndicator.numberOfPages = onboardingPages.count
     }
     

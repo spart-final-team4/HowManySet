@@ -103,7 +103,7 @@ private extension OnboardingView {
     
     /// 배경색 등 Appearance 설정
     func setAppearance() {
-        self.backgroundColor = UIColor(named: "Background")
+        self.backgroundColor = .background
     }
     
     /// 서브뷰 계층 구조 설정
@@ -130,10 +130,10 @@ private extension OnboardingView {
         }
         
         centerImageView.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(32)
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(60)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(260)
-            $0.height.equalTo(520)
+            $0.leading.trailing.equalToSuperview().inset(40)
+            $0.height.equalTo(centerImageView.snp.width).multipliedBy(1.2)
         }
         
         pageIndicator.snp.makeConstraints {
