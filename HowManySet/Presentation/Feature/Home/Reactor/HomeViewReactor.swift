@@ -49,7 +49,8 @@ struct WorkoutSummary {
 final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
-    
+    private let fsSaveRecordUseCase: FSSaveRecordUseCase
+
     private let routineMockData = WorkoutRoutine.mockData[0]
     private let recordMockData = WorkoutRecord.mockData[0]
     
@@ -115,6 +116,8 @@ final class HomeViewReactor: Reactor {
         case sendCurrentCardStates(WorkoutCardState)
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
+        /// 운동 완료 시 usecase이용해서 데이터 저장
+        case saveWorkoutData
     }
     
     // MARK: - State is a current view state
@@ -143,7 +146,6 @@ final class HomeViewReactor: Reactor {
         var currentExerciseAllSetsCompleted: Bool
         var isEditAndMemoViewPresented: Bool
         var isRestTimerStopped: Bool
-        
         // 기록 관련
         /// 저장되는 운동 기록 정보
         var workoutRecord: WorkoutRecord
@@ -153,12 +155,16 @@ final class HomeViewReactor: Reactor {
         var didExerciseCount: Int
         var totalSetCountInRoutine: Int
         var didSetCount: Int
+        /// 현재 사용자 uid
+        var uid: String
     }
     
     let initialState: State
     
-    init(saveRecordUseCase: SaveRecordUseCase) {
+    init(saveRecordUseCase: SaveRecordUseCase,
+         fsSaveRecordUseCase: FSSaveRecordUseCase) {
         self.saveRecordUseCase = saveRecordUseCase
+        self.fsSaveRecordUseCase = fsSaveRecordUseCase
         
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
@@ -229,7 +235,8 @@ final class HomeViewReactor: Reactor {
             totalExerciseCount: initialWorkoutCardStates.count,
             didExerciseCount: 0,
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
-            didSetCount: 0
+            didSetCount: 0,
+            uid: "UID"
         )
     }
     
@@ -316,7 +323,8 @@ final class HomeViewReactor: Reactor {
                 .just(.manageWorkoutData(isEnded: true)),
                 .just(.setWorkingout(false)),
                 .just(.setResting(false)),
-                .just(.setRestTime(0))
+                .just(.setRestTime(0)),
+                .just(.saveWorkoutData)
             ])
             
         case let .editAndMemoViewPresented(cardIndex):
@@ -514,6 +522,17 @@ final class HomeViewReactor: Reactor {
                 newState.restSecondsRemaining = Float(newState.restTime)
                 newState.restStartTime = nil
             }
+            
+        case .saveWorkoutData:
+            newState.workoutRecord = WorkoutRecord(
+                workoutRoutine: newState.workoutRoutine,
+                totalTime: newState.workoutTime,
+                workoutTime: newState.workoutTime,
+                comment: newState.memoInRoutine,
+                date: Date()
+            )
+            saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
+            fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             
         }//mutation
         return newState
