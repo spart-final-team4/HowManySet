@@ -18,6 +18,10 @@ public struct SetCompleteIntent: AppIntent, ControlConfigurationIntent, LiveActi
     
     public init() {}
 
+    public init(index: Int?) {
+        self.index = index
+    }
+    
     public func perform() async throws -> some IntentResult {
         print("[Intent] perform 호출! index: \(String(describing: index))")
         let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
