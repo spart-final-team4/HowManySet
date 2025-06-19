@@ -46,6 +46,14 @@ struct WorkoutSummary {
     let routineMemo: String?
 }
 
+/// 운동 편집 시 보낼 데이터 형식
+struct WorkoutStateForEdit {
+    var currentRoutine: WorkoutRoutine
+    var currentExcerciseName: String
+    var currentUnit: String
+    var currentWeightSet: [[Int]]
+}
+
 final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
@@ -112,17 +120,17 @@ final class HomeViewReactor: Reactor {
         // 편집, 메모 모달창 관련
         case setEditAndMemoViewPresented(Bool)
         case updateExerciseMemo(with: String?)
-        /// 무게 횟수 버튼 클릭 시 데이터 전달
-        case sendCurrentCardStates(WorkoutCardState)
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
         /// 운동 완료 시 usecase이용해서 데이터 저장
         case saveWorkoutData
+        /// 운동 편집 시 Edit용 데이터로 변형
+        case convertToEditData(at: Int)
     }
     
     // MARK: - State is a current view state
     struct State {
-        /// 전체 루틴 데이터! (운동 진행 중일 시 변화 없음)
+        /// 전체 루틴 데이터
         var workoutRoutine: WorkoutRoutine
         /// 현재 루틴의 전체 각 운동의 State
         var workoutCardStates: [WorkoutCardState]
@@ -157,6 +165,7 @@ final class HomeViewReactor: Reactor {
         var didSetCount: Int
         /// 현재 사용자 uid
         var uid: String
+        var workoutStateForEdit: WorkoutStateForEdit
     }
     
     let initialState: State
@@ -193,7 +202,6 @@ final class HomeViewReactor: Reactor {
             initialTotalSetCountInRoutine += workout.sets.count
         }
         
-        
         let initialWorkoutRecord = WorkoutRecord(
             // TODO: 검토 필요
             id:  UUID().uuidString,
@@ -212,6 +220,18 @@ final class HomeViewReactor: Reactor {
             exerciseDidCount: 0,
             setDidCount: 0,
             routineMemo: initialWorkoutRecord.comment
+        )
+        
+        let firstWorkout = initialRoutine.workouts[0]
+        let weightSet: [[Int]] = firstWorkout.sets.map { set in
+            [Int(set.weight), set.reps]
+        }
+
+        let initialWorkoutStateForEdit = WorkoutStateForEdit(
+            currentRoutine: initialRoutine,
+            currentExcerciseName: firstWorkout.name,
+            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
+            currentWeightSet: weightSet
         )
         
         self.initialState = State(
@@ -236,7 +256,8 @@ final class HomeViewReactor: Reactor {
             didExerciseCount: 0,
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
-            uid: "UID"
+            uid: "UID",
+            workoutStateForEdit: initialWorkoutStateForEdit
         )
     }
     
@@ -339,10 +360,7 @@ final class HomeViewReactor: Reactor {
             return .just(.updateExerciseMemo(with: newMemo))
             
         case let .weightRepsButtonClicked(cardIndex):
-            let currentExerciseIndex = currentState.currentExerciseIndex
-            let currentExercise = currentState.workoutCardStates[currentExerciseIndex]
-            
-            return .just(.sendCurrentCardStates(currentExercise))
+            return .just(.convertToEditData(at: cardIndex))
             
         }//action
     }//mutate
@@ -506,10 +524,6 @@ final class HomeViewReactor: Reactor {
             newState.workoutCardStates[currentExerciseIndex].memoInExercise = newMemo
             print("📋 변경된메모: \(String(describing: newMemo)), \(String(describing: newState.workoutCardStates[currentExerciseIndex].memoInExercise))")
             
-        case let .sendCurrentCardStates(currentCardState):
-            // MARK: - TODO: 현재 운동 카드 편집위해 데이터 전달
-            print("🦾 편집될 운동 카드 데이터: \(currentCardState)")
-            
         case let .stopRestTimer(isStopped):
             if isStopped {
                 newState.isResting = false
@@ -534,6 +548,17 @@ final class HomeViewReactor: Reactor {
             saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             
+        case let .convertToEditData(cardIndex):
+            let currentExercise = newState.workoutCardStates[cardIndex]
+            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
+                [Int(set.weight), set.reps]
+            }
+            newState.workoutStateForEdit = WorkoutStateForEdit(
+                currentRoutine: newState.workoutRoutine,
+                currentExcerciseName: currentExercise.currentExerciseName,
+                currentUnit: currentExercise.currentUnit,
+                currentWeightSet: currentSetsData
+            )
         }//mutation
         return newState
     }//reduce
