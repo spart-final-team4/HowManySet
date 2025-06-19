@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+protocol AuthUseCaseProtocol {
+    func signInAnonymously(completion: @escaping (Result<User, Error>) -> Void)
+    func fetchCurrentUser() -> User?
+    func signOut() -> Result<Void, Error>
+    func deleteAccount(completion: @escaping (Result<Void, Error>) -> Void)
+}
