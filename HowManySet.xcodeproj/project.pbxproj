@@ -154,7 +154,6 @@
 			membershipExceptions = (
 				LiveActivityAppGroupBridge.swift,
 				LiveActivityService.swift,
-				"Notification+Name.swift",
 			);
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
