@@ -19,3 +19,4 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var currentSet: Int
     var totalSet: Int
 }
+
