@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 
 struct WorkoutRecordDTO {
+    let id: String
     var workoutRoutine: WorkoutRoutineDTO?
     var totalTime: Int
     var workoutTime: Int
@@ -19,8 +20,9 @@ struct WorkoutRecordDTO {
 extension WorkoutRecordDTO {
     func toEntity() -> WorkoutRecord {
         return WorkoutRecord(
+            id: self.id,
             workoutRoutine: self.workoutRoutine?.toEntity()
-            ?? WorkoutRoutine(name: "MOCK", workouts: []),
+            ?? WorkoutRoutine(id: "", name: "MOCK", workouts: []),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
             comment: self.comment,
@@ -31,6 +33,7 @@ extension WorkoutRecordDTO {
 
 extension WorkoutRecordDTO {
     init(entity: WorkoutRecord) {
+        self.id = entity.id
         self.workoutRoutine = WorkoutRoutineDTO(entity: entity.workoutRoutine)
         self.totalTime = entity.totalTime
         self.workoutTime = entity.workoutTime
@@ -41,6 +44,7 @@ extension WorkoutRecordDTO {
 
 extension WorkoutRecordDTO {
     init(from model: RMWorkoutRecord) {
+        self.id = model.id
         self.workoutRoutine = model.workoutRoutine?.toDTO()
         self.totalTime = model.totalTime
         self.workoutTime = model.workoutTime
@@ -52,10 +56,12 @@ extension WorkoutRecordDTO {
 extension WorkoutRecordDTO {
     init(from fsModel: FSWorkoutRecord) {
         let routine = WorkoutRoutineDTO(
+            // TODO: 검토 필요
+            id: fsModel.id ?? "",
             name: fsModel.workoutRoutineName ?? "Unknown",
             workouts: fsModel.workouts.map { WorkoutDTO(from: $0) }
         )
-        
+        self.id = routine.id
         self.workoutRoutine = routine
         self.totalTime = fsModel.totalTime
         self.workoutTime = fsModel.workoutTime

@@ -16,9 +16,10 @@ struct WorkoutDTO {
 
 extension WorkoutDTO {
     func toEntity() -> Workout {
-        return Workout(name: self.name,
-                       sets: self.sets.map { $0.toEntity() },
-                       comment: self.comment)
+        return Workout(
+            name: self.name,
+            sets: self.sets.map { $0.toEntity() },
+            comment: self.comment)
     }
 }
 

@@ -30,8 +30,7 @@ final class DIContainer {
     
     /// 홈 화면을 생성하여 반환
     func makeHomeViewController(coordinator: HomeCoordinator) -> (UIViewController, HomeViewReactor) {
-        let realmService: RealmServiceProtocol = RealmService()
-        let recordRepository = RecordRepositoryImpl(realmService: realmService)
+        let recordRepository = RecordRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         
@@ -51,8 +50,7 @@ final class DIContainer {
     
     /// 루틴 리스트 화면을 생성하여 반환
     func makeRoutineListViewController(coordinator: RoutineListCoordinator) -> UIViewController {
-        let realmService: RealmServiceProtocol = RealmService()
-        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl()
         
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
@@ -81,8 +79,7 @@ final class DIContainer {
 
     /// 캘린더 화면을 생성하여 반환
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
-        let realmService: RealmServiceProtocol = RealmService()
-        let recordRepository = RecordRepositoryImpl(realmService: realmService)
+        let recordRepository = RecordRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
@@ -140,8 +137,7 @@ final class DIContainer {
     /// 루틴 완료 화면을 생성하여 반환
     func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary) -> UIViewController {
         
-        let realmService: RealmServiceProtocol = RealmService()
-        let recordRepository = RecordRepositoryImpl(realmService: realmService)
+        let recordRepository = RecordRepositoryImpl()
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         
         // Firestore 로직 추가

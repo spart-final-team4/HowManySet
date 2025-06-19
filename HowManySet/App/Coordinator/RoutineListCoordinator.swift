@@ -74,8 +74,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     /// 운동 편집 화면 전체 화면으로 push
     func pushEditExcerciseView(routineName: String) {
-        let realmService: RealmServiceProtocol = RealmService()
-        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         
         let reactor = EditExcerciseViewReactor(routineName: routineName, saveRoutineUseCase: saveRoutineUseCase)
@@ -86,11 +85,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
 
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
     func pushEditRoutineView(with routine: WorkoutRoutine) {
-        let realmService: RealmServiceProtocol = RealmService()
-        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
-        let reactor = EditRoutineViewReactor(with: routine, saveRoutineUseCase: saveRoutineUseCase, deleteRoutineUseCase: deleteRoutineUseCase)
+        let reactor = EditRoutineViewReactor(with: routine,
+                                             saveRoutineUseCase: saveRoutineUseCase,
+                                             deleteRoutineUseCase: deleteRoutineUseCase)
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
         navigationController.pushViewController(editRoutineVC, animated: true)
