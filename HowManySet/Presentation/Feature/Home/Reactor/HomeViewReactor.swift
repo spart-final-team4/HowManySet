@@ -47,7 +47,7 @@ struct WorkoutSummary {
 }
 
 /// 운동 편집 시 보낼 데이터 형식
-struct WorkoutStateForEdit {
+struct WorkoutStateForEdit: Equatable {
     var currentRoutine: WorkoutRoutine
     var currentExcerciseName: String
     var currentUnit: String
@@ -165,7 +165,7 @@ final class HomeViewReactor: Reactor {
         var didSetCount: Int
         /// 현재 사용자 uid
         var uid: String
-        var workoutStateForEdit: WorkoutStateForEdit
+        var workoutStateForEdit: WorkoutStateForEdit?
     }
     
     let initialState: State
@@ -257,7 +257,7 @@ final class HomeViewReactor: Reactor {
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
             uid: "UID",
-            workoutStateForEdit: initialWorkoutStateForEdit
+            workoutStateForEdit: nil
         )
     }
     
@@ -722,10 +722,10 @@ extension HomeViewReactor.State {
         let repsText = "회"
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
         
-        print("""
-            LIVEACTIVITY INDEX: \(currentExerciseIndex),
-            LIVEACTIVITY ISRESTING: \(isResting),
-        """)
+//        print("""
+//            LIVEACTIVITY INDEX: \(currentExerciseIndex),
+//            LIVEACTIVITY ISRESTING: \(isResting),
+//        """)
         
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,

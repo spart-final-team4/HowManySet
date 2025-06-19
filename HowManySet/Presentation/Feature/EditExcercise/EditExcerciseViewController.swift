@@ -183,6 +183,17 @@ final class EditExcerciseViewController: UIViewController, View {
                 owner.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
+        
+        // MARK: - 홈 화면 데이터 연동
+        reactor.state
+            .map { $0.workoutStateForEdit?.currentExcerciseName }
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] exerciseName in
+                guard let self, let exerciseName else { return }
+                self.headerView.configure(with: exerciseName)
+            }
+            .disposed(by: disposeBag)
+        
     }
 }
 
