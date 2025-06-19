@@ -18,6 +18,11 @@ final class AuthViewController: UIViewController, View {
     private let mainView = AuthView()
     private let coordinator: AuthCoordinatorProtocol
     var disposeBag = DisposeBag()
+    
+    // ASAuthorizationController를 강한 참조로 유지
+    private var appleAuthController: ASAuthorizationController?
+    // nonce를 인스턴스 변수로 저장
+    private var currentNonce: String?
 
     init(reactor: AuthViewReactor, coordinator: AuthCoordinatorProtocol) {
         self.coordinator = coordinator
@@ -64,16 +69,18 @@ final class AuthViewController: UIViewController, View {
     }
 
     private func startAppleLogin() {
+        let provider = ASAuthorizationAppleIDProvider()
         let nonce = randomNonceString()
-        let request = ASAuthorizationAppleIDProvider().createRequest()
+        currentNonce = nonce
+        
+        let request = provider.createRequest()
         request.nonce = sha256(nonce)
         request.requestedScopes = [.fullName, .email]
 
-        let controller = ASAuthorizationController(authorizationRequests: [request])
-        controller.delegate = self
-        controller.presentationContextProvider = self
-        controller.performRequests()
-        objc_setAssociatedObject(controller, AssociatedNonceKey, nonce, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        appleAuthController = ASAuthorizationController(authorizationRequests: [request])
+        appleAuthController?.delegate = self
+        appleAuthController?.presentationContextProvider = self
+        appleAuthController?.performRequests()
     }
 
     private func showErrorAlert(_ error: Error) {
@@ -93,22 +100,28 @@ extension AuthViewController: ASAuthorizationControllerDelegate, ASAuthorization
     }
 
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        guard let reactor = self.reactor else { return }
-        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
-           let identityTokenData = appleIDCredential.identityToken,
-           let identityTokenString = String(data: identityTokenData, encoding: .utf8),
-           let nonce = objc_getAssociatedObject(controller, &AssociatedNonceKey) as? String {
-            reactor.action.onNext(.tapAppleLogin(idToken: identityTokenString, nonce: nonce))
+        defer {
+            appleAuthController = nil
+            currentNonce = nil
         }
+        
+        guard let reactor = self.reactor,
+              let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+              let identityTokenData = appleIDCredential.identityToken,
+              let identityTokenString = String(data: identityTokenData, encoding: .utf8),
+              let nonce = currentNonce else {
+            return
+        }
+        
+        reactor.action.onNext(.tapAppleLogin(idToken: identityTokenString, nonce: nonce))
     }
 
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        print("Apple 로그인 실패: \(error.localizedDescription)")
+        appleAuthController = nil
+        currentNonce = nil
         showErrorAlert(error)
     }
 }
-
-private var AssociatedNonceKey = UnsafeRawPointer(bitPattern: "apple_login_nonce".hashValue)!
 
 private func randomNonceString(length: Int = 32) -> String {
     precondition(length > 0)
