@@ -52,6 +52,9 @@ final class EditExcerciseViewReactor: Reactor {
         var currentExcerciseName: String = "" // 입력된 운동 이름
         var currentUnit: String = "kg"        // 단위 기본값 (kg)
         var currentWeightSet: [[Int]] = []    // 현재 세트 입력값 (2차원 배열: [무게, 반복수])
+        
+        // 홈에서 모달로 띄워질 때 사용하는 값들
+        var workoutCardState: WorkoutCardState
     }
     
     /// 운동 저장 결과 상태
@@ -75,8 +78,11 @@ final class EditExcerciseViewReactor: Reactor {
     /// - Parameters:
     ///   - routineName: 새로 생성할 루틴 이름
     ///   - saveRoutineUseCase: 루틴 저장을 위한 UseCase 주입
-    init(routineName: String = "", saveRoutineUseCase: SaveRoutineUseCaseProtocol) {
-        self.initialState = State(currentRoutine: WorkoutRoutine(id: UUID().uuidString, name: routineName, workouts: []))
+    init(routineName: String, saveRoutineUseCase: SaveRoutineUseCaseProtocol, workoutCardState: WorkoutCardState) {
+        self.initialState = State(
+            currentRoutine: WorkoutRoutine(name: routineName,workouts: []),
+            workoutCardState: workoutCardState
+        )
         self.saveRoutineUseCase = saveRoutineUseCase
     }
     

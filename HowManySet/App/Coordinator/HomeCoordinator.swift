@@ -10,7 +10,7 @@ import UIKit
 protocol HomeCoordinatorProtocol: Coordinator {
     func presentRoutineListView()
     func presentEditAndMemoView()
-    func presentEditExerciseView(routineName: String)
+    func presentEditExerciseView(routineName: String, workoutCardState: WorkoutCardState)
     func presentEditRoutineView(with routine: WorkoutRoutine)
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
@@ -66,10 +66,11 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     }
     
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
-    func presentEditExerciseView(routineName: String) {
-        let routineRepository = RoutineRepositoryImpl()
+    func presentEditExerciseView(routineName: String, workoutCardState: WorkoutCardState) {
+        let realmService: RealmServiceProtocol = RealmService()
+        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let reactor = EditExcerciseViewReactor(routineName: routineName, saveRoutineUseCase: saveRoutineUseCase)
+        let reactor = EditExcerciseViewReactor(routineName: routineName, saveRoutineUseCase: saveRoutineUseCase, workoutCardState: workoutCardState)
         let editExerciseVC = EditExcerciseViewController(reactor: reactor)
         
         if let sheet = editExerciseVC.sheetPresentationController {
