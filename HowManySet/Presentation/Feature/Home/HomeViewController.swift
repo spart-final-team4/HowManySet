@@ -22,7 +22,8 @@ final class HomeViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
-    var liveActivityTimer: Timer?
+    /// LiveActivity용 disposable
+    private var liveActivityDisposeBag = DisposeBag()
     
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
@@ -125,12 +126,6 @@ final class HomeViewController: UIViewController, View {
         
         setupUI()
         
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        liveActivityTimer?.invalidate()
-        liveActivityTimer = nil
     }
 }
 
@@ -534,7 +529,7 @@ extension HomeViewController {
             .bind(onNext: { [weak self] startAction in
                 guard let self else { return }
                 // 루틴 시작 시 라이브 액티비티 실행
-                self.setLiveActivity()
+                bindLiveActivityEvents(reactor: reactor)
                 reactor.action.onNext(startAction)
             })
             .disposed(by: disposeBag)
@@ -575,6 +570,7 @@ extension HomeViewController {
         // MARK: - 페이징 관련
         // 스크롤의 감속이 끝났을 때 페이징
         pagingScrollView.rx.didEndDecelerating
+        
             .map { [weak self] _ -> Int in
                 guard let self else { return 0 }
                 // scrollView 내부 콘텐트가 수평으로 얼마나 스크롤 됐는지 / scrollView가 화면에 차지하는 너비
@@ -600,6 +596,7 @@ extension HomeViewController {
         // 페이징이 되었을 시 동작 (페이지 컨트롤 클릭 시 대응)
         // 기본적으로 페이지 컨트롤 클릭 시 페이지 값이 변경되어 .valueChaned로 구현
         pageController.rx.controlEvent(.valueChanged)
+            .observe(on: MainScheduler.instance)
             .map { [weak self] _ -> Int in
                 guard let self else { return 0 }
                 let currentPage = self.pageController.currentPage
@@ -759,7 +756,7 @@ extension HomeViewController {
                         guard state.currentExerciseIndex == cardIndex,
                               state.isResting,
                               let totalRest = state.restStartTime,
-                              totalRest > 0 else { return }
+                              totalRest >= 0 else { return }
                         
                         let elapsed = Float(totalRest) - Float(state.restSecondsRemaining)
                         let progress = max(min(elapsed / Float(totalRest), 1), 0)
@@ -868,14 +865,13 @@ extension HomeViewController {
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .distinctUntilChanged { $0 == $1 }
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
-                                 
+                
                 let (isWorkingout, data) = state
-                                 
                 let contentState = data
-            
+                
                 if isWorkingout {
                     LiveActivityService.shared.start(with: contentState)
                 } else {
@@ -885,7 +881,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.forLiveActivity }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .distinctUntilChanged()
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
@@ -909,37 +905,64 @@ extension HomeViewController {
 // MARK: LiveActivity
 private extension HomeViewController {
     
-    func setLiveActivity() {
+    func bindLiveActivityEvents(reactor: HomeViewReactor) {
         
-        guard let reactor = self.reactor else { return }
-        
-        // 세트 완료 감지
-        liveActivityTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            
-            // 세트 완료 (체크 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
-                reactor.action.onNext(.setCompleteButtonClicked(at: index))
+        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .startWith(Notification(name: UIApplication.willEnterForegroundNotification))
+            .flatMapLatest { [weak self] _ -> Observable<Void> in
+                guard let self else { return .empty() }
+                // 0.1초마다 polling
+                return Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.instance)
+                    .flatMap { _ in
+                        Observable.merge(
+                            Observable.create { observer in
+                                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                                    print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
+                                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
+                                    observer.onCompleted()
+                                }
+                                return Disposables.create()
+                            },
+                            Observable.create { observer in
+                                LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
+                                    print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
+                                    reactor.action.onNext(.forwardButtonClicked(at: index))
+                                    observer.onCompleted()
+                                }
+                                return Disposables.create()
+                            },
+                            Observable.create { observer in
+                                LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
+                                    print("운동 종료 polling 이벤트 감지!")
+                                    self.coordinator?.popUpEndWorkoutAlert {
+                                        reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                                        return self.reactor?.currentState.workoutSummary ??
+                                        WorkoutSummary(
+                                            routineName: "",
+                                            date: Date(),
+                                            routineDidProgress: 0,
+                                            totalTime: 0,
+                                            exerciseDidCount: 0,
+                                            setDidCount: 0,
+                                            routineMemo: nil
+                                        )
+                                    }
+                                    observer.onCompleted()
+                                }
+                                return Disposables.create()
+                            },
+                            Observable.create { observer in
+                                LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
+                                    print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
+                                    reactor.action.onNext(.restPauseButtonClicked)
+                                    observer.onCompleted()
+                                }
+                                return Disposables.create()
+                            }
+                        )
+                    }
             }
-            // 휴식 스킵 (forward 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-                print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
-                reactor.action.onNext(.forwardButtonClicked(at: index))
-            }
-            // 운동 종료 (stop 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
-                print("운동 종료 polling 이벤트 감지!")
-                self.coordinator?.popUpEndWorkoutAlert {
-                    reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                    return self.reactor!.currentState.workoutSummary
-                }
-            }
-            // 휴식 재생/일시정지 (pause/play 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-                print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
-                reactor.action.onNext(.restPauseButtonClicked)
-            }
-        }
+            .subscribe()
+            .disposed(by: liveActivityDisposeBag)
     }
 }
