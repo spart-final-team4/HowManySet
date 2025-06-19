@@ -64,11 +64,6 @@ final class EditRoutineTableView: UITableView {
             cell.configure(model: item)
             return cell
         })
-        
-        cellMoreButtonTapped
-            .subscribe{ indexPath in
-                print(indexPath)
-            }.disposed(by: disposeBag)
     }
 
     // MARK: - Public Method
