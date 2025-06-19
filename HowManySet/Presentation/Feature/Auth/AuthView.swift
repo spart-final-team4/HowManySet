@@ -90,7 +90,7 @@ final class AuthView: UIView {
 
     // MARK: - Layout
     private func setupLayout() {
-        backgroundColor = .black
+        backgroundColor = .background
         addSubviews(logoView, kakaoLoginButton, googleLoginButton, appleLoginButton, anonymousLoginButton)
 
         logoView.snp.makeConstraints {
@@ -100,26 +100,26 @@ final class AuthView: UIView {
             $0.height.equalTo(75)
         }
 
-        kakaoLoginButton.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(20)
-            $0.height.equalTo(56)
-            $0.top.greaterThanOrEqualTo(logoView.snp.bottom).offset(60)
-        }
-
-        googleLoginButton.snp.makeConstraints {
-            $0.left.right.height.equalTo(kakaoLoginButton)
-            $0.top.equalTo(kakaoLoginButton.snp.bottom).offset(16)
+        anonymousLoginButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-24)
+            $0.height.equalTo(24)
         }
 
         appleLoginButton.snp.makeConstraints {
-            $0.left.right.height.equalTo(kakaoLoginButton)
-            $0.top.equalTo(googleLoginButton.snp.bottom).offset(16)
+            $0.left.right.equalToSuperview().inset(20)
+            $0.height.equalTo(56)
+            $0.bottom.equalTo(anonymousLoginButton.snp.top).offset(-16)
         }
 
-        anonymousLoginButton.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(appleLoginButton.snp.bottom).offset(24)
-            $0.height.equalTo(24)
+        googleLoginButton.snp.makeConstraints {
+            $0.left.right.height.equalTo(appleLoginButton)
+            $0.bottom.equalTo(appleLoginButton.snp.top).offset(-16)
+        }
+
+        kakaoLoginButton.snp.makeConstraints {
+            $0.left.right.height.equalTo(appleLoginButton)
+            $0.bottom.equalTo(googleLoginButton.snp.top).offset(-16)
         }
     }
 }

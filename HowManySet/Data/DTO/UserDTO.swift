@@ -29,6 +29,7 @@ struct UserDTO {
 
     func toFirestoreData() -> [String: Any] {
         var data: [String: Any] = [
+            "uid": uid,  // 🔥 추가
             "name": name,
             "provider": provider,
             "createdAt": FieldValue.serverTimestamp()
