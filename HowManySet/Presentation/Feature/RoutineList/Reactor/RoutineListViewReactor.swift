@@ -51,7 +51,16 @@ final class RoutineListViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .updatedRoutine(let routines):
-            newState.routines = routines
+            var newRoutines: [WorkoutRoutine] = []
+            for i in 0..<routines.count {
+                if !routines[i].workouts.isEmpty {
+                    newRoutines.append(routines[i])
+                } else {
+                    deleteRoutineUseCase.execute(uid: "", item: routines[i])
+                }
+            }
+            
+            newState.routines = newRoutines
         }
         
         return newState
