@@ -7,14 +7,18 @@
 
 import AppIntents
 import ActivityKit
-//import WidgetKit
+import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-struct SkipRestIntent: AppIntent {
-    static var title: LocalizedStringResource = "휴식 스킵"
-    @Parameter(title: "현재 운동 인덱스") var index: Int
+public struct SkipRestIntent: AppIntent, ControlConfigurationIntent, LiveActivityIntent {
+    public static var title: LocalizedStringResource = "휴식 스킵"
+    public static var description = IntentDescription("휴식 스킵 버튼(스킵 후 다음 세트로 넘어감)")
+    @Parameter(title: "현재 운동 인덱스")
+    public var index: Int?
     
-    func perform() async throws -> some IntentResult {
+    public init() {}
+
+    public func perform() async throws -> some IntentResult {
         
         let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
         sharedDefaults?.set(index, forKey: "SkipRestIndex")
