@@ -66,6 +66,14 @@ extension SummaryInfoCell {
     var publicSaveButton: UIButton { saveButton }
 }
 
+// MARK: - 저장버튼 활성화 상태 정하는 메서드
+extension SummaryInfoCell {
+    func updateSaveButtonEnabled(_ isEnabled: Bool) {
+        publicSaveButton.isEnabled = isEnabled
+        publicSaveButton.setTitleColor(isEnabled ? .white : .systemGray, for: .normal)
+    }
+}
+
 // MARK: - SummaryInfoCell UI 관련 extension
 private extension SummaryInfoCell {
     func setupUI() {
