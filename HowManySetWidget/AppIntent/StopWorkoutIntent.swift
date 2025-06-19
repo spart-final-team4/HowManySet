@@ -7,14 +7,17 @@
 
 import AppIntents
 import ActivityKit
-//import WidgetKit
+import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-struct StopWorkoutIntent: AppIntent {
-    static var title: LocalizedStringResource = "운동 종료"
-    @Parameter(title: "현재 운동 인덱스") var index: Int
-    
-    func perform() async throws -> some IntentResult {
+public struct StopWorkoutIntent: AppIntent, ControlConfigurationIntent, LiveActivityIntent {
+    public static var title: LocalizedStringResource = "운동 종료"
+    public static var description = IntentDescription("운동 종료 버튼(클릭 시 앱에서 Alert)")
+    @Parameter(title: "현재 운동 인덱스") var index: Int?
+
+    public init() {}
+
+    public func perform() async throws -> some IntentResult {
         
         let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
         sharedDefaults?.set(index, forKey: "CurrentIndex")

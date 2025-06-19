@@ -47,6 +47,7 @@ final class LiveActivityAppGroupEventBridge {
         let index = defaults.integer(forKey: indexKey)
         let timestamp = defaults.double(forKey: timestampKey)
         let lastTimestamp = lastHandledTimestamps[indexKey] ?? 0
+        print("[Bridge] 읽은 index: \(index), timestamp: \(timestamp)")
         guard index > 0, timestamp > lastTimestamp else { return }
         lastHandledTimestamps[indexKey] = timestamp
         completion(index)
