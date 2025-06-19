@@ -39,7 +39,28 @@ final class RecordDetailViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .tapConfirm:
+            let trimmedCurrent = currentState.memo?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let current = (trimmedCurrent == "메모를 입력해주세요.") ? nil : trimmedCurrent
+            let original = currentState.record.comment?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            let isCurrentEmpty = current?.isEmpty ?? true
+            let isOriginalEmpty = original?.isEmpty ?? true
+
+            // 둘 다 nil 또는 공백이면 변경 없음
+            if isCurrentEmpty && isOriginalEmpty {
+                print("변경된 값 없음")
+                return .just(.setDismiss(true))
+            }
+
+            // 값이 다르면 변경된 것으로 간주
+            if current != original {
+                print("변경된 메모 저장: \(current ?? "")")
+                return .just(.setDismiss(true))
+            }
+
+            print("변경된 값 없음")
             return .just(.setDismiss(true))
+
         case let .updateMemo(text):
             return .just(.setMemo(text))
         }

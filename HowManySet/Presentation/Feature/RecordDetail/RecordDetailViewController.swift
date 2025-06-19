@@ -127,20 +127,35 @@ extension RecordDetailViewController {
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
-        // SummaryInfoCell의 확인 버튼 바인딩
+        // Memo 텍스트 입력 -> Reactor로 전달
+        recordDetailView.publicCollectionView.rx
+            .willDisplayCell
+            .compactMap { $0.cell as? MemoInfoCell }
+            .bind(with: self) { (owner: RecordDetailViewController, cell: MemoInfoCell) in
+                cell.publicMemoTextView.rx.text.orEmpty
+                    .distinctUntilChanged()
+                    .map { RecordDetailViewReactor.Action.updateMemo($0) }
+                    .bind(to: reactor.action)
+                    .disposed(by: owner.disposeBag)
+            }
+            .disposed(by: disposeBag)
+
+        // 확인 버튼 탭 -> Reactor 액션 전달
         recordDetailView.publicCollectionView.rx
             .willDisplayCell
             .compactMap { $0.cell as? SummaryInfoCell }
-            .flatMap { cell in
+            .take(1)
+            .bind(with: self) { (owner: RecordDetailViewController, cell: SummaryInfoCell) in
                 cell.publicConfirmButton.rx.tap
                     .map { RecordDetailViewReactor.Action.tapConfirm }
+                    .bind(to: reactor.action)
+                    .disposed(by: owner.disposeBag)
             }
-            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        // Action 처리 결과에 따라 모달 닫기
+        // shouldDismiss 상태 변화 -> 모달 닫기
         reactor.state
-            .map { $0.shouldDismiss }
+            .map(\.shouldDismiss)
             .distinctUntilChanged()
             .filter { $0 }
             .bind(with: self) { owner, _ in
