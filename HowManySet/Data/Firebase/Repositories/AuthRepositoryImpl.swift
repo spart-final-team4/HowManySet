@@ -5,7 +5,7 @@
 //  Created by GO on 6/19/25.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import FirebaseAuth
 import FirebaseFirestore
@@ -13,7 +13,6 @@ import FirebaseCore
 import GoogleSignIn
 import KakaoSDKAuth
 import KakaoSDKUser
-import UIKit
 
 /// 인증 관련 데이터 처리를 담당하는 Repository 구현체
 /// - Firebase Auth와 각종 소셜 로그인을 통합하여 처리
@@ -25,6 +24,39 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
         self.firebaseAuthService = firebaseAuthService
     }
 
+    /// 로그아웃 처리
+    /// - Returns: 로그아웃 결과 Observable
+    public func signOut() -> Observable<Void> {
+        return Observable.create { observer in
+            let result = self.firebaseAuthService.signOut()
+            switch result {
+            case .success:
+                observer.onNext(())
+                observer.onCompleted()
+            case .failure(let error):
+                observer.onError(error)
+            }
+            return Disposables.create()
+        }
+    }
+
+    /// 계정 삭제 처리
+    /// - Returns: 계정 삭제 결과 Observable
+    public func deleteAccount() -> Observable<Void> {
+        return Observable.create { observer in
+            self.firebaseAuthService.deleteAccount { result in
+                switch result {
+                case .success:
+                    observer.onNext(())
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
     /// 카카오 로그인 처리
     /// - Returns: 로그인된 사용자 정보 Observable
     public func signInWithKakao() -> Observable<User> {
