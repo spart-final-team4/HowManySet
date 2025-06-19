@@ -83,7 +83,11 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
     /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
     func presentEditRoutineView(with routine: WorkoutRoutine) {
-        let reactor = EditRoutineViewReactor(with: routine)
+        let realmService: RealmServiceProtocol = RealmService()
+        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        let reactor = EditRoutineViewReactor(with: routine, saveRoutineUseCase: saveRoutineUseCase, deleteRoutineUseCase: deleteRoutineUseCase)
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
         if let sheet = editRoutineVC.sheetPresentationController {
