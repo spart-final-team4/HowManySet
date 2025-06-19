@@ -16,7 +16,8 @@ final class EditRoutineTableView: UITableView {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private(set) var cellMoreButtonTapped = PublishRelay<IndexPath>()
-
+    private(set) var footerViewTapped = PublishRelay<Void>()
+    
     /// RxDataSources를 위한 DataSource 타입 별칭
     typealias DataSource = RxTableViewSectionedReloadDataSource<EditRoutineSection>
 
@@ -114,6 +115,11 @@ extension EditRoutineTableView: UITableViewDelegate {
         ) as? EditRoutineTableFooterView else {
             return nil
         }
+        
+        footerView.plusExcerciseButtonTapped
+            .bind(to: footerViewTapped)
+            .disposed(by: footerView.disposeBag)
+        
         return footerView
     }
 
