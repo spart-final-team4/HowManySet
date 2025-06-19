@@ -510,8 +510,11 @@ private extension HomeViewController {
                             cardView.weightRepsButton.transform = .identity
                         }
                     })
+                    let currentRoutineName = reactor.currentState.workoutRoutine.name
+                    let workoutCardState = reactor.currentState.workoutCardStates[cardView.index]
+                    self.coordinator?.presentEditExerciseView(routineName: currentRoutineName, workoutCardState: workoutCardState)
+
                     reactor.action.onNext(action)
-                    self.coordinator?.presentEditExerciseView(routineName: "")
                 }
                 .disposed(by: disposeBag)
         }
