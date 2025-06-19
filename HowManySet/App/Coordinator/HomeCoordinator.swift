@@ -11,7 +11,7 @@ protocol HomeCoordinatorProtocol: Coordinator {
     func presentRoutineListView()
     func presentEditAndMemoView()
     func presentEditExerciseView(routineName: String)
-    func presentEditRoutineView()
+    func presentEditRoutineView(with routine: WorkoutRoutine)
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
     func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
@@ -82,8 +82,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     }
         
     /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
-    func presentEditRoutineView() {
-        let reactor = EditRoutinViewReactor()
+    func presentEditRoutineView(with routine: WorkoutRoutine) {
+        let realmService: RealmServiceProtocol = RealmService()
+        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        let reactor = EditRoutineViewReactor(with: routine, saveRoutineUseCase: saveRoutineUseCase, deleteRoutineUseCase: deleteRoutineUseCase)
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
         if let sheet = editRoutineVC.sheetPresentationController {

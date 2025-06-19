@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 /// 운동 루틴 편집 화면에서 나타나는 바텀시트 뷰 컨트롤러입니다.
 /// 사용자는 이 뷰에서 다음 작업을 수행할 수 있습니다:
@@ -18,6 +20,11 @@ import Then
 /// 버튼은 좌측 정렬된 텍스트와 패딩을 포함한 스타일로 구성됩니다.
 /// iOS 15 이상에서 deprecated된 `contentEdgeInsets`는 추후 `UIButton.Configuration` 기반으로 전환 권장됩니다.
 final class EditRoutineBottomSheetViewController: UIViewController {
+    
+    private let disposeBag = DisposeBag()
+    private(set) var excerciseChangeButtonSubject = PublishRelay<Void>()
+    private(set) var removeExcerciseButtonSubject = PublishRelay<Void>()
+    private(set) var changeExcerciseListButtonSubject = PublishRelay<Void>()
     
     /// 운동 정보 변경 버튼
     private lazy var excerciseChangeButton = UIButton().then {
@@ -77,6 +84,28 @@ private extension EditRoutineBottomSheetViewController {
         setAppearance()
         setViewHierarchy()
         setConstraints()
+        bind()
+    }
+    
+    func bind() {
+        excerciseChangeButton.rx.tap
+            .bind(to: excerciseChangeButtonSubject)
+            .disposed(by: disposeBag)
+        removeExcerciseButton.rx.tap
+            .bind(to: removeExcerciseButtonSubject)
+            .disposed(by: disposeBag)
+        changeExcerciseListButton.rx.tap
+            .bind(to: changeExcerciseListButtonSubject)
+            .disposed(by: disposeBag)
+        
+        Observable
+            .merge(excerciseChangeButton.rx.tap.asObservable(),
+                   removeExcerciseButton.rx.tap.asObservable(),
+                   changeExcerciseListButton.rx.tap.asObservable())
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, _ in
+                owner.dismiss(animated: true)
+            }.disposed(by: disposeBag)
     }
     
     /// 뷰의 기본 배경 색상 설정

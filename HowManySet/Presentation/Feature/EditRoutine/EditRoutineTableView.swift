@@ -15,6 +15,7 @@ final class EditRoutineTableView: UITableView {
 
     // MARK: - Properties
     private let disposeBag = DisposeBag()
+    private(set) var cellMoreButtonTapped = PublishRelay<IndexPath>()
 
     /// RxDataSources를 위한 DataSource 타입 별칭
     typealias DataSource = RxTableViewSectionedReloadDataSource<EditRoutineSection>
@@ -55,10 +56,19 @@ final class EditRoutineTableView: UITableView {
             ) as? EditRoutineTableViewCell else {
                 return UITableViewCell()
             }
-
+            cell.moreButtonTapped
+                .subscribe(with: self) { owner, _ in
+                    owner.cellMoreButtonTapped.accept(indexPath)
+                }.disposed(by: cell.disposeBag)
+                
             cell.configure(model: item)
             return cell
         })
+        
+        cellMoreButtonTapped
+            .subscribe{ indexPath in
+                print(indexPath)
+            }.disposed(by: disposeBag)
     }
 
     // MARK: - Public Method
@@ -67,14 +77,7 @@ final class EditRoutineTableView: UITableView {
         var items = [EditRoutioneCellModel]()
 
         routine.workouts.forEach { workout in
-            items.append(
-                EditRoutioneCellModel(
-                    name: workout.name,
-                    setText: "총 \(workout.sets.count)세트",
-                    weightText: "\(workout.sets.map { $0.weight }.max()!)\(workout.sets[0].unit)",
-                    repsText: "\(workout.sets.map { $0.reps }.max()!)회"
-                )
-            )
+            items.append(mappingRoutineToCellModel(workout: workout))
         }
 
         let model = [EditRoutineSection(headerTitle: routine.name, items: items)]
@@ -84,6 +87,13 @@ final class EditRoutineTableView: UITableView {
         Observable.just(model)
             .bind(to: self.rx.items(dataSource: rxDataSource))
             .disposed(by: disposeBag)
+    }
+    
+    func mappingRoutineToCellModel(workout: Workout) -> EditRoutioneCellModel {
+        return EditRoutioneCellModel(name: workout.name,
+                                     setText: "총 \(workout.sets.count)세트",
+                                     weightText: "\(workout.sets.map { $0.weight }.max()!)\(workout.sets[0].unit)",
+                                     repsText: "\(workout.sets.map { $0.reps }.max()!)회")
     }
 }
 
