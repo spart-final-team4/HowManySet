@@ -94,7 +94,7 @@ final class AuthView: UIView {
         addSubviews(logoView, kakaoLoginButton, googleLoginButton, appleLoginButton, anonymousLoginButton)
 
         logoView.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(120)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(160)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(215)
             $0.height.equalTo(75)
