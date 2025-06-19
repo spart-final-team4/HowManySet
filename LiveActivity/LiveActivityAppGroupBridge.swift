@@ -10,15 +10,16 @@ import Foundation
 final class LiveActivityAppGroupEventBridge {
     static let shared = LiveActivityAppGroupEventBridge()
     private let appGroupID = "group.com.eightroutes.HowManySet"
-
+    
     private var lastHandledTimestamps: [String: TimeInterval] = [:]
-
+    private var lastHandledStopWorkoutTimestamp: Double = 0
+    
     private init() {}
-
+    
     func checkSetCompleteEvent(completion: (Int) -> Void) {
         checkEvent(indexKey: "SetCompleteIndex", timestampKey: "SetCompleteTimestamp", completion: completion)
     }
-
+    
     func checkSkipRestEvent(completion: (Int) -> Void) {
         checkEvent(indexKey: "SkipRestIndex", timestampKey: "SkipRestTimestamp", completion: completion)
     }
@@ -26,21 +27,20 @@ final class LiveActivityAppGroupEventBridge {
     func checkPlayAndPauseRestEvent(completion: (Int) -> Void) {
         checkEvent(indexKey: "PlayAndPauseRestIndex", timestampKey: "PlayAndPauseRestTimestamp", completion: completion)
     }
-
+    
     func checkStopWorkoutEvent(completion: () -> Void) {
         guard let defaults = UserDefaults(suiteName: appGroupID) else { return }
-        let key = "StopWorkout"
-        let timestampKey = "StopWorkoutTimestamp"
-        let flag = defaults.bool(forKey: key)
-        let timestamp = defaults.double(forKey: timestampKey)
-        let lastTimestamp = lastHandledTimestamps[key] ?? 0
-        guard flag, timestamp > lastTimestamp else { return }
-        lastHandledTimestamps[key] = timestamp
-        completion()
-        defaults.removeObject(forKey: key)
-        defaults.removeObject(forKey: timestampKey)
+        let flag = defaults.bool(forKey: "StopWorkout")
+        let timestamp = defaults.double(forKey: "StopWorkoutTimestamp")
+        if flag && timestamp > lastHandledStopWorkoutTimestamp {
+            print("StopWorkout 감지됨: \(timestamp)")
+            lastHandledStopWorkoutTimestamp = timestamp
+            completion()
+            defaults.removeObject(forKey: "StopWorkout")
+            defaults.removeObject(forKey: "StopWorkoutTimestamp")
+        }
     }
-
+    
     // 공통 인덱스 이벤트 처리
     private func checkEvent(indexKey: String, timestampKey: String, completion: (Int) -> Void) {
         guard let defaults = UserDefaults(suiteName: appGroupID) else { return }
@@ -50,11 +50,13 @@ final class LiveActivityAppGroupEventBridge {
         guard timestamp > lastTimestamp else { return }
         lastHandledTimestamps[indexKey] = timestamp
         completion(index)
+        defaults.removeObject(forKey: indexKey)
+        defaults.removeObject(forKey: timestampKey)
     }
     
     /// 앱 시작 시 기존 운동 진행 정보 관련 defaults들 제거
     func removeAppGroupEventValuesIfNeeded() {
-        if let defaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet") {
+        if let defaults = UserDefaults(suiteName: appGroupID) {
             defaults.removeObject(forKey: "SetCompleteIndex")
             defaults.removeObject(forKey: "SetCompleteTimestamp")
             defaults.removeObject(forKey: "SkipRestIndex")
