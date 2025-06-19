@@ -35,48 +35,43 @@ extension Workout {
             name: "벤치프레스",
             sets: [
                 WorkoutSet(weight: 60, unit: "kg", reps: 10),
-                WorkoutSet(weight: 65, unit: "kg", reps: 8),
-                WorkoutSet(weight: 70, unit: "kg", reps: 6),
-                WorkoutSet(weight: 70, unit: "kg", reps: 6),
-                WorkoutSet(weight: 70, unit: "kg", reps: 6)
+                WorkoutSet(weight: 70, unit: "kg", reps: 8),
+                WorkoutSet(weight: 80, unit: "kg", reps: 6)
             ],
-            comment: "팔꿈치 각도 유지"
+            comment: "폼에 집중하기"
         ),
         Workout(
             name: "스쿼트",
             sets: [
-                WorkoutSet(weight: 80, unit: "kg", reps: 12),
-                WorkoutSet(weight: 90, unit: "kg", reps: 10),
-                WorkoutSet(weight: 100, unit: "kg", reps: 8)
+                WorkoutSet(weight: 80, unit: "kg", reps: 10),
+                WorkoutSet(weight: 100, unit: "kg", reps: 8),
+                WorkoutSet(weight: 120, unit: "kg", reps: 6)
             ],
-            comment: "무릎이 앞으로 나가지 않도록"
+            comment: "무릎 조심"
         ),
         Workout(
             name: "데드리프트",
             sets: [
-                WorkoutSet(weight: 100, unit: "kg", reps: 5),
-                WorkoutSet(weight: 110, unit: "kg", reps: 5),
-                WorkoutSet(weight: 120, unit: "kg", reps: 5)
+                WorkoutSet(weight: 90, unit: "kg", reps: 8),
+                WorkoutSet(weight: 110, unit: "kg", reps: 6)
             ],
-            comment: "허리 고정에 집중"
+            comment: "허리 고정"
         ),
         Workout(
-            name: "오버헤드 프레스",
+            name: "체스트 프레스",
             sets: [
-                WorkoutSet(weight: 30, unit: "kg", reps: 10),
-                WorkoutSet(weight: 35, unit: "kg", reps: 8),
-                WorkoutSet(weight: 40, unit: "kg", reps: 6)
+                WorkoutSet(weight: 40, unit: "kg", reps: 12),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10)
             ],
-            comment: "코어에 힘 주기"
+            comment: nil
         ),
         Workout(
-            name: "랫풀다운",
+            name: "랫풀 다운",
             sets: [
-                WorkoutSet(weight: 45, unit: "kg", reps: 12),
-                WorkoutSet(weight: 50, unit: "kg", reps: 12),
-                WorkoutSet(weight: 55, unit: "kg", reps: 10)
+                WorkoutSet(weight: 40, unit: "kg", reps: 12),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10)
             ],
-            comment: "광배근 수축에 집중"
+            comment: nil
         )
     ]
 }

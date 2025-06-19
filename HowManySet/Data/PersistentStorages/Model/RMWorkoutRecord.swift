@@ -10,6 +10,7 @@ import RealmSwift
 
 
 final class RMWorkoutRecord: Object {
+    @Persisted(primaryKey: true) var id: String
     @Persisted var workoutRoutine: RMWorkoutRoutine?
     @Persisted var totalTime: Int
     @Persisted var workoutTime: Int
@@ -30,13 +31,18 @@ final class RMWorkoutRecord: Object {
         self.comment = comment
         self.date = date
     }
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 extension RMWorkoutRecord {
     func toDTO() -> WorkoutRecordDTO {
         return WorkoutRecordDTO(
+            id: self.id,
             workoutRoutine: self.workoutRoutine?.toDTO()
-            ?? WorkoutRoutineDTO(name: "MOCK", workouts: []),
+            ?? WorkoutRoutineDTO(id: "", name: "MOCK", workouts: []),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
             comment: self.comment,
@@ -48,7 +54,8 @@ extension RMWorkoutRecord {
 extension RMWorkoutRecord {
     convenience init(dto: WorkoutRecordDTO) {
         self.init()
-        self.workoutRoutine = RMWorkoutRoutine(dto: dto.workoutRoutine ?? WorkoutRoutineDTO(name: "MOCK", workouts: []))
+        self.id = dto.id
+        self.workoutRoutine = RMWorkoutRoutine(dto: dto.workoutRoutine ?? WorkoutRoutineDTO(id: "", name: "MOCK", workouts: []))
         self.totalTime = dto.totalTime
         self.workoutTime = dto.workoutTime
         self.comment = dto.comment
