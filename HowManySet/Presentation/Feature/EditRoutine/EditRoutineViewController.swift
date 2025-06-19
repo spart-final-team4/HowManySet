@@ -53,6 +53,13 @@ final class EditRoutineViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        tableView.footerViewTapped
+            .do(onNext: { [weak self] in
+                self?.presentEditRoutineVC()
+            }).map { Reactor.Action.plusExcerciseButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         editRoutineBottomSheetViewController.excerciseChangeButtonSubject
             .map{ Reactor.Action.changeWorkoutInfo }
             .bind(to: reactor.action)
@@ -92,6 +99,11 @@ final class EditRoutineViewController: UIViewController, View {
         }
 
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
+    }
+    
+    func presentEditRoutineVC() {
+        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl())))
+        self.present(vc, animated: true)
     }
 }
 
