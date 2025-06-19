@@ -18,7 +18,7 @@ public struct SetCompleteIntent: AppIntent, ControlConfigurationIntent, LiveActi
     
     public init() {}
 
-    public init(index: Int?) {
+    public init(index: Int) {
         self.index = index
     }
     
