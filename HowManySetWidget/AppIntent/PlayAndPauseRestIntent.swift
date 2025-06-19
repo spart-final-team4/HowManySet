@@ -17,6 +17,10 @@ public struct PlayAndPauseRestIntent: AppIntent, ControlConfigurationIntent, Liv
     public var index: Int?
     
     public init() {}
+
+    public init(index: Int?) {
+        self.index = index
+    }
     
     public func perform() async throws -> some IntentResult {
         

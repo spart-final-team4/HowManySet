@@ -18,6 +18,10 @@ public struct SkipRestIntent: AppIntent, ControlConfigurationIntent, LiveActivit
     
     public init() {}
 
+    public init(index: Int?) {
+        self.index = index
+    }
+
     public func perform() async throws -> some IntentResult {
         
         let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")

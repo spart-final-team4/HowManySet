@@ -18,5 +18,6 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var isRestPaused: Bool
     var currentSet: Int
     var totalSet: Int
+    var currentIndex: Int
 }
 

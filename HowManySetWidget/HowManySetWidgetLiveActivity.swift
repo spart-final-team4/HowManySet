@@ -30,6 +30,9 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         // 세트 관련
         var currentSet: Int
         var totalSet: Int
+        
+        // 현재 코드 인덱스
+        var currentIndex: Int
     }
     
     // Fixed non-changing properties about your activity go here!
@@ -75,7 +78,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             
                             HStack(spacing: 10) {
                                 if #available(iOS 17.0, *) {
-                                    Button(intent: SetCompleteIntent()) {
+                                    Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
                                         Image(systemName: "checkmark")
                                             .foregroundStyle(.brand)
                                             .fontWeight(.bold)
@@ -89,7 +92,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 }
                                 
                                 if #available(iOS 17.0, *) {
-                                    Button(intent: StopWorkoutIntent()) {
+                                    Button(intent: StopWorkoutIntent(index: context.state.currentIndex)) {
                                         Image(systemName: "xmark")
                                             .foregroundStyle(.white)
                                             .fontWeight(.bold)
@@ -123,7 +126,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             
                             HStack(spacing: 10) {
                                 if #available(iOS 17.0, *) {
-                                    Button(intent: SkipRestIntent()) {
+                                    Button(intent: SkipRestIntent(index: context.state.currentIndex)) {
                                         Image(systemName: "forward.end.fill")
                                             .foregroundStyle(.brand)
                                             .fontWeight(.semibold)
@@ -214,6 +217,7 @@ extension HowManySetWidgetAttributes.ContentState {
         self.isRestPaused = data.isRestPaused
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
+        self.currentIndex = data.currentIndex
     }
 }
 
@@ -234,7 +238,8 @@ extension HowManySetWidgetAttributes.ContentState {
             restSecondsRemaining: 0,
             isRestPaused: false,
             currentSet: 2,
-            totalSet: 5
+            totalSet: 5,
+            currentIndex: 0
         )
     }
     
@@ -248,7 +253,8 @@ extension HowManySetWidgetAttributes.ContentState {
             restSecondsRemaining: 30,
             isRestPaused: false,
             currentSet: 2,
-            totalSet: 5
+            totalSet: 5,
+            currentIndex: 0
         )
     }
 }

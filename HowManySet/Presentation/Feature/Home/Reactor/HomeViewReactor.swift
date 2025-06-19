@@ -657,7 +657,8 @@ extension HomeViewReactor.State {
                 restSecondsRemaining: 0,
                 isRestPaused: false,
                 currentSet: 0,
-                totalSet: 0
+                totalSet: 0,
+                currentIndex: 0
             )
         }
         
@@ -682,7 +683,8 @@ extension HomeViewReactor.State {
             restSecondsRemaining: restSecondsRemaining,
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
-            totalSet: exercise.totalSetCount
+            totalSet: exercise.totalSetCount,
+            currentIndex: currentExerciseIndex
         )
     }
 }
