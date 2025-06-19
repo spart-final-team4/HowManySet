@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 /// 앱의 전체 흐름을 관리하는 Coordinator
 /// - 로그인 여부, 온보딩 여부를 체크하고 적절한 흐름으로 분기
@@ -42,8 +43,7 @@ final class AppCoordinator: Coordinator {
     
     /// 상태 체크 함수 분리
     private func checkLoginStatus() -> Bool {
-        // TODO: 실제 로그인 상태(Firebase 등) 연동
-        return false
+        return Auth.auth().currentUser != nil
     }
     
     private func checkOnboardingStatus() -> Bool {
