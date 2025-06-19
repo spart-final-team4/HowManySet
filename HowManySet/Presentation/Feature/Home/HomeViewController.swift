@@ -827,6 +827,23 @@ extension HomeViewController {
                 print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
             }).disposed(by: disposeBag)
         
+        reactor.state.map { $0.workoutStateForEdit }
+            .filter { $0 != nil }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] workout in
+                guard let self, let workout else { return }
+                
+                if reactor.currentState.isWorkingout {
+                    let currentRoutineName = reactor.currentState.workoutRoutine.name
+                    let workoutStateForEdit = reactor.currentState.workoutStateForEdit
+                    self.coordinator?.presentEditExerciseView(
+                        routineName: currentRoutineName,
+                        workoutStateForEdit: workout
+                    )
+                }
+            }.disposed(by: disposeBag)
+        
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
