@@ -32,9 +32,9 @@ final class AppCoordinator: Coordinator {
         let hasCompletedOnboarding = checkOnboardingStatus()
         
         if !isLoggedIn {
-            showTabBarFlow()
+            showAuthFlow()
         } else if !hasCompletedOnboarding {
-            showTabBarFlow()
+            showOnboardingFlow()
         } else {
             showTabBarFlow()
         }
