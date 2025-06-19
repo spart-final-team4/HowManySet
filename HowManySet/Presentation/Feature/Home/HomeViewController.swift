@@ -127,47 +127,6 @@ final class HomeViewController: UIViewController, View {
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        guard let reactor = self.reactor else { return }
-        
-        let defaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
-        let index = defaults?.integer(forKey: "SetCompleteIndex") ?? -1
-        let timestamp = defaults?.double(forKey: "SetCompleteTimestamp") ?? -1
-        print("[앱] 직접 읽음: index=\(index), timestamp=\(timestamp)")
-        
-        // 세트 완료 감지
-        liveActivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            print("[앱] Live Activity Timer Tick")
-            
-            // 세트 완료 (체크 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
-                reactor.action.onNext(.setCompleteButtonClicked(at: index))
-            }
-            // 휴식 스킵 (forward 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-                print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
-                reactor.action.onNext(.forwardButtonClicked(at: index))
-            }
-            // 운동 종료 (stop 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
-                print("운동 종료 polling 이벤트 감지!")
-                self.coordinator?.popUpEndWorkoutAlert {
-                    reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                    return self.reactor!.currentState.workoutSummary
-                }
-            }
-            // 휴식 재생/일시정지 (pause/play 버튼)
-            LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-                print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
-                reactor.action.onNext(.restPauseButtonClicked)
-            }
-        }
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         liveActivityTimer?.invalidate()
@@ -481,7 +440,6 @@ private extension HomeViewController {
                             cardView.setCompleteButton.transform = .identity
                         }
                     })
-                    //                        print("🚀 Reactor로 세트 완료 액션 전송: \(action)")
                     reactor.action.onNext(action)
                 })
                 .disposed(by: cardView.disposeBag)
@@ -499,7 +457,7 @@ private extension HomeViewController {
             
             // 루틴 편집 및 메모 버튼
             cardView.editButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+                .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
                 .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
                 .bind(onNext: { [weak self] action in
                     guard let self else { return }
@@ -536,7 +494,6 @@ private extension HomeViewController {
                     })
                     .bind { [weak cardView] in
                         guard let cardView else { return }
-                        cardView.restPlayPauseButton.isSelected.toggle()
                         reactor.action.onNext(.restPauseButtonClicked)
                     }
                     .disposed(by: cardView.disposeBag)
@@ -585,7 +542,12 @@ extension HomeViewController {
         routineStartCardView.routineSelectButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .map { Reactor.Action.routineSelected }
-            .bind(to: reactor.action)
+            .bind(onNext: { [weak self] startAction in
+                guard let self else { return }
+                // 루틴 시작 시 라이브 액티비티 실행
+                self.setLiveActivity()
+                reactor.action.onNext(startAction)
+            })
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
@@ -953,4 +915,42 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
     }//bind
+}
+
+// MARK: LiveActivity
+private extension HomeViewController {
+    
+    func setLiveActivity() {
+        
+        guard let reactor = self.reactor else { return }
+        
+        // 세트 완료 감지
+        liveActivityTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            
+            // 세트 완료 (체크 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
+                reactor.action.onNext(.setCompleteButtonClicked(at: index))
+            }
+            // 휴식 스킵 (forward 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
+                print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
+                reactor.action.onNext(.forwardButtonClicked(at: index))
+            }
+            // 운동 종료 (stop 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
+                print("운동 종료 polling 이벤트 감지!")
+                self.coordinator?.popUpEndWorkoutAlert {
+                    reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                    return self.reactor!.currentState.workoutSummary
+                }
+            }
+            // 휴식 재생/일시정지 (pause/play 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
+                print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
+                reactor.action.onNext(.restPauseButtonClicked)
+            }
+        }
+    }
 }
