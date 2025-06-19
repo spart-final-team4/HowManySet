@@ -68,3 +68,15 @@ extension WorkoutRecord {
         )
     ]
 }
+// MARK: - 커스텀 복사 메서드
+extension WorkoutRecord {
+    func withUpdatedComment(_ newComment: String?) -> WorkoutRecord {
+        return WorkoutRecord(
+            workoutRoutine: self.workoutRoutine,
+            totalTime: self.totalTime,
+            workoutTime: self.workoutTime,
+            comment: newComment,
+            date: self.date
+        )
+    }
+}
