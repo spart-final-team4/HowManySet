@@ -40,9 +40,8 @@ final class DIContainer {
         let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
         
         let reactor = HomeViewReactor(
-            saveRecordUseCase: saveRecordUseCase
-//            ,
-//            fsSaveRecordUseCase: fsSaveRecordUseCase
+            saveRecordUseCase: saveRecordUseCase,
+            fsSaveRecordUseCase: fsSaveRecordUseCase
         )
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
