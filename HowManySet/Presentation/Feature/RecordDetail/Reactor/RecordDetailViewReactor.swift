@@ -15,13 +15,17 @@ final class RecordDetailViewReactor: Reactor {
     enum Mutation {
         case setDismiss(Bool)
         case setMemo(String?)
+        case setSaveButtonEnabled(Bool)
+        case updateOriginalMemo(String?)
     }
     
     // MARK: - State is a current view state
     struct State {
         let record: WorkoutRecord
         var memo: String?
+        var originalMemo: String?
         var shouldDismiss: Bool
+        var isSaveButtonEnabled: Bool
     }
 
     // MARK: - Properties
@@ -32,7 +36,9 @@ final class RecordDetailViewReactor: Reactor {
         self.initialState = State(
             record: record,
             memo: record.comment,
-            shouldDismiss: false
+            originalMemo: record.comment,
+            shouldDismiss: false,
+            isSaveButtonEnabled: false
         )
     }
     
@@ -43,30 +49,30 @@ final class RecordDetailViewReactor: Reactor {
             return .just(.setDismiss(true))
 
         case .tapSave:
-            let trimmedCurrent = currentState.memo?.trimmingCharacters(in: .whitespacesAndNewlines)
-            let current = (trimmedCurrent == "메모를 입력해주세요.") ? nil : trimmedCurrent
-            let original = currentState.record.comment?.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            let isCurrentEmpty = current?.isEmpty ?? true
-            let isOriginalEmpty = original?.isEmpty ?? true
-
-            // 둘 다 nil 또는 공백이면 변경 없음
-            if isCurrentEmpty && isOriginalEmpty {
+            guard let memo = currentState.memo?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  memo != "메모를 입력해주세요.",
+                  memo != currentState.originalMemo?.trimmingCharacters(in: .whitespacesAndNewlines)
+            else {
                 print("변경된 값 없음")
                 return .empty()
             }
 
-            // 값이 다르면 변경된 것으로 간주
-            if current != original {
-                print("변경된 메모 저장: \(current ?? "")")
-                return .empty()
-            }
-
-            print("변경된 값 없음")
-            return .empty()
+            print("변경된 메모 저장: \(memo)")
+            return Observable.from([
+                .updateOriginalMemo(memo),
+                .setSaveButtonEnabled(false)
+            ])
 
         case let .updateMemo(text):
-            return .just(.setMemo(text))
+            let trimmed = text?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let current = (trimmed == "메모를 입력해주세요.") ? nil : trimmed
+            let original = currentState.record.comment?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let isChanged = current != original && !(current?.isEmpty ?? true)
+
+            return Observable.from([
+                .setMemo(text),
+                .setSaveButtonEnabled(isChanged)
+            ])
         }
     }
 
@@ -78,6 +84,10 @@ final class RecordDetailViewReactor: Reactor {
             newState.shouldDismiss = value
         case let .setMemo(text):
             newState.memo = text
+        case let .setSaveButtonEnabled(isEnabled):
+            newState.isSaveButtonEnabled = isEnabled
+        case let .updateOriginalMemo(newMemo):
+            newState.originalMemo = newMemo
         }
         return newState
     }

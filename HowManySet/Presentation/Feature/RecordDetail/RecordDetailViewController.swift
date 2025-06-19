@@ -127,34 +127,49 @@ extension RecordDetailViewController {
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
-        // Memo 텍스트 입력 -> Reactor로 전달
-        recordDetailView.publicCollectionView.rx
-            .willDisplayCell
-            .compactMap { $0.cell as? MemoInfoCell }
-            .bind(with: self) { (owner: RecordDetailViewController, cell: MemoInfoCell) in
-                cell.publicMemoTextView.rx.text.orEmpty
-                    .distinctUntilChanged()
-                    .map { RecordDetailViewReactor.Action.updateMemo($0) }
-                    .bind(to: reactor.action)
-                    .disposed(by: owner.disposeBag)
-            }
-            .disposed(by: disposeBag)
-
-        // 저장 버튼, 확인 버튼 탭 -> Reactor 액션 전달
+        // collectionView에 있는 셀 탭 -> Reactor 액션 전달
         recordDetailView.publicCollectionView.rx
             .willDisplayCell
             .compactMap { $0.cell as? SummaryInfoCell }
             .take(1)
             .bind(with: self) { (owner: RecordDetailViewController, cell: SummaryInfoCell) in
+                // 저장 버튼 탭
                 cell.publicSaveButton.rx.tap
                     .map { RecordDetailViewReactor.Action.tapSave }
                     .bind(to: reactor.action)
                     .disposed(by: owner.disposeBag)
 
+                // 확인 버튼 탭
                 cell.publicConfirmButton.rx.tap
                     .map { RecordDetailViewReactor.Action.tapConfirm }
                     .bind(to: reactor.action)
                     .disposed(by: owner.disposeBag)
+
+                // 저장 버튼 활성화 상태 바인딩
+                reactor.state
+                    .map(\.isSaveButtonEnabled)
+                    .distinctUntilChanged()
+                    .bind(with: owner) { _, isEnabled in
+                        cell.publicSaveButton.isEnabled = isEnabled
+                        cell.publicSaveButton.setTitleColor(
+                            isEnabled ? .white : .systemGray,
+                            for: .normal
+                        )
+                    }
+                    .disposed(by: owner.disposeBag)
+            }
+            .disposed(by: disposeBag)
+
+        // 저장 버튼 상태 변화 → 보이는 SummaryInfoCell에 직접 반영
+        reactor.state
+            .map(\.isSaveButtonEnabled)
+            .distinctUntilChanged()
+            .bind(with: self) { owner, isEnabled in
+                owner.recordDetailView.publicCollectionView.visibleCells.forEach { cell in
+                    if let summaryCell = cell as? SummaryInfoCell {
+                        summaryCell.updateSaveButtonEnabled(isEnabled)
+                    }
+                }
             }
             .disposed(by: disposeBag)
 
@@ -175,7 +190,7 @@ extension RecordDetailViewController {
             .bind(with: self) { (owner: RecordDetailViewController, cell: MemoInfoCell) in
                 let textView = cell.publicMemoTextView
 
-                // 1. placeholder 로직
+                // placeholder 로직
                 textView.rx.didBeginEditing
                     .bind(with: owner) { _, _ in
                         if textView.text == "메모를 입력해주세요." {
@@ -197,11 +212,11 @@ extension RecordDetailViewController {
                     }
                     .disposed(by: owner.disposeBag)
 
-                // 2. 텍스트 업데이트 리액터로 전달
+                // 텍스트 업데이트 시 리액터로 전달
                 textView.rx.text.orEmpty
                     .distinctUntilChanged()
                     .map { RecordDetailViewReactor.Action.updateMemo($0) }
-                    .bind(to: owner.reactor!.action)
+                    .bind(to: reactor.action)
                     .disposed(by: owner.disposeBag)
             }
             .disposed(by: disposeBag)
