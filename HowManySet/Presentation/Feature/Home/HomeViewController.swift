@@ -454,7 +454,7 @@ private extension HomeViewController {
             cardView.weightRepsButton.rx.tap
                 .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                 .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
-                .bind { [weak self] action in
+                .bind(onNext: { [weak self] action in
                     guard let self else { return }
                     
                     // 클릭 애니메이션
@@ -465,9 +465,13 @@ private extension HomeViewController {
                             cardView.weightRepsButton.transform = .identity
                         }
                     })
+                    
+                    let cardIndex = cardView.index
+                    let currentRoutineName = reactor.currentState.workoutRoutine.name
+                    self.coordinator?.presentEditExerciseView(routineName: currentRoutineName)
+                    
                     reactor.action.onNext(action)
-                    self.coordinator?.presentEditExerciseView(routineName: "")
-                }
+                })
                 .disposed(by: disposeBag)
             
             // 휴식 재생/일시정지 버튼
