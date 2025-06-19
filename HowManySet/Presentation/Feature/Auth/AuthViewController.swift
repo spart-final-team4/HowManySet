@@ -50,7 +50,7 @@ final class AuthViewController: UIViewController, View {
         mainView.appleLoginButton.rx.controlEvent(.touchUpInside)
             .bind { [weak self] in self?.startAppleLogin() }
             .disposed(by: disposeBag)
-
+        
         mainView.anonymousLoginButton.rx.tap
             .map { Reactor.Action.tapAnonymousLogin }
             .bind(to: reactor.action)

@@ -104,9 +104,7 @@ final class DIContainer {
     
     /// 마이페이지 화면을 생성하여 반환
     func makeMyPageViewController(coordinator: MyPageCoordinator) -> UIViewController {
-        
         let userSettingRepository = UserSettingRepositoryImpl()
-        
         let fetchUserSettingUseCase = FetchUserSettingUseCase(repository: userSettingRepository)
         let saveUserSettingUseCase = SaveUserSettingUseCase(repository: userSettingRepository)
         
@@ -122,9 +120,15 @@ final class DIContainer {
             repository: fsUserSettingRespository
         )
         
+        // AuthUseCase 추가
+        let firebaseAuthService = FirebaseAuthService()
+        let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+        let authUseCase = AuthUseCase(repository: authRepository)
+        
         let reactor = MyPageViewReactor(
             fetchUserSettingUseCase: fetchUserSettingUseCase,
-            saveUserSettingUseCase: saveUserSettingUseCase
+            saveUserSettingUseCase: saveUserSettingUseCase,
+            authUseCase: authUseCase
 //            ,
 //            // Firestore UseCase들 추가
 //            fsFetchUserSettingUseCase: fsFetchUserSettingUseCase,

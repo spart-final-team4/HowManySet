@@ -123,10 +123,16 @@ private extension OnBoardingViewController {
         goToNextPage()
     }
     
-    /// 온보딩 닫기(X) 버튼 클릭 시 온보딩 종료 로직(추후 구현).
+    /// 온보딩 닫기(X) 버튼 클릭 시 온보딩을 건너뛰고 바로 완료 처리.
     @objc func onboardingViewCloseButtonAction() {
-        // TODO: 화면 전환 로직
-        // TODO: 온보딩 화면 종료 상태 저장
+        // 온보딩 완료 상태를 UserDefaults에 저장
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+        
+        // 온보딩 건너뛰었음을 별도로 저장 (향후 재안내 등에 활용 가능)
+        UserDefaults.standard.set(true, forKey: "hasSkippedOnboarding")
+        
+        // Coordinator를 통해 온보딩 완료 처리
+        coordinator?.completeOnBoarding()
     }
 }
 

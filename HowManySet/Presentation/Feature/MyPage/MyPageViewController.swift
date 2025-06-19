@@ -64,6 +64,21 @@ final class MyPageViewController: UIViewController, View {
             .subscribe(with: self) { owner, cell in
                 owner.handleCellTapped(cell)
             }.disposed(by: disposeBag)
+        
+        /// 로그아웃/계정삭제 성공 시 인증 화면으로 이동
+        reactor.state
+            .map { $0.shouldNavigateToAuth }
+            .filter { $0 }
+            .subscribe(with: self) { owner, _ in
+                owner.coordinator?.navigateToAuth()
+            }.disposed(by: disposeBag)
+        
+        /// 에러 처리
+        reactor.state
+            .compactMap { $0.error }
+            .subscribe(with: self) { error in
+                print(error)
+            }.disposed(by: disposeBag)
     }
 
     /// 선택된 셀에 따라 코디네이터로 화면 이동 처리

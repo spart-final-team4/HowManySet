@@ -72,22 +72,49 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
         }
         let uid = user.uid
 
-        // Firestore defaults 컬렉션 전체 삭제
-        let docRef = db.collection("defaults").document(uid)
-        docRef.delete { error in
+        // 🔥 Firestore 데이터 먼저 삭제
+        let userRef = db.collection("users").document(uid)
+        let defaultsRef = db.collection("defaults").document(uid)
+        
+        // 병렬로 데이터 삭제
+        let group = DispatchGroup()
+        var deletionError: Error?
+        
+        group.enter()
+        userRef.delete { error in
             if let error = error {
+                deletionError = error
+            }
+            group.leave()
+        }
+        
+        group.enter()
+        defaultsRef.delete { error in
+            if let error = error {
+                deletionError = error
+            }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            if let error = deletionError {
                 completion(.failure(error))
                 return
             }
+            
+            // 🔥 Firebase Auth 계정 삭제
             user.delete { error in
                 if let error = error {
+                    print("Firebase Auth 계정 삭제 실패: \(error.localizedDescription)")
                     completion(.failure(error))
                     return
                 }
+                print("🔥 Firebase Auth 계정 삭제 성공")
                 completion(.success(()))
             }
         }
     }
+
 
     /// 기본 Firestore 데이터 설정
     /// - Parameter uid: 사용자 ID
