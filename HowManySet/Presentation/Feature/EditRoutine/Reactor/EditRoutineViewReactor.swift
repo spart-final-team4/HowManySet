@@ -11,25 +11,42 @@ import ReactorKit
 
 final class EditRoutineViewReactor: Reactor {
     
+    private let saveRoutineUseCase: SaveRoutineUseCase
+    private let deleteRoutineUseCase: DeleteRoutineUseCase
     // Action is an user interaction
     enum Action {
         case viewDidLoad
+        case cellButtonTapped(IndexPath)
+        case changeWorkoutInfo
+        case removeSelectedWorkout
+        case changeListOrder
     }
     
     // Mutate is a state mani
     enum Mutation {
         case loadWorkout
+        case cellButtonTapped(IndexPath)
+        case changeWorkoutInfo
+        case removeSelectedWorkout
+        case changeListOrder
     }
     
     // State is a current view state
     struct State {
         var routine: WorkoutRoutine
+        var currentSeclectedWorkout: Workout?
+        var currentSeclectedIndexPath: IndexPath?
     }
     
     let initialState: State
     
-    init(with routine: WorkoutRoutine) {
+    init(with routine: WorkoutRoutine,
+         saveRoutineUseCase: SaveRoutineUseCase,
+         deleteRoutineUseCase: DeleteRoutineUseCase
+    ) {
         self.initialState = State(routine: routine)
+        self.saveRoutineUseCase = saveRoutineUseCase
+        self.deleteRoutineUseCase = deleteRoutineUseCase
     }
     
     // Action -> Mutation
@@ -37,6 +54,14 @@ final class EditRoutineViewReactor: Reactor {
         switch action {
         case .viewDidLoad:
             return .just(.loadWorkout)
+        case .cellButtonTapped(let indexPath):
+            return .just(.cellButtonTapped(indexPath))
+        case .changeWorkoutInfo:
+            return .just(.changeWorkoutInfo)
+        case .removeSelectedWorkout:
+            return .just(.removeSelectedWorkout)
+        case .changeListOrder:
+            return .just(.changeListOrder)
         }
     }
     
@@ -45,6 +70,20 @@ final class EditRoutineViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .loadWorkout:
+            break
+        case .cellButtonTapped(let indexPath):
+            newState.currentSeclectedWorkout = newState.routine.workouts[indexPath.row]
+            newState.currentSeclectedIndexPath = indexPath
+        case .changeWorkoutInfo:
+            break
+        case .removeSelectedWorkout:
+            var newRoutine = newState.routine
+            deleteRoutineUseCase.execute(uid: "", item: newRoutine)
+            guard let indexPath = newState.currentSeclectedIndexPath else { return newState }
+            newRoutine.workouts.remove(at: indexPath.row)
+            saveRoutineUseCase.execute(uid: "", item: newRoutine)
+            newState.routine = newRoutine
+        case .changeListOrder:
             break
         }
         return newState
