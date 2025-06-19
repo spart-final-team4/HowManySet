@@ -37,7 +37,6 @@ final class RoutineListViewController: UIViewController, View {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reactor?.action.onNext(.viewWillAppear)
-        print("viewWillAppear")
     }
 
     override func viewDidLoad() {
@@ -45,8 +44,6 @@ final class RoutineListViewController: UIViewController, View {
         setDelegates()
         setRegisters()
         configureDataSource()
-        // MockData 표시
-//        applySnapshot(with: WorkoutRoutine.mockData)
     }
 
     // MARK: - Bind
@@ -107,7 +104,7 @@ extension RoutineListViewController {
         // Item 추가
         snapshot.appendItems(routines, toSection: .main)
         // 실제 적용
-        dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 
