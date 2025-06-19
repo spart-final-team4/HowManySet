@@ -916,8 +916,9 @@ extension HomeViewController {
         
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
-            .distinctUntilChanged { $0 == $1 }
+            .filter { $0.0 }
             .observe(on: MainScheduler.asyncInstance)
+            .distinctUntilChanged { $0 == $1 }
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                                  
                 let (isWorkingout, data) = state
@@ -934,6 +935,7 @@ extension HomeViewController {
         
         reactor.state.map { $0.forLiveActivity }
             .observe(on: MainScheduler.asyncInstance)
+            .distinctUntilChanged()
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,

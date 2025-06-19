@@ -18,7 +18,7 @@ public struct PlayAndPauseRestIntent: AppIntent, ControlConfigurationIntent, Liv
     
     public init() {}
 
-    public init(index: Int?) {
+    public init(index: Int) {
         self.index = index
     }
     

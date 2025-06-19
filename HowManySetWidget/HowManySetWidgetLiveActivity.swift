@@ -61,7 +61,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             .monospacedDigit()
                     }
                     // MARK: - 운동 중 contents
-                    if context.state.isWorkingout {
+                    if !context.state.isResting {
                         HStack {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(context.state.exerciseName)
@@ -108,7 +108,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         }
                     }
                     // MARK: - 휴식 중 contents
-                    else if context.state.isResting {
+                    else {
                         HStack {
                             HStack(alignment: .lastTextBaseline, spacing: 5) {
                                 Text(restLabel)
@@ -155,8 +155,6 @@ struct HowManySetWidgetLiveActivity: Widget {
 
                             }
                         }
-                    } else {
-                        EmptyView()
                     }
                     // MARK: - ProgressBar
                     SetProgressBarForLiveActivity(

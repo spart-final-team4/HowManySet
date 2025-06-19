@@ -18,7 +18,7 @@ public struct SkipRestIntent: AppIntent, ControlConfigurationIntent, LiveActivit
     
     public init() {}
 
-    public init(index: Int?) {
+    public init(index: Int) {
         self.index = index
     }
 

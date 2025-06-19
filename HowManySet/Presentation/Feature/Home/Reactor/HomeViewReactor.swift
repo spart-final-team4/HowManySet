@@ -674,6 +674,11 @@ extension HomeViewReactor.State {
         let repsText = "회"
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
         
+        print("""
+            LIVEACTIVITY INDEX: \(currentExerciseIndex),
+            LIVEACTIVITY ISRESTING: \(isResting),
+        """)
+        
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,
             isWorkingout: isWorkingout,

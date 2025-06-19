@@ -25,8 +25,8 @@ public struct StopWorkoutIntent: AppIntent, ControlConfigurationIntent, LiveActi
     public func perform() async throws -> some IntentResult {
         
         let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
-        sharedDefaults?.set(index, forKey: "CurrentIndex")
-        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "CurrentTimeStamp") 
+        sharedDefaults?.set(index, forKey: "StopWorkoutIndex")
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "StopWorkoutTimeStamp") 
         sharedDefaults?.synchronize()
         return .result()
     }
