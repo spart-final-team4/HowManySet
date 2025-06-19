@@ -11,6 +11,7 @@
 		66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 66189C5E2DEF0E770087F042 /* ReactorKit */; };
 		66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		664F0ECE2DF40EA70086D6F6 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 664F0ECD2DF40EA70086D6F6 /* SnapKit */; };
+		666D1FC52E03AC540038F553 /* HowManySetIntentExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		668CB1302DE9BE7300924340 /* HowManySetWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		668CB1722DE9C2E100924340 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1712DE9C2E100924340 /* RxCocoa */; };
 		668CB1742DE9C2E100924340 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 668CB1732DE9C2E100924340 /* RxRelay */; };
@@ -32,6 +33,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		666D1FC32E03AC540038F553 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 669358B32DE9AA8C00956214 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 666D1FBB2E03AC540038F553;
+			remoteInfo = HowManySetIntentExtension;
+		};
 		668CB12E2DE9BE7300924340 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 669358B32DE9AA8C00956214 /* Project object */;
@@ -77,6 +85,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		666D1FCA2E03AC540038F553 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				666D1FC52E03AC540038F553 /* HowManySetIntentExtension.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		668CB1352DE9BE7300924340 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -102,6 +121,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = HowManySetIntentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HowManySetWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		668CB11C2DE9BE7000924340 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		668CB11E2DE9BE7000924340 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -115,7 +135,7 @@
 		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntent/PlayAndPauseRoutineIntent.swift,
+				AppIntent/PlayAndPauseRestIntent.swift,
 				AppIntent/SetCompleteIntent.swift,
 				AppIntent/SkipRestIntent.swift,
 				AppIntent/StopWorkoutIntent.swift,
@@ -125,13 +145,30 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
-		66329E0B2E014961003405F2 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */ = {
+		666D1FB72E03A95C0038F553 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				HowManySetUITests.swift,
 				HowManySetUITestsLaunchTests.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		666D1FC92E03AC540038F553 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetIntentExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
+		};
+		666D1FCD2E03ACC70038F553 /* Exceptions for "HowManySetWidget" folder in "HowManySetIntentExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntent/PlayAndPauseRestIntent.swift,
+				AppIntent/SetCompleteIntent.swift,
+				AppIntent/SkipRestIntent.swift,
+				AppIntent/StopWorkoutIntent.swift,
+			);
+			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
 		667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -163,15 +200,24 @@
 		66329E042E014905003405F2 /* HowManySetUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				66329E0B2E014961003405F2 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */,
+				666D1FB72E03A95C0038F553 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */,
 			);
 			path = HowManySetUITests;
+			sourceTree = "<group>";
+		};
+		666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				666D1FC92E03AC540038F553 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetIntentExtension" target */,
+			);
+			path = HowManySetIntentExtension;
 			sourceTree = "<group>";
 		};
 		668CB1202DE9BE7000924340 /* HowManySetWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */,
+				666D1FCD2E03ACC70038F553 /* Exceptions for "HowManySetWidget" folder in "HowManySetIntentExtension" target */,
 			);
 			path = HowManySetWidget;
 			sourceTree = "<group>";
@@ -201,6 +247,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		666D1FB92E03AC540038F553 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		668CB1172DE9BE7000924340 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -265,6 +318,7 @@
 				669358BD2DE9AA8C00956214 /* HowManySet */,
 				669358D42DE9AA8E00956214 /* HowManySetTests */,
 				668CB1202DE9BE7000924340 /* HowManySetWidget */,
+				666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */,
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
 				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
@@ -280,6 +334,7 @@
 				669358D12DE9AA8E00956214 /* HowManySetTests.xctest */,
 				669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */,
 				668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */,
+				666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -287,6 +342,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 666D1FC62E03AC540038F553 /* Build configuration list for PBXNativeTarget "HowManySetIntentExtension" */;
+			buildPhases = (
+				666D1FB82E03AC540038F553 /* Sources */,
+				666D1FB92E03AC540038F553 /* Frameworks */,
+				666D1FBA2E03AC540038F553 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */,
+			);
+			name = HowManySetIntentExtension;
+			packageProductDependencies = (
+			);
+			productName = HowManySetIntentExtension;
+			productReference = 666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 		668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 668CB1312DE9BE7300924340 /* Build configuration list for PBXNativeTarget "HowManySetWidgetExtension" */;
@@ -320,11 +397,13 @@
 				669358B92DE9AA8C00956214 /* Resources */,
 				668CB1352DE9BE7300924340 /* Embed Foundation Extensions */,
 				66189C612DEF0E860087F042 /* Embed Frameworks */,
+				666D1FCA2E03AC540038F553 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				668CB12F2DE9BE7300924340 /* PBXTargetDependency */,
+				666D1FC42E03AC540038F553 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				66329E042E014905003405F2 /* HowManySetUITests */,
@@ -412,6 +491,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					666D1FBB2E03AC540038F553 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					668CB1192DE9BE7000924340 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -459,11 +541,19 @@
 				669358D02DE9AA8E00956214 /* HowManySetTests */,
 				669358DA2DE9AA8E00956214 /* HowManySetUITests */,
 				668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */,
+				666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		666D1FBA2E03AC540038F553 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		668CB1182DE9BE7000924340 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -496,6 +586,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		666D1FB82E03AC540038F553 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		668CB1162DE9BE7000924340 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -527,6 +624,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		666D1FC42E03AC540038F553 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
+			targetProxy = 666D1FC32E03AC540038F553 /* PBXContainerItemProxy */;
+		};
 		668CB12F2DE9BE7300924340 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
@@ -545,6 +647,60 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		666D1FC72E03AC540038F553 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HowManySetIntentExtension/HowManySetIntentExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U54KVZDT39;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HowManySetIntentExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HowManySetIntentExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.HowManySetIntentExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		666D1FC82E03AC540038F553 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HowManySetIntentExtension/HowManySetIntentExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U54KVZDT39;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HowManySetIntentExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HowManySetIntentExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.HowManySetIntentExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		668CB1322DE9BE7300924340 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -889,6 +1045,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		666D1FC62E03AC540038F553 /* Build configuration list for PBXNativeTarget "HowManySetIntentExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				666D1FC72E03AC540038F553 /* Debug */,
+				666D1FC82E03AC540038F553 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		668CB1312DE9BE7300924340 /* Build configuration list for PBXNativeTarget "HowManySetWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
