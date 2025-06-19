@@ -8,7 +8,7 @@ final class SummaryInfoCell: UICollectionViewCell {
 
     private let headerHStackView = UIStackView()
     private let routineNameLabel = UILabel()
-    private let editButton = UIButton()
+    private let saveButton = UIButton()
     private let confirmButton = UIButton()
     private let headerVStackView = UIStackView()
     private let startToEndLabel = UILabel()
@@ -63,6 +63,7 @@ final class SummaryInfoCell: UICollectionViewCell {
 // MARK: - Computed Properties
 extension SummaryInfoCell {
     var publicConfirmButton: UIButton { confirmButton }
+    var publicSaveButton: UIButton { saveButton }
 }
 
 // MARK: - SummaryInfoCell UI 관련 extension
@@ -86,8 +87,8 @@ private extension SummaryInfoCell {
             $0.font = .systemFont(ofSize: 18, weight: .semibold)
             $0.textAlignment = .center
         }
-        editButton.do {
-            $0.setTitle("수정", for: .normal)
+        saveButton.do {
+            $0.setTitle("저장", for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
             $0.setTitleColor(.textTertiary, for: .normal)
         }
@@ -128,7 +129,7 @@ private extension SummaryInfoCell {
     }
 
     func setViewHierarchy() {
-        headerHStackView.addArrangedSubviews(editButton, routineNameLabel, confirmButton)
+        headerHStackView.addArrangedSubviews(saveButton, routineNameLabel, confirmButton)
         headerVStackView.addArrangedSubviews(headerHStackView, startToEndLabel)
 
         contentView.addSubviews(
