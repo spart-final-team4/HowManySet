@@ -454,9 +454,9 @@ private extension HomeViewController {
             cardView.weightRepsButton.rx.tap
                 .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                 .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
-                .bind(onNext: { [weak self] action in
-                    guard let self else { return }
-                    
+                .bind(onNext: { action in
+                    reactor.action.onNext(action)
+
                     // 클릭 애니메이션
                     UIView.animate(withDuration: 0.1, animations: {
                         cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -465,65 +465,16 @@ private extension HomeViewController {
                             cardView.weightRepsButton.transform = .identity
                         }
                     })
-                    
-                    let cardIndex = cardView.index
-                    let currentRoutineName = reactor.currentState.workoutRoutine.name
-                    let workoutCardState = reactor.currentState.workoutCardStates[cardIndex]
-                    let currentWorkoutStateForEdit = reactor.currentState.workoutStateForEdit
-                    self.coordinator?.presentEditExerciseView(
-                        routineName: currentRoutineName,
-                        workoutStateForEdit: currentWorkoutStateForEdit
-                    )
-                    reactor.action.onNext(action)
                 })
                 .disposed(by: disposeBag)
             
             // 휴식 재생/일시정지 버튼
             cardView.restPlayPauseButton.rx.tap
                 .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-                .do(onNext: {
-                    print("휴식 버튼 탭 감지 - index: \(cardView.index)")
-                })
-                .bind { [weak cardView] in
-                    guard let cardView else { return }
+                .bind {
                     reactor.action.onNext(.restPauseButtonClicked)
                 }
                 .disposed(by: cardView.disposeBag)
-            
-            cardView.editButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-                .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
-                .bind(onNext: { [weak self] action in
-                    guard let self else { return }
-                    self.coordinator?.presentEditAndMemoView()
-                    reactor.action.onNext(action)
-                })
-                .disposed(by: disposeBag)
-            
-            cardView.weightRepsButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-                .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
-                .bind { [weak self] action in
-                    guard let self else { return }
-                    
-                    // 클릭 애니메이션
-                    UIView.animate(withDuration: 0.1, animations: {
-                        cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                    }, completion: { _ in
-                        UIView.animate(withDuration: 0.1) {
-                            cardView.weightRepsButton.transform = .identity
-                        }
-                    })
-                    let currentRoutineName = reactor.currentState.workoutRoutine.name
-                    let workoutStateForEdit = reactor.currentState.workoutStateForEdit
-                    self.coordinator?.presentEditExerciseView(
-                        routineName: currentRoutineName,
-                        workoutStateForEdit: workoutStateForEdit
-                    )
-
-                    reactor.action.onNext(action)
-                }
-                .disposed(by: disposeBag)
         }
         print("✅ 버튼 바인딩 완료 - \(visibleCards)")
     }
