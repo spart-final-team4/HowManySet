@@ -77,7 +77,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         
-        let reactor = EditExcerciseViewReactor(routineName: routineName, saveRoutineUseCase: saveRoutineUseCase)
+        let reactor = EditExcerciseViewReactor(
+            routineName: routineName,
+            saveRoutineUseCase: saveRoutineUseCase,
+            workoutStateForEdit: nil, // 탭바에서 push시에는 필요없음
+            caller: EditExerciseCaller.fromTabBar // 탭바에서 push
+        )
         let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
         
         navigationController.pushViewController(editExcerciseVC, animated: true)

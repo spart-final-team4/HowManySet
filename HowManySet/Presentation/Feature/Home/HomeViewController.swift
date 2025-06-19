@@ -468,8 +468,12 @@ private extension HomeViewController {
                     
                     let cardIndex = cardView.index
                     let currentRoutineName = reactor.currentState.workoutRoutine.name
-                    self.coordinator?.presentEditExerciseView(routineName: currentRoutineName)
-                    
+                    let workoutCardState = reactor.currentState.workoutCardStates[cardIndex]
+                    let currentWorkoutStateForEdit = reactor.currentState.workoutStateForEdit
+                    self.coordinator?.presentEditExerciseView(
+                        routineName: currentRoutineName,
+                        workoutStateForEdit: currentWorkoutStateForEdit
+                    )
                     reactor.action.onNext(action)
                 })
                 .disposed(by: disposeBag)
@@ -511,8 +515,11 @@ private extension HomeViewController {
                         }
                     })
                     let currentRoutineName = reactor.currentState.workoutRoutine.name
-                    let workoutCardState = reactor.currentState.workoutCardStates[cardView.index]
-                    self.coordinator?.presentEditExerciseView(routineName: currentRoutineName, workoutCardState: workoutCardState)
+                    let workoutStateForEdit = reactor.currentState.workoutStateForEdit
+                    self.coordinator?.presentEditExerciseView(
+                        routineName: currentRoutineName,
+                        workoutStateForEdit: workoutStateForEdit
+                    )
 
                     reactor.action.onNext(action)
                 }
