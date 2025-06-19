@@ -10,11 +10,6 @@ import RxSwift
 import RxRelay
 import ReactorKit
 
-enum EditExerciseCaller {
-    case fromTabBar
-    case fromHome
-}
-
 /// 운동 편집 화면의 상태를 관리하는 Reactor 클래스입니다.
 ///
 /// 사용자의 입력(Action)을 받아 상태(State)를 업데이트하고,
@@ -59,7 +54,7 @@ final class EditExcerciseViewReactor: Reactor {
         var currentWeightSet: [[Int]] = []    // 현재 세트 입력값 (2차원 배열: [무게, 반복수])
         
         // 홈 화면 관련 데이터
-        var caller: EditExerciseCaller
+        var caller: ViewCaller
         var workoutStateForEdit: WorkoutStateForEdit?
     }
     
@@ -87,7 +82,7 @@ final class EditExcerciseViewReactor: Reactor {
     init(routineName: String,
          saveRoutineUseCase: SaveRoutineUseCaseProtocol,
          workoutStateForEdit: WorkoutStateForEdit?,
-         caller: EditExerciseCaller
+         caller: ViewCaller
     ) {
         self.saveRoutineUseCase = saveRoutineUseCase
         
