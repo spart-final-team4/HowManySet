@@ -115,11 +115,13 @@
 		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntent/PauseRoutineIntent.swift,
-				AppIntent/PlayRoutineIntent.swift,
+				AppIntent/PlayAndPauseRoutineIntent.swift,
+				AppIntent/SetCompleteIntent.swift,
 				AppIntent/SkipRestIntent.swift,
-				AppIntent/SkipSetIntent.swift,
+				AppIntent/StopWorkoutIntent.swift,
 				HowManySetWidgetLiveActivity.swift,
+				Model/LiveActivityModel.swift,
+				View/SetProgressBarForLiveActivity.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
@@ -140,19 +142,21 @@
 			);
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
-		668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				HowManySetWidgetInfo.plist,
-			);
-			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
-		};
 		669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Info.plist,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		66B4EE402E03263200A5F4C6 /* Exceptions for "LiveActivity" folder in "HowManySetWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LiveActivityAppGroupBridge.swift,
+				LiveActivityService.swift,
+				"Notification+Name.swift",
+			);
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -169,7 +173,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */,
-				668CB1342DE9BE7300924340 /* Exceptions for "HowManySetWidget" folder in "HowManySetWidgetExtension" target */,
 			);
 			path = HowManySetWidget;
 			sourceTree = "<group>";
@@ -186,6 +189,14 @@
 		669358D42DE9AA8E00956214 /* HowManySetTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HowManySetTests;
+			sourceTree = "<group>";
+		};
+		66B4EE3B2E03263100A5F4C6 /* LiveActivity */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				66B4EE402E03263200A5F4C6 /* Exceptions for "LiveActivity" folder in "HowManySetWidgetExtension" target */,
+			);
+			path = LiveActivity;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -259,6 +270,7 @@
 				669358BC2DE9AA8C00956214 /* Products */,
 				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
 				66329E042E014905003405F2 /* HowManySetUITests */,
+				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
 			);
 			sourceTree = "<group>";
 		};
@@ -318,6 +330,7 @@
 			fileSystemSynchronizedGroups = (
 				66329E042E014905003405F2 /* HowManySetUITests */,
 				669358BD2DE9AA8C00956214 /* HowManySet */,
+				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
 			);
 			name = HowManySet;
 			packageProductDependencies = (
@@ -538,11 +551,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HowManySetWidget/Resources/HowManySetWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HowManySetWidget/HowManySetWidgetInfo.plist;
+				INFOPLIST_FILE = HowManySetWidget/Resources/HowManySetWidgetInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
@@ -571,11 +585,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HowManySetWidget/Resources/HowManySetWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U54KVZDT39;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HowManySetWidget/HowManySetWidgetInfo.plist;
+				INFOPLIST_FILE = HowManySetWidget/Resources/HowManySetWidgetInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
