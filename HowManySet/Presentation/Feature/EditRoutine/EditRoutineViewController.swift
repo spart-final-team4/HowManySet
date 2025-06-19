@@ -60,6 +60,11 @@ final class EditRoutineViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        tableView.dragDropRelay
+            .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         editRoutineBottomSheetViewController.excerciseChangeButtonSubject
             .map{ Reactor.Action.changeWorkoutInfo }
             .bind(to: reactor.action)
