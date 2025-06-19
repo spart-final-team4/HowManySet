@@ -184,7 +184,9 @@ private extension EditAndMemoViewController {
                 guard let self else { return }
                 print("루틴 수정 버튼 클릭")
                 self.dismiss(animated: true) {
-                    self.coordinator?.presentEditRoutineView()
+                    // TODO: 검토 및 테스트 필요
+                    guard let routine = self.reactor?.currentState.workoutRoutine else { return }
+                    self.coordinator?.presentEditRoutineView(with: routine)
                 }
             }).disposed(by: disposeBag)
         

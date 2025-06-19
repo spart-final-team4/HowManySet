@@ -8,10 +8,15 @@
 import UIKit
 import Then
 import SnapKit
+import RxCocoa
+import RxSwift
 
 /// 운동 루틴 편집 화면에서 각 운동 항목을 표시하는 테이블 뷰 셀
 /// - 기능: 운동 이름, 세트 수, 무게, 반복 횟수를 보여주며, 우측에 더보기 버튼을 배치
 final class EditRoutineTableViewCell: UITableViewCell {
+    
+    var disposeBag = DisposeBag()
+    var moreButtonTapped = PublishRelay<Void>()
     
     /// 셀 재사용을 위한 식별자
     static var identifier: String {
@@ -59,6 +64,11 @@ final class EditRoutineTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
+    
     /// 셀을 모델 데이터로 구성하는 메서드
     /// - Parameter model: 운동 정보를 담고 있는 `EditRoutioneCellModel` 객체
     func configure(model: EditRoutioneCellModel) {
@@ -77,6 +87,13 @@ private extension EditRoutineTableViewCell {
         setAppearance()
         setViewHierarchy()
         setConstraints()
+        bind()
+    }
+    
+    func bind() {
+        moreButton.rx.tap
+            .bind(to: moreButtonTapped)
+            .disposed(by: disposeBag)
     }
     
     /// 셀 배경색 및 기본 속성 설정
