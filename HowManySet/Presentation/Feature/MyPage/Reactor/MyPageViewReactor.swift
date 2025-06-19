@@ -15,23 +15,38 @@ final class MyPageViewReactor: Reactor {
     
     private let fetchUserSettingUseCase: FetchUserSettingUseCase
     private let saveUserSettingUseCase: SaveUserSettingUseCase
+    private let authUseCase: AuthUseCaseProtocol
     
     /// 사용자 액션 (뷰에서 발생하는 이벤트)
     enum Action {
         /// 셀 탭 이벤트, 탭된 셀 타입을 전달
         case cellTapped(MyPageCellType)
+        /// 로그아웃
+        case confirmLogout
+        /// 계정 삭제(회원 탈퇴)
+        case confirmDeleteAccount
     }
     
     /// 상태 변화를 나타내는 Mutation (내부 상태 조작용)
     enum Mutation {
         /// 특정 셀 타입에 대한 화면 전환 지시
         case presentTo(MyPageCellType)
+        /// 로그아웃 성공
+        case logoutSuccess
+        /// 계정 삭제 성공
+        case deleteAccountSuccess
+        /// 에러 발생
+        case setError(Error)
     }
     
     /// 현재 뷰 상태를 담는 구조체
     struct State {
         /// 현재 화면 전환 대상 셀 타입 (없으면 nil)
         var presentTarget: MyPageCellType?
+        /// 로그아웃/계정삭제 성공 여부
+        var shouldNavigateToAuth: Bool = false
+        /// 에러 정보
+        var error: Error?
     }
     
     /// 초기 상태
@@ -41,9 +56,10 @@ final class MyPageViewReactor: Reactor {
     /// - Parameters:
     ///   - fetchUserSettingUseCase: 사용자 설정 조회용 유스케이스
     ///   - saveUserSettingUseCase: 사용자 설정 저장용 유스케이스
-    init(fetchUserSettingUseCase: FetchUserSettingUseCase, saveUserSettingUseCase: SaveUserSettingUseCase) {
+    init(fetchUserSettingUseCase: FetchUserSettingUseCase, saveUserSettingUseCase: SaveUserSettingUseCase, authUseCase: AuthUseCaseProtocol) {
         self.fetchUserSettingUseCase = fetchUserSettingUseCase
         self.saveUserSettingUseCase = saveUserSettingUseCase
+        self.authUseCase = authUseCase
         self.initialState = State(presentTarget: nil)
     }
     
@@ -54,6 +70,14 @@ final class MyPageViewReactor: Reactor {
         switch action {
         case .cellTapped(let cell):
             return .just(.presentTo(cell))
+        case .confirmLogout:
+            return authUseCase.logout()
+                .map { .logoutSuccess }
+                .catch { .just(.setError($0)) }
+        case .confirmDeleteAccount:
+            return authUseCase.deleteAccount()
+                .map { .deleteAccountSuccess }
+                .catch { .just(.setError($0)) }
         }
     }
     
@@ -67,6 +91,10 @@ final class MyPageViewReactor: Reactor {
         switch mutation {
         case .presentTo(let myPageCellType):
             newState.presentTarget = myPageCellType
+        case .logoutSuccess, .deleteAccountSuccess:
+            newState.shouldNavigateToAuth = true
+        case .setError(let error):
+            newState.error = error
         }
         return newState
     }
