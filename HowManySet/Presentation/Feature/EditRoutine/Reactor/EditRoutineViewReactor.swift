@@ -78,8 +78,9 @@ final class EditRoutineViewReactor: Reactor {
             break
         case .removeSelectedWorkout:
             var newRoutine = newState.routine
-            deleteRoutineUseCase.execute(uid: "", item: newRoutine)
-            guard let indexPath = newState.currentSeclectedIndexPath else { return newState }
+            guard let workout = currentState.currentSeclectedWorkout else { return newState }
+            deleteRoutineUseCase.execute(uid: "", item: currentState.routine)
+            guard let indexPath = currentState.currentSeclectedIndexPath else { return newState }
             newRoutine.workouts.remove(at: indexPath.row)
             saveRoutineUseCase.execute(uid: "", item: newRoutine)
             newState.routine = newRoutine
@@ -89,3 +90,4 @@ final class EditRoutineViewReactor: Reactor {
         return newState
     }
 }
+

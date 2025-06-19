@@ -83,7 +83,7 @@ final class EditRoutineTableView: UITableView {
         let model = [EditRoutineSection(headerTitle: routine.name, items: items)]
 
         guard let rxDataSource = rxDataSource else { return }
-
+        dataSource = nil
         Observable.just(model)
             .bind(to: self.rx.items(dataSource: rxDataSource))
             .disposed(by: disposeBag)
