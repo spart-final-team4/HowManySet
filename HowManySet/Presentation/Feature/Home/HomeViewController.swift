@@ -22,6 +22,8 @@ final class HomeViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
+    var liveActivityTimer: Timer?
+    
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
     
@@ -122,6 +124,47 @@ final class HomeViewController: UIViewController, View {
         print(#function)
         
         setupUI()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // 세트 완료 감지
+        liveActivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            print("[앱] Live Activity Timer Tick")
+            
+            // 세트 완료 (체크 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
+                self.reactor?.action.onNext(.setCompleteButtonClicked(at: index))
+            }
+            // 휴식 스킵 (forward 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
+                print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
+                self.reactor?.action.onNext(.forwardButtonClicked(at: index))
+            }
+            // 운동 종료 (stop 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
+                print("운동 종료 polling 이벤트 감지!")
+                self.coordinator?.popUpEndWorkoutAlert {
+                    self.reactor?.action.onNext(.stopButtonClicked(isEnded: true))
+                    return self.reactor!.currentState.workoutSummary
+                }
+            }
+            // 휴식 재생/일시정지 (pause/play 버튼)
+            LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
+                print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
+                self.reactor?.action.onNext(.restPauseButtonClicked)
+            }
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        liveActivityTimer?.invalidate()
+        liveActivityTimer = nil
     }
 }
 
@@ -480,8 +523,8 @@ private extension HomeViewController {
                 
                 // 휴식 재생/일시정지 버튼
                 cardView.restPlayPauseButton.rx.tap
-                    .observe(on: MainScheduler.asyncInstance)
-                    .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
+                    .observe(on: MainScheduler.instance)
+                    .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .do(onNext: {
                         print("휴식 버튼 탭 감지 - index: \(cardView.index)")
                     })
@@ -743,7 +786,7 @@ extension HomeViewController {
         // 중지 시 휴식 버튼, 프로그레스바 동작 관련
         reactor.state.map { ($0.isRestPaused, $0.isWorkoutPaused) }
             .distinctUntilChanged { $0 == $1 }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .bind { [weak self] isRestPaused, isWorkoutPaused in
                 guard let self else { return }
                 
@@ -886,7 +929,6 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.forLiveActivity }
-            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
@@ -910,51 +952,5 @@ extension HomeViewController {
 // MARK: - LiveActivity Notification Setting
 private extension HomeViewController {
     
-    func setLiveActivityNotifications() {
-        
-        // 세트 완료
-        NotificationCenter.default.addObserver(
-            forName: .setCompleteFromLiveActivity,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let self, let reactor else { return }
-            let index = (notification.userInfo?["index"] as? Int) ?? 0
-            reactor.action.onNext(.setCompleteButtonClicked(at: index))
-        }
-        
-        // 운동 종료
-        NotificationCenter.default.addObserver(
-            forName: .stopWorkoutFromLiveActivity,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let self, let reactor else { return }
-            self.coordinator?.popUpEndWorkoutAlert {
-                reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                return reactor.currentState.workoutSummary
-            }
-        }
-        
-        // 휴식 스킵
-        NotificationCenter.default.addObserver(
-            forName: .skipRestFromLiveActivity,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let self, let reactor else { return }
-            let index = (notification.userInfo?["index"] as? Int) ?? 0
-            reactor.action.onNext(.forwardButtonClicked(at: index))
-        }
-        
-        // 휴식 정지/재개
-        NotificationCenter.default.addObserver(
-            forName: .playAndPauseRestFromLiveActivity,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let self, let reactor else { return }
-            reactor.action.onNext(.restPauseButtonClicked)
-        }
-    }
+    
 }
