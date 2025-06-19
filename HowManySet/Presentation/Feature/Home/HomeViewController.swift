@@ -375,18 +375,18 @@ private extension HomeViewController {
         
         // 모든 카드를 먼저 작아진 상태로 초기화
         visibleCards.forEach { card in
-            UIView.performWithoutAnimation {
+            UIView.animate(withDuration: 0.1, animations: {
                 card.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 card.alpha = 0.9
-            }
+            })
         }
         
         // 현재 카드만 활성 상태로 설정
         let currentCard = visibleCards[newCurrentPage]
-        UIView.performWithoutAnimation {
+        UIView.animate(withDuration: 0.1, animations: {
             currentCard.transform = .identity
             currentCard.alpha = 1
-        }
+        })
         
         self.previousPage = self.currentPage
         self.currentPage = newCurrentPage
@@ -819,16 +819,16 @@ extension HomeViewController {
                     }
                     
                     // 현재 카드 초기화 (애니메이션 전)
-                    UIView.performWithoutAnimation {
+                    UIView.animate(withDuration: 0.1, animations: {
                         currentCard.transform = .identity
                         currentCard.alpha = 1
-                    }
+                    })
                 }
                 
                 let hiddenView = self.pagingCardViewContainer[cardToHideIndex]
                 
                 // 애니메이션 실행 후 끝나면 hidden
-                UIView.animate(withDuration: 0.3, animations: {
+                UIView.animate(withDuration: 0.1, animations: {
                     hiddenView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
                     hiddenView.alpha = 0.0
                 }) { _ in
