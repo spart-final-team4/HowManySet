@@ -530,7 +530,6 @@ private extension HomeViewController {
                 
                 // 휴식 재생/일시정지 버튼
                 cardView.restPlayPauseButton.rx.tap
-                    .observe(on: MainScheduler.instance)
                     .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .do(onNext: {
                         print("휴식 버튼 탭 감지 - index: \(cardView.index)")
@@ -543,7 +542,6 @@ private extension HomeViewController {
                     .disposed(by: cardView.disposeBag)
                 
                 cardView.editButton.rx.tap
-                    .observe(on: MainScheduler.instance)
                     .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
                     .bind(onNext: { [weak self] action in
@@ -554,7 +552,6 @@ private extension HomeViewController {
                     .disposed(by: disposeBag)
                 
                 cardView.weightRepsButton.rx.tap
-                    .observe(on: MainScheduler.instance)
                     .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                     .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
                     .bind { [weak self] action in
@@ -920,7 +917,7 @@ extension HomeViewController {
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0 == $1 }
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                                  
                 let (isWorkingout, data) = state
@@ -936,7 +933,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.forLiveActivity }
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
