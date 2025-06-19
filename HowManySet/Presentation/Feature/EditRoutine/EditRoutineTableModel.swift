@@ -10,6 +10,7 @@ import RxDataSources
 
 /// 운동 루틴 편집을 위한 셀 모델
 struct EditRoutioneCellModel {
+    let id = UUID().uuidString
     let name: String           // 운동 이름
     let setText: String        // 세트 수 정보
     let weightText: String     // 최대 중량 정보
@@ -28,5 +29,13 @@ extension EditRoutineSection: SectionModelType {
     init(original: EditRoutineSection, items: [EditRoutioneCellModel]) {
         self = original
         self.items = items
+    }
+}
+
+// 래핑 클래스
+final class EditRoutineDragItem: NSObject {
+    let model: EditRoutioneCellModel
+    init(model: EditRoutioneCellModel) {
+        self.model = model
     }
 }

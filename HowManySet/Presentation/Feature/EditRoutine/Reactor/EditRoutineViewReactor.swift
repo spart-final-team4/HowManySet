@@ -21,6 +21,7 @@ final class EditRoutineViewReactor: Reactor {
         case removeSelectedWorkout
         case changeListOrder
         case plusExcerciseButtonTapped
+        case reorderWorkout(source: IndexPath, destination: IndexPath)
     }
     
     // Mutate is a state mani
@@ -31,6 +32,7 @@ final class EditRoutineViewReactor: Reactor {
         case removeSelectedWorkout
         case changeListOrder
         case plusExcerciseButtonTapped
+        case reorderRoutine(WorkoutRoutine)
     }
     
     // State is a current view state
@@ -66,6 +68,11 @@ final class EditRoutineViewReactor: Reactor {
             return .just(.changeListOrder)
         case .plusExcerciseButtonTapped:
             return .just(.plusExcerciseButtonTapped)
+        case .reorderWorkout(source: let source, destination: let destination):
+            var new = currentState.routine
+            new.workouts.swapAt(source.item, destination.item)
+            deleteRoutineUseCase.execute(uid: "", item: currentState.routine)
+            return .just(.reorderRoutine(new))
         }
     }
     
@@ -92,6 +99,9 @@ final class EditRoutineViewReactor: Reactor {
             break
         case .plusExcerciseButtonTapped:
             break
+        case .reorderRoutine(let routine):
+            var newRoutine = routine
+            saveRoutineUseCase.execute(uid: "", item: routine)
         }
         return newState
     }
