@@ -84,6 +84,12 @@ final class RecordDetailViewController: UIViewController, View {
         bindKeyboardNotifications()
         bindTapToDismissKeyboard()
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        reactor?.action.onNext(.refreshRecord)
+    }
 }
 
 // MARK: - UI Methods & Reactor Bind
@@ -121,12 +127,12 @@ extension RecordDetailViewController {
         // 레이아웃 업데이트
         recordDetailView.updateLayout(with: allSections)
 
-        // MARK: - Data Binding
         // 이후에 collecitonView에 데이터 바인딩
         Observable.just(allSections)
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
+        // MARK: - Data Binding
         // collectionView에 있는 셀 탭 -> Reactor 액션 전달
         recordDetailView.publicCollectionView.rx
             .willDisplayCell
@@ -150,11 +156,7 @@ extension RecordDetailViewController {
                     .map(\.isSaveButtonEnabled)
                     .distinctUntilChanged()
                     .bind(with: owner) { _, isEnabled in
-                        cell.publicSaveButton.isEnabled = isEnabled
-                        cell.publicSaveButton.setTitleColor(
-                            isEnabled ? .white : .systemGray,
-                            for: .normal
-                        )
+                        cell.updateSaveButtonEnabled(isEnabled)
                     }
                     .disposed(by: owner.disposeBag)
             }
@@ -194,7 +196,7 @@ extension RecordDetailViewController {
                 textView.rx.didBeginEditing
                     .bind(with: owner) { _, _ in
                         if textView.text == "메모를 입력해주세요." {
-                            textView.text = ""
+                            textView.text = nil
                             textView.textColor = .white
                         }
                         textView.layer.borderColor = UIColor.systemGray.cgColor
@@ -214,6 +216,7 @@ extension RecordDetailViewController {
 
                 // 텍스트 업데이트 시 리액터로 전달
                 textView.rx.text.orEmpty
+                    .skip(until: textView.rx.didBeginEditing)
                     .distinctUntilChanged()
                     .map { RecordDetailViewReactor.Action.updateMemo($0) }
                     .bind(to: reactor.action)
