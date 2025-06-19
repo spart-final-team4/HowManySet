@@ -273,7 +273,7 @@ final class HomeViewReactor: Reactor {
                 
             ])
             
-        // MARK: - 세트 완료 버튼 클릭 시 로직
+            // MARK: - 세트 완료 버튼 클릭 시 로직
         case let .setCompleteButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             
@@ -362,7 +362,7 @@ final class HomeViewReactor: Reactor {
             }
             print("휴식중? \(newState.isResting)")
             
-        // 휴식 버튼으로 휴식 시간 설정 시
+            // 휴식 버튼으로 휴식 시간 설정 시
         case let .setRestTime(restTime):
             // 초기화 버튼 클릭 시 0으로 설정
             if restTime == 0 {
@@ -434,7 +434,7 @@ final class HomeViewReactor: Reactor {
                 
                 // 0.1초씩 감소
                 newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.1, 0)
-//                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
+                //                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
                 if newState.restSecondsRemaining == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
@@ -645,6 +645,21 @@ private extension HomeViewReactor {
 extension HomeViewReactor.State {
     
     var forLiveActivity: WorkoutDataForLiveActivity {
+        
+        guard workoutCardStates.indices.contains(currentExerciseIndex) else {
+            // 기본 데이터
+            return WorkoutDataForLiveActivity(
+                workoutTime: 0,
+                isWorkingout: false,
+                exerciseName: "",
+                exerciseInfo: "",
+                isResting: false,
+                restSecondsRemaining: 0,
+                isRestPaused: false,
+                currentSet: 0,
+                totalSet: 0
+            )
+        }
         
         let exercise = workoutCardStates[currentExerciseIndex]
         let reps = exercise.currentReps
