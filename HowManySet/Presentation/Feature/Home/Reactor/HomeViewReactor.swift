@@ -539,7 +539,15 @@ final class HomeViewReactor: Reactor {
             }
             
         case .saveWorkoutData:
-            // TODO: - WorkoutRoutine 업데이트
+
+            let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
+                cardStates: newState.workoutCardStates)
+            
+                newState.workoutRoutine = WorkoutRoutine(
+                    name: newState.workoutRoutine.name,
+                    workouts: updatedWorkouts
+                )
+            
             newState.workoutRecord = WorkoutRecord(
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
@@ -547,6 +555,7 @@ final class HomeViewReactor: Reactor {
                 comment: newState.memoInRoutine,
                 date: Date()
             )
+            
             saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             
