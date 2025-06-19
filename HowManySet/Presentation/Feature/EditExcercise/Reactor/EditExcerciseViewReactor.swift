@@ -71,19 +71,26 @@ final class EditExcerciseViewReactor: Reactor {
     let dismissRelay = PublishRelay<Void>()       // 화면 종료용 Relay
     
     private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
-    
+    private var workoutStateForEdit: WorkoutStateForEdit?
+    private var caller: EditExerciseCaller
+        
     // MARK: - Initializer
     
     /// 초기화 메서드
     /// - Parameters:
     ///   - routineName: 새로 생성할 루틴 이름
     ///   - saveRoutineUseCase: 루틴 저장을 위한 UseCase 주입
-    init(routineName: String, saveRoutineUseCase: SaveRoutineUseCaseProtocol, workoutCardState: WorkoutCardState) {
+    init(routineName: String,
+         saveRoutineUseCase: SaveRoutineUseCaseProtocol,
+         workoutStateForEdit: WorkoutStateForEdit?,
+         caller: EditExerciseCaller
+    ) {
         self.initialState = State(
-            currentRoutine: WorkoutRoutine(name: routineName,workouts: []),
-            workoutCardState: workoutCardState
+            currentRoutine: WorkoutRoutine(name: routineName,workouts: [])
         )
         self.saveRoutineUseCase = saveRoutineUseCase
+        self.workoutStateForEdit = workoutStateForEdit
+        self.caller = caller
     }
     
     // MARK: - Mutation 생성
@@ -179,4 +186,11 @@ final class EditExcerciseViewReactor: Reactor {
         }
         return true
     }
+}
+
+
+// MARK: - EditExerciseCaller
+enum EditExerciseCaller {
+    case fromTabBar
+    case fromHome
 }
