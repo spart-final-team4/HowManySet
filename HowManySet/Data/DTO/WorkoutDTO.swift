@@ -37,3 +37,21 @@ extension WorkoutDTO {
         self.sets = model.sets.map { WorkoutSetDTO(from: $0) }
     }
 }
+
+extension WorkoutDTO {
+    init(from fsModel: FSWorkout) {
+        self.name = fsModel.name
+        self.comment = fsModel.comment
+        self.sets = fsModel.sets.map { WorkoutSetDTO(from: $0) }
+    }
+}
+
+extension WorkoutDTO {
+    func toFSModel() -> FSWorkout {
+        return FSWorkout(
+            name: self.name,
+            sets: self.sets.map { $0.toFSModel() },
+            comment: self.comment
+        )
+    }
+}
