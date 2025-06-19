@@ -30,14 +30,14 @@ final class AppCoordinator: Coordinator {
     func start() {
         let isLoggedIn = checkLoginStatus()
         let hasCompletedOnboarding = checkOnboardingStatus()
-        showTabBarFlow()
-//        if !isLoggedIn {
-//            showAuthFlow()
-//        } else if !hasCompletedOnboarding {
-//            showOnboardingFlow()
-//        } else {
-//            showTabBarFlow()
-//        }
+        
+        if !isLoggedIn {
+            showTabBarFlow()
+        } else if !hasCompletedOnboarding {
+            showTabBarFlow()
+        } else {
+            showTabBarFlow()
+        }
     }
     
     /// 상태 체크 함수 분리
