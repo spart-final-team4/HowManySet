@@ -186,11 +186,16 @@ final class EditExcerciseViewController: UIViewController, View {
         
         // MARK: - 홈 화면 데이터 연동
         reactor.state
-            .map { $0.workoutStateForEdit?.currentExcerciseName }
+            .map { $0.workoutStateForEdit }
+            .filter { $0 != nil }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] exerciseName in
-                guard let self, let exerciseName else { return }
-                self.headerView.configure(with: exerciseName)
+            .bind { [weak self] workout in
+                guard let self, let workout else { return }
+                let name = workout.currentExcerciseName
+                let sets = workout.currentWeightSet
+                self.headerView.configure(with: name)
+                self.contentView.configureSets(with: sets)
             }
             .disposed(by: disposeBag)
         
