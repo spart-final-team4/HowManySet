@@ -12,4 +12,6 @@ public protocol AuthRepositoryProtocol {
     func signInWithGoogle() -> Observable<User>
     func signInWithApple(token: String, nonce: String) -> Observable<User>
     func signInAnonymously() -> Observable<User>
+    func signOut() -> Observable<Void>
+    func deleteAccount() -> Observable<Void>
 }

@@ -28,4 +28,12 @@ public protocol AuthUseCaseProtocol {
     /// 익명 로그인 비즈니스 로직
     /// - Returns: 로그인된 사용자 정보 Observable
     func loginAnonymously() -> Observable<User>
+    
+    /// 로그아웃 비즈니스 로직
+    /// - Returns: 로그아웃 결과 Observable
+    func logout() -> Observable<Void>
+    
+    /// 계정 삭제 비즈니스 로직
+    /// - Returns: 계정 삭제 결과 Observable
+    func deleteAccount() -> Observable<Void>
 }

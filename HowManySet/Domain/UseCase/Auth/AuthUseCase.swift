@@ -57,4 +57,24 @@ public final class AuthUseCase: AuthUseCaseProtocol {
                 print("익명 로그인 성공: \(user.name)")
             })
     }
+    
+    /// 로그아웃 비즈니스 로직
+    /// - Returns: 로그아웃 결과 Observable
+    public func logout() -> Observable<Void> {
+        return repository.signOut()
+            .do(onNext: { _ in
+                print("로그아웃 성공")
+                // 필요시 추가 비즈니스 로직 (캐시 삭제 등)
+            })
+    }
+    
+    /// 계정 삭제 비즈니스 로직
+    /// - Returns: 계정 삭제 결과 Observable
+    public func deleteAccount() -> Observable<Void> {
+        return repository.deleteAccount()
+            .do(onNext: { _ in
+                print("계정 삭제 성공")
+                // 필요시 추가 비즈니스 로직 (로컬 데이터 삭제 등)
+            })
+    }
 }
