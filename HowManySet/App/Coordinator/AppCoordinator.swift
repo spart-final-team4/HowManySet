@@ -43,6 +43,7 @@ final class AppCoordinator: Coordinator {
     
     /// 상태 체크 함수 분리
     private func checkLoginStatus() -> Bool {
+        print("✅checkLoginStatus✅", Auth.auth().currentUser != nil)
         return Auth.auth().currentUser != nil
     }
     
@@ -95,6 +96,8 @@ final class AppCoordinator: Coordinator {
         tabBarCoordinator.finishFlow = { [weak self, weak tabBarCoordinator] in
             guard let self, let tabBarCoordinator else { return }
             self.childDidFinish(tabBarCoordinator)
+            // 로그아웃/계정삭제 후 인증 화면으로 이동
+            self.showAuthFlow()
         }
         
         tabBarCoordinator.start()

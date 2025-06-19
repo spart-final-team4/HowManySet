@@ -71,13 +71,30 @@ final class MyPageViewReactor: Reactor {
         case .cellTapped(let cell):
             return .just(.presentTo(cell))
         case .confirmLogout:
+            print("🔥 로그아웃 액션 시작")
             return authUseCase.logout()
+                .do(onNext: { _ in
+                    print("🔥 로그아웃 성공 - UserDefaults 초기화")
+                    UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+                })
                 .map { .logoutSuccess }
-                .catch { .just(.setError($0)) }
+                .catch { error in
+                    print("🔥 로그아웃 실패: \(error)")
+                    return .just(.setError(error))
+                }
+            
         case .confirmDeleteAccount:
+            print("🔥 계정삭제 액션 시작")
             return authUseCase.deleteAccount()
+                .do(onNext: { _ in
+                    print("🔥 계정삭제 성공 - UserDefaults 초기화")
+                    UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+                })
                 .map { .deleteAccountSuccess }
-                .catch { .just(.setError($0)) }
+                .catch { error in
+                    print("🔥 계정삭제 실패: \(error)")
+                    return .just(.setError(error))
+                }
         }
     }
     

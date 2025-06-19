@@ -43,6 +43,12 @@ final class TabBarCoordinator: Coordinator {
         calendarCoordinator = CalendarCoordinator(navigationController: calendarNav, container: container)
         myPageCoordinator = MyPageCoordinator(navigationController: myPageNav, container: container)
         
+        // 🔥 MyPageCoordinator의 finishFlow 설정 (로그아웃/계정삭제 시 호출됨)
+        myPageCoordinator?.finishFlow = { [weak self] in
+            // 로그아웃/계정삭제 후 인증 화면으로 이동
+            self?.navigateToAuth()
+        }
+        
         // 각 코디네이터 start()
         homeCoordinator?.start()
         routineListCoordinator?.start()
@@ -67,5 +73,11 @@ final class TabBarCoordinator: Coordinator {
         calendarNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "calendar"), selectedImage: nil)
         myPageNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "person"), selectedImage: nil)
         
+    }
+    
+    /// 로그아웃/계정삭제 후 인증 화면으로 이동
+    private func navigateToAuth() {
+        // AppCoordinator에게 인증 화면으로 전환 요청
+        finishFlow?()
     }
 }
