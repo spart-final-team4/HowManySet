@@ -10,19 +10,22 @@ import RealmSwift
 
 
 struct WorkoutRoutineDTO {
+    let id: String
     var name: String
     var workouts: [WorkoutDTO]
 }
 
 extension WorkoutRoutineDTO {
     func toEntity() -> WorkoutRoutine {
-        return WorkoutRoutine(name: self.name,
+        return WorkoutRoutine(id: self.id,
+                              name: self.name,
                               workouts: self.workouts.map { $0.toEntity() })
     }
 }
 
 extension WorkoutRoutineDTO {
     init(entity: WorkoutRoutine) {
+        self.id = entity.id
         self.name = entity.name
         self.workouts = entity.workouts.map { WorkoutDTO(entity: $0) }
     }
@@ -30,6 +33,7 @@ extension WorkoutRoutineDTO {
 
 extension WorkoutRoutineDTO {
     init(from model: RMWorkoutRoutine) {
+        self.id = model.id
         self.name = model.name
         self.workouts = model.workouts.map{ WorkoutDTO(from: $0) }
     }
@@ -37,6 +41,8 @@ extension WorkoutRoutineDTO {
 
 extension WorkoutRoutineDTO {
     init(from fsModel: FSWorkoutRoutine) {
+        // TODO: 검토 필요
+        self.id = fsModel.id ?? ""
         self.name = fsModel.name
         self.workouts = fsModel.workouts.map { WorkoutDTO(from: $0) }
     }

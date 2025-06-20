@@ -47,12 +47,23 @@ final class EditRoutineViewController: UIViewController, View {
     
     func bind(reactor: EditRoutineViewReactor) {
         tableView.cellMoreButtonTapped
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, indexPath in
-                // TODO: 해당 셀의 데이터 가져와서 editRoutineBottomSheet로 전달
-                print(reactor.currentState.routine.workouts[indexPath.row])
-                owner.presentBottomSheetVC(workout: reactor.currentState.routine.workouts[indexPath.row])
-            }.disposed(by: disposeBag)
+            .do(onNext: { [weak self] indexPath in
+                self?.presentBottomSheetVC()})
+            .map{ Reactor.Action.cellButtonTapped($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        tableView.footerViewTapped
+            .do(onNext: { [weak self] in
+                self?.presentEditRoutineVC()
+            }).map { Reactor.Action.plusExcerciseButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        tableView.dragDropRelay
+            .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
         editRoutineBottomSheetViewController.excerciseChangeButtonSubject
             .map{ Reactor.Action.changeWorkoutInfo }
@@ -78,7 +89,7 @@ final class EditRoutineViewController: UIViewController, View {
             }.disposed(by: disposeBag)
     }
     
-    func presentBottomSheetVC(workout: Workout) {
+    func presentBottomSheetVC() {
         if let sheet = editRoutineBottomSheetViewController.sheetPresentationController {
             let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
 
@@ -93,6 +104,11 @@ final class EditRoutineViewController: UIViewController, View {
         }
 
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
+    }
+    
+    func presentEditRoutineVC() {
+        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl())))
+        self.present(vc, animated: true)
     }
 }
 

@@ -38,9 +38,10 @@ final class RMWorkout: Object {
 
 extension RMWorkout {
     func toDTO() -> WorkoutDTO {
-        return WorkoutDTO(name: self.name,
-                          comment: self.comment,
-                          sets: self.sets.map { $0.toDTO() })
+        return WorkoutDTO(
+            name: self.name,
+            comment: self.comment,
+            sets: self.sets.map { $0.toDTO() })
     }
 }
 

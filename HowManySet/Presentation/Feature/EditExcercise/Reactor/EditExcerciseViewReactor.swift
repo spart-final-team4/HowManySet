@@ -75,8 +75,8 @@ final class EditExcerciseViewReactor: Reactor {
     /// - Parameters:
     ///   - routineName: 새로 생성할 루틴 이름
     ///   - saveRoutineUseCase: 루틴 저장을 위한 UseCase 주입
-    init(routineName: String, saveRoutineUseCase: SaveRoutineUseCaseProtocol) {
-        self.initialState = State(currentRoutine: WorkoutRoutine(name: routineName, workouts: []))
+    init(routineName: String = "", saveRoutineUseCase: SaveRoutineUseCaseProtocol) {
+        self.initialState = State(currentRoutine: WorkoutRoutine(id: UUID().uuidString, name: routineName, workouts: []))
         self.saveRoutineUseCase = saveRoutineUseCase
     }
     
@@ -91,9 +91,10 @@ final class EditExcerciseViewReactor: Reactor {
                 currentWeightSet.removeFirst() // 첫 행은 빈 값이므로 제거
                 
                 let sets = currentWeightSet.map {
-                    WorkoutSet(weight: Double($0[0]),
-                               unit: self.currentState.currentUnit,
-                               reps: $0[1])
+                    WorkoutSet(
+                        weight: Double($0[0]),
+                        unit: self.currentState.currentUnit,
+                        reps: $0[1])
                 }
                 
                 let newWorkout = Workout(

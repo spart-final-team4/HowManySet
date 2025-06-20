@@ -53,6 +53,7 @@ struct FSWorkoutRoutine: Codable {
 extension FSWorkoutRoutine {
     func toDTO() -> WorkoutRoutineDTO {
         return WorkoutRoutineDTO(
+            id: self.id ?? "",
             name: self.name,
             workouts: self.workouts.map { $0.toDTO() }
         )

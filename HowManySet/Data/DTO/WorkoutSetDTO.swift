@@ -16,9 +16,11 @@ struct WorkoutSetDTO {
 
 extension WorkoutSetDTO {
     func toEntity() -> WorkoutSet {
-        return WorkoutSet(weight: self.weight,
-                          unit: self.unit,
-                          reps: self.reps)
+        return WorkoutSet(
+            weight: self.weight,
+            unit: self.unit,
+            reps: self.reps
+        )
     }
 }
 extension WorkoutSetDTO {
