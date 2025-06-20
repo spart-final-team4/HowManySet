@@ -12,6 +12,7 @@ import Foundation
 /// 루틴 이름과 그에 포함된 여러 개의 운동 목록을 포함합니다.
 struct WorkoutRoutine: Hashable {
     
+    let id: String
     /// 운동 루틴의 이름입니다.
     ///
     /// 예: `"전신 루틴"`, `"상체 집중 루틴"` 등
@@ -26,7 +27,7 @@ struct WorkoutRoutine: Hashable {
 extension WorkoutRoutine {
     static let mockData: [WorkoutRoutine] = [
         WorkoutRoutine(
-            name: "전신 루틴",
+            id: "", name: "전신 루틴",
             workouts: [
                 Workout.mockData[0], // 벤치프레스
                 Workout.mockData[1], // 스쿼트
@@ -36,7 +37,7 @@ extension WorkoutRoutine {
             ]
         ),
         WorkoutRoutine(
-            name: "상체 집중 루틴",
+            id: "", name: "상체 집중 루틴",
             workouts: [
                 Workout.mockData[0], // 벤치프레스
                 Workout.mockData[3], // 오버헤드 프레스
@@ -44,7 +45,7 @@ extension WorkoutRoutine {
             ]
         ),
         WorkoutRoutine(
-            name: "하체 강화 루틴",
+            id: "", name: "하체 강화 루틴",
             workouts: [
                 Workout.mockData[1], // 스쿼트
                 Workout.mockData[2]  // 데드리프트

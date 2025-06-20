@@ -16,7 +16,9 @@ final class EditRoutineTableView: UITableView {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private(set) var cellMoreButtonTapped = PublishRelay<IndexPath>()
-
+    private(set) var footerViewTapped = PublishRelay<Void>()
+    private(set) var dragDropRelay = PublishRelay<(source: IndexPath, destination: IndexPath)>()
+    
     /// RxDataSources를 위한 DataSource 타입 별칭
     typealias DataSource = RxTableViewSectionedReloadDataSource<EditRoutineSection>
 
@@ -26,8 +28,11 @@ final class EditRoutineTableView: UITableView {
     // MARK: - Initializer
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
-        bind()
         delegate = self
+        dragInteractionEnabled = true
+        dragDelegate = self
+        dropDelegate = self
+        bind()
         backgroundColor = .background
     }
 
@@ -39,7 +44,8 @@ final class EditRoutineTableView: UITableView {
     // MARK: - Binding
     /// RxDataSource 바인딩 설정 및 셀 구성 정의
     func bind() {
-        rxDataSource = DataSource(configureCell: { (dataSource, tableView, indexPath, item) in
+        rxDataSource = DataSource(
+            configureCell: { (dataSource, tableView, indexPath, item) in
 
             // 셀, 헤더, 푸터 등록
             tableView.register(EditRoutineTableHeaderView.self,
@@ -56,6 +62,7 @@ final class EditRoutineTableView: UITableView {
             ) as? EditRoutineTableViewCell else {
                 return UITableViewCell()
             }
+            
             cell.moreButtonTapped
                 .subscribe(with: self) { owner, _ in
                     owner.cellMoreButtonTapped.accept(indexPath)
@@ -63,12 +70,8 @@ final class EditRoutineTableView: UITableView {
                 
             cell.configure(model: item)
             return cell
-        })
-        
-        cellMoreButtonTapped
-            .subscribe{ indexPath in
-                print(indexPath)
-            }.disposed(by: disposeBag)
+            })
+        rxDataSource?.canMoveRowAtIndexPath = { _, _ in return true }
     }
 
     // MARK: - Public Method
@@ -83,7 +86,7 @@ final class EditRoutineTableView: UITableView {
         let model = [EditRoutineSection(headerTitle: routine.name, items: items)]
 
         guard let rxDataSource = rxDataSource else { return }
-
+        dataSource = nil
         Observable.just(model)
             .bind(to: self.rx.items(dataSource: rxDataSource))
             .disposed(by: disposeBag)
@@ -119,6 +122,11 @@ extension EditRoutineTableView: UITableViewDelegate {
         ) as? EditRoutineTableFooterView else {
             return nil
         }
+        
+        footerView.plusExcerciseButtonTapped
+            .bind(to: footerViewTapped)
+            .disposed(by: footerView.disposeBag)
+        
         return footerView
     }
 
@@ -133,4 +141,54 @@ extension EditRoutineTableView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 90
     }
+}
+
+
+extension EditRoutineTableView: UITableViewDragDelegate {
+    func tableView(
+        _ tableView: UITableView,
+        itemsForBeginning session: any UIDragSession,
+        at indexPath: IndexPath
+    ) -> [UIDragItem]  {
+        session.localContext = indexPath
+        guard let item = rxDataSource?[indexPath] else {
+            return []
+        }
+        print(item)
+        // 실제 데이터 전달
+        let itemProvider = NSItemProvider(object: item.name as NSString)
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        dragItem.localObject = item // Drop 시 직접 사용 가능
+        return [dragItem]
+    }
+    
+}
+extension EditRoutineTableView: UITableViewDropDelegate {
+    func tableView(
+        _ tableView: UITableView,
+        dropSessionDidUpdate session: UIDropSession,
+        withDestinationIndexPath destinationIndexPath: IndexPath?
+    ) -> UITableViewDropProposal {
+        guard
+            let sourceIndexPath = session.localDragSession?.localContext as? IndexPath,
+            let destinationIndexPath = destinationIndexPath,
+            sourceIndexPath != destinationIndexPath
+        else {
+            return UITableViewDropProposal(operation: .cancel)
+        }
+        dragDropRelay.accept((source: sourceIndexPath, destination: destinationIndexPath))
+        return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        performDropWith coordinator: UITableViewDropCoordinator
+    ) {
+        guard
+            let sourceIndexPath = coordinator.items.first?.sourceIndexPath,
+            let destinationIndexPath = coordinator.destinationIndexPath
+        else { return }
+        dragDropRelay.accept((source: sourceIndexPath, destination: destinationIndexPath))
+    }
+    
 }

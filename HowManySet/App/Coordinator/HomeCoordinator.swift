@@ -67,8 +67,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
     func presentEditExerciseView(routineName: String) {
-        let realmService: RealmServiceProtocol = RealmService()
-        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let reactor = EditExcerciseViewReactor(routineName: routineName, saveRoutineUseCase: saveRoutineUseCase)
         let editExerciseVC = EditExcerciseViewController(reactor: reactor)
@@ -83,11 +82,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
     /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
     func presentEditRoutineView(with routine: WorkoutRoutine) {
-        let realmService: RealmServiceProtocol = RealmService()
-        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
-        let reactor = EditRoutineViewReactor(with: routine, saveRoutineUseCase: saveRoutineUseCase, deleteRoutineUseCase: deleteRoutineUseCase)
+        let reactor = EditRoutineViewReactor(with: routine,
+                                             saveRoutineUseCase: saveRoutineUseCase,
+                                             deleteRoutineUseCase: deleteRoutineUseCase)
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
         if let sheet = editRoutineVC.sheetPresentationController {

@@ -189,6 +189,8 @@ final class HomeViewReactor: Reactor {
         
         
         let initialWorkoutRecord = WorkoutRecord(
+            // TODO: 검토 필요
+            id:  UUID().uuidString,
             workoutRoutine: initialRoutine,
             totalTime: 0,
             workoutTime: 0,
@@ -451,6 +453,8 @@ final class HomeViewReactor: Reactor {
             
             // 저장될 데이터들
             newState.workoutRecord = WorkoutRecord(
+                // TODO: 검토 필요
+                id: UUID().uuidString,
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,

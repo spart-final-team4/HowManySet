@@ -17,14 +17,14 @@ final class FetchRoutineUseCaseTests: XCTestCase {
     let realmServiceStub = RealmServiceStub()
     
     override func setUpWithError() throws {
-        repository = RoutineRepositoryImpl(realmService: realmServiceStub)
+        repository = RoutineRepositoryImpl()
         usecase = FetchRoutineUseCase(repository: repository)
         disposeBag = DisposeBag()
     }
     
     func test_저장된루틴이_정상적으로불러와지는가() {
         // given
-        let routine = WorkoutRoutine(name: "test", workouts: [])
+        let routine = WorkoutRoutine(id: "", name: "test", workouts: [])
         realmServiceStub.create(item: RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: routine)))
         
         // when

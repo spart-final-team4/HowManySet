@@ -12,12 +12,12 @@ import RealmSwift
 /// `RealmServiceProtocol`을 구현하며, Realm 객체를 생성, 조회, 수정, 삭제할 수 있습니다.
 final class RealmService: RealmServiceProtocol {
     
+    static let shared = RealmService()
+    
     /// Realm 인스턴스
     private let realm: Realm
-
-    /// RealmService 객체 초기화
-    /// Realm 인스턴스 생성 실패 시 앱을 중단시킵니다.
-    init() {
+    
+    private init() {
         do {
             realm = try Realm()
         } catch {
@@ -74,9 +74,24 @@ final class RealmService: RealmServiceProtocol {
     /// Realm에서 특정 객체를 삭제합니다.
     /// - Parameter item: 삭제할 Realm 객체
     func delete<T: Object>(item: T) {
+        let realm = try! Realm()
+        guard let primaryKey = T.primaryKey() else {
+            print("⚠️ \(T.self)는 primaryKey가 없어서 안전한 삭제가 불가능합니다.")
+            return
+        }
+        
+        // 2. item에서 primary key 값을 안전하게 꺼냄
+        guard let keyValue = item.value(forKey: primaryKey) else {
+            print("⚠️ 객체에서 primary key 값을 가져올 수 없습니다.")
+            return
+        }
+        guard let objToDelete = realm.object(ofType: T.self, forPrimaryKey: keyValue) else {
+            print("❌ Realm에 해당 객체가 존재하지 않습니다.")
+            return
+        }
         do {
             try realm.write {
-                realm.delete(item)
+                realm.delete(objToDelete)
             }
         } catch {
             print("delete Failed: \(error.localizedDescription)")

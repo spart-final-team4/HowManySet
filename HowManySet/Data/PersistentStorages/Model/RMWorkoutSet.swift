@@ -9,7 +9,6 @@ import Foundation
 import RealmSwift
 
 final class RMWorkoutSet: Object {
-    
     @Persisted var weight: Double
     @Persisted var unit: String
     @Persisted var reps: Int
@@ -28,7 +27,8 @@ final class RMWorkoutSet: Object {
 
 extension RMWorkoutSet {
     func toDTO() -> WorkoutSetDTO {
-        return WorkoutSetDTO(weight: self.weight,
+        return WorkoutSetDTO(
+                             weight: self.weight,
                           unit: self.unit,
                           reps: self.reps)
     }
