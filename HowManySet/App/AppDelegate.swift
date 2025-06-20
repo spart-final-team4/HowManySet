@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  HowManySet
 //
-//  Created by 정근호 on 5/30/25.
+//  Created by GO on 5/30/25.
 //
 
 import UIKit
@@ -18,28 +18,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-            
-            // 스플래시 화면 노출 2초
-            Thread.sleep(forTimeInterval: 2.0)
-            
-            // Firebase 초기화
-            FirebaseApp.configure()
-            
-            if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
-                KakaoSDK.initSDK(appKey: kakaoAppKey)
-            } else {
-                fatalError("Check Your AppKey")
-            }
-            
+
+        Thread.sleep(forTimeInterval: 2.0)
+        
+        // Firebase 초기화
+        FirebaseApp.configure()
+        
+        // Google Sign-In 설정
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            fatalError("No client ID found in Firebase configuration")
+        }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        // 카카오 SDK 초기화
+        if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
+            KakaoSDK.initSDK(appKey: kakaoAppKey)
+        } else {
+            fatalError("Check Your AppKey")
+        }
+        
             // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
             LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
         
         return true
     }
-    
-    // 구글/카카오 인증 결과 처리 (iOS 13 이상, SceneDelegate 병행 사용)
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool {
-        // 구글 로그인 처리
         if GIDSignIn.sharedInstance.handle(url) {
             return true
         }
@@ -49,18 +54,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return false
     }
-    
-    // MARK: UISceneSession Lifecycle
+
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
-        // 기본 SceneDelegate 사용
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-    
-    func application(
-        _ application: UIApplication,
-        didDiscardSceneSessions sceneSessions: Set<UISceneSession>
-    ) {
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // 필요시 리소스 해제 등 처리
     }
 }

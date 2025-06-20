@@ -9,11 +9,11 @@ import UIKit
 import FirebaseFirestore
 
 final class DIContainer {
-
+    
     /// 온보딩 화면을 생성하여 반환
     func makeOnBoardingViewController(coordinator: OnBoardingCoordinator) -> UIViewController {
-//        let repository
-//        let useCase
+        //        let repository
+        //        let useCase
         let reactor = OnBoardingViewReactor()
         
         return OnBoardingViewController(reactor: reactor, coordinator: coordinator)
@@ -21,10 +21,10 @@ final class DIContainer {
     
     /// 인증 화면을 생성하여 반환
     func makeAuthViewController(coordinator: AuthCoordinator) -> UIViewController {
-//        let repository
-//        let useCase
-        let reactor = AuthViewReactor()
-        
+        let firebaseAuthService = FirebaseAuthService()
+        let repository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+        let useCase = AuthUseCase(repository: repository)
+        let reactor = AuthViewReactor(useCase: useCase, coordinator: coordinator)
         return AuthViewController(reactor: reactor, coordinator: coordinator)
     }
     
@@ -76,7 +76,7 @@ final class DIContainer {
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator)
     }
-
+    
     /// 캘린더 화면을 생성하여 반환
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
         let recordRepository = RecordRepositoryImpl()
@@ -104,9 +104,7 @@ final class DIContainer {
     
     /// 마이페이지 화면을 생성하여 반환
     func makeMyPageViewController(coordinator: MyPageCoordinator) -> UIViewController {
-        
         let userSettingRepository = UserSettingRepositoryImpl()
-        
         let fetchUserSettingUseCase = FetchUserSettingUseCase(repository: userSettingRepository)
         let saveUserSettingUseCase = SaveUserSettingUseCase(repository: userSettingRepository)
         
@@ -122,9 +120,15 @@ final class DIContainer {
             repository: fsUserSettingRespository
         )
         
+        // AuthUseCase 추가
+        let firebaseAuthService = FirebaseAuthService()
+        let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+        let authUseCase = AuthUseCase(repository: authRepository)
+        
         let reactor = MyPageViewReactor(
             fetchUserSettingUseCase: fetchUserSettingUseCase,
-            saveUserSettingUseCase: saveUserSettingUseCase
+            saveUserSettingUseCase: saveUserSettingUseCase,
+            authUseCase: authUseCase
 //            ,
 //            // Firestore UseCase들 추가
 //            fsFetchUserSettingUseCase: fsFetchUserSettingUseCase,

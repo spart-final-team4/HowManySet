@@ -92,7 +92,7 @@ private extension NicknameInputView {
     
     /// 배경색 등 Appearance 설정
     func setAppearance() {
-        self.backgroundColor = UIColor(named: "Background")
+        self.backgroundColor = .background
     }
     
     /// 서브뷰 계층 구조 설정
