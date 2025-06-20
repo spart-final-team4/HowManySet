@@ -18,6 +18,7 @@ protocol MyPageCoordinatorProtocol: Coordinator {
     func presentReportProblemView()
     func alertLogout()
     func pushAccountWithdrawalView()
+    func navigateToAuth()
 }
 
 /// 마이페이지 흐름 담당 coordinator
@@ -27,6 +28,9 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     private let navigationController: UINavigationController
     private let container: DIContainer
     
+    /// 로그아웃/계정삭제 완료 시 호출할 클로저
+    var finishFlow: (() -> Void)?
+
     /// coordinator 생성자
     /// - Parameters:
     ///   - navigationController: 네비게이션 컨트롤러
@@ -170,26 +174,37 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         }
     }
     
+    /// 로그아웃 팝업 표시 및 Reactor 액션 연결
     func alertLogout() {
+        // MyPageViewController에서 Reactor를 통해 로그아웃 처리하도록 수정
+        guard let myPageVC = navigationController.viewControllers.last as? MyPageViewController else { return }
+        
         let deleteAccountVC = DefaultPopupViewController(title: "로그아웃 하시겠습니까?",
                                                          okButtonText: "로그아웃") {
-            // TODO: 로그인 페이지로 이동
+            // 🔥 Reactor의 confirmLogout 액션 호출
+            myPageVC.reactor?.action.onNext(.confirmLogout)
         }
         navigationController.present(deleteAccountVC, animated: true)
     }
     
-    /// 계정 삭제 시 단순 alert? or View?
+    /// 계정 삭제 팝업 표시 및 Reactor 액션 연결
     func pushAccountWithdrawalView() {
-        // TODO: 계정 삭제 로직
+        guard let myPageVC = navigationController.viewControllers.last as? MyPageViewController else { return }
+        
         let deleteAccountVC = DefaultPopupViewController(title: "정말 탈퇴하시겠습니까?",
                                                          content: "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다.",
                                                          okButtonText: "계정 삭제") {
-            // TODO: 계정 삭제 & 로그인 페이지로 이동
-            print("계정 삭제")
+            // 🔥 Reactor의 confirmDeleteAccount 액션 호출
+            myPageVC.reactor?.action.onNext(.confirmDeleteAccount)
         }
         navigationController.present(deleteAccountVC, animated: true)
     }
     
+    /// 인증 화면으로 이동 (로그아웃/계정삭제 후)
+    func navigateToAuth() {
+        print("로그아웃 / 계정삭제 후 화면 전환")
+        finishFlow?()
+    }
     
 }
 
