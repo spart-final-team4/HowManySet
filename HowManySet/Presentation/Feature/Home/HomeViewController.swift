@@ -375,18 +375,18 @@ private extension HomeViewController {
         
         // 모든 카드를 먼저 작아진 상태로 초기화
         visibleCards.forEach { card in
-            UIView.animate(withDuration: 0.1, animations: {
+            UIView.performWithoutAnimation {
                 card.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                 card.alpha = 0.9
-            })
+            }
         }
         
         // 현재 카드만 활성 상태로 설정
         let currentCard = visibleCards[newCurrentPage]
-        UIView.animate(withDuration: 0.1, animations: {
+        UIView.performWithoutAnimation {
             currentCard.transform = .identity
             currentCard.alpha = 1
-        })
+        }
         
         self.previousPage = self.currentPage
         self.currentPage = newCurrentPage
@@ -535,7 +535,6 @@ extension HomeViewController {
         // MARK: - 페이징 관련
         // 스크롤의 감속이 끝났을 때 페이징
         pagingScrollView.rx.didEndDecelerating
-        
             .map { [weak self] _ -> Int in
                 guard let self else { return 0 }
                 // scrollView 내부 콘텐트가 수평으로 얼마나 스크롤 됐는지 / scrollView가 화면에 차지하는 너비
@@ -543,6 +542,7 @@ extension HomeViewController {
                 return newPage
             }
             .distinctUntilChanged()
+            .observe(on: MainScheduler.asyncInstance)
             .do(onNext: { [weak self] newPage in
                 guard let self else { return }
                 print("🔍 변경된 페이지: \(newPage)")
@@ -568,6 +568,7 @@ extension HomeViewController {
                 return currentPage
             }
             .distinctUntilChanged()
+            .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { [weak self] newPage in
                 guard let self else { return }
                 self.handlePageChanged(newCurrentPage: newPage)
@@ -765,6 +766,12 @@ extension HomeViewController {
                     
                     let currentCard = self.pagingCardViewContainer[cardToHideIndex]
                     
+//                    // 현재 카드 초기화 (애니메이션 전)
+//                    UIView.performWithoutAnimation {
+//                        currentCard.transform = .identity
+//                        currentCard.alpha = 1
+//                    }
+//                    
                     // 다음 페이지로 이동할지, 이전 페이지로 이동할지 결정
                     let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
                     let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == exerciseIndex }) ?? 0
@@ -778,20 +785,14 @@ extension HomeViewController {
                         // 마지막이 아닌 경우, 현재 페이지 유지 (다음 카드가 현재 위치로 이동)
                         newPage = self.currentPage
                     }
-                    
-                    // 현재 카드 초기화 (애니메이션 전)
-                    UIView.animate(withDuration: 0.1, animations: {
-                        currentCard.transform = .identity
-                        currentCard.alpha = 1
-                    })
                 }
                 
                 let hiddenView = self.pagingCardViewContainer[cardToHideIndex]
                 
                 // 애니메이션 실행 후 끝나면 hidden
-                UIView.animate(withDuration: 0.1, animations: {
+                UIView.animate(withDuration: 0.3, animations: {
                     hiddenView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
-                    hiddenView.alpha = 0.0
+                    hiddenView.alpha = 0.5
                 }) { _ in
                     
                     hiddenView.isHidden = true
