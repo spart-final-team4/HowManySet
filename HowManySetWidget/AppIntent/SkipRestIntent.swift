@@ -10,7 +10,7 @@ import ActivityKit
 import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-public struct SkipRestIntent: AppIntent, ControlConfigurationIntent, LiveActivityIntent {
+public struct SkipRestIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "휴식 스킵"
     public static var description = IntentDescription("휴식 스킵 버튼(스킵 후 다음 세트로 넘어감)")
     @Parameter(title: "현재 운동 인덱스")
