@@ -109,7 +109,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// 운동 완료 화면으로 이동
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary) {
-        let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container, workoutSummary: workoutSummary)
+        guard let homeViewReactor else { return }
+        let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
         routineCompleteCoordinator.start()
     }
     
