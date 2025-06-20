@@ -81,7 +81,7 @@ final class EditAndMemoViewController: UIViewController, View {
         super.viewWillDisappear(animated)
         
         let newMemo = self.memoTextView.text
-        reactor?.action.onNext(.updateCurrentMemo(with: newMemo ?? ""))
+        reactor?.action.onNext(.updateCurrentExerciseMemo(with: newMemo ?? ""))
     }
     
 }

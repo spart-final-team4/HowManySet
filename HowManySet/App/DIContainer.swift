@@ -142,7 +142,7 @@ final class DIContainer {
     }
     
     /// 루틴 완료 화면을 생성하여 반환
-    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary) -> UIViewController {
+    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor) -> UIViewController {
         
         let recordRepository = RecordRepositoryImpl()
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
@@ -157,6 +157,6 @@ final class DIContainer {
 //                                                 fsSaveRecordUseCase: fsSaveRecordUseCase
         )
         
-        return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary)
+        return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
     }
 }

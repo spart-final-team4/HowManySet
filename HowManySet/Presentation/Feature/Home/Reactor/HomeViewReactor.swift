@@ -32,7 +32,7 @@ struct WorkoutCardState {
     /// 현재 운동 종목의 메모
     var memoInExercise: String?
     var allSetsCompleted: Bool
-
+    
     /// 현재 세트의 무게
     var currentWeight: Double { setInfo[setIndex].weight }
     /// 현재 세트의 단위
@@ -83,9 +83,12 @@ final class HomeViewReactor: Reactor {
         /// 카드의 운동 옵션 버튼 클릭으로 editAndMemoView present시
         case editAndMemoViewPresented(at: Int)
         /// MemoTextView의 메모로 업데이트
-        case updateCurrentMemo(with: String)
+        case updateCurrentExerciseMemo(with: String)
         /// 무게, 횟수 컨테이너 버튼 클릭 시
         case weightRepsButtonClicked(at: Int)
+        /// 운동 완료 화면에서 확인 시 다시 저장 (루틴 메모 작성했을시에만)
+        case confirmButtonClickedForSaving(newMemo: String?)
+        case updateCurrentRoutineMemo(with: String)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -126,6 +129,7 @@ final class HomeViewReactor: Reactor {
         case saveWorkoutData
         /// 운동 편집 시 Edit용 데이터로 변형
         case convertToEditData(at: Int)
+        case updateRoutineMemo(with: String?)
     }
     
     // MARK: - State is a current view state
@@ -174,26 +178,20 @@ final class HomeViewReactor: Reactor {
     private let fsSaveRecordUseCase: FSSaveRecordUseCase
     private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
     private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
-    private let fetchRecordUseCase: FetchRecordUseCaseProtocol
-    private let fsFetchRecordUseCase: FSFetchRecordUseCase
-
+    
     private let routineMockData = WorkoutRoutine.mockData[0]
     private let recordMockData = WorkoutRecord.mockData[0]
     
     init(saveRecordUseCase: SaveRecordUseCaseProtocol,
          fsSaveRecordUseCase: FSSaveRecordUseCase,
          deleteRecordUseCase: DeleteRecordUseCaseProtocol,
-         fsDeleteRecordUseCase: FSDeleteRecordUseCase,
-         fetchRecordUseCase: FetchRecordUseCaseProtocol,
-         fsFetchRecordUseCase: FSFetchRecordUseCase
+         fsDeleteRecordUseCase: FSDeleteRecordUseCase
     ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fsSaveRecordUseCase = fsSaveRecordUseCase
         self.deleteRecordUseCase = deleteRecordUseCase
         self.fsDeleteRecordUseCase = fsDeleteRecordUseCase
-        self.fetchRecordUseCase = fetchRecordUseCase
-        self.fsFetchRecordUseCase = fsFetchRecordUseCase
-
+        
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routineMockData
@@ -243,7 +241,7 @@ final class HomeViewReactor: Reactor {
         let weightSet: [[Int]] = firstWorkout.sets.map { set in
             [Int(set.weight), set.reps]
         }
-
+        
         let initialWorkoutStateForEdit = WorkoutStateForEdit(
             currentRoutine: initialRoutine,
             currentExcerciseName: firstWorkout.name,
@@ -370,7 +368,7 @@ final class HomeViewReactor: Reactor {
             
             return .just(.setEditAndMemoViewPresented(true))
             
-        case .updateCurrentMemo(let newMemo):
+        case .updateCurrentExerciseMemo(let newMemo):
             return .concat([
                 .just(.updateExerciseMemo(with: newMemo)),
                 .just(.saveWorkoutData)
@@ -379,6 +377,19 @@ final class HomeViewReactor: Reactor {
         case let .weightRepsButtonClicked(cardIndex):
             return .just(.convertToEditData(at: cardIndex))
             
+        case let .confirmButtonClickedForSaving(newMemo):
+            if newMemo != nil,
+               newMemo != currentState.memoInRoutine {
+                return .just(.saveWorkoutData)
+            } else {
+                return .empty()
+            }
+            
+        case let .updateCurrentRoutineMemo(with: newMemo):
+            return .concat([
+                .just(.updateRoutineMemo(with: newMemo)),
+                .just(.saveWorkoutData)
+            ])
         }//action
     }//mutate
     
@@ -553,19 +564,20 @@ final class HomeViewReactor: Reactor {
                 newState.restSecondsRemaining = Float(newState.restTime)
                 newState.restStartTime = nil
             }
-        
+            
         // MARK: - 현재 운동 데이터 저장
         // 메모 창 dismiss시, 운동 완료 시 등등
-        // 기존 데이터 제거 후 저장
         case .saveWorkoutData:
+            
+            // TODO: - 기존 데이터 삭제 필요
             
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
             
-                newState.workoutRoutine = WorkoutRoutine(
-                    name: newState.workoutRoutine.name,
-                    workouts: updatedWorkouts
-                )
+            newState.workoutRoutine = WorkoutRoutine(
+                name: newState.workoutRoutine.name,
+                workouts: updatedWorkouts
+            )
             
             newState.workoutRecord = WorkoutRecord(
                 workoutRoutine: newState.workoutRoutine,
@@ -589,6 +601,10 @@ final class HomeViewReactor: Reactor {
                 currentUnit: currentExercise.currentUnit,
                 currentWeightSet: currentSetsData
             )
+            
+        case let .updateRoutineMemo(with: newMemo):
+            newState.memoInRoutine = newMemo
+            
         }//mutation
         return newState
     }//reduce
@@ -759,10 +775,10 @@ extension HomeViewReactor.State {
         let repsText = "회"
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
         
-//        print("""
-//            LIVEACTIVITY INDEX: \(currentExerciseIndex),
-//            LIVEACTIVITY ISRESTING: \(isResting),
-//        """)
+        //        print("""
+        //            LIVEACTIVITY INDEX: \(currentExerciseIndex),
+        //            LIVEACTIVITY ISRESTING: \(isResting),
+        //        """)
         
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,
