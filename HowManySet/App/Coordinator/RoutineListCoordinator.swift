@@ -81,7 +81,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
             workoutStateForEdit: nil, // 탭바에서 push시에는 필요없음
-            caller: ViewCaller.fromTabBar // 탭바에서 push
+            caller: ViewCaller.forAdding // 탭바에서 push
         )
         let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
         
