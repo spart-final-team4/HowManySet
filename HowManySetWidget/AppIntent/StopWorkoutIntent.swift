@@ -10,7 +10,7 @@ import ActivityKit
 import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-public struct StopWorkoutIntent: AppIntent, ControlConfigurationIntent, LiveActivityIntent {
+public struct StopWorkoutIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "운동 종료"
     public static var description = IntentDescription("운동 종료 버튼(클릭 시 앱에서 Alert)")
     @Parameter(title: "현재 운동 인덱스") 
