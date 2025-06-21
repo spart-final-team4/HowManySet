@@ -87,7 +87,11 @@ final class EditExcerciseViewReactor: Reactor {
         self.saveRoutineUseCase = saveRoutineUseCase
         
         self.initialState = State(
-            currentRoutine: WorkoutRoutine(name: routineName,workouts: []),
+            currentRoutine: WorkoutRoutine(
+                id: UUID().uuidString,
+                name: routineName,
+                workouts: []
+            ),
             caller: caller,
             workoutStateForEdit: workoutStateForEdit ?? nil
         )

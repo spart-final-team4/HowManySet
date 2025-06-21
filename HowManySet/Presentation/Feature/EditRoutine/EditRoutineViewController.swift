@@ -107,9 +107,14 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentEditRoutineVC() {
-        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl())))
-        self.present(vc, animated: true)
-    }
+            let vc = EditRoutineViewController(
+                reactor: EditRoutineViewReactor(
+                    with: WorkoutRoutine(id: UUID().uuidString, name: "", workouts: []),
+                    saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
+                    deleteRoutineUseCase: DeleteRoutineUseCase(repository: RoutineRepositoryImpl()))
+            )
+            self.present(vc, animated: true)
+        }
 }
 
 // MARK: - UI 구성 관련 private 메서드

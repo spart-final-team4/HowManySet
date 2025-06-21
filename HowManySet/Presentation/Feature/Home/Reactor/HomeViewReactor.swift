@@ -587,11 +587,13 @@ final class HomeViewReactor: Reactor {
                 cardStates: newState.workoutCardStates)
             
             newState.workoutRoutine = WorkoutRoutine(
+                id: UUID().uuidString,
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
             
             newState.workoutRecord = WorkoutRecord(
+                id: UUID().uuidString,
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
