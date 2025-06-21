@@ -72,8 +72,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         routineName: String,
         workoutStateForEdit: WorkoutStateForEdit,
     ) {
-        let realmService: RealmServiceProtocol = RealmService()
-        let routineRepository = RoutineRepositoryImpl(realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let reactor = EditExcerciseViewReactor(
             routineName: routineName,
