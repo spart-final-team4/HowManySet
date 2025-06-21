@@ -9,8 +9,10 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
+import RxCocoa
+import ReactorKit
 
-final class RoutineCompleteViewController: UIViewController {
+final class RoutineCompleteViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: RoutineCompleteCoordinatorProtocol?
@@ -137,15 +139,19 @@ final class RoutineCompleteViewController: UIViewController {
     }
     
     // MARK: - Initializer
-    init(coordinator: RoutineCompleteCoordinatorProtocol, workoutSummary: WorkoutSummary) {
+    init(coordinator: RoutineCompleteCoordinatorProtocol,
+         workoutSummary: WorkoutSummary,
+         homeViewReactor: HomeViewReactor
+    ) {
         super.init(nibName: nil, bundle: nil)
         self.coordinator = coordinator
         self.workoutSummary = workoutSummary
+        self.reactor = homeViewReactor
         
         self.hidesBottomBarWhenPushed = true
         self.navigationItem.hidesBackButton = true
         
-        self.transitioningDelegate = self
+//        self.transitioningDelegate = self
     }
     
     @available(*, unavailable)
@@ -316,14 +322,6 @@ private extension RoutineCompleteViewController {
     
     func bindUIEvents() {
         
-        confirmButton.rx.tap
-            .bind { [weak self] _ in
-                guard let self else { return }
-                
-                self.navigationController?.popToRootViewController(animated: true)
-            }
-            .disposed(by: disposeBag)
-        
         shareButton.rx.tap
             .bind { [weak self] _ in
                 guard let self else { return }
@@ -340,6 +338,36 @@ private extension RoutineCompleteViewController {
             .bind { [weak self] _ in
                 guard let self else { return }
                 self.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Reactor Binding
+extension RoutineCompleteViewController {
+    
+    func bind(reactor: HomeViewReactor) {
+        
+        confirmButton.rx.tap
+            .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+            .map { Reactor.Action.confirmButtonClickedForSaving }
+            .bind { [weak self] action in
+                guard let self else { return }
+                
+                let updatedMemo = self.memoTextView.text
+                
+                reactor.action.onNext(action(updatedMemo))
+                
+                // 클릭 애니메이션
+                UIView.animate(withDuration: 0.1, animations: {
+                    self.confirmButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                }, completion: { _ in
+                    UIView.animate(withDuration: 0.1) {
+                        self.confirmButton.transform = .identity
+                    }
+                })
+                
+                self.navigationController?.popToRootViewController(animated: true)
             }
             .disposed(by: disposeBag)
     }
@@ -439,13 +467,13 @@ private extension RoutineCompleteViewController {
     }
 }
 
-extension RoutineCompleteViewController: UIViewControllerTransitioningDelegate {
-    
-    func animationController(
-        forPresented presented: UIViewController,
-        presenting: UIViewController,
-        source: UIViewController
-    ) -> UIViewControllerAnimatedTransitioning? {
-        return SlideUpAnimator()
-    }
-}
+//extension RoutineCompleteViewController: UIViewControllerTransitioningDelegate {
+//    
+//    func animationController(
+//        forPresented presented: UIViewController,
+//        presenting: UIViewController,
+//        source: UIViewController
+//    ) -> UIViewControllerAnimatedTransitioning? {
+//        return SlideUpAnimator()
+//    }
+//}

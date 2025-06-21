@@ -116,6 +116,7 @@ final class HomePagingCardView: UIView {
     lazy var remainingRestTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
         $0.isHidden = true
+        $0.tintColor = .textSecondary
     }
     
     lazy var setCompleteButton = UIButton().then {
@@ -132,7 +133,7 @@ final class HomePagingCardView: UIView {
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         $0.isUserInteractionEnabled = false
         $0.alpha = 0
-        $0.tintColor = .white
+        $0.tintColor = .textSecondary
     }
     
     lazy var restProgressBar = UIProgressView().then {
@@ -268,8 +269,8 @@ extension HomePagingCardView {
                 
         exerciseNameLabel.text = state.currentExerciseName
         exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
-        weightLabel.text = "\(Int(state.currentWeight))\(state.currentUnit)"
-        repsLabel.text = "\(state.currentReps)\(repsText)"
+        weightLabel.text = "\(Int(state.currentWeightForSave))\(state.currentUnitForSave)"
+        repsLabel.text = "\(state.currentRepsForSave)\(repsText)"
         setProgressBar.updateProgress(currentSet: state.setProgressAmount)
         
         if state.currentSetNumber == 1 {

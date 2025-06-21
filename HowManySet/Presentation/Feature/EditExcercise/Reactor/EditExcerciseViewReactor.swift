@@ -52,6 +52,10 @@ final class EditExcerciseViewReactor: Reactor {
         var currentExcerciseName: String = "" // 입력된 운동 이름
         var currentUnit: String = "kg"        // 단위 기본값 (kg)
         var currentWeightSet: [[Int]] = []    // 현재 세트 입력값 (2차원 배열: [무게, 반복수])
+        
+        // 홈 화면 관련 데이터
+        var caller: ViewCaller
+        var workoutStateForEdit: WorkoutStateForEdit?
     }
     
     /// 운동 저장 결과 상태
@@ -68,16 +72,30 @@ final class EditExcerciseViewReactor: Reactor {
     let dismissRelay = PublishRelay<Void>()       // 화면 종료용 Relay
     
     private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
-    
+        
     // MARK: - Initializer
     
     /// 초기화 메서드
     /// - Parameters:
     ///   - routineName: 새로 생성할 루틴 이름
     ///   - saveRoutineUseCase: 루틴 저장을 위한 UseCase 주입
-    init(routineName: String = "", saveRoutineUseCase: SaveRoutineUseCaseProtocol) {
-        self.initialState = State(currentRoutine: WorkoutRoutine(id: UUID().uuidString, name: routineName, workouts: []))
+    init(routineName: String,
+         saveRoutineUseCase: SaveRoutineUseCaseProtocol,
+         workoutStateForEdit: WorkoutStateForEdit?,
+         caller: ViewCaller
+    ) {
         self.saveRoutineUseCase = saveRoutineUseCase
+        
+        self.initialState = State(
+            currentRoutine: WorkoutRoutine(
+                id: UUID().uuidString,
+                name: routineName,
+                workouts: []
+            ),
+            caller: caller,
+            workoutStateForEdit: workoutStateForEdit ?? nil
+        )
+
     }
     
     // MARK: - Mutation 생성

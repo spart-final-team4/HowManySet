@@ -17,15 +17,17 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     private let navigationController: UINavigationController
     private let container: DIContainer
     private let workoutSummary: WorkoutSummary
+    private let homeViewReactor: HomeViewReactor
 
-    init(navigationController: UINavigationController, container: DIContainer, workoutSummary: WorkoutSummary) {
+    init(navigationController: UINavigationController, container: DIContainer, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor) {
         self.navigationController = navigationController
         self.container = container
         self.workoutSummary = workoutSummary
+        self.homeViewReactor = homeViewReactor
     }
     
     func start() {
-        let routineCompleteVC = container.makeRoutineCompleteViewController(coordinator: self, workoutSummary: workoutSummary)
+        let routineCompleteVC = container.makeRoutineCompleteViewController(coordinator: self, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
 
         navigationController.pushViewController(routineCompleteVC, animated: true)
     }

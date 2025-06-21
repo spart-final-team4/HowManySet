@@ -33,16 +33,19 @@ final class DIContainer {
         let recordRepository = RecordRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+        let deleteRecordUsecase = DeleteRecordUseCase(repository: recordRepository)
         
         // Firestore 로직 추가
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
         let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
         let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
+        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
         
         let reactor = HomeViewReactor(
-            saveRecordUseCase: saveRecordUseCase
-//            ,
-//            fsSaveRecordUseCase: fsSaveRecordUseCase
+            saveRecordUseCase: saveRecordUseCase,
+            fsSaveRecordUseCase: fsSaveRecordUseCase,
+            deleteRecordUseCase: deleteRecordUsecase,
+            fsDeleteRecordUseCase: fsDeleteRecordUseCase
         )
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
@@ -139,7 +142,7 @@ final class DIContainer {
     }
     
     /// 루틴 완료 화면을 생성하여 반환
-    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary) -> UIViewController {
+    func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor) -> UIViewController {
         
         let recordRepository = RecordRepositoryImpl()
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
@@ -154,6 +157,6 @@ final class DIContainer {
 //                                                 fsSaveRecordUseCase: fsSaveRecordUseCase
         )
         
-        return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary)
+        return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
     }
 }

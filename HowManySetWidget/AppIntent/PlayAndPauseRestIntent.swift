@@ -10,7 +10,7 @@ import ActivityKit
 import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
-public struct PlayAndPauseRestIntent: AppIntent, ControlConfigurationIntent, LiveActivityIntent {
+public struct PlayAndPauseRestIntent: AppIntent, LiveActivityIntent {
     public static var title: LocalizedStringResource = "휴식 중지 재개"
     public static var description = IntentDescription("휴식 중지 및 재개 버튼")
     @Parameter(title: "현재 운동 인덱스")

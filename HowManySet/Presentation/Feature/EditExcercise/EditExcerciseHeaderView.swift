@@ -118,3 +118,11 @@ private extension EditExcerciseHeaderView {
         }
     }
 }
+
+// MARK: Internal Methods
+extension EditExcerciseHeaderView {
+    
+    func configure(with text: String) {
+        exerciseNameTextField.text = text
+    }
+}
