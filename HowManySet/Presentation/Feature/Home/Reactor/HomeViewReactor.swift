@@ -360,7 +360,22 @@ final class HomeViewReactor: Reactor {
             return .just(.changeExerciseIndex(newPageIndex))
             
         case .restPauseButtonClicked:
-            return .just(.pauseAndPlayRest(!currentState.isRestPaused))
+            if currentState.isRestPaused {
+                // 현재 일시정지 상태 → 재생으로 전환
+                // interval을 restSecondsRemaining에서 재시작
+                let restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
+                    .take(Int(currentState.restSecondsRemaining * 10))
+                    .take(until: self.state.map { $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }.filter { $0 })
+                    .map { _ in Mutation.restRemainingSecondsUpdating }
+                return .concat([
+                    .just(.pauseAndPlayRest(false)),
+                    restTimer
+                ])
+            } else {
+                // 재생 상태 → 일시정지로 전환
+                // interval 종료, 남은 시간만 보존
+                return .just(.pauseAndPlayRest(true))
+            }
             
         case .stopButtonClicked(let isEnded):
             return .concat([
@@ -495,11 +510,10 @@ final class HomeViewReactor: Reactor {
                !newState.isWorkoutPaused,
                !newState.isRestPaused,
                !newState.isRestTimerStopped {
-                
                 // 0.1초씩 감소
                 newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.1, 0)
-                //                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
-                if newState.restSecondsRemaining == 0.0 {
+//                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
+                if newState.restSecondsRemaining.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
@@ -576,9 +590,7 @@ final class HomeViewReactor: Reactor {
         // MARK: - 현재 운동 데이터 저장
         // 메모 창 dismiss시, 운동 완료 시 등등
         case .saveWorkoutData:
-            
             // TODO: - 기존 데이터 삭제 필요
-            
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
             
@@ -587,7 +599,6 @@ final class HomeViewReactor: Reactor {
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
-            
             newState.workoutRecord = WorkoutRecord(
                 id: UUID().uuidString,
                 workoutRoutine: newState.workoutRoutine,
@@ -596,7 +607,6 @@ final class HomeViewReactor: Reactor {
                 comment: newState.memoInRoutine,
                 date: Date()
             )
-            
             saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             

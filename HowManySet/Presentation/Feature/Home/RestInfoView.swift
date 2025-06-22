@@ -203,13 +203,16 @@ extension RestInfoView {
         // MARK: Action
         [restButton10, restButton30, restButton60, restResetButton].forEach { button in
             button.rx.tap
+                .observe(on: MainScheduler.instance)
                 .do(onNext: {
                     UIView.animate(withDuration: 0.1,
                                    animations: {
                         button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                        button.alpha = 0.9
                     }, completion: { _ in
                         UIView.animate(withDuration: 0.1) {
                             button.transform = .identity
+                            button.alpha = 1
                         }
                     })
                 })
@@ -221,6 +224,7 @@ extension RestInfoView {
         // MARK: State
         // HomeViewReactor의 상태를 구독하여 RestInfoView의 UI를 업데이트
         reactor.state.map { $0.restTime }
+            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] restTime in
                 guard let self else { return }
                 self.restTimeLabel.text = Int(restTime).toRestTimeLabel()
