@@ -129,7 +129,7 @@ private extension HomeRoutineStartCardView {
         }
         
         initialImageView.snp.makeConstraints {
-            $0.width.height.equalTo(50)
+            $0.width.height.equalTo(60)
         }
     }
 }

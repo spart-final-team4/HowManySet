@@ -188,7 +188,7 @@ private extension HomeViewController {
         }
         
         pagingScrollView.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalToSuperview().multipliedBy(0.45)
         }
         
@@ -320,10 +320,10 @@ private extension HomeViewController {
                     $0.leading.equalToSuperview()
                         .offset(cardInset + CGFloat(i) * screenWidth)
                 }
-                UIView.performWithoutAnimation {
+                UIView.animate(withDuration: 0.1, animations: {
                     cardView.transform = .identity
                     cardView.alpha = 1
-                }
+                })
             }
             
             pagingScrollContentView.snp.remakeConstraints {
@@ -373,29 +373,28 @@ private extension HomeViewController {
         
         pagingScrollView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: true)
         
-        // 모든 카드를 먼저 작아진 상태로 초기화
-        visibleCards.forEach { card in
-            UIView.performWithoutAnimation {
-                card.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-                card.alpha = 0.9
+        // 애니메이션을 통한 카드 상태 변경
+        UIView.animate(withDuration: 0.1, animations: {
+            // 모든 카드를 먼저 작아진 상태로 애니메이션
+            visibleCards.enumerated().forEach { index, card in
+                if index == newCurrentPage {
+                    card.transform = .identity
+                    card.alpha = 1.0
+                } else {
+                    card.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+                    card.alpha = 0.9
+                }
             }
-        }
+        })
         
-        // 현재 카드만 활성 상태로 설정
-        let currentCard = visibleCards[newCurrentPage]
-        UIView.performWithoutAnimation {
-            currentCard.transform = .identity
-            currentCard.alpha = 1
-        }
-        
-        self.previousPage = self.currentPage
+        self.previousPage = newCurrentPage
         self.currentPage = newCurrentPage
         self.pageController.currentPage = newCurrentPage
         self.pageController.numberOfPages = visibleCards.count
         
         print("currentPage: \(self.currentPage)")
-        print("페이지 변경: \(self.previousPage) -> \(currentPage)")
-        print(previousPage, newCurrentPage, nextPage)
+        print("page 변경: \(self.previousPage) -> \(newCurrentPage)")
+        print("page -> \(previousPage), \(newCurrentPage), \(nextPage)")
     }
     
     // MARK: - 현재 페이지에서 visible한 카드의 실제 exerciseIndex를 반환하는 함수
@@ -456,9 +455,9 @@ private extension HomeViewController {
                 .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
                 .bind(onNext: { action in
                     reactor.action.onNext(action)
-
+                    
                     // 클릭 애니메이션
-                    UIView.animate(withDuration: 0.1, animations: {
+                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                     }, completion: { _ in
                         UIView.animate(withDuration: 0.1) {
@@ -561,7 +560,6 @@ extension HomeViewController {
         // 페이징이 되었을 시 동작 (페이지 컨트롤 클릭 시 대응)
         // 기본적으로 페이지 컨트롤 클릭 시 페이지 값이 변경되어 .valueChaned로 구현
         pageController.rx.controlEvent(.valueChanged)
-            .observe(on: MainScheduler.instance)
             .map { [weak self] _ -> Int in
                 guard let self else { return 0 }
                 let currentPage = self.pageController.currentPage
@@ -766,12 +764,12 @@ extension HomeViewController {
                     
                     let currentCard = self.pagingCardViewContainer[cardToHideIndex]
                     
-//                    // 현재 카드 초기화 (애니메이션 전)
-//                    UIView.performWithoutAnimation {
-//                        currentCard.transform = .identity
-//                        currentCard.alpha = 1
-//                    }
-//                    
+                    // 현재 카드 초기화 (애니메이션 전)
+                    UIView.animate(withDuration: 0.1, animations: {
+                        currentCard.transform = .identity
+                        currentCard.alpha = 1
+                    })
+                    
                     // 다음 페이지로 이동할지, 이전 페이지로 이동할지 결정
                     let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
                     let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == exerciseIndex }) ?? 0
@@ -837,7 +835,6 @@ extension HomeViewController {
                 
                 if reactor.currentState.isWorkingout {
                     let currentRoutineName = reactor.currentState.workoutRoutine.name
-                    let workoutStateForEdit = reactor.currentState.workoutStateForEdit
                     self.coordinator?.presentEditExerciseView(
                         routineName: currentRoutineName,
                         workoutStateForEdit: workout
