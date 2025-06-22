@@ -305,7 +305,7 @@ private extension RoutineCompleteViewController {
         
         exerciseInfoLabel.text = "\(routineName) | \(todayDate) \(exerciseRecordSavedText)"
         progressView.setProgress(CGFloat(routineDidProgress))
-        percentageLabel.text = "\(Int(routineDidProgress * 100))%"
+        percentageLabel.text = "\(min(100, Int(routineDidProgress * 100)))%"
         exerciseTimeLabel.text = totalTime
         exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
         memoTextView.text = routineMemo
