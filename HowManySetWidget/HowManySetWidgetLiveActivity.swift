@@ -85,7 +85,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                             .font(.title3)
                                     }
                                     .frame(width: buttonSize, height: buttonSize)
-                                    .background(Circle().fill(Color("brandBackground")))
+                                    .background(Circle().fill(Color("green10")))
                                     .buttonStyle(.borderless)
                                 } else {
                                     // Fallback on earlier versions
@@ -133,7 +133,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                             .font(.title3)
                                     }
                                     .frame(width: buttonSize, height: buttonSize)
-                                    .background(Circle().fill(Color("brandBackground")))
+                                    .background(Circle().fill(Color("green10")))
                                     .buttonStyle(.borderless)
                                 } else {
                                     // Fallback on earlier versions
