@@ -118,13 +118,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     /// 유저가 직접 종료 버튼을 눌러서 종료 시
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary) {
         
-        let endWorkoutVC = DefaultPopupViewController(
-            title: "운동 종료",
-            titleTextColor: .error,
-            content: "현재 운동을 종료하시겠습니까?",
-            okButtonText: "종료",
-            okButtonBackgroundColor: .error,
-            okAction: { [weak self] in
+        let endWorkoutVC = ExercisePopupViewController(
+            title: "운동을 종료할까요?",
+            content: "지금까지의 기록만 저장됩니다.",
+            leftButtonText: "운동종료",
+            rightButtonText: "계속하기",
+            nextAction: { [weak self] in
                 guard let self else { return }
                 
                 /// 종료 버튼 누를 시에 해당 클로저(reactor.action) 즉시 실행
@@ -144,13 +143,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     /// 유저가 루틴을 모두 완료했을 시
     func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary) {
         
-        let endWorkoutVC = DefaultPopupViewController(
-            title: "오늘의 모든 운동 완료!",
-            titleTextColor: .error,
-            content: "모든 운동을 완료했습니다. 운동을 종료하시겠습니까?",
-            okButtonText: "종료",
-            okButtonBackgroundColor: .error,
-            okAction: { [weak self] in
+        let endWorkoutVC = ExercisePopupViewController(
+            title: "오늘의 루틴 완료!",
+            content: "수고하셨어요! 운동 기록을 저장할게요.",
+            leftButtonText: "결과보기",
+            rightButtonText: "계속하기",
+            nextAction: { [weak self] in
                 guard let self else { return }
                 
                 let workoutSummary = onConfirm()
