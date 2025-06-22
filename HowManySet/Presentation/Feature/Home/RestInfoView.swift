@@ -99,9 +99,8 @@ final class RestInfoView: UIView, View {
         // MARK: - 내부 물 버튼들 생성 및 바인딩
         for _ in 0..<5 {
             let waterButton = UIButton().then {
-                $0.setImage(UIImage(systemName: "waterbottle"), for: .normal)
-                $0.setImage(UIImage(systemName: "waterbottle.fill"), for: .selected)
-                $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
+                $0.setImage(UIImage(named: "water"), for: .normal)
+                $0.setImage(UIImage(named: "water.fill"), for: .selected)
                 $0.tintColor = .white
                 $0.setTitleColor(.brand, for: .selected)
             }
@@ -114,6 +113,10 @@ final class RestInfoView: UIView, View {
                 }.disposed(by: disposeBag)
             
             $0.addArrangedSubview(waterButton)
+            
+            waterButton.snp.makeConstraints {
+                $0.width.height.equalTo(32)
+            }
         }
     }
     

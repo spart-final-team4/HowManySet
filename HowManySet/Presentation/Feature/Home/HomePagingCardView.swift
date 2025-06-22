@@ -86,8 +86,8 @@ final class HomePagingCardView: UIView {
     }
     
     private lazy var weightImageView = UIImageView().then {
-        let config = UIImage.SymbolConfiguration(pointSize: 40)
-        $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
+        $0.image = UIImage(named: "brandDumbbell")
+        $0.contentMode = .scaleAspectFit
         $0.tintColor = .brand
     }
     
@@ -232,6 +232,10 @@ private extension HomePagingCardView {
         restPlayPauseButton.snp.makeConstraints {
             $0.centerY.equalTo(remainingRestTimeLabel)
             $0.trailing.equalTo(remainingRestTimeLabel.snp.leading).offset(-12)
+        }
+        
+        weightImageView.snp.makeConstraints {
+            $0.width.height.equalTo(40)
         }
     }
 }
