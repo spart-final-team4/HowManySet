@@ -111,7 +111,10 @@ final class HomeViewReactor: Reactor {
         /// 운동 데이터 업데이트, 운동 종료시 처리 포함
         case manageWorkoutData(isEnded: Bool)
         /// 스킵(다음) 버튼 클릭 시 분기처리 및 완료항목 업데이트
-        case manageForwardFlow(isRoutineCompleted: Bool)
+        case manageDataIfForwarded(
+            isRoutineCompleted: Bool,
+            isCurrentExerciseCompleted: Bool
+        )
         /// 현재 운동 카드 업데이트
         case updateWorkoutCardState(
             updatedCardState: WorkoutCardState,
@@ -354,10 +357,7 @@ final class HomeViewReactor: Reactor {
             
         case .pageChanged(let newPageIndex):
             // 해당 페이지로 운동 인덱스 변경
-            return .concat([
-                .just(.manageForwardFlow(isRoutineCompleted: false)),
-                .just(.changeExerciseIndex(newPageIndex))
-            ])
+            return .just(.changeExerciseIndex(newPageIndex))
             
         case .restPauseButtonClicked:
             return .just(.pauseAndPlayRest(!currentState.isRestPaused))
@@ -450,11 +450,7 @@ final class HomeViewReactor: Reactor {
                 newState.isRestTimerStopped = true
             }
             
-        case let .manageForwardFlow(isRoutineCompleted):
-            
-            if !newState.isResting {
-                newState.didSetCount += 1
-            }
+        case let .manageDataIfForwarded(isRoutineCompleted, isCurrentExerciseCompleted):
             
             if isRoutineCompleted,
                newState.currentExerciseAllSetsCompleted { // 루틴 전체 완료
@@ -466,9 +462,9 @@ final class HomeViewReactor: Reactor {
                 newState.didExerciseCount += 1
                 print("현재 운동 완료")
             } else { // 다음 세트로
+                newState.didSetCount += 1
                 print("다음 세트로 - \(newState.workoutCardStates[newState.currentExerciseIndex].setIndex)")
             }
-            
             print("🚬 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
             
         case let .updateWorkoutCardState(updatedState, oldState, oldIndex):
@@ -676,9 +672,12 @@ private extension HomeViewReactor {
                 .just(.setResting(isResting)),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer,
-                .just(.manageForwardFlow(isRoutineCompleted: false)),
                 // 카드 정보 업데이트
-                .just(.updateWorkoutCardState(updatedCardState: updatedCardState))
+                .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
+                .just(.manageDataIfForwarded(
+                    isRoutineCompleted: false,
+                    isCurrentExerciseCompleted: false
+                ))
             ])
         } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
             
@@ -709,12 +708,15 @@ private extension HomeViewReactor {
                     .just(.setResting(false)),
                     .just(.setRestTimeDataAtProgressBar(0)), // 휴식 프로그레스 초기화
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                    .just(.manageForwardFlow(isRoutineCompleted: false)),
                     .just(.updateWorkoutCardState(
                         updatedCardState: currentState.workoutCardStates[nextExerciseIndex],
                         oldCardState: currentCardState,
                         oldCardIndex: cardIndex)),
-                    .just(.changeExerciseIndex(nextExerciseIndex))
+                    .just(.changeExerciseIndex(nextExerciseIndex)),
+                    .just(.manageDataIfForwarded(
+                        isRoutineCompleted: false,
+                        isCurrentExerciseCompleted: true
+                    ))
                 ])
             } else { // nextExerciseIndex == cardIndex일때
                 
@@ -736,12 +738,15 @@ private extension HomeViewReactor {
                         .just(.setResting(false)),
                         .just(.setRestTimeDataAtProgressBar(0)), // 휴식 프로그레스 초기화
                         .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                        .just(.manageForwardFlow(isRoutineCompleted: false)),
                         .just(.updateWorkoutCardState(
                             updatedCardState: currentState.workoutCardStates[nextExerciseIndex],
                             oldCardState: currentCardState,
                             oldCardIndex: cardIndex)),
-                        .just(.changeExerciseIndex(nextExerciseIndex))
+                        .just(.manageDataIfForwarded(
+                            isRoutineCompleted: false,
+                            isCurrentExerciseCompleted: true
+                        )),
+                        .just(.changeExerciseIndex(nextExerciseIndex)),
                     ])
                 }
             }
