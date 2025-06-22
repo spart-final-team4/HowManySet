@@ -37,20 +37,19 @@ final class HomeRoutineStartCardView: UIView {
     
     private lazy var containerVStack = UIStackView().then {
         $0.axis = .vertical
-        $0.distribution = .fillProportionally
+        $0.distribution = .equalSpacing
         $0.alignment = .center
     }
 
     private lazy var initialImageView = UIImageView().then {
         $0.image = UIImage(named: "MainIcon")
         $0.contentMode = .scaleAspectFit
-        $0.tintColor = .brand
     }
     
     private lazy var initialTextLabel = UILabel().then {
         $0.text = initialText
         $0.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        $0.numberOfLines = 0
+        $0.numberOfLines = 1
         $0.adjustsFontSizeToFitWidth = true
         $0.textAlignment = .center
     }
@@ -120,8 +119,7 @@ private extension HomeRoutineStartCardView {
         }
         
         containerVStack.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview()
-            $0.verticalEdges.equalToSuperview().inset(20)
+            $0.center.equalToSuperview()
         }
         
         routineSelectButton.snp.makeConstraints {
@@ -129,7 +127,7 @@ private extension HomeRoutineStartCardView {
         }
         
         initialImageView.snp.makeConstraints {
-            $0.width.height.equalTo(60)
+            $0.width.height.equalTo(70)
         }
     }
 }
