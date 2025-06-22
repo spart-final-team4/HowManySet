@@ -100,16 +100,13 @@ final class RestInfoView: UIView, View {
         for _ in 0..<5 {
             let waterButton = UIButton().then {
                 $0.setImage(UIImage(named: "water"), for: .normal)
-                $0.setImage(UIImage(named: "water.fill"), for: .selected)
-                $0.tintColor = .white
-                $0.setTitleColor(.brand, for: .selected)
+                $0.setImage(UIImage(named: "waterFill"), for: .selected)
             }
             
             waterButton.rx.tap
                 .bind { [weak waterButton]  in
                     guard let waterButton else { return }
                     waterButton.isSelected.toggle()
-                    waterButton.tintColor = waterButton.isSelected ? .brand : .white
                 }.disposed(by: disposeBag)
             
             $0.addArrangedSubview(waterButton)
