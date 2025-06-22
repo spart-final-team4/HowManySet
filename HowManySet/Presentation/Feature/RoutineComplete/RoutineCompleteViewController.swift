@@ -27,6 +27,8 @@ final class RoutineCompleteViewController: UIViewController, View {
     private let memoPlaceHolderText = "메모를 입력해 주세요."
     private let confirmText = "확인"
     
+    private let fontSize: CGFloat = UIScreen.main.bounds.width < 375 ? 14 : 20
+    
     // MARK: - UI Components
     private lazy var mainContentsContainer = UIView()
     
@@ -74,7 +76,7 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var exerciseTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .systemFont(ofSize: fontSize, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
@@ -82,7 +84,7 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var exerciseAndSetInfoLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .systemFont(ofSize: fontSize, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
