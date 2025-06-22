@@ -116,7 +116,7 @@ final class HomePagingCardView: UIView {
     lazy var remainingRestTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
         $0.isHidden = true
-        $0.tintColor = .textSecondary
+        $0.textColor = .textSecondary
     }
     
     lazy var setCompleteButton = UIButton().then {
