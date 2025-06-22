@@ -55,7 +55,7 @@ final class EditRoutineViewController: UIViewController, View {
         
         tableView.footerViewTapped
             .do(onNext: { [weak self] in
-                self?.presentEditRoutineVC()
+                self?.presentEditExerciseVC()
             }).map { Reactor.Action.plusExcerciseButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -106,12 +106,13 @@ final class EditRoutineViewController: UIViewController, View {
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
     }
     
-    func presentEditRoutineVC() {
-            let vc = EditRoutineViewController(
-                reactor: EditRoutineViewReactor(
-                    with: WorkoutRoutine(id: UUID().uuidString, name: "", workouts: []),
+    func presentEditExerciseVC() {
+            let vc = EditExcerciseViewController(
+                reactor: EditExcerciseViewReactor(
+                    routineName: reactor?.currentState.routine.name ?? "알수없음",
                     saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
-                    deleteRoutineUseCase: DeleteRoutineUseCase(repository: RoutineRepositoryImpl()))
+                    workoutStateForEdit: nil,
+                    caller: .forEditing)
             )
             self.present(vc, animated: true)
         }
