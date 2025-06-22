@@ -511,7 +511,7 @@ extension HomeViewController {
                 guard let self = self else {
                     return Reactor.Action.forwardButtonClicked(at: 0)
                 }
-                // 현재 visible한 카드들의 index 받아온 후 forward
+                // 현재 visible한 카드들 index 받아온 후 forward
                 let currentExerciseIndex = self.getCurrentVisibleExerciseIndex()
                 return Reactor.Action.forwardButtonClicked(at: currentExerciseIndex)
             }
@@ -743,39 +743,34 @@ extension HomeViewController {
         reactor.state
             .map { $0.currentExerciseAllSetsCompleted }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
             .filter { $0 }
             .withLatestFrom(
                 reactor.state.map { $0.currentExerciseIndex }
             )
-            .bind(onNext: { [weak self] exerciseIndex in
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] currentIndex in
                 guard let self else { return }
                 
                 // 삭제할 카드 찾기 (exerciseIndex 기준)
-                guard let cardToHideIndex = self.pagingCardViewContainer.firstIndex(where: { $0.index == exerciseIndex }) else {
-                    print("⚠️ 삭제할 카드를 찾을 수 없습니다. exerciseIndex: \(exerciseIndex)")
+                guard let cardToHideIndex = self.pagingCardViewContainer.firstIndex(
+                    where: { $0.index == currentIndex }
+                )
+                else {
+                    print("⚠️ 삭제할 카드를 찾을 수 없습니다. currentIndex: \(currentIndex)")
                     return
                 }
                 
                 var newPage = self.currentPage
-                
                 // 현재 카드의 인덱스가 유효한지 확인
                 if self.pagingCardViewContainer.indices.contains(cardToHideIndex) {
+                    // hidden 처리할 카드
+                    let currentCardToHide = self.pagingCardViewContainer[cardToHideIndex]
                     
-                    let currentCard = self.pagingCardViewContainer[cardToHideIndex]
-                    
-                    // 현재 카드 초기화 (애니메이션 전)
-                    UIView.animate(withDuration: 0.1, animations: {
-                        currentCard.transform = .identity
-                        currentCard.alpha = 1
-                    })
+                    // hidden이 아닌 뷰들 중 첫번째 뷰의 인덱스를 받아옴
+                    let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
+                    let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) ?? 0
                     
                     // 다음 페이지로 이동할지, 이전 페이지로 이동할지 결정
-                    let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
-                    let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == exerciseIndex }) ?? 0
-                    
-                    // 마지막 카드가 아니면 현재 위치 유지 (다음 카드로 자동 이동)
-                    // 마지막 카드면 이전 카드로 이동
                     if currentVisibleIndex >= visibleCardsBeforeHiding.count - 1 {
                         // 마지막 카드인 경우, 이전 페이지로
                         newPage = max(0, self.currentPage - 1)
@@ -785,30 +780,26 @@ extension HomeViewController {
                     }
                 }
                 
-                let hiddenView = self.pagingCardViewContainer[cardToHideIndex]
+                let hiddenCard = self.pagingCardViewContainer[cardToHideIndex]
                 
                 // 애니메이션 실행 후 끝나면 hidden
-                UIView.animate(withDuration: 0.3, animations: {
-                    hiddenView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
-                    hiddenView.alpha = 0.5
+                UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut],  animations: {
+                    hiddenCard.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
+                    hiddenCard.alpha = 0.5
                 }) { _ in
                     
-                    hiddenView.isHidden = true
-                    
+                    hiddenCard.isHidden = true
                     // 모든 카드가 완료된 경우 체크
                     let visibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
                     if visibleCards.isEmpty {
                         print("🎉 모든 운동 완료!")
-                        
                         self.coordinator?.popUpEndWorkoutAlert {
                             reactor.action.onNext(.stopButtonClicked(isEnded: true))
                             return reactor.currentState.workoutSummary
                         }
                     }
-                    
                     // newPage가 유효한 범위 내에 있는지 확인
                     let finalNewPage = min(newPage, visibleCards.count - 1)
-                    
                     print("💻 finalNewPage: \(finalNewPage), stateIndex: \(reactor.currentState.currentExerciseIndex)")
                     
                     // 나머지 카드 뷰 레이아웃 재조정
@@ -816,7 +807,6 @@ extension HomeViewController {
                         cardContainer: self.pagingCardViewContainer,
                         newPage: finalNewPage
                     )
-                    
                     // 새로운 현재 운동의 exerciseIndex를 Reactor에 알림
                     if visibleCards.indices.contains(finalNewPage) {
                         let newExerciseIndex = visibleCards[finalNewPage].index
@@ -826,13 +816,13 @@ extension HomeViewController {
                 print("카드 뷰 개수: \(self.pagingCardViewContainer.count)")
             }).disposed(by: disposeBag)
         
+        // weightRepsButtonClick -> forEdit 데이터 변형 시 실행됨
         reactor.state.map { $0.workoutStateForEdit }
             .filter { $0 != nil }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind { [weak self] workout in
                 guard let self, let workout else { return }
-                
                 if reactor.currentState.isWorkingout {
                     let currentRoutineName = reactor.currentState.workoutRoutine.name
                     self.coordinator?.presentEditExerciseView(
