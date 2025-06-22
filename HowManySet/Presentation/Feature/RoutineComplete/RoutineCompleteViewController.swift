@@ -46,6 +46,7 @@ final class RoutineCompleteViewController: UIViewController, View {
         $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .lightGray
         $0.textAlignment = .center
+        $0.numberOfLines = 1
     }
     
     private lazy var cardContentsContainer = UIView().then {
@@ -73,17 +74,19 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var exerciseTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
+        $0.numberOfLines = 1
     }
     
     private lazy var exerciseAndSetInfoLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
+        $0.numberOfLines = 1
     }
     
     private lazy var timeIcon = UIImageView().then {
@@ -380,9 +383,9 @@ private extension RoutineCompleteViewController {
                 guard let self else { return }
                 print("키보드 나타남")
         
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.1, animations: {
                     self.mainContentsContainer.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight/2)
-                }
+                })
             })
             .disposed(by: disposeBag)
         
@@ -391,9 +394,9 @@ private extension RoutineCompleteViewController {
                 guard let self else { return }
                 print("키보드 사라짐")
 
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.1, animations: {
                     self.mainContentsContainer.transform = .identity
-                }
+                })
             })
             .disposed(by: disposeBag)
     }
