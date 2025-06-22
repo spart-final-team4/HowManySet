@@ -116,8 +116,8 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var shareButton = UIButton().then {
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
-        $0.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        $0.setImage(UIImage(named: "share"), for: .normal)
+        $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
         $0.backgroundColor = .systemGray2
         $0.layer.cornerRadius = 22
@@ -209,11 +209,6 @@ private extension RoutineCompleteViewController {
     
     func setConstraints() {
         
-//        mainContentsContainer.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-//            $0.bottom.equalToSuperview()
-//            $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
-//        }
         mainContentsContainer.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
@@ -271,7 +266,7 @@ private extension RoutineCompleteViewController {
         }
         
         confirmButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(20)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(56)
         }
