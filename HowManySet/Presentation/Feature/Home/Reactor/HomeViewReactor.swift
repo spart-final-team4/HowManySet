@@ -320,6 +320,7 @@ final class HomeViewReactor: Reactor {
                 .withLatestFrom(self.state.map{ $0.isWorkoutPaused }) { _, isPaused in return isPaused }
                 .filter { !$0 }
                 .map { _ in Mutation.workoutTimeUpdating }
+                .observe(on: MainScheduler.asyncInstance)
             
             return .concat([
                 .just(.setWorkingout(true)),
@@ -327,7 +328,7 @@ final class HomeViewReactor: Reactor {
                 .just(.initializeWorkoutCardStates(updatedCardStates))
             ])
             
-            // MARK: - 세트 완료 버튼 클릭 시 로직
+        // MARK: - 세트 완료 버튼 클릭 시 로직
         case let .setCompleteButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             
@@ -336,7 +337,7 @@ final class HomeViewReactor: Reactor {
                 handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
             ])
             
-            // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
+        // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
         case let .forwardButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 스킵 버튼 클릭!")
             
@@ -367,6 +368,8 @@ final class HomeViewReactor: Reactor {
                     .take(Int(currentState.restSecondsRemaining * 10))
                     .take(until: self.state.map { $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }.filter { $0 })
                     .map { _ in Mutation.restRemainingSecondsUpdating }
+                    .observe(on: MainScheduler.asyncInstance)
+
                 return .concat([
                     .just(.pauseAndPlayRest(false)),
                     restTimer
@@ -607,8 +610,11 @@ final class HomeViewReactor: Reactor {
                 comment: newState.memoInRoutine,
                 date: Date()
             )
-            saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
-            fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
+            
+            DispatchQueue.global().async {
+                self.saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
+                self.fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
+            }
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
@@ -661,6 +667,7 @@ private extension HomeViewReactor {
                     .take(Int(tickCount))
                     .take(until: self.state.map { !$0.isResting || $0.isRestTimerStopped }.filter { $0 })
                     .map { _ in Mutation.restRemainingSecondsUpdating }
+                    .observe(on: MainScheduler.asyncInstance)
             }
             
             let nextSet = currentWorkout.sets[nextSetIndex]
