@@ -69,6 +69,7 @@ private extension OnBoardingViewController {
     /// 배경색 및 온보딩 페이지 인디케이터의 페이지 수 등 Appearance 관련 설정.
     func setAppearance() {
         view.backgroundColor = .background
+        navigationController?.setNavigationBarHidden(true, animated: false)
         onboardingView.pageIndicator.numberOfPages = onboardingPages.count
     }
     
@@ -98,6 +99,15 @@ private extension OnBoardingViewController {
 private extension OnBoardingViewController {
     /// 닉네임 입력 "다음" 버튼 클릭 시 온보딩 페이지로 전환. 첫 페이지로 초기화.
     @objc func nicknameInputViewNextButtonAction() {
+        guard let nickname = nicknameInputView.nicknameTextField.text,
+              !nickname.isEmpty else {
+            return
+        }
+        
+        // 닉네임 설정 완료 처리
+        coordinator?.completeNicknameSetting(nickname: nickname)
+        
+        // 온보딩 화면으로 전환
         nicknameInputView.isHidden = true
         onboardingView.isHidden = false
         currentPageIndex = 0
@@ -125,9 +135,6 @@ private extension OnBoardingViewController {
     
     /// 온보딩 닫기(X) 버튼 클릭 시 온보딩을 건너뛰고 바로 완료 처리.
     @objc func onboardingViewCloseButtonAction() {
-        // 온보딩 완료 상태를 UserDefaults에 저장
-        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-        
         // 온보딩 건너뛰었음을 별도로 저장 (향후 재안내 등에 활용 가능)
         UserDefaults.standard.set(true, forKey: "hasSkippedOnboarding")
         
@@ -199,7 +206,7 @@ private extension OnBoardingViewController {
         onboardingView.titleLabel.text = page.title
         onboardingView.subTitleLabel.text = page.subtitle
         onboardingView.centerImageView.image = UIImage(named: page.imageName)
-
+        
         let isLastPage = index == onboardingPages.count - 1
         let buttonTitle = isLastPage ? "시작하기" : "다음"
         onboardingView.nextButton.setTitle(buttonTitle, for: .normal)
@@ -212,15 +219,13 @@ private extension OnBoardingViewController {
             currentPageIndex = nextIndex
         } else {
             print("goToNextPage() - else")
-            (coordinator as? OnBoardingCoordinator)?.completeOnBoarding()
+            coordinator?.completeOnBoarding()
         }
     }
 }
 
 private extension OnBoardingViewController {
-    
     func bindUIEvents() {
-        
         // 화면 탭하면 키보드 내리기
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
