@@ -422,9 +422,8 @@ private extension HomeViewController {
             
             // 세트 완료 버튼
             cardView.setCompleteButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
-                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
-                .bind(onNext: { action in
+                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+                .do(onNext: {
                     print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     
                     UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
@@ -434,15 +433,14 @@ private extension HomeViewController {
                             cardView.setCompleteButton.transform = .identity
                         })
                     })
-                    DispatchQueue.main.async {
-                        reactor.action.onNext(action)
-                    }
                 })
+                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
+                .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
             
             // 루틴 편집 및 메모 버튼
             cardView.editButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
+                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
                 .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
                 .bind(onNext: { [weak self] action in
                     guard let self else { return }
@@ -453,11 +451,8 @@ private extension HomeViewController {
             
             // 해당 페이지 운동 종목 버튼
             cardView.weightRepsButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
-                .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
-                .bind(onNext: { action in
-                    reactor.action.onNext(action)
-                    
+                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+                .do(onNext: {
                     // 클릭 애니메이션
                     UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -467,11 +462,13 @@ private extension HomeViewController {
                         })
                     })
                 })
+                .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
+                .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
             // 휴식 재생/일시정지 버튼
             cardView.restPlayPauseButton.rx.tap
-                .throttle(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
+                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
                 .map { Reactor.Action.restPauseButtonClicked }
                 .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
@@ -517,6 +514,7 @@ extension HomeViewController {
                 let currentExerciseIndex = self.getCurrentVisibleExerciseIndex()
                 return Reactor.Action.forwardButtonClicked(at: currentExerciseIndex)
             }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -611,7 +609,7 @@ extension HomeViewController {
         // 운동 시간 업데이트
         reactor.state.map { $0.isWorkingout }
             .filter { $0 }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] isWorkingout in
                 guard let self else { return }
                 
@@ -620,26 +618,32 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
         
         // 휴식 중 여부에 따라 뷰 표현 전환
-        reactor.state.map { ($0.restTime, $0.isResting) }
-            .distinctUntilChanged { $0 == $1 }
-            .observe(on: MainScheduler.asyncInstance)
-            .bind { [weak self] restTime, isResting in
-                guard let self else { return }
-                
-                self.restInfoView.restTimeLabel.text = Int(restTime).toRestTimeLabel()
-                
-                if isResting {
-                    self.pagingCardViewContainer.forEach {
-                        $0.showRestUI()
-                        self.restInfoView.showWaterInfo()
-                    }
-                } else {
-                    self.pagingCardViewContainer.forEach {
-                        $0.showExerciseUI()
-                    }
-                    self.restInfoView.showRestInfo()
+        Observable.combineLatest(
+            reactor.state.map { $0.restTime },
+            reactor.state.map { $0.isResting },
+            reactor.state.map { $0.isWorkingout }
+        )
+        .filter { $2 }
+        .distinctUntilChanged { $0 == $1 }
+        .observe(on: MainScheduler.instance)
+        .bind { [weak self] (data: (Float, Bool, Bool)) in
+            guard let self else { return }
+            let (restTime, isResting, _ ) = data
+            
+            self.restInfoView.restTimeLabel.text = Int(restTime).toRestTimeLabel()
+            
+            if isResting {
+                self.pagingCardViewContainer.forEach {
+                    $0.showRestUI()
+                    self.restInfoView.showWaterInfo()
                 }
-            }.disposed(by: disposeBag)
+            } else {
+                self.pagingCardViewContainer.forEach {
+                    $0.showExerciseUI()
+                }
+                self.restInfoView.showRestInfo()
+            }
+        }.disposed(by: disposeBag)
         
         // TODO: 추후에 리팩토링
         // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
@@ -652,6 +656,7 @@ extension HomeViewController {
             reactor.state.map { $0.isRestTimerStopped }
         )
         .filter { !$5 }
+        .distinctUntilChanged { $0 == $1 }
         .observe(on: MainScheduler.asyncInstance)
         .map { [weak self] (restData: (Bool, Int, Float, Float, Float?, Bool)) -> [(Int, Float, String, Bool, Bool)] in
             guard let self else { return [] }
@@ -731,7 +736,7 @@ extension HomeViewController {
         // 운동 중지 시
         reactor.state.map { $0.isWorkoutPaused }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind(with: self) { view, isWorkoutPaused in
                 let workoutButtonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: workoutButtonImageName), for: .normal)
@@ -746,7 +751,7 @@ extension HomeViewController {
             .withLatestFrom(
                 reactor.state.map { $0.currentExerciseIndex }
             )
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { [weak self] currentIndex in
                 guard let self else { return }
                 
@@ -761,6 +766,14 @@ extension HomeViewController {
                 
                 let cardToHide = self.pagingCardViewContainer[cardToHideIndex]
                 let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
+                
+                // 카드 삭제 애니메이션
+                UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+                    // 스케일 다운 및 페이드 아웃
+                    cardToHide.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+                    cardToHide.alpha = 0.1
+                    cardToHide.isHidden = true
+                })
                 
                 // 현재 보이는 카드 중에서의 인덱스 찾기
                 guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
@@ -780,59 +793,40 @@ extension HomeViewController {
                 
                 print("💻 삭제 전 visible 카드 수: \(visibleCardsBeforeHiding.count), 현재 visible 인덱스: \(currentVisibleIndex), 새로운 페이지: \(newPage)")
                 
-                // 카드 삭제 애니메이션
-                UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-                    // 스케일 다운 및 페이드 아웃
-                    cardToHide.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-                    cardToHide.alpha = 0.5
-                }) { [weak self] _ in
-                    guard let self = self else { return }
-                    
-                    // 카드 숨김 처리
-                    UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-                        cardToHide.isHidden = true
-                        cardToHide.transform = .identity
-                        cardToHide.alpha = 1.0
-                    })
-                    
-                    // 남은 visible 카드 확인
-                    let remainingVisibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
-                    
-                    if remainingVisibleCards.isEmpty {
-                        print("🎉 모든 운동 완료!")
-                        // 운동 완료 처리
-                        if let reactor = self.reactor {
-                            self.coordinator?.popUpEndWorkoutAlert {
-                                DispatchQueue.main.async {
-                                    reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                                }
-                                return reactor.currentState.workoutSummary
-                            }
+                
+                // 남은 visible 카드 확인
+                let remainingVisibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
+                
+                if remainingVisibleCards.isEmpty {
+                    print("🎉 모든 운동 완료!")
+                    // 운동 완료 처리
+                    if let reactor = self.reactor {
+                        self.coordinator?.popUpCompletedWorkoutAlert {
+                            reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                            return reactor.currentState.workoutSummary
                         }
-                        return
                     }
+                    return
+                }
+                
+                // 유효한 페이지 범위로 조정
+                let finalNewPage = min(newPage, remainingVisibleCards.count - 1)
+                
+                print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
+                
+                // 레이아웃 재조정
+                self.setExerciseCardViewslayout(
+                    cardContainer: self.pagingCardViewContainer,
+                    newPage: finalNewPage
+                )
+                
+                // Reactor에 페이지 변경 알림
+                if remainingVisibleCards.indices.contains(finalNewPage) {
+                    let newExerciseIndex = remainingVisibleCards[finalNewPage].index
+                    print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
                     
-                    // 유효한 페이지 범위로 조정
-                    let finalNewPage = min(newPage, remainingVisibleCards.count - 1)
-                    
-                    print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
-                    
-                    // 레이아웃 재조정
-                    self.setExerciseCardViewslayout(
-                        cardContainer: self.pagingCardViewContainer,
-                        newPage: finalNewPage
-                    )
-                    
-                    // Reactor에 페이지 변경 알림
-                    if remainingVisibleCards.indices.contains(finalNewPage) {
-                        let newExerciseIndex = remainingVisibleCards[finalNewPage].index
-                        print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
-                        
-                        if let reactor = self.reactor {
-                            DispatchQueue.main.async {
-                                reactor.action.onNext(.pageChanged(to: newExerciseIndex))
-                            }
-                        }
+                    if let reactor = self.reactor {
+                        reactor.action.onNext(.pageChanged(to: newExerciseIndex))
                     }
                 }
             }).disposed(by: disposeBag)
@@ -902,8 +896,7 @@ private extension HomeViewController {
             .startWith(Notification(name: UIApplication.willEnterForegroundNotification))
             .flatMapLatest { [weak self] _ -> Observable<Void> in
                 guard let self else { return .empty() }
-                // 0.1초마다 polling
-                return Observable<Int>.interval(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
+                return Observable<Int>.interval(.milliseconds(500), scheduler: MainScheduler.instance)
                     .flatMap { _ in
                         Observable.merge(
                             Observable.create { observer in

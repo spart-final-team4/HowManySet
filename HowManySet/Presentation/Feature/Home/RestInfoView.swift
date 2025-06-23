@@ -203,7 +203,7 @@ extension RestInfoView {
         // MARK: Action
         [restButton10, restButton30, restButton60, restResetButton].forEach { button in
             button.rx.tap
-                .observe(on: MainScheduler.instance)
+                .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                 .do(onNext: {
                     UIView.animate(withDuration: 0.1,
                                    animations: {
