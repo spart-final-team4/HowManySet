@@ -36,6 +36,16 @@ final class RealmService: RealmServiceProtocol {
         let realm = try? Realm()
         return realm?.objects(type.type)
     }
+    
+    func read<T: Object>(type: RealmDataType<T>, primaryKey: String) -> Object? {
+        do {
+            let realm = try Realm()
+            guard let data = realm.object(ofType: type.type.self, forPrimaryKey: primaryKey) else { return nil }
+            return data
+        } catch {
+            return nil
+        }
+    }
 
     /// Realm에서 특정 인덱스에 해당하는 객체를 조회합니다.
     /// - Parameters:
