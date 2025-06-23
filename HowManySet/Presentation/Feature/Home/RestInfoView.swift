@@ -21,6 +21,10 @@ final class RestInfoView: UIView, View {
     private let restResetButtonText = "초기화"
     private let restText = "현재 설정된 휴식 시간"
     private let waterText = "물 한잔 챙겼다면, 클릭!"
+    
+    // SE3 - 375 x 667 pt
+    private let customInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 16 : 20
+    private let buttonHeight: CGFloat =  UIScreen.main.bounds.width <= 375 ? 30 : 36
 
     var disposeBag = DisposeBag()
     
@@ -56,34 +60,34 @@ final class RestInfoView: UIView, View {
     }
     
     lazy var restButton60 = UIButton().then {
-        $0.backgroundColor = .darkGray
+        $0.backgroundColor = .grey5
         $0.setTitle(restButtonText60, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 60
     }
     
     lazy var restButton30 = UIButton().then {
-        $0.backgroundColor = .darkGray
+        $0.backgroundColor = .grey5
         $0.setTitle(restButtonText30, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 30
     }
     
     lazy var restButton10 = UIButton().then {
-        $0.backgroundColor = .darkGray
+        $0.backgroundColor = .grey5
         $0.setTitle(restButtonText10, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 10
     }
     
     lazy var restResetButton = UIButton().then {
         $0.backgroundColor = .background
         $0.setTitle(restResetButtonText, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 0
     }
     
@@ -101,6 +105,7 @@ final class RestInfoView: UIView, View {
             let waterButton = UIButton().then {
                 $0.setImage(UIImage(named: "water"), for: .normal)
                 $0.setImage(UIImage(named: "waterFill"), for: .selected)
+                $0.contentMode = .scaleAspectFit
             }
             
             waterButton.rx.tap
@@ -112,7 +117,7 @@ final class RestInfoView: UIView, View {
             $0.addArrangedSubview(waterButton)
             
             waterButton.snp.makeConstraints {
-                $0.width.height.equalTo(32)
+                $0.width.height.equalTo(buttonHeight)
             }
         }
     }
@@ -143,28 +148,34 @@ private extension RestInfoView {
     
     func setViewHiearchy() {
         self.addSubview(contentsVStack)
-        contentsVStack.addArrangedSubviews(restLabelHStack, restButtonHStack,
-                                           waterLabel, waterImageHStack)
-        
-        restLabelHStack.addArrangedSubviews(restLabel, restTimeLabel)
+        contentsVStack.addArrangedSubviews(
+            restLabelHStack,
+            restButtonHStack,
+            waterLabel,
+            waterImageHStack
+        )
+        restLabelHStack.addArrangedSubviews(
+            restLabel,
+            restTimeLabel
+        )
         restButtonHStack.addArrangedSubviews(
             restButton60,
             restButton30,
             restButton10,
-            restResetButton)
+            restResetButton
+        )
     }
     
     func setConstraints() {
         
         contentsVStack.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(12)
-            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.edges.equalToSuperview().inset(customInset)
         }
         
         [restButton60, restButton30, restButton10, restResetButton].forEach {
             $0.snp.makeConstraints {
                 $0.width.equalTo(self).multipliedBy(0.19)
-                $0.height.equalTo(36)
+                $0.height.equalTo(buttonHeight)
             }
         }
     }
