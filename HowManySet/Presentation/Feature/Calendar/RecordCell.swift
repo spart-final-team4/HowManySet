@@ -94,6 +94,11 @@ private extension RecordCell {
     }
 
     func setConstraints() {
+        contentView.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(8)
+            $0.horizontalEdges.equalToSuperview()
+        }
+
         labelStackView.snp.makeConstraints {
             $0.verticalEdges.equalToSuperview().inset(16)
             $0.horizontalEdges.equalToSuperview().inset(20)
