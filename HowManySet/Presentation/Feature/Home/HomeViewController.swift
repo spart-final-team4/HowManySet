@@ -320,10 +320,8 @@ private extension HomeViewController {
                     $0.leading.equalToSuperview()
                         .offset(cardInset + CGFloat(i) * screenWidth)
                 }
-                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                    cardView.transform = .identity
-                    cardView.alpha = 1
-                })
+                cardView.transform = .identity
+                cardView.alpha = 1
             }
             
             pagingScrollContentView.snp.remakeConstraints {
@@ -756,12 +754,11 @@ extension HomeViewController {
             .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { [weak self] currentIndex in
                 guard let self else { return }
-                
+                                
                 // 삭제할 카드 찾기 (exerciseIndex 기준)
                 guard let cardToHideIndex = self.pagingCardViewContainer.firstIndex(
                     where: { $0.index == currentIndex }
-                )
-                else {
+                ) else {
                     print("⚠️ 삭제할 카드를 찾을 수 없습니다. currentIndex: \(currentIndex)")
                     return
                 }
@@ -770,12 +767,13 @@ extension HomeViewController {
                 let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
                 
                 // 카드 삭제 애니메이션
-                UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+                UIView.performWithoutAnimation {
                     // 스케일 다운 및 페이드 아웃
                     cardToHide.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
                     cardToHide.alpha = 0.1
-                    cardToHide.isHidden = true
-                })
+                }
+                
+                cardToHide.isHidden = true
                 
                 // 현재 보이는 카드 중에서의 인덱스 찾기
                 guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
@@ -848,12 +846,12 @@ extension HomeViewController {
                     self.coordinator?.presentEditExerciseView(
                         routineName: currentRoutineName,
                         workoutStateForEdit: workout,
-                        onDismiss: {                                                    reactor.action.onNext(.editExerciseViewPresented(at: self.getCurrentVisibleExerciseIndex(), isPresented: false))
+                        onDismiss: {                                                    reactor.action.onNext(.editExerciseViewPresented(at: self.getCurrentVisibleExerciseIndex(), isPresented: false)) // getCurrentVisibleExerciseIndex로 현재 index를 가져온 후 수행
                         }
                     )
                 }
             }.disposed(by: disposeBag)
-    
+        
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
