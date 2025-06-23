@@ -116,6 +116,7 @@ final class EditExcerciseViewReactor: Reactor {
                 }
                 
                 let newWorkout = Workout(
+                    id: UUID().uuidString,
                     name: self.currentState.currentExcerciseName,
                     sets: sets,
                     comment: nil
@@ -166,7 +167,7 @@ final class EditExcerciseViewReactor: Reactor {
             
         case .saveRoutine:
             // TODO: 실제 저장 시 UID 입력 필요
-            saveRoutineUseCase.execute(uid: "", item: newState.currentRoutine)
+            saveRoutineUseCase.execute(item: newState.currentRoutine)
             
         case .changeExcerciseName(let newName):
             newState.currentExcerciseName = newName

@@ -27,3 +27,13 @@ protocol UserSettingRepository {
     func saveUserSetting(uid: String, settings: UserSetting)
 }
 
+// MARK: Realm Repository
+extension UserSettingRepository {
+    func fetchUserSetting() -> Single<UserSetting> {
+        return fetchUserSetting(uid: "")
+    }
+    
+    func saveUserSetting(settings: UserSetting) {
+        saveUserSetting(uid: "", settings: settings)
+    }
+}

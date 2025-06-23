@@ -19,3 +19,9 @@ protocol SaveRecordUseCaseProtocol {
     ///   - item: 저장할 `WorkoutRecord` 객체
     func execute(uid: String, item: WorkoutRecord)
 }
+
+extension SaveRecordUseCaseProtocol {
+    func execute(uid: String = "", item: WorkoutRecord) {
+        execute(uid: uid, item: item)
+    }
+}
