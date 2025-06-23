@@ -18,7 +18,7 @@ protocol UpdateRoutineUseCaseProtocol {
 }
 
 extension UpdateRoutineUseCaseProtocol {
-    func execute(uid: String = "", item: WorkoutRoutine) {
-        execute(uid: uid, item: item)
+    func execute(item: WorkoutRoutine) {
+        execute(uid: "", item: item)
     }
 }

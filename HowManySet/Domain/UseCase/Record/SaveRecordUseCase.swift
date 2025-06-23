@@ -26,7 +26,7 @@ final class SaveRecordUseCase: SaveRecordUseCaseProtocol {
     ///
     /// - Parameters:
     ///   - item: 저장할 `WorkoutRecord` 객체
-    func execute(item: WorkoutRecord) {
+    func execute(uid: String = "", item: WorkoutRecord) {
         repository.saveRecord(item: item)
     }
 }

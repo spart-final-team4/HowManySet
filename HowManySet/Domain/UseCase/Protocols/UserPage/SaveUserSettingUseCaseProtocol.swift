@@ -20,7 +20,7 @@ protocol SaveUserSettingUseCaseProtocol {
 }
 
 extension SaveUserSettingUseCaseProtocol {
-    func execute(uid: String = "", settings: UserSetting) {
-        execute(uid: uid, settings: settings)
+    func execute(settings: UserSetting) {
+        execute(uid: "", settings: settings)
     }
 }

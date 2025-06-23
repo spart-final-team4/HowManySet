@@ -26,7 +26,7 @@ final class DeleteRoutineUseCase: DeleteRoutineUseCaseProtocol {
     ///
     /// - Parameters:
     ///   - item: 삭제할 `WorkoutRoutine` 객체
-    func execute(item: WorkoutRoutine) {
+    func execute(uid: String = "", item: WorkoutRoutine) {
         repository.deleteRoutine(item: item)
     }
 }

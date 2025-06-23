@@ -20,7 +20,7 @@ protocol FetchRecordUseCaseProtocol {
 }
 
 extension FetchRecordUseCaseProtocol {
-    func execute(uid: String = "") -> Single<[WorkoutRecord]> {
-        return execute(uid: uid)
+    func execute() -> Single<[WorkoutRecord]> {
+        return execute(uid: "")
     }
 }

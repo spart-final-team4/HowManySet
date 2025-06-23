@@ -26,7 +26,7 @@ final class SaveRoutineUseCase: SaveRoutineUseCaseProtocol {
     ///
     /// - Parameters:
     ///   - item: 저장할 `WorkoutRoutine` 객체
-    func execute(item: WorkoutRoutine) {
+    func execute(uid: String = "", item: WorkoutRoutine) {
         repository.saveRoutine(item: item)
     }
 }
