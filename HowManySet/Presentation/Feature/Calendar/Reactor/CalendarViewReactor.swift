@@ -39,20 +39,23 @@ final class CalendarViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case let .selectDate(date):
-            // 실제 fetch 대신 mockData 사용
-            let calendar = Calendar.current
-            let filteredRecords = WorkoutRecord.mockData.filter {
-                calendar.isDate($0.date, inSameDayAs: date)
-            }
+            let fetch = fetchRecordUseCase.execute(uid: UUID().uuidString)
+                .map { records in
+                    let filtered = records.filter {
+                        Calendar.current.isDate($0.date, inSameDayAs: date)
+                    }
+                    return Mutation.setRecords(filtered)
+                }
+                .asObservable()
 
             return Observable.concat([
-                Observable.just(.setSelectedDate(date)),
-                Observable.just(.setRecords(filteredRecords))
+                .just(.setSelectedDate(date)),
+                fetch
             ])
 
         case let .deleteItem(indexPath):
             let recordToDelete = currentState.records[indexPath.row]
-            deleteRecordUseCase.execute(uid: "", item: recordToDelete)
+            deleteRecordUseCase.execute(uid: UUID().uuidString, item: recordToDelete)
 
             return .just(.deleteRecordAt(indexPath))
         }
