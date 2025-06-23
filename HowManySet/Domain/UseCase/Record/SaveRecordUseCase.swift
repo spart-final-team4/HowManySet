@@ -25,9 +25,8 @@ final class SaveRecordUseCase: SaveRecordUseCaseProtocol {
     /// 주어진 사용자 ID에 해당하는 운동 기록을 저장합니다.
     ///
     /// - Parameters:
-    ///   - uid: 운동 기록을 저장할 사용자의 고유 식별자
     ///   - item: 저장할 `WorkoutRecord` 객체
-    func execute(uid: String, item: WorkoutRecord) {
-        repository.saveRecord(uid: uid, item: item)
+    func execute(item: WorkoutRecord) {
+        repository.saveRecord(item: item)
     }
 }

@@ -70,7 +70,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
     func presentEditExerciseView(
         routineName: String,
-        workoutStateForEdit: WorkoutStateForEdit,
+        workoutStateForEdit: WorkoutStateForEdit
     ) {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)

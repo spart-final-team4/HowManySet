@@ -20,3 +20,8 @@ protocol FetchUserSettingUseCaseProtocol {
     func execute(uid: String) -> Single<UserSetting>
 }
 
+extension FetchUserSettingUseCaseProtocol {
+    func execute(uid: String = "") -> Single<UserSetting> {
+        return execute(uid: uid)
+    }
+}

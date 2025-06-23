@@ -1,0 +1,20 @@
+//
+//  UpdateRecordUseCase.swift
+//  HowManySet
+//
+//  Created by MJ Dev on 6/23/25.
+//
+
+import Foundation
+
+final class UpdateRecordUseCase: UpdateRecordUseCaseProtocol {
+    private let repository: RecordRepository
+    
+    init(repository: RecordRepository) {
+        self.repository = repository
+    }
+    
+    func execute(item: WorkoutRecord) {
+        repository.updateRecord(item: item)
+    }
+}

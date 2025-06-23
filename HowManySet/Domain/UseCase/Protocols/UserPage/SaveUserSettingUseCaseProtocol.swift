@@ -15,7 +15,12 @@ protocol SaveUserSettingUseCaseProtocol {
     /// 주어진 사용자 ID에 해당하는 사용자 설정 정보를 저장합니다.
     ///
     /// - Parameters:
-    ///   - uid: 설정 정보를 저장할 사용자의 고유 식별자
     ///   - settings: 저장할 `UserSetting` 객체
     func execute(uid: String, settings: UserSetting)
+}
+
+extension SaveUserSettingUseCaseProtocol {
+    func execute(uid: String = "", settings: UserSetting) {
+        execute(uid: uid, settings: settings)
+    }
 }
