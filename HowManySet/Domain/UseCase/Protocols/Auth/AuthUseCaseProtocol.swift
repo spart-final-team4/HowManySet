@@ -5,6 +5,7 @@
 //  Created by GO on 6/19/25.
 //
 
+import Foundation
 import RxSwift
 
 /// 인증 관련 비즈니스 로직을 정의하는 프로토콜
@@ -36,4 +37,21 @@ public protocol AuthUseCaseProtocol {
     /// 계정 삭제 비즈니스 로직
     /// - Returns: 계정 삭제 결과 Observable
     func deleteAccount() -> Observable<Void>
+    
+    /// 사용자 상태 조회 비즈니스 로직
+    /// - Parameter uid: 사용자 ID
+    /// - Returns: 사용자 상태 Observable
+    func getUserStatus(uid: String) -> Observable<UserStatus>
+    
+    /// 닉네임 설정 완료 비즈니스 로직
+    /// - Parameters:
+    ///   - uid: 사용자 ID
+    ///   - nickname: 설정할 닉네임
+    /// - Returns: 완료 결과 Observable
+    func completeNicknameSetting(uid: String, nickname: String) -> Observable<Void>
+    
+    /// 온보딩 완료 비즈니스 로직
+    /// - Parameter uid: 사용자 ID
+    /// - Returns: 완료 결과 Observable
+    func completeOnboarding(uid: String) -> Observable<Void>
 }
