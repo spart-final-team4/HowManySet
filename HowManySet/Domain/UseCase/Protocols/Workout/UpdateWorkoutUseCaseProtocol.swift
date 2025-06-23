@@ -10,3 +10,9 @@ import Foundation
 protocol UpdateWorkoutUseCaseProtocol {
     func execute(uid: String, item: Workout)
 }
+
+extension UpdateWorkoutUseCaseProtocol {
+    func execute(uid: String = "", item: Workout) {
+        execute(uid: uid, item: item)
+    }
+}

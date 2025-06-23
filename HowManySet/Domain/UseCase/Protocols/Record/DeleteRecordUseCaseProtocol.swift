@@ -13,7 +13,12 @@ protocol DeleteRecordUseCaseProtocol {
     
     /// 특정 운동 기록을 삭제합니다.
     /// - Parameters:
-    ///   - uid: 사용자 식별자
     ///   - item: 삭제할 운동 기록
     func execute(uid: String, item: WorkoutRecord)
+}
+
+extension DeleteRecordUseCaseProtocol {
+    func execute(uid: String = "", item: WorkoutRecord) {
+        execute(uid: uid, item: item)
+    }
 }

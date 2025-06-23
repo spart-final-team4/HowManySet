@@ -40,3 +40,23 @@ protocol RoutineRepository {
     ///   - item: 수정할 `WorkoutRoutine` 객체
     func updateRoutine(uid: String, item: WorkoutRoutine)
 }
+
+// MARK: Realm Repository
+extension RoutineRepository {
+    
+    func fetchRoutine(uid: String = "") -> Single<[WorkoutRoutine]> {
+        return fetchRoutine(uid: uid)
+    }
+    
+    func deleteRoutine(uid: String = "", item: WorkoutRoutine) {
+        deleteRoutine(uid: uid, item: item)
+    }
+    
+    func saveRoutine(uid: String = "", item: WorkoutRoutine) {
+        saveRoutine(uid: uid, item: item)
+    }
+    
+    func updateRoutine(uid: String = "", item: WorkoutRoutine) {
+        updateRoutine(uid: uid, item: item)
+    }
+}
