@@ -19,8 +19,6 @@ protocol RealmDataTypeProtocol {
 /// 다양한 Realm DTO 타입을 나타내는 열거형입니다.
 /// 타입 캐스팅을 통해 구체 타입 정보를 제공합니다.
 enum RealmDataType<T: Object>: RealmDataTypeProtocol {
-    /// WorkoutSetDTO 타입
-    case workoutSet
     /// WorkoutDTO 타입
     case workout
     /// WorkoutRoutineDTO 타입
@@ -31,8 +29,6 @@ enum RealmDataType<T: Object>: RealmDataTypeProtocol {
     /// 각 케이스에 해당하는 Realm 객체 타입 반환
     var type: T.Type {
         switch self {
-        case .workoutSet:
-            return RMWorkoutSet.self as! T.Type
         case .workout:
             return RMWorkout.self as! T.Type
         case .workoutRoutine:
