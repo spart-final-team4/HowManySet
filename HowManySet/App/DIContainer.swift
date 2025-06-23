@@ -8,6 +8,8 @@
 import UIKit
 import FirebaseFirestore
 
+/// 의존성 주입 컨테이너
+/// - 출시 수준의 완전한 DI 구현
 final class DIContainer {
     
     /// 온보딩 화면을 생성하여 반환 (닉네임 입력 + 온보딩 통합)
@@ -122,7 +124,6 @@ final class DIContainer {
             repository: fsUserSettingRespository
         )
         
-        // AuthUseCase 추가 (기존 패턴 유지)
         let firebaseAuthService = FirebaseAuthService()
         let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
         let authUseCase = AuthUseCase(repository: authRepository)
