@@ -18,6 +18,10 @@ public struct User {
     public let provider: String
     /// 사용자 이메일 (선택적)
     public let email: String?
+    /// 닉네임 설정 완료 여부
+    public let hasSetNickname: Bool
+    /// 온보딩 완료 여부
+    public let hasCompletedOnboarding: Bool
 
     /// User 모델 생성자
     /// - Parameters:
@@ -25,10 +29,14 @@ public struct User {
     ///   - name: 사용자 이름
     ///   - provider: 로그인 제공자
     ///   - email: 사용자 이메일 (선택적)
-    public init(uid: String, name: String, provider: String, email: String? = nil) {
+    ///   - hasSetNickname: 닉네임 설정 완료 여부
+    ///   - hasCompletedOnboarding: 온보딩 완료 여부
+    public init(uid: String, name: String, provider: String, email: String? = nil, hasSetNickname: Bool = false, hasCompletedOnboarding: Bool = false) {
         self.uid = uid
         self.name = name
         self.provider = provider
         self.email = email
+        self.hasSetNickname = hasSetNickname
+        self.hasCompletedOnboarding = hasCompletedOnboarding
     }
 }
