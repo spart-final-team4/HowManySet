@@ -126,7 +126,8 @@ private extension CalendarView {
 
         recordTableView.snp.makeConstraints {
             $0.top.equalTo(calendarContainerView.snp.bottom).offset(16)
-            $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide).inset(20)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(safeAreaLayoutGuide)
         }
 
         previousMonthButton.snp.makeConstraints {
