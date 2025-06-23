@@ -10,7 +10,11 @@ import UIKit
 protocol HomeCoordinatorProtocol: Coordinator {
     func presentRoutineListView()
     func presentEditAndMemoView()
-    func presentEditExerciseView(routineName: String, workoutStateForEdit: WorkoutStateForEdit)
+    func presentEditExerciseView(
+        routineName: String,
+        workoutStateForEdit: WorkoutStateForEdit,
+        onDismiss: (() -> Void)?
+    )
     func presentEditRoutineView(with routine: WorkoutRoutine)
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
@@ -70,7 +74,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
     func presentEditExerciseView(
         routineName: String,
-        workoutStateForEdit: WorkoutStateForEdit
+        workoutStateForEdit: WorkoutStateForEdit,
+        onDismiss: (() -> Void)? = nil
     ) {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
@@ -81,6 +86,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             caller: ViewCaller.forEditing
         )
         let editExerciseVC = EditExcerciseViewController(reactor: reactor)
+        
+        editExerciseVC.onDismiss = onDismiss
         
         if let sheet = editExerciseVC.sheetPresentationController {
             sheet.detents = [.large()]

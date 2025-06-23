@@ -88,7 +88,7 @@ final class HomeViewReactor: Reactor {
         /// MemoTextView의 메모로 업데이트
         case updateCurrentExerciseMemo(with: String)
         /// 무게, 횟수 컨테이너 버튼 클릭 시
-        case weightRepsButtonClicked(at: Int)
+        case editExerciseViewPresented(at: Int, isPresented: Bool)
         /// 운동 완료 화면에서 확인 시 다시 저장 (루틴 메모 작성했을시에만)
         case confirmButtonClickedForSaving(newMemo: String?)
         case updateCurrentRoutineMemo(with: String)
@@ -133,6 +133,7 @@ final class HomeViewReactor: Reactor {
         case stopRestTimer(Bool)
         /// 운동 완료 시 usecase이용해서 데이터 저장
         case saveWorkoutData
+        case setEditExerciseViewPresented(Bool)
         /// 운동 편집 시 Edit용 데이터로 변형
         case convertToEditData(at: Int)
         case updateRoutineMemo(with: String?)
@@ -163,6 +164,7 @@ final class HomeViewReactor: Reactor {
         var memoInRoutine: String?
         var currentExerciseAllSetsCompleted: Bool
         var isEditAndMemoViewPresented: Bool
+        var isEditExerciseViewPresented: Bool
         var isRestTimerStopped: Bool
         // 기록 관련
         /// 저장되는 운동 기록 정보
@@ -273,6 +275,7 @@ final class HomeViewReactor: Reactor {
             memoInRoutine: initialWorkoutRecord.comment,
             currentExerciseAllSetsCompleted: false,
             isEditAndMemoViewPresented: false,
+            isEditExerciseViewPresented: false,
             isRestTimerStopped: false,
             workoutRecord: initialWorkoutRecord,
             workoutSummary: initialWorkoutSummary,
@@ -426,8 +429,11 @@ final class HomeViewReactor: Reactor {
                 .just(.saveWorkoutData)
             ])
             
-        case let .weightRepsButtonClicked(cardIndex):
-            return .just(.convertToEditData(at: cardIndex))
+        case let .editExerciseViewPresented(cardIndex, isPresented):
+            return .concat([
+                .just(.convertToEditData(at: cardIndex)),
+                .just(.setEditExerciseViewPresented(isPresented))
+            ])
             
         case let .confirmButtonClickedForSaving(newMemo):
             if newMemo != nil,
@@ -650,6 +656,10 @@ final class HomeViewReactor: Reactor {
             
         case let .updateRoutineMemo(with: newMemo):
             newState.memoInRoutine = newMemo
+            
+        case let .setEditExerciseViewPresented(isPresented):
+            print("isEditExerciseViewPresented: \(isPresented)")
+            newState.isEditExerciseViewPresented = isPresented
             
         }//mutation
         return newState

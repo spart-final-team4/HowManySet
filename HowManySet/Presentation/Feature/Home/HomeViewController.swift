@@ -440,18 +440,18 @@ private extension HomeViewController {
             
             // 루틴 편집 및 메모 버튼
             cardView.editButton.rx.tap
-                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
-                .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
-                .bind(onNext: { [weak self] action in
+                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+                .do(onNext: { [weak self] _ in
                     guard let self else { return }
                     self.coordinator?.presentEditAndMemoView()
-                    reactor.action.onNext(action)
                 })
+                .map { Reactor.Action.editAndMemoViewPresented(at: cardView.index) }
+                .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
             // 해당 페이지 운동 종목 버튼
             cardView.weightRepsButton.rx.tap
-                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
                 .do(onNext: {
                     // 클릭 애니메이션
                     UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
@@ -461,14 +461,15 @@ private extension HomeViewController {
                             cardView.weightRepsButton.transform = .identity
                         })
                     })
+                    print("isEditExerciseViewPresentedVC:", reactor.currentState.isEditExerciseViewPresented)
                 })
-                .map { Reactor.Action.weightRepsButtonClicked(at: cardView.index) }
+                .map { Reactor.Action.editExerciseViewPresented(at: cardView.index, isPresented: true) }
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
             // 휴식 재생/일시정지 버튼
             cardView.restPlayPauseButton.rx.tap
-                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
                 .map { Reactor.Action.restPauseButtonClicked }
                 .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
@@ -832,21 +833,26 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
         
         // weightRepsButtonClick -> forEdit 데이터 변형 시 실행됨
-        reactor.state.map { $0.workoutStateForEdit }
-            .filter { $0 != nil }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.asyncInstance)
+        reactor.state
+            .map { ($0.isEditExerciseViewPresented, $0.workoutStateForEdit) }
+            .distinctUntilChanged { $0 == $1 }
+            .compactMap { (isPresented, workout) -> WorkoutStateForEdit? in
+                (isPresented ? workout : nil)
+            }
+            .observe(on: MainScheduler.instance)
             .bind { [weak self] workout in
-                guard let self, let workout else { return }
+                guard let self else { return }
                 if reactor.currentState.isWorkingout {
                     let currentRoutineName = reactor.currentState.workoutRoutine.name
                     self.coordinator?.presentEditExerciseView(
                         routineName: currentRoutineName,
-                        workoutStateForEdit: workout
+                        workoutStateForEdit: workout,
+                        onDismiss: {                                reactor.action.onNext(.editExerciseViewPresented(at: self.currentPage, isPresented: false))
+                        }
                     )
                 }
             }.disposed(by: disposeBag)
-        
+    
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
