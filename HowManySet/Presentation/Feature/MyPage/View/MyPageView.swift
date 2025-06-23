@@ -14,7 +14,7 @@ import Then
 final class MyPageView: UIView {
     
     /// 사용자 이름 또는 상태를 표시하는 헤더 뷰
-    private let headerView = MyPageHeaderView()
+    let headerView = MyPageHeaderView()
     
     /// 마이페이지 목록을 표시하는 컬렉션 뷰
     let collectionView = MyPageCollectionView()
