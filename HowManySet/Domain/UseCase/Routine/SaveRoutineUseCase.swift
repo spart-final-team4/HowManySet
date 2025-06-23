@@ -25,10 +25,9 @@ final class SaveRoutineUseCase: SaveRoutineUseCaseProtocol {
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 저장합니다.
     ///
     /// - Parameters:
-    ///   - uid: 운동 루틴을 저장할 사용자의 고유 식별자
     ///   - item: 저장할 `WorkoutRoutine` 객체
-    func execute(uid: String, item: WorkoutRoutine) {
-        repository.saveRoutine(uid: uid, item: item)
+    func execute(item: WorkoutRoutine) {
+        repository.saveRoutine(item: item)
     }
 }
 
