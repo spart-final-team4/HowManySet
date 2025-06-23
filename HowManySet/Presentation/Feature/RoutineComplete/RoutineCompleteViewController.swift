@@ -26,9 +26,12 @@ final class RoutineCompleteViewController: UIViewController, View {
     private let exerciseRecordSavedText = "운동 기록 저장됨"
     private let memoPlaceHolderText = "메모를 입력해 주세요."
     private let confirmText = "확인"
-    
-    private let fontSize: CGFloat = UIScreen.main.bounds.width < 375 ? 14 : 20
-    
+        
+    private let cardInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 24 : 28
+    private let statInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 20 : 24
+    private let fontSize: CGFloat = UIScreen.main.bounds.width <= 375 ? 18 : 20
+    private let iconSize: CGFloat = UIScreen.main.bounds.width <= 375 ? 22 : 24
+
     // MARK: - UI Components
     private lazy var mainContentsContainer = UIView()
     
@@ -203,13 +206,28 @@ private extension RoutineCompleteViewController {
             memoTextView,
             confirmButton
         )
-        
-        topLabelVStack.addArrangedSubviews(exerciseCompletedLabel, exerciseInfoLabel)
-        cardContentsContainer.addSubviews(progressView, routineStatisticsContainer, shareButton)
+        topLabelVStack.addArrangedSubviews(
+            exerciseCompletedLabel,
+            exerciseInfoLabel
+        )
+        cardContentsContainer.addSubviews(
+            progressView,
+            routineStatisticsContainer,
+            shareButton
+        )
         routineStatisticsContainer.addSubview(routineStatisticsVStack)
-        routineStatisticsVStack.addArrangedSubviews(timeInfoHStack, exerciseInfoHStack)
-        timeInfoHStack.addArrangedSubviews(timeIcon, exerciseTimeLabel)
-        exerciseInfoHStack.addArrangedSubviews(exerciseIcon, exerciseAndSetInfoLabel)
+        routineStatisticsVStack.addArrangedSubviews(
+            timeInfoHStack,
+            exerciseInfoHStack
+        )
+        timeInfoHStack.addArrangedSubviews(
+            timeIcon,
+            exerciseTimeLabel
+        )
+        exerciseInfoHStack.addArrangedSubviews(
+            exerciseIcon,
+            exerciseAndSetInfoLabel
+        )
     }
     
     func setConstraints() {
@@ -242,26 +260,26 @@ private extension RoutineCompleteViewController {
         }
         
         shareButton.snp.makeConstraints {
-            $0.top.trailing.equalToSuperview().inset(28)
+            $0.top.trailing.equalToSuperview().inset(cardInset)
             $0.width.height.equalTo(44)
         }
         
         routineStatisticsContainer.snp.makeConstraints {
             $0.height.equalToSuperview().multipliedBy(0.31)
-            $0.horizontalEdges.equalToSuperview().inset(28)
-            $0.bottom.equalToSuperview().inset(28)
+            $0.horizontalEdges.equalToSuperview().inset(cardInset)
+            $0.bottom.equalToSuperview().inset(cardInset)
         }
         
         routineStatisticsVStack.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(24)
+            $0.edges.equalToSuperview().inset(statInset)
         }
         
         timeIcon.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(iconSize)
         }
         
         exerciseIcon.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(iconSize)
         }
         
         memoTextView.snp.makeConstraints {
