@@ -37,3 +37,27 @@ protocol RecordRepository {
     func updateRecord(uid: String, item: WorkoutRecord)
 }
 
+// MARK: Realm Repository
+extension RecordRepository {
+    
+    func saveRecord(uid: String = "", item: WorkoutRecord) {
+        saveRecord(uid: uid, item: item)
+    }
+    
+    func fetchRecord(uid: String = "") -> Single<[WorkoutRecord]> {
+        return fetchRecord(uid: uid)
+    }
+    
+    func deleteRecord(uid: String = "", item: WorkoutRecord) {
+        return deleteRecord(uid: uid, item: item)
+    }
+    
+    func deleteAllRecord(uid: String = "") {
+        deleteAllRecord(uid: uid)
+    }
+    
+    func updateRecord(uid: String = "", item: WorkoutRecord) {
+        updateRecord(uid: uid, item: item)
+    }
+}
+
