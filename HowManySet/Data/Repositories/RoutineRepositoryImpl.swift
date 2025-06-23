@@ -15,9 +15,8 @@ final class RoutineRepositoryImpl: RoutineRepository {
     
     /// 주어진 사용자 ID에 해당하는 운동 루틴 리스트를 비동기적으로 조회합니다.
     ///
-    /// - Parameter uid: 운동 루틴을 조회할 사용자의 고유 식별자
     /// - Returns: `Single`로 감싸진 `WorkoutRoutine` 배열, 조회 성공 시 배열을 방출하고 실패 시 에러를 방출합니다.
-    func fetchRoutine(uid: String) -> Single<[WorkoutRoutine]> {
+    func fetchRoutine() -> Single<[WorkoutRoutine]> {
         return Single.create { observer in
             guard let routines = RealmService.shared.read(type: .workoutRoutine) else {
                 observer(.failure(RealmErrorType.dataNotFound))
@@ -35,7 +34,6 @@ final class RoutineRepositoryImpl: RoutineRepository {
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 삭제합니다.
     ///
     /// - Parameters:
-    ///   - uid: 운동 루틴을 삭제할 사용자의 고유 식별자
     ///   - item: 삭제할 `WorkoutRoutine` 객체
     func deleteRoutine(uid: String, item: WorkoutRoutine) {
         let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
@@ -45,7 +43,6 @@ final class RoutineRepositoryImpl: RoutineRepository {
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 저장합니다.
     ///
     /// - Parameters:
-    ///   - uid: 운동 루틴을 저장할 사용자의 고유 식별자
     ///   - item: 저장할 `WorkoutRoutine` 객체
     func saveRoutine(uid: String, item: WorkoutRoutine) {
         let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
@@ -55,7 +52,6 @@ final class RoutineRepositoryImpl: RoutineRepository {
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 수정합니다.
     ///
     /// - Parameters:
-    ///   - uid: 운동 루틴을 수정할 사용자의 고유 식별자
     ///   - item: 수정할 `WorkoutRoutine` 객체 덮어쓰기
     func updateRoutine(uid: String, item: WorkoutRoutine) {
         if let routine = RealmService.shared.read(type: .workoutRoutine,
