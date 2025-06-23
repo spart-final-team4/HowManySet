@@ -63,7 +63,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
         if let sheet = editAndMemoVC.sheetPresentationController {
             sheet.detents = [.custom{ context in
-                0.6 * context.maximumDetentValue
+                0.5 * context.maximumDetentValue
             }]
             sheet.prefersGrabberVisible = true
         }
