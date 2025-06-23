@@ -184,7 +184,7 @@ private extension HomePagingCardView {
         
         topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
         topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, editButton)
-        exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
+        exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, /*exerciseSetLabel*/)
         weightRepsButton.addSubview(weightRepsHStack)
         weightRepsHStack.addArrangedSubviews(weightInfoVStack,
                                              repsInfoVStack)

@@ -196,7 +196,7 @@ final class HomeViewReactor: Reactor {
     private let routineMockData = WorkoutRoutine.mockData[0]
     private let recordMockData = WorkoutRecord.mockData[0]
     
-//    private let firstFetchedRoutineData
+    //    private let firstFetchedRoutineData
     
     init(saveRecordUseCase: SaveRecordUseCaseProtocol,
          fsSaveRecordUseCase: FSSaveRecordUseCase,
@@ -344,7 +344,8 @@ final class HomeViewReactor: Reactor {
                 .just(.initializeWorkoutCardStates(updatedCardStates))
             ])
             
-        // MARK: - 세트 완료 버튼 클릭 시 로직
+            // MARK: - 세트 완료 버튼 클릭 시 로직
+            /// 세트 완료는 세트 완료 버튼을 누른 카드 기준으로 변경
         case let .setCompleteButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             
@@ -354,14 +355,17 @@ final class HomeViewReactor: Reactor {
                 handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
             ])
             
-        // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
+            // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
+            /// 세트 스킵, 휴식 스킵은 유저한테 보여지는 카드 기준으로 변경
         case let .forwardButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 스킵 버튼 클릭!")
-            
-            return .concat([
-                .just(.stopRestTimer(true)),
-                handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
-            ])
+            if currentState.isResting {
+                // 휴식 중일 때 휴식만 종료
+                return .just(.stopRestTimer(true))
+            } else {
+                // 그 외엔 휴식 없이 바로 진행
+                return handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
+            }
             
         case .workoutPauseButtonClicked:
             if currentState.isRestPaused {
@@ -408,7 +412,7 @@ final class HomeViewReactor: Reactor {
                     )
                     .map { _ in Mutation.restRemainingSecondsUpdating }
                     .observe(on: MainScheduler.asyncInstance)
-
+                
                 return .concat([
                     .just(.pauseAndPlayRest(false)),
                     restTimer
@@ -560,7 +564,7 @@ final class HomeViewReactor: Reactor {
                !newState.isRestTimerStopped {
                 // 0.1초씩 감소
                 newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.1, 0)
-//                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
+                //                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
                 if newState.restSecondsRemaining.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
@@ -613,6 +617,7 @@ final class HomeViewReactor: Reactor {
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             newState.currentExerciseIndex = newIndex
+            newState.updatingIndex = newIndex
             
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
@@ -635,8 +640,8 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
             }
             
-        // MARK: - 현재 운동 데이터 저장
-        // 메모 창 dismiss시, 운동 완료 시 등등
+            // MARK: - 현재 운동 데이터 저장
+            // 메모 창 dismiss시, 운동 완료 시 등등
         case .saveWorkoutData:
             // TODO: - 기존 데이터 삭제 필요
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
