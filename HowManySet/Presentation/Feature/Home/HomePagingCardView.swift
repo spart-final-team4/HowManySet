@@ -53,11 +53,6 @@ final class HomePagingCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
-//    private lazy var exerciseSetLabel = UILabel().then {
-//        $0.font = UIFont.systemFont(ofSize: 14)
-//        $0.textColor = .textSecondary
-//    }
-    
     lazy var editButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -68,7 +63,8 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .cardBackground
     }
 
-    lazy var weightRepsButton = UIButton().then {
+    // TODO: 추후에 배포 후 UIButton()으로 변경
+    lazy var weightRepsButton = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
@@ -272,7 +268,6 @@ extension HomePagingCardView {
     func configure(with state: WorkoutCardState) {
                 
         exerciseNameLabel.text = state.currentExerciseName
-//        exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
         weightLabel.text = "\(Int(state.currentWeightForSave))\(state.currentUnitForSave)"
         repsLabel.text = "\(state.currentRepsForSave)\(repsText)"
         setProgressBar.updateProgress(currentSet: state.setProgressAmount)
