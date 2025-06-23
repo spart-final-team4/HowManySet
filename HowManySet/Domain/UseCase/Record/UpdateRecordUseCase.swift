@@ -14,7 +14,7 @@ final class UpdateRecordUseCase: UpdateRecordUseCaseProtocol {
         self.repository = repository
     }
     
-    func execute(item: WorkoutRecord) {
+    func execute(uid: String = "", item: WorkoutRecord) {
         repository.updateRecord(item: item)
     }
 }
