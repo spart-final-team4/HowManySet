@@ -20,7 +20,7 @@ protocol FetchRoutineUseCaseProtocol {
 }
 
 extension FetchRoutineUseCaseProtocol {
-    func execute(uid: String = "") -> Single<[WorkoutRoutine]> {
-        return execute(uid: uid)
+    func execute() -> Single<[WorkoutRoutine]> {
+        return execute(uid: "")
     }
 }

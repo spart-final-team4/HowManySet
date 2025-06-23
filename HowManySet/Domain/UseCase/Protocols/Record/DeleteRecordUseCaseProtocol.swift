@@ -18,7 +18,7 @@ protocol DeleteRecordUseCaseProtocol {
 }
 
 extension DeleteRecordUseCaseProtocol {
-    func execute(uid: String = "", item: WorkoutRecord) {
-        execute(uid: uid, item: item)
+    func execute(item: WorkoutRecord) {
+        execute(uid: "", item: item)
     }
 }

@@ -21,7 +21,7 @@ protocol SaveRecordUseCaseProtocol {
 }
 
 extension SaveRecordUseCaseProtocol {
-    func execute(uid: String = "", item: WorkoutRecord) {
-        execute(uid: uid, item: item)
+    func execute(item: WorkoutRecord) {
+        execute(uid: "", item: item)
     }
 }
