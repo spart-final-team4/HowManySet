@@ -848,7 +848,7 @@ extension HomeViewController {
                     self.coordinator?.presentEditExerciseView(
                         routineName: currentRoutineName,
                         workoutStateForEdit: workout,
-                        onDismiss: {                                reactor.action.onNext(.editExerciseViewPresented(at: self.currentPage, isPresented: false))
+                        onDismiss: {                                                    reactor.action.onNext(.editExerciseViewPresented(at: self.getCurrentVisibleExerciseIndex(), isPresented: false))
                         }
                     )
                 }
