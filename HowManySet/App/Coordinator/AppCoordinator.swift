@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import RxSwift
 
 /// 앱의 전체 흐름을 관리하는 Coordinator
 /// - 로그인 여부, 온보딩 여부를 체크하고 적절한 흐름으로 분기
@@ -21,37 +22,84 @@ final class AppCoordinator: Coordinator {
     /// 의존성 주입 컨테이너
     private let container: DIContainer
     
+    /// RxSwift DisposeBag
+    private let disposeBag = DisposeBag()
+    
     /// 생성자 - 의존성 주입 및 윈도우 연결
     init(window: UIWindow, container: DIContainer) {
         self.window = window
         self.container = container
     }
     
-    /// 앱 시작 시 호출됨 - 로그인/온보딩 상태에 따라 적절한 플로우를 보여줌
+    /// 앱 시작 시 호출됨 - 사용자별 상태 확인하여 적절한 플로우로 분기
     func start() {
         let isLoggedIn = checkLoginStatus()
-        let hasCompletedOnboarding = checkOnboardingStatus()
         
         if !isLoggedIn {
             showAuthFlow()
-        } else if !hasCompletedOnboarding {
-            showOnboardingFlow()
         } else {
-            showTabBarFlow()
+            // 로그인된 사용자의 상태를 UseCase를 통해 확인
+            checkUserStatus()
         }
     }
     
-    /// 상태 체크 함수 분리
+    /// 로그인 상태 확인
     private func checkLoginStatus() -> Bool {
-        print("✅checkLoginStatus✅", Auth.auth().currentUser != nil)
-        return Auth.auth().currentUser != nil
+        let isLoggedIn = Auth.auth().currentUser != nil
+        print("✅ 로그인 상태: \(isLoggedIn)")
+        return isLoggedIn
     }
     
-    private func checkOnboardingStatus() -> Bool {
-        return UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    /// 사용자 상태 확인 (UseCase를 통해)
+    private func checkUserStatus() {
+        guard let currentUser = Auth.auth().currentUser else {
+            showAuthFlow()
+            return
+        }
+
+        let firebaseAuthService = FirebaseAuthService()
+        let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+        let authUseCase = AuthUseCase(repository: authRepository)
+        
+        authUseCase.getUserStatus(uid: currentUser.uid)
+            .observe(on: MainScheduler.instance)
+            .subscribe(
+                onNext: { [weak self] userStatus in
+                    switch userStatus {
+                    case .needsOnboarding:
+                        self?.showOnboardingFlow()
+                    case .complete:
+                        self?.showTabBarFlow()
+                    }
+                },
+                onError: { [weak self] error in
+                    print("사용자 상태 조회 실패: \(error)")
+                    // 에러 시 온보딩부터 시작
+                    self?.showOnboardingFlow()
+                }
+            )
+            .disposed(by: disposeBag)
     }
     
-    /// 온보딩 흐름 시작
+    /// 로그인/회원가입 흐름 시작
+    private func showAuthFlow() {
+        let authCoordinator = AuthCoordinator(navigationController: UINavigationController(), container: container)
+        childCoordinators.append(authCoordinator)
+        
+        authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
+            guard let self, let authCoordinator else { return }
+            self.childDidFinish(authCoordinator)
+            
+            // 로그인 완료 후 사용자 상태 확인
+            self.checkUserStatus()
+        }
+        
+        authCoordinator.start()
+        window.rootViewController = authCoordinator.navigationController
+        window.makeKeyAndVisible()
+    }
+    
+    /// 온보딩 흐름 시작 (닉네임 입력 + 온보딩)
     private func showOnboardingFlow() {
         let onboardingCoordinator = OnBoardingCoordinator(navigationController: UINavigationController(), container: container)
         childCoordinators.append(onboardingCoordinator)
@@ -64,28 +112,6 @@ final class AppCoordinator: Coordinator {
         
         onboardingCoordinator.start()
         window.rootViewController = onboardingCoordinator.navigationController
-        window.makeKeyAndVisible()
-    }
-    
-    /// 로그인/회원가입 흐름 시작
-    private func showAuthFlow() {
-        let authCoordinator = AuthCoordinator(navigationController: UINavigationController(), container: container)
-        childCoordinators.append(authCoordinator)
-        
-        authCoordinator.finishFlow = { [weak self, weak authCoordinator] in
-            guard let self, let authCoordinator else { return }
-            self.childDidFinish(authCoordinator)
-            
-            let hasCompletedOnboarding = self.checkOnboardingStatus()
-            if hasCompletedOnboarding {
-                self.showTabBarFlow()
-            } else {
-                self.showOnboardingFlow()
-            }
-        }
-        
-        authCoordinator.start()
-        window.rootViewController = authCoordinator.navigationController
         window.makeKeyAndVisible()
     }
     
