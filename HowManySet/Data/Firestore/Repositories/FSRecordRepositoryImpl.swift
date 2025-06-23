@@ -11,6 +11,10 @@ import RxSwift
 /// Firestore 기반 운동 기록 저장소 구현체입니다.
 /// 기존 RecordRepository 프로토콜을 구현하여 일관된 인터페이스를 제공합니다.
 final class FSRecordRepositoryImpl: RecordRepository {
+    func updateRecord(uid: String, item: WorkoutRecord) {
+        // TODO: 구현 필요
+    }
+    
     
     private let firestoreService: FirestoreServiceProtocol
 
