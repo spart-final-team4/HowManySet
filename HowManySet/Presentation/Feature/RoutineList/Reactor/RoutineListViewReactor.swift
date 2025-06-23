@@ -40,7 +40,7 @@ final class RoutineListViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return fetchRoutineUseCase.execute(uid: "")
+            return fetchRoutineUseCase.execute()
                 .map{ Mutation.updatedRoutine($0) }
                 .asObservable()
         }
@@ -56,7 +56,7 @@ final class RoutineListViewReactor: Reactor {
                 if !routines[i].workouts.isEmpty {
                     newRoutines.append(routines[i])
                 } else {
-                    deleteRoutineUseCase.execute(uid: "", item: routines[i])
+                    deleteRoutineUseCase.execute(item: routines[i])
                 }
             }
             

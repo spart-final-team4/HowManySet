@@ -71,7 +71,7 @@ final class EditRoutineViewReactor: Reactor {
         case .reorderWorkout(source: let source, destination: let destination):
             var new = currentState.routine
             new.workouts.swapAt(source.item, destination.item)
-            deleteRoutineUseCase.execute(uid: "", item: currentState.routine)
+            deleteRoutineUseCase.execute(item: currentState.routine)
             return .just(.reorderRoutine(new))
         }
     }
@@ -90,10 +90,10 @@ final class EditRoutineViewReactor: Reactor {
         case .removeSelectedWorkout:
             var newRoutine = newState.routine
             guard let workout = currentState.currentSeclectedWorkout else { return newState }
-            deleteRoutineUseCase.execute(uid: "", item: currentState.routine)
+            deleteRoutineUseCase.execute(item: currentState.routine)
             guard let indexPath = currentState.currentSeclectedIndexPath else { return newState }
             newRoutine.workouts.remove(at: indexPath.row)
-            saveRoutineUseCase.execute(uid: "", item: newRoutine)
+            saveRoutineUseCase.execute(item: newRoutine)
             newState.routine = newRoutine
         case .changeListOrder:
             break
@@ -101,7 +101,7 @@ final class EditRoutineViewReactor: Reactor {
             break
         case .reorderRoutine(let routine):
             var newRoutine = routine
-            saveRoutineUseCase.execute(uid: "", item: routine)
+            saveRoutineUseCase.execute(item: routine)
         }
         return newState
     }
