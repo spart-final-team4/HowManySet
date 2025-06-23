@@ -39,18 +39,18 @@ final class CalendarViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case let .selectDate(date):
-            let fetch = fetchRecordUseCase.execute(uid: UUID().uuidString)
-                .map { records in
-                    let filtered = records.filter {
+            let fetchRecords = fetchRecordUseCase.execute(uid: UUID().uuidString)
+                .map { allRecords in
+                    let filteredRecords = allRecords.filter {
                         Calendar.current.isDate($0.date, inSameDayAs: date)
                     }
-                    return Mutation.setRecords(filtered)
+                    return Mutation.setRecords(filteredRecords)
                 }
                 .asObservable()
 
             return Observable.concat([
                 .just(.setSelectedDate(date)),
-                fetch
+                fetchRecords
             ])
 
         case let .deleteItem(indexPath):
