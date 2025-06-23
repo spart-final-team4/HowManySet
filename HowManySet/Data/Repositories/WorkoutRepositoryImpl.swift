@@ -9,13 +9,13 @@ import Foundation
 
 final class WorkoutRepositoryImpl: WorkoutRepository {
     
-    func deleteWorkout(workout: Workout) {
+    func deleteWorkout(uid: String, workout: Workout) {
         if let workout = RealmService.shared.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
             RealmService.shared.delete(item: workout)
         }
     }
     
-    func updateWorkout(workout: Workout) {
+    func updateWorkout(uid: String, workout: Workout) {
         if let workout = RealmService.shared.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
             RealmService.shared.update(item: workout) { (savedWorkout: RMWorkout) in
                 savedWorkout.name = workout.name

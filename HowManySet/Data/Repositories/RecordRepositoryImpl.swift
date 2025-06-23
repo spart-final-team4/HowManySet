@@ -16,7 +16,7 @@ final class RecordRepositoryImpl: RecordRepository {
     /// - Parameters:
     ///   - uid: 사용자 식별자 (현재 사용되지 않음, 확장 가능성 대비)
     ///   - item: 저장할 운동 기록 모델 (`WorkoutRecord`)
-    func saveRecord(item: WorkoutRecord) {
+    func saveRecord(uid: String, item: WorkoutRecord) {
         // TODO: 운동 기록 저장 구현
         let record = RMWorkoutRecord(dto: WorkoutRecordDTO(entity: item))
         RealmService.shared.create(item: record)
@@ -26,7 +26,7 @@ final class RecordRepositoryImpl: RecordRepository {
     /// RxSwift의 Single로 비동기 데이터를 반환합니다.
     /// - Parameter uid: 사용자 식별자 (현재 사용되지 않음, 향후 사용자별 데이터 필터링에 활용 가능)
     /// - Returns: 운동 기록 배열을 성공 시 반환, 실패 시 `RealmErrorType.dataNotFound` 발생
-    func fetchRecord() -> Single<[WorkoutRecord]> {
+    func fetchRecord(uid: String) -> Single<[WorkoutRecord]> {
         return Single.create { observer in
             guard let records = RealmService.shared.read(type: .workoutRecord) else {
                 observer(.failure(RealmErrorType.dataNotFound))
@@ -42,18 +42,18 @@ final class RecordRepositoryImpl: RecordRepository {
     /// - Parameters:
     ///   - uid: 사용자 식별자 (현재 사용되지 않음)
     ///   - item: 삭제할 운동 기록 모델
-    func deleteRecord(item: WorkoutRecord) {
+    func deleteRecord(uid: String, item: WorkoutRecord) {
         let record = RMWorkoutRecord(dto: WorkoutRecordDTO(entity: item))
         RealmService.shared.delete(item: record)
     }
 
     /// 모든 운동 루틴(기록 포함)을 삭제합니다.
     /// - Parameter uid: 사용자 식별자 (현재 사용되지 않음)
-    func deleteAllRecord() {
+    func deleteAllRecord(uid: String) {
         RealmService.shared.deleteAll(type: .workoutRecord)
     }
     
-    func updateRecord(item: WorkoutRecord) {
+    func updateRecord(uid: String, item: WorkoutRecord) {
         if let record = RealmService.shared.read(type: .workoutRecord) as? RMWorkoutRecord {
             RealmService.shared.update(item: record) { (savedRecord: RMWorkoutRecord) in
                 savedRecord.comment = item.comment

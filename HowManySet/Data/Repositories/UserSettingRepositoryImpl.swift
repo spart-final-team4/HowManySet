@@ -11,11 +11,11 @@ import RxSwift
 // 대략적으로 세팅
 final class UserSettingRepositoryImpl: UserSettingRepository {
     
-    func fetchUserSetting() -> Single<UserSetting> {
+    func fetchUserSetting(uid: String) -> Single<UserSetting> {
         return Single<UserSetting>.just(UserSetting(pushNotificationEnabled: false, unit: "metric", darkmode: true, locale: "ko_KR"))
     }
     
-    func saveUserSetting(settings: UserSetting) {
+    func saveUserSetting(uid: String, settings: UserSetting) {
 
     }
     

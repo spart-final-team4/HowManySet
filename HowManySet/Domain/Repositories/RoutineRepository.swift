@@ -44,19 +44,19 @@ protocol RoutineRepository {
 // MARK: Realm Repository
 extension RoutineRepository {
     
-    func fetchRoutine(uid: String = "") -> Single<[WorkoutRoutine]> {
-        return fetchRoutine(uid: uid)
+    func fetchRoutine() -> Single<[WorkoutRoutine]> {
+        return fetchRoutine(uid: "")
     }
     
-    func deleteRoutine(uid: String = "", item: WorkoutRoutine) {
-        deleteRoutine(uid: uid, item: item)
+    func deleteRoutine(item: WorkoutRoutine) {
+        deleteRoutine(uid: "", item: item)
     }
     
-    func saveRoutine(uid: String = "", item: WorkoutRoutine) {
-        saveRoutine(uid: uid, item: item)
+    func saveRoutine(item: WorkoutRoutine) {
+        saveRoutine(uid: "", item: item)
     }
     
-    func updateRoutine(uid: String = "", item: WorkoutRoutine) {
-        updateRoutine(uid: uid, item: item)
+    func updateRoutine(item: WorkoutRoutine) {
+        updateRoutine(uid: "", item: item)
     }
 }
