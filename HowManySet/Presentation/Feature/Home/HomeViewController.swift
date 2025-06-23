@@ -422,7 +422,7 @@ private extension HomeViewController {
             
             // 세트 완료 버튼
             cardView.setCompleteButton.rx.tap
-                .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
                 .do(onNext: {
                     print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     
@@ -499,14 +499,14 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
-            .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .map { Reactor.Action.workoutPauseButtonClicked }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         // 수정: forwardButton 클릭 시 현재 visible한 카드의 실제 exerciseIndex 사용
         forwardButton.rx.tap
-            .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .map { [weak self] in
                 guard let self else {
                     return Reactor.Action.forwardButtonClicked(at: 0)
@@ -696,6 +696,7 @@ extension HomeViewController {
                 } else {
                     cardView.restProgressBar.setProgress(progress, animated: false)
                     cardView.remainingRestTimeLabel.text = timeText
+                    // 변경된 운동 정보(세트 수, 무게, 횟수)들로 업데이트
                     cardView.configure(with: cardState)
                     cardView.showExerciseUI()
                     self.restInfoView.showRestInfo()
@@ -737,7 +738,7 @@ extension HomeViewController {
         // 운동 중지 시
         reactor.state.map { $0.isWorkoutPaused }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { view, isWorkoutPaused in
                 let workoutButtonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 view.pauseButton.setImage(UIImage(systemName: workoutButtonImageName), for: .normal)
