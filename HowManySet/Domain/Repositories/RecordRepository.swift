@@ -33,5 +33,7 @@ protocol RecordRepository {
     /// 사용자의 모든 운동 기록을 삭제합니다.
     /// - Parameter uid: 사용자 식별자
     func deleteAllRecord(uid: String)
+    
+    func updateRecord(uid: String, item: WorkoutRecord)
 }
 

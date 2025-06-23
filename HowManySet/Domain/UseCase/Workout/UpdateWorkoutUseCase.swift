@@ -15,7 +15,7 @@ final class UpdateWorkoutUseCase: UpdateWorkoutUseCaseProtocol {
         self.repository = repository
     }
     
-    func excute(uid: String, item: Workout) {
+    func execute(uid: String, item: Workout) {
         repository.updateWorkout(uid: uid, workout: item)
     }
 }

@@ -18,7 +18,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
     /// - Parameter uid: 운동 루틴을 조회할 사용자의 고유 식별자
     /// - Returns: `Single`로 감싸진 `WorkoutRoutine` 배열, 조회 성공 시 배열을 방출하고 실패 시 에러를 방출합니다.
     func fetchRoutine(uid: String) -> Single<[WorkoutRoutine]> {
-        return Single.create { [weak self] observer in
+        return Single.create { observer in
             guard let routines = RealmService.shared.read(type: .workoutRoutine) else {
                 observer(.failure(RealmErrorType.dataNotFound))
                 return Disposables.create()
@@ -61,7 +61,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
         if let routine = RealmService.shared.read(type: .workoutRoutine,
                                                   primaryKey: item.id)
             as? RMWorkoutRoutine {
-            RealmService.shared.update(item: routine) { savedRoutine in
+            RealmService.shared.update(item: routine) { (savedRoutine: RMWorkoutRoutine) in
                 savedRoutine.name = item.name
                 savedRoutine.workoutArray = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0)) }
             }

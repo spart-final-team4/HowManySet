@@ -8,5 +8,5 @@
 import Foundation
 
 protocol UpdateWorkoutUseCaseProtocol {
-    func excute(uid: String, item: Workout)
+    func execute(uid: String, item: Workout)
 }
