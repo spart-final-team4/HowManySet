@@ -80,6 +80,7 @@ private extension CalendarView {
         recordTableView.do {
             $0.backgroundColor = .clear
             $0.separatorStyle = .none
+            $0.showsVerticalScrollIndicator = false
         }
 
         previousMonthButton.do {
