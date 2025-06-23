@@ -611,10 +611,8 @@ final class HomeViewReactor: Reactor {
                 date: Date()
             )
             
-            DispatchQueue.global().async {
-                self.saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
-                self.fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
-            }
+            self.saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
+            self.fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
