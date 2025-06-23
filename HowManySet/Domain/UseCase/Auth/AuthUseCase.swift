@@ -6,6 +6,7 @@
 //
 
 import RxSwift
+import Foundation
 
 /// 인증 관련 비즈니스 로직을 처리하는 UseCase 구현체
 /// - Repository를 통해 데이터를 처리하고 비즈니스 규칙을 적용
@@ -76,5 +77,61 @@ public final class AuthUseCase: AuthUseCaseProtocol {
                 print("계정 삭제 성공")
                 // 필요시 추가 비즈니스 로직 (로컬 데이터 삭제 등)
             })
+    }
+
+    /// 사용자 상태 조회 비즈니스 로직
+    /// - Parameter uid: 사용자 ID
+    /// - Returns: 사용자 상태 Observable
+    public func getUserStatus(uid: String) -> Observable<UserStatus> {
+        return repository.fetchUserInfo(uid: uid)
+            .map { user in
+                guard let user = user else {
+                    return .needsOnboarding
+                }
+                
+                if !user.hasCompletedOnboarding {
+                    return .needsOnboarding
+                } else {
+                    return .complete
+                }
+            }
+            .do(onNext: { status in
+                print("사용자 상태 조회 결과: \(status)")
+            })
+    }
+
+    /// 닉네임 설정 완료 비즈니스 로직
+    /// - Parameters:
+    ///   - uid: 사용자 ID
+    ///   - nickname: 설정할 닉네임
+    /// - Returns: 완료 결과 Observable
+    public func completeNicknameSetting(uid: String, nickname: String) -> Observable<Void> {
+        // 닉네임 유효성 검사
+        guard isValidNickname(nickname) else {
+            return Observable.error(NSError(domain: "InvalidNickname", code: -1, userInfo: [NSLocalizedDescriptionKey: "유효하지 않은 닉네임입니다."]))
+        }
+        
+        return repository.updateUserNickname(uid: uid, nickname: nickname)
+            .do(onNext: { _ in
+                print("닉네임 설정 완료: \(nickname)")
+            })
+    }
+
+    /// 온보딩 완료 비즈니스 로직
+    /// - Parameter uid: 사용자 ID
+    /// - Returns: 완료 결과 Observable
+    public func completeOnboarding(uid: String) -> Observable<Void> {
+        return repository.updateOnboardingStatus(uid: uid, completed: true)
+            .do(onNext: { _ in
+                print("온보딩 완료")
+            })
+    }
+
+    /// 닉네임 유효성 검사 (한글/영문 2~8자)
+    /// - Parameter nickname: 검사할 닉네임
+    /// - Returns: 유효하면 true, 아니면 false
+    private func isValidNickname(_ nickname: String) -> Bool {
+        let regex = "^[가-힣a-zA-Z]{2,8}$"
+        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: nickname)
     }
 }
