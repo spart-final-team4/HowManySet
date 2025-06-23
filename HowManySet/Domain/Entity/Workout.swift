@@ -11,7 +11,7 @@ import Foundation
 ///
 /// 이 구조체는 특정 운동의 이름, 세트 목록, 세트 간 휴식 시간, 그리고 선택적인 코멘트를 포함합니다.
 struct Workout: Hashable {
-    
+    var id: String
     /// 운동 이름입니다.
     ///
     /// 예: `"벤치프레스"`, `"스쿼트"` 등
@@ -32,6 +32,7 @@ struct Workout: Hashable {
 extension Workout {
     static let mockData: [Workout] = [
         Workout(
+            id: UUID().uuidString,
             name: "벤치프레스",
             sets: [
                 WorkoutSet(weight: 60, unit: "kg", reps: 10),
@@ -41,6 +42,7 @@ extension Workout {
             comment: "폼에 집중하기"
         ),
         Workout(
+            id: UUID().uuidString,
             name: "스쿼트",
             sets: [
                 WorkoutSet(weight: 80, unit: "kg", reps: 10),
@@ -50,6 +52,7 @@ extension Workout {
             comment: "무릎 조심"
         ),
         Workout(
+            id: UUID().uuidString,
             name: "데드리프트",
             sets: [
                 WorkoutSet(weight: 90, unit: "kg", reps: 8),
@@ -58,6 +61,7 @@ extension Workout {
             comment: "허리 고정"
         ),
         Workout(
+            id: UUID().uuidString,
             name: "체스트 프레스",
             sets: [
                 WorkoutSet(weight: 40, unit: "kg", reps: 12),
@@ -66,6 +70,7 @@ extension Workout {
             comment: nil
         ),
         Workout(
+            id: UUID().uuidString,
             name: "랫풀 다운",
             sets: [
                 WorkoutSet(weight: 40, unit: "kg", reps: 12),
