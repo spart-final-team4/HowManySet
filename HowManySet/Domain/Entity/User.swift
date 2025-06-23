@@ -9,8 +9,7 @@ import Foundation
 
 /// 사용자 상태 열거형
 public enum UserStatus {
-    case needsNickname      // 닉네임 설정 필요
-    case needsOnboarding    // 온보딩 필요
+    case needsOnboarding    // 온보딩 필요 (닉네임 입력 + 온보딩)
     case complete           // 모든 설정 완료
 }
 
