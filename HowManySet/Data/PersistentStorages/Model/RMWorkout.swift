@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 
 final class RMWorkout: Object {
+    @Persisted(primaryKey: true) var id: String
     @Persisted var name: String
     @Persisted var comment: String?
     @Persisted var sets = List<RMWorkoutSet>()
@@ -34,11 +35,16 @@ final class RMWorkout: Object {
         self.comment = comment
         self.setArray = sets
     }
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 extension RMWorkout {
     func toDTO() -> WorkoutDTO {
         return WorkoutDTO(
+            id: self.id,
             name: self.name,
             comment: self.comment,
             sets: self.sets.map { $0.toDTO() })
@@ -48,6 +54,7 @@ extension RMWorkout {
 extension RMWorkout {
     convenience init(dto: WorkoutDTO) {
         self.init()
+        self.id = dto.id
         self.name = dto.name
         self.comment = dto.comment
         self.setArray = dto.sets.map{ RMWorkoutSet(dto: $0) }
