@@ -14,7 +14,7 @@ protocol WorkoutRepository {
 
 // MARK: Realm Repository
 
-extension  WorkoutRepository {
+extension WorkoutRepository {
     func updateWorkout(workout: Workout) {
         updateWorkout(uid: "", workout: workout)
     }

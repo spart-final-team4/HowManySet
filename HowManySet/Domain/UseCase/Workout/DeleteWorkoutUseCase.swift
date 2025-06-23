@@ -15,7 +15,7 @@ final class DeleteWorkoutUseCase: DeleteWorkoutUseCaseProtocol {
         self.repository = repository
     }
     
-    func execute(item: Workout) {
+    func execute(uid: String = "", item: Workout) {
         repository.deleteWorkout(workout: item)
     }
 }

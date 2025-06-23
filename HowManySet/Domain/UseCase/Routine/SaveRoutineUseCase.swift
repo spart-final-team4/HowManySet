@@ -11,10 +11,6 @@ import Foundation
 ///
 /// `RoutineRepository`를 통해 특정 사용자의 운동 루틴을 저장하는 기능을 제공합니다.
 final class SaveRoutineUseCase: SaveRoutineUseCaseProtocol {
-    func execute(uid: String = "", item: WorkoutRoutine) {
-        repository.saveRoutine(item: item)
-    }
-    
     
     /// 운동 루틴 데이터를 관리하는 리포지토리 객체
     private let repository: RoutineRepository
@@ -30,7 +26,7 @@ final class SaveRoutineUseCase: SaveRoutineUseCaseProtocol {
     ///
     /// - Parameters:
     ///   - item: 저장할 `WorkoutRoutine` 객체
-    func execute(item: WorkoutRoutine) {
+    func execute(uid: String = "", item: WorkoutRoutine) {
         repository.saveRoutine(item: item)
     }
 }
