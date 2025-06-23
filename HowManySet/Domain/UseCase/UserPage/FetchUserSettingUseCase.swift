@@ -27,8 +27,8 @@ final class FetchUserSettingUseCase: FetchUserSettingUseCaseProtocol {
     ///
     /// - Parameter uid: 설정 정보를 조회할 사용자의 고유 식별자
     /// - Returns: `Single`로 감싸진 `UserSetting` 객체, 조회 성공 시 설정 정보를 방출하고 실패 시 에러를 방출합니다.
-    func execute(uid: String) -> Single<UserSetting> {
-        return repository.fetchUserSetting(uid: uid)
+    func execute(uid: String = "") -> Single<UserSetting> {
+        return repository.fetchUserSetting()
     }
 }
 

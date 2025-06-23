@@ -12,7 +12,7 @@ protocol UpdateWorkoutUseCaseProtocol {
 }
 
 extension UpdateWorkoutUseCaseProtocol {
-    func execute(uid: String = "", item: Workout) {
-        execute(uid: uid, item: item)
+    func execute(item: Workout) {
+        execute(uid: "", item: item)
     }
 }
