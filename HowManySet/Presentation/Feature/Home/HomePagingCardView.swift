@@ -53,10 +53,10 @@ final class HomePagingCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
-    private lazy var exerciseSetLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 14)
-        $0.textColor = .textSecondary
-    }
+//    private lazy var exerciseSetLabel = UILabel().then {
+//        $0.font = UIFont.systemFont(ofSize: 14)
+//        $0.textColor = .textSecondary
+//    }
     
     lazy var editButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
@@ -116,7 +116,7 @@ final class HomePagingCardView: UIView {
     lazy var remainingRestTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
         $0.isHidden = true
-        $0.textColor = .textSecondary
+        $0.textColor = .black
     }
     
     lazy var setCompleteButton = UIButton().then {
@@ -133,7 +133,7 @@ final class HomePagingCardView: UIView {
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         $0.isUserInteractionEnabled = false
         $0.alpha = 0
-        $0.tintColor = .textSecondary
+        $0.tintColor = .black
     }
     
     lazy var restProgressBar = UIProgressView().then {
@@ -272,7 +272,7 @@ extension HomePagingCardView {
     func configure(with state: WorkoutCardState) {
                 
         exerciseNameLabel.text = state.currentExerciseName
-        exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
+//        exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
         weightLabel.text = "\(Int(state.currentWeightForSave))\(state.currentUnitForSave)"
         repsLabel.text = "\(state.currentRepsForSave)\(repsText)"
         setProgressBar.updateProgress(currentSet: state.setProgressAmount)
