@@ -116,6 +116,7 @@ final class EditExcerciseViewReactor: Reactor {
                 }
                 
                 let newWorkout = Workout(
+                    id: UUID().uuidString,
                     name: self.currentState.currentExcerciseName,
                     sets: sets,
                     comment: nil

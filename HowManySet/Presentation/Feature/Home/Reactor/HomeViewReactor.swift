@@ -752,6 +752,7 @@ private extension HomeViewReactor {
     func convertWorkoutCardStatesToWorkouts(cardStates: [WorkoutCardState]) -> [Workout] {
         return cardStates.map { card in
             Workout(
+                id: UUID().uuidString,
                 name: card.currentExerciseName,
                 sets: card.setInfo,
                 comment: card.memoInExercise
