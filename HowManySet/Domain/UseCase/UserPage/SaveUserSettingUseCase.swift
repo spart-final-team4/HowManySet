@@ -27,8 +27,8 @@ final class SaveUserSettingUseCase: SaveUserSettingUseCaseProtocol {
     /// - Parameters:
     ///   - uid: 설정 정보를 저장할 사용자의 고유 식별자
     ///   - settings: 저장할 `UserSetting` 객체
-    func execute(uid: String, settings: UserSetting) {
-        repository.saveUserSetting(uid: uid, settings: settings)
+    func execute(uid: String = "", settings: UserSetting) {
+        repository.saveUserSetting(settings: settings)
     }
 }
 

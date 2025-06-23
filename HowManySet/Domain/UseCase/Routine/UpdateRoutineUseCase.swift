@@ -26,5 +26,9 @@ final class UpdateRoutineUseCase: UpdateRoutineUseCaseProtocol {
     func execute(item: WorkoutRoutine) {
         repository.updateRoutine(item: item)
     }
+    
+    func execute(uid: String = "", item: WorkoutRoutine) {
+        repository.updateRoutine(uid: uid, item: item)
+    }
 }
 
