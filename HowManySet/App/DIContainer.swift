@@ -31,21 +31,29 @@ final class DIContainer {
     /// 홈 화면을 생성하여 반환
     func makeHomeViewController(coordinator: HomeCoordinator) -> (UIViewController, HomeViewReactor) {
         let recordRepository = RecordRepositoryImpl()
+        let routineRepository = RoutineRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
-        let deleteRecordUsecase = DeleteRecordUseCase(repository: recordRepository)
+        let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
+        let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
         
         // Firestore 로직 추가
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
+        
         let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
         let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
         let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
         
+        let fsRoutineRepository = FSRoutineRepositoryImpl(firestoreService: firestoreService)
+        let fsFetchRoutineUseCase = FSFetchRoutineUseCase(repository: fsRoutineRepository)
+        
         let reactor = HomeViewReactor(
             saveRecordUseCase: saveRecordUseCase,
             fsSaveRecordUseCase: fsSaveRecordUseCase,
-            deleteRecordUseCase: deleteRecordUsecase,
-            fsDeleteRecordUseCase: fsDeleteRecordUseCase
+            deleteRecordUseCase: deleteRecordUseCase,
+            fsDeleteRecordUseCase: fsDeleteRecordUseCase,
+            fetchRoutineUseCase: fetchRoutineUseCase,
+            fsFetchRoutineUseCase: fsFetchRoutineUseCase
         )
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
