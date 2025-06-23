@@ -23,7 +23,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
                 observer(.failure(RealmErrorType.dataNotFound))
                 return Disposables.create()
             }
-             
+            
             let routineDTO: [WorkoutRoutineDTO] = routines.map{ ($0 as! RMWorkoutRoutine).toDTO()}
             // 예시: 빈 배열 반환
             observer(.success(routineDTO.map{$0.toEntity()}))
@@ -58,14 +58,12 @@ final class RoutineRepositoryImpl: RoutineRepository {
     ///   - uid: 운동 루틴을 수정할 사용자의 고유 식별자
     ///   - item: 수정할 `WorkoutRoutine` 객체 덮어쓰기
     func updateRoutine(uid: String, item: WorkoutRoutine) {
-        // TODO: 운동 루틴 수정 구현 (테스트 필요)
-        let routines = RealmService.shared.read(type: .workoutRoutine)
-        routines?.forEach{ object in
-            RealmService.shared.update(item: object) { routine in
-                let data = routine as! RMWorkoutRoutine
-                if data.name == item.name {
-                    data.workoutArray = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0)) }
-                }
+        if let routine = RealmService.shared.read(type: .workoutRoutine,
+                                                  primaryKey: item.id)
+            as? RMWorkoutRoutine {
+            RealmService.shared.update(item: routine) { savedRoutine in
+                savedRoutine.name = item.name
+                savedRoutine.workoutArray = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0)) }
             }
         }
     }
