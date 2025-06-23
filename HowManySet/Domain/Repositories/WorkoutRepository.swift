@@ -15,10 +15,10 @@ protocol WorkoutRepository {
 // MARK: Realm Repository
 
 extension  WorkoutRepository {
-    func updateWorkout(uid: String = "", workout: Workout) {
-        updateWorkout(uid: uid, workout: workout)
+    func updateWorkout(workout: Workout) {
+        updateWorkout(uid: "", workout: workout)
     }
-    func deleteWorkout(uid: String = "", workout: Workout) {
-        deleteWorkout(uid: uid, workout: workout)
+    func deleteWorkout(workout: Workout) {
+        deleteWorkout(uid: "", workout: workout)
     }
 }
