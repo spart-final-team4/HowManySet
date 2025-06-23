@@ -347,7 +347,26 @@ final class HomeViewReactor: Reactor {
             ])
             
         case .workoutPauseButtonClicked:
-            return .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
+            if currentState.isRestPaused {
+                // 현재 일시정지 상태 → 재생으로 전환
+                // interval을 restSecondsRemaining에서 재시작
+                let restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
+                    .take(Int(currentState.restSecondsRemaining * 10))
+                    .take(until: self.state.map {
+                        $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
+                        .filter { $0 }
+                    )
+                    .map { _ in Mutation.restRemainingSecondsUpdating }
+                    .observe(on: MainScheduler.asyncInstance)
+                
+                return .concat([
+                    .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused)),
+                    .just(.pauseAndPlayRest(false)),
+                    restTimer
+                ])
+            } else {
+                return .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
+            }
             
             // 하단 휴식 버튼 누를 시 동작
         case .setRestTime(let newRestTime):
@@ -366,7 +385,10 @@ final class HomeViewReactor: Reactor {
                 // interval을 restSecondsRemaining에서 재시작
                 let restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
                     .take(Int(currentState.restSecondsRemaining * 10))
-                    .take(until: self.state.map { $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }.filter { $0 })
+                    .take(until: self.state.map {
+                        $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
+                        .filter { $0 }
+                    )
                     .map { _ in Mutation.restRemainingSecondsUpdating }
                     .observe(on: MainScheduler.asyncInstance)
 
@@ -663,7 +685,10 @@ private extension HomeViewReactor {
                 // 휴식 타이머
                 restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
                     .take(Int(tickCount))
-                    .take(until: self.state.map { !$0.isResting || $0.isRestTimerStopped }.filter { $0 })
+                    .take(until: self.state.map {
+                        $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
+                        .filter { $0 }
+                    )
                     .map { _ in Mutation.restRemainingSecondsUpdating }
                     .observe(on: MainScheduler.asyncInstance)
             }
