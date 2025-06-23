@@ -13,9 +13,20 @@ struct UserDTO {
     let name: String
     let provider: String
     let email: String?
+    let hasSetNickname: Bool
+    let hasCompletedOnboarding: Bool
+
+    init(uid: String, name: String, provider: String, email: String? = nil, hasSetNickname: Bool = false, hasCompletedOnboarding: Bool = false) {
+        self.uid = uid
+        self.name = name
+        self.provider = provider
+        self.email = email
+        self.hasSetNickname = hasSetNickname
+        self.hasCompletedOnboarding = hasCompletedOnboarding
+    }
 
     func toEntity() -> User {
-        return User(uid: uid, name: name, provider: provider, email: email)
+        return User(uid: uid, name: name, provider: provider, email: email, hasSetNickname: hasSetNickname, hasCompletedOnboarding: hasCompletedOnboarding)
     }
 
     static func from(uid: String, data: [String: Any]) -> UserDTO? {
@@ -23,15 +34,19 @@ struct UserDTO {
               let provider = data["provider"] as? String else {
             return nil
         }
-        let email = data["email"] as? String  // 선택적 필드
-        return UserDTO(uid: uid, name: name, provider: provider, email: email)
+        let email = data["email"] as? String
+        let hasSetNickname = data["hasSetNickname"] as? Bool ?? false
+        let hasCompletedOnboarding = data["hasCompletedOnboarding"] as? Bool ?? false
+        return UserDTO(uid: uid, name: name, provider: provider, email: email, hasSetNickname: hasSetNickname, hasCompletedOnboarding: hasCompletedOnboarding)
     }
 
     func toFirestoreData() -> [String: Any] {
         var data: [String: Any] = [
-            "uid": uid,  // 🔥 추가
+            "uid": uid,
             "name": name,
             "provider": provider,
+            "hasSetNickname": hasSetNickname,
+            "hasCompletedOnboarding": hasCompletedOnboarding,
             "createdAt": FieldValue.serverTimestamp()
         ]
         if let email = email {
