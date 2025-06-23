@@ -1,4 +1,5 @@
 import UIKit
+import RxDataSources
 import RxSwift
 import RxCocoa
 import ReactorKit
@@ -10,6 +11,16 @@ final class CalendarViewController: UIViewController, View {
 
     let calendarView = CalendarView()
     private var coordinator: CalendarCoordinatorProtocol? // 이유는 모르겠지만 weak를 쓰면 인스턴스가 메모리에서 해제됨. 따라서 일단 strong으로 구현하자
+
+    typealias RecordSection = SectionModel<String, WorkoutRecord>
+
+    let dataSource = RxTableViewSectionedReloadDataSource<RecordSection>(
+        configureCell: { dataSource, tableView, indexPath, item in
+            let cell = tableView.dequeueReusableCell(withIdentifier: RecordCell.identifier) as! RecordCell
+            cell.configure(with: item)
+            return cell
+        }
+    )
 
     // MARK: - Life Cycle
     override func loadView() {
@@ -38,13 +49,10 @@ final class CalendarViewController: UIViewController, View {
     func bind(reactor: CalendarViewReactor) {
         // records를 tableView에 바인딩
         reactor.state
-            .map(\.records)
-            .bind(to: calendarView.publicRecordTableView.rx.items(
-                cellIdentifier: RecordCell.identifier,
-                cellType: RecordCell.self
-            )) { _, record, cell in
-                cell.configure(with: record)
+            .map { state in
+                state.records.map { SectionModel(model: "", items: [$0]) }  // 섹션당 1개 셀
             }
+            .bind(to: calendarView.publicRecordTableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
         // tableView.delegate 설정
@@ -134,6 +142,26 @@ extension CalendarViewController: UITableViewDelegate {
         guard let record = reactor?.currentState.records[indexPath.row] else { return }
 
         coordinator?.presentRecordDetailView(record: record)
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+            self?.reactor?.action.onNext(.deleteItem(indexPath)) // Reactor로 이벤트 전달
+                    completion(true)
+                }
+
+        deleteAction.backgroundColor = .error
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = UIView()
+        footer.backgroundColor = .clear
+        return footer
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        16 // 원하는 spacing 값
     }
 }
 

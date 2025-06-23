@@ -4,18 +4,20 @@ import ReactorKit
 
 final class CalendarViewReactor: Reactor {
 
-    private let saveRecordUseCase: SaveRecordUseCase
+    private let deleteRecordUseCase: DeleteRecordUseCase
     private let fetchRecordUseCase: FetchRecordUseCase
 
     // MARK: - Action is an user interaction
     enum Action {
         case selectDate(Date)
+        case deleteItem(IndexPath)
     }
 
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
         case setSelectedDate(Date)
         case setRecords([WorkoutRecord])
+        case deleteRecordAt(IndexPath)
     }
 
     // MARK: - State is a current view state
@@ -27,8 +29,8 @@ final class CalendarViewReactor: Reactor {
     let initialState: State
 
     // MARK: - Init
-    init(saveRecordUseCase: SaveRecordUseCase, fetchRecordUseCase: FetchRecordUseCase) {
-        self.saveRecordUseCase = saveRecordUseCase
+    init(deleteRecordUseCase: DeleteRecordUseCase, fetchRecordUseCase: FetchRecordUseCase) {
+        self.deleteRecordUseCase = deleteRecordUseCase
         self.fetchRecordUseCase = fetchRecordUseCase
         self.initialState = State()
     }
@@ -47,6 +49,12 @@ final class CalendarViewReactor: Reactor {
                 Observable.just(.setSelectedDate(date)),
                 Observable.just(.setRecords(filteredRecords))
             ])
+
+        case let .deleteItem(indexPath):
+            let recordToDelete = currentState.records[indexPath.row]
+            deleteRecordUseCase.execute(uid: "", item: recordToDelete)
+
+            return .just(.deleteRecordAt(indexPath))
         }
     }
 
@@ -59,6 +67,10 @@ final class CalendarViewReactor: Reactor {
             newState.selectedDate = date
         case let .setRecords(records):
             newState.records = records
+        case let .deleteRecordAt(indexPath):
+            var updatedRecords = state.records
+            updatedRecords.remove(at: indexPath.row)
+            newState.records = updatedRecords
         }
 
         return newState

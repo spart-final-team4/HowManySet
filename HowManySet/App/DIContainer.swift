@@ -93,7 +93,7 @@ final class DIContainer {
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
         let recordRepository = RecordRepositoryImpl()
         
-        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+        let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
 
         // Firestore 로직 추가
@@ -103,7 +103,7 @@ final class DIContainer {
         let fsFetchRecordUseCase = FSFetchRecordUseCase(repository: fsRecordRepository)
 
         let reactor = CalendarViewReactor(
-            saveRecordUseCase: saveRecordUseCase,
+            deleteRecordUseCase: deleteRecordUseCase,
             fetchRecordUseCase: fetchRecordUseCase
         )
         
