@@ -22,9 +22,8 @@ final class DeleteRecordUseCase: DeleteRecordUseCaseProtocol {
 
     /// 특정 운동 기록을 삭제합니다.
     /// - Parameters:
-    ///   - uid: 사용자 식별자
     ///   - item: 삭제할 운동 기록
-    func execute(uid: String, item: WorkoutRecord) {
-        repository.deleteRecord(uid: uid, item: item)
+    func execute(item: WorkoutRecord) {
+        repository.deleteRecord(item: item)
     }
 }
