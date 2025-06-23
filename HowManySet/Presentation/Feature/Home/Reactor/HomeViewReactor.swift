@@ -186,19 +186,27 @@ final class HomeViewReactor: Reactor {
     private let fsSaveRecordUseCase: FSSaveRecordUseCase
     private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
     private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
+    private let fetchRoutineUseCase: FetchRoutineUseCaseProtocol
+    private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
     
     private let routineMockData = WorkoutRoutine.mockData[0]
     private let recordMockData = WorkoutRecord.mockData[0]
     
+//    private let firstFetchedRoutineData
+    
     init(saveRecordUseCase: SaveRecordUseCaseProtocol,
          fsSaveRecordUseCase: FSSaveRecordUseCase,
          deleteRecordUseCase: DeleteRecordUseCaseProtocol,
-         fsDeleteRecordUseCase: FSDeleteRecordUseCase
+         fsDeleteRecordUseCase: FSDeleteRecordUseCase,
+         fetchRoutineUseCase: FetchRoutineUseCaseProtocol,
+         fsFetchRoutineUseCase: FSFetchRoutineUseCase
     ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fsSaveRecordUseCase = fsSaveRecordUseCase
         self.deleteRecordUseCase = deleteRecordUseCase
         self.fsDeleteRecordUseCase = fsDeleteRecordUseCase
+        self.fetchRoutineUseCase = fetchRoutineUseCase
+        self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
         
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
