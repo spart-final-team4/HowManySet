@@ -14,4 +14,7 @@ public protocol AuthRepositoryProtocol {
     func signInAnonymously() -> Observable<User>
     func signOut() -> Observable<Void>
     func deleteAccount() -> Observable<Void>
+    func fetchUserInfo(uid: String) -> Observable<User?>
+    func updateUserNickname(uid: String, nickname: String) -> Observable<Void>
+    func updateOnboardingStatus(uid: String, completed: Bool) -> Observable<Void>
 }
