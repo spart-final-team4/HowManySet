@@ -9,4 +9,5 @@ import Foundation
 
 protocol WorkoutRepository {
     func updateWorkout(uid: String, workout: Workout)
+    func deleteWorkout(uid: String, workout: Workout)
 }
