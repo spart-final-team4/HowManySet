@@ -59,16 +59,19 @@ final class EditExcerciseViewReactor: Reactor {
     }
     
     /// 운동 저장 결과 상태
-    enum VaildWorkout {
-        case excerciseSaveSuccess
-        case excerciseSavefailure
-        case saveRoutineFailure
+    enum ValidWorkout {
+        case workoutNameTooLong
+        case workoutNameTooShort
+        case workoutInvalidCharacters
+        case wokkoutNameEmpty
+        case success
+        case workoutEmpty
     }
     
     // MARK: - Properties
     
     let initialState: State
-    let alertRelay = PublishRelay<VaildWorkout>() // Alert 표시용 Relay
+    let alertRelay = PublishRelay<ValidWorkout>() // Alert 표시용 Relay
     let dismissRelay = PublishRelay<Void>()       // 화면 종료용 Relay
     
     private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
@@ -122,12 +125,10 @@ final class EditExcerciseViewReactor: Reactor {
                     comment: nil
                 )
                 
-                if self.validationWorkout(workout: newWorkout) {
+                if case .success = self.validationWorkout(workout: newWorkout) {
                     observer.onNext(.addExcercise(newWorkout))
-                    self.alertRelay.accept(.excerciseSaveSuccess)
-                } else {
-                    self.alertRelay.accept(.excerciseSavefailure)
                 }
+                self.alertRelay.accept(self.validationWorkout(workout: newWorkout))
                 observer.onCompleted()
                 return Disposables.create()
             }
@@ -136,7 +137,7 @@ final class EditExcerciseViewReactor: Reactor {
             return Observable.create { [unowned self] observer in
                 let routine = self.currentState.currentRoutine
                 if routine.workouts.isEmpty {
-                    self.alertRelay.accept(.saveRoutineFailure)
+                    self.alertRelay.accept(.workoutEmpty)
                 } else {
                     self.dismissRelay.accept(())
                     observer.onNext(.saveRoutine)
@@ -182,14 +183,20 @@ final class EditExcerciseViewReactor: Reactor {
     }
     
     // MARK: - 유효성 검사
-    
-    /// 입력된 운동 데이터의 유효성을 검사합니다.
-    /// - Parameter workout: 검사 대상 운동
-    /// - Returns: 유효하면 `true`, 아니면 `false`
-    func validationWorkout(workout: Workout) -> Bool {
-        if workout.name == "" || workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0 }) {
-            return false
+    func validationWorkout(workout: Workout) -> ValidWorkout {
+        if workout.name.isEmpty {
+            return ValidWorkout.wokkoutNameEmpty
         }
-        return true
+        if workout.name.count > 30 {
+            return ValidWorkout.workoutNameTooLong
+        }
+        if workout.name.count <= 3 {
+            return ValidWorkout.workoutNameTooShort
+        }
+        if workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0}) {
+            return ValidWorkout.workoutInvalidCharacters
+        }
+        
+        return ValidWorkout.success
     }
 }
