@@ -14,7 +14,7 @@ import Then
 final class MyPageHeaderView: UIView {
     
     /// 사용자 이름 또는 상태(예: 비회원)를 표시하는 레이블
-    private let usernameLabel = UILabel().then {
+    let usernameLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 36, weight: .regular)
         $0.numberOfLines = 0
         $0.text = "비회원" // 기본값

@@ -10,6 +10,12 @@ import Foundation
 /// Firebase Auth 서비스를 정의하는 프로토콜
 /// - Firebase Auth의 기본 기능들을 추상화
 public protocol FirebaseAuthServiceProtocol {
+    /// 커스텀 토큰으로 로그인
+    /// - Parameters:
+    ///   - customToken: Firebase 커스텀 토큰
+    ///   - completion: 로그인 결과 콜백
+    func signInWithCustomToken(_ customToken: String, completion: @escaping (Result<User, Error>) -> Void)
+    
     /// 익명 로그인 처리
     /// - Parameter completion: 로그인 결과 콜백
     func signInAnonymously(completion: @escaping (Result<User, Error>) -> Void)

@@ -48,6 +48,12 @@ final class MyPageViewController: UIViewController, View {
         setupUI()
     }
     
+    /// 뷰가 나타날 때마다 사용자 이름 로드
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reactor?.action.onNext(.loadUserName)
+    }
+    
     /// ReactorKit 바인딩
     func bind(reactor: MyPageViewReactor) {
         
@@ -76,9 +82,17 @@ final class MyPageViewController: UIViewController, View {
         /// 에러 처리
         reactor.state
             .compactMap { $0.error }
-            .subscribe(with: self) { error in
-                print(error)
+            .subscribe(with: self) { owner, error in
+                print("🔴 MyPage 에러: \(error)")
             }.disposed(by: disposeBag)
+        
+        /// 사용자 이름 바인딩 (Firestore에서 fetch한 데이터)
+        reactor.state
+            .map { $0.userName }
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .bind(to: mypageView.headerView.usernameLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 
     /// 선택된 셀에 따라 코디네이터로 화면 이동 처리
