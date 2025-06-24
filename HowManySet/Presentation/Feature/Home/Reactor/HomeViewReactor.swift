@@ -414,15 +414,12 @@ final class HomeViewReactor: Reactor {
             
         case let .setWorkingout(isWorkingout):
             newState.isWorkingout = isWorkingout
-            saveCurrentWorkoutState(newState)
             
         case let .setWorkoutTime(time):
             newState.workoutTime = time
-            saveCurrentWorkoutState(newState)
             
         case let .pauseAndPlayWorkout(isPaused):
             newState.isWorkoutPaused = isPaused
-            saveCurrentWorkoutState(newState)
             
         case let .setResting(isResting):
             newState.isResting = isResting
@@ -431,7 +428,6 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
             }
             print("휴식중? \(newState.isResting)")
-            saveCurrentWorkoutState(newState)
             
             // 휴식 버튼으로 휴식 시간 설정 시
         case let .setRestTime(restTime):
@@ -441,7 +437,6 @@ final class HomeViewReactor: Reactor {
             } else {
                 newState.restTime += restTime
             }
-            saveCurrentWorkoutState(newState)
             
         case let .setRestTimeDataAtProgressBar(restTime):
             if restTime > 0 {
@@ -453,7 +448,6 @@ final class HomeViewReactor: Reactor {
                 newState.restSecondsRemaining = 0.0
                 newState.isRestTimerStopped = true
             }
-            saveCurrentWorkoutState(newState)
             
         case let .manageDataIfForwarded(isRoutineCompleted, isCurrentExerciseCompleted):
             
@@ -471,7 +465,6 @@ final class HomeViewReactor: Reactor {
                 print("다음 세트로 - \(newState.workoutCardStates[newState.currentExerciseIndex].setIndex)")
             }
             print("🚬 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
-            saveCurrentWorkoutState(newState)
             
         case let .updateWorkoutCardState(updatedState, oldState, oldIndex):
             
@@ -491,16 +484,13 @@ final class HomeViewReactor: Reactor {
             // 새로운 카드 모든 세트 완료 다시 false로 설정
             newState.currentExerciseAllSetsCompleted = false
             print("ℹ️ 업데이트된 카드 State: \(updatedState.currentExerciseName), \(updatedState.currentSetNumber)세트 째, \(updatedState.currentExerciseNumber)번째 운동 (모든세트완료?: \(updatedState.allSetsCompleted ? "TRUE" : "FALSE"))")
-            saveCurrentWorkoutState(newState)
             
         case let .initializeWorkoutCardStates(cardStates):
             newState.workoutCardStates = cardStates
             newState.currentExerciseIndex = 0 // 첫 운동으로 초기화
-            saveCurrentWorkoutState(newState)
             
         case .workoutTimeUpdating:
             newState.workoutTime += 1
-            saveCurrentWorkoutState(newState)
             
         case .restRemainingSecondsUpdating:
             if newState.isResting,
@@ -515,11 +505,9 @@ final class HomeViewReactor: Reactor {
                     newState.isRestTimerStopped = true
                 }
             }
-            saveCurrentWorkoutState(newState)
             
         case let .pauseAndPlayRest(isPaused):
             newState.isRestPaused = isPaused
-            saveCurrentWorkoutState(newState)
             
         // MARK: - 운동 종료 시 운동 관련 데이터 핸들
         // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
@@ -550,12 +538,7 @@ final class HomeViewReactor: Reactor {
                 setDidCount: newState.didSetCount,
                 routineMemo: newState.memoInRoutine
             )
-            
             print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
-            
-            // 운동 완료 시 UserDefaults에 있는 운동 상태 제거
-            print("🗑️ currentWorkoutState 제거")
-            UserDefaults.standard.removeObject(forKey: "currentWorkoutState")
             
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
@@ -566,17 +549,14 @@ final class HomeViewReactor: Reactor {
                     print("\($0.currentExerciseName), \( $0.allSetsCompleted)")
                 }
             }
-            saveCurrentWorkoutState(newState)
             
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             newState.currentExerciseIndex = newIndex
             newState.updatingIndex = newIndex
-            saveCurrentWorkoutState(newState)
             
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
-            saveCurrentWorkoutState(newState)
             
         case let .updateExerciseMemo(newMemo):
             let currentExerciseIndex = currentState.currentExerciseIndex
@@ -591,7 +571,6 @@ final class HomeViewReactor: Reactor {
             )
             
             updateWorkoutUseCase.execute(item: currentWorkout)
-            saveCurrentWorkoutState(newState)
                         
         case let .stopRestTimer(isStopped):
             if isStopped {
@@ -605,7 +584,6 @@ final class HomeViewReactor: Reactor {
                 newState.restSecondsRemaining = Float(newState.restTime)
                 newState.restStartTime = nil
             }
-            saveCurrentWorkoutState(newState)
             
         // MARK: - 현재 운동 데이터 저장
         // 메모 창 dismiss시, 운동 완료 시 등등
@@ -633,7 +611,6 @@ final class HomeViewReactor: Reactor {
             } else {
                 print("사용자 uid가 없습니다!")
             }
-            saveCurrentWorkoutState(newState)
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
@@ -646,21 +623,17 @@ final class HomeViewReactor: Reactor {
                 currentUnit: currentExercise.currentUnitForSave,
                 currentWeightSet: currentSetsData
             )
-            saveCurrentWorkoutState(newState)
             
         case let .updateRoutineMemo(with: newMemo):
             newState.memoInRoutine = newMemo
-            saveCurrentWorkoutState(newState)
             
         case let .setEditExerciseViewPresented(isPresented):
             print("isEditExerciseViewPresented: \(isPresented)")
             newState.isEditExerciseViewPresented = isPresented
-            saveCurrentWorkoutState(newState)
             
         case let .setUpdatingIndex(cardIndex):
             print("Updating인 CARDINDEX: \(cardIndex)")
             newState.updatingIndex = cardIndex
-            saveCurrentWorkoutState(newState)
             
         }//switch mutation
                 
@@ -844,21 +817,21 @@ extension HomeViewReactor.State {
 // MARK: - 운동 진행 상태 UserDefaults
 // 앱 스위처에서 스와이프 종료 후에도 운동 상태 남기기 위함
 
-/// UserDefaults로 운동상태 Save
-func saveCurrentWorkoutState(_ state: HomeViewReactor.State) {
-    if let encoded = try? JSONEncoder().encode(state) {
-        UserDefaults.standard.set(encoded, forKey: "currentWorkoutState")
-    }
-}
-
-/// UserDefaults에서 운동상태 Load
-func loadCurrentWorkoutState() -> HomeViewReactor.State? {
-    if let data = UserDefaults.standard.data(forKey: "currentWorkoutState"),
-       let state = try? JSONDecoder().decode(HomeViewReactor.State.self, from: data) {
-        return state
-    }
-    return nil
-}
+///// UserDefaults로 운동상태 Save
+//func saveCurrentWorkoutState(_ state: HomeViewReactor.State) {
+//    if let encoded = try? JSONEncoder().encode(state) {
+//        UserDefaults.standard.set(encoded, forKey: "currentWorkoutState")
+//    }
+//}
+//
+///// UserDefaults에서 운동상태 Load
+//func loadCurrentWorkoutState() -> HomeViewReactor.State? {
+//    if let data = UserDefaults.standard.data(forKey: "currentWorkoutState"),
+//       let state = try? JSONDecoder().decode(HomeViewReactor.State.self, from: data) {
+//        return state
+//    }
+//    return nil
+//}
 
 // MARK: defaultInitialState
 extension HomeViewReactor {
