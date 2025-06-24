@@ -51,14 +51,26 @@ struct HowManySetWidgetLiveActivity: Widget {
             // Lock screen/banner UI goes here
             VStack() {
                 VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Image(systemName: "timer")
-                            .foregroundStyle(.brand)
-                        Text(String(context.state.workoutTime.toWorkOutTimeLabel()))
-                            .foregroundStyle(.white)
-                            .font(.system(size: 14))
-                            .fontWeight(.semibold)
-                            .monospacedDigit()
+                    if !context.state.isResting {
+                        HStack {
+                            Image(systemName: "timer")
+                                .foregroundStyle(.brand)
+                            Text(String(context.state.workoutTime.toWorkOutTimeLabel()))
+                                .foregroundStyle(.white)
+                                .font(.system(size: 14))
+                                .fontWeight(.semibold)
+                                .monospacedDigit()
+                            }
+                    } else {
+                        HStack {
+                            Image(systemName: "dumbbell")
+                                .foregroundStyle(.brand)
+                            Text(String(context.state.exerciseName))
+                                .foregroundStyle(.white)
+                                .font(.system(size: 14))
+                                .fontWeight(.semibold)
+                                .monospacedDigit()
+                        }
                     }
                     // MARK: - 운동 중 contents
                     if !context.state.isResting {
