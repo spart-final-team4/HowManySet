@@ -9,12 +9,14 @@ final class CalendarViewReactor: Reactor {
 
     // MARK: - Action is an user interaction
     enum Action {
+        case viewDidLoad
         case selectDate(Date)
         case deleteItem(IndexPath)
     }
 
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
+        case setAllRecords([WorkoutRecord])
         case setSelectedDate(Date)
         case setRecords([WorkoutRecord])
         case deleteRecordAt(IndexPath)
@@ -24,6 +26,7 @@ final class CalendarViewReactor: Reactor {
     struct State {
         var selectedDate: Date = Date()
         var records: [WorkoutRecord] = []
+        var allRecords: [WorkoutRecord] = []
     }
 
     let initialState: State
@@ -38,6 +41,10 @@ final class CalendarViewReactor: Reactor {
     // MARK: - Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
+        case .viewDidLoad:
+            return fetchRecordUseCase.execute(uid: UUID().uuidString)
+                .map { Mutation.setAllRecords($0) }
+                .asObservable()
         case let .selectDate(date):
             let fetchRecords = fetchRecordUseCase.execute(uid: UUID().uuidString)
                 .map { allRecords in
@@ -66,6 +73,8 @@ final class CalendarViewReactor: Reactor {
         var newState = state
 
         switch mutation {
+        case let .setAllRecords(records):
+            newState.allRecords = records
         case let .setSelectedDate(date):
             newState.selectedDate = date
         case let .setRecords(records):
