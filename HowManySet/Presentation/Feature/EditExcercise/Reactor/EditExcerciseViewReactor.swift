@@ -187,10 +187,10 @@ final class EditExcerciseViewReactor: Reactor {
         if workout.name.isEmpty {
             return ValidWorkout.wokkoutNameEmpty
         }
-        if workout.name.count > 30 {
+        if workout.name.count > 25 {
             return ValidWorkout.workoutNameTooLong
         }
-        if workout.name.count <= 3 {
+        if workout.name.count <= 1 {
             return ValidWorkout.workoutNameTooShort
         }
         if workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0}) {
