@@ -87,9 +87,11 @@ private extension SavedExcerciseView {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(4)
+            $0.width.equalToSuperview().multipliedBy(0.5)
         }
         setCountLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.leading.equalTo(excerciseNameLabel.snp.trailing).offset(15)
             $0.trailing.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(4)
         }
