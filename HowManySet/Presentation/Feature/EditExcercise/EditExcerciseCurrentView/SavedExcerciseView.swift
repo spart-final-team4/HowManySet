@@ -29,6 +29,7 @@ final class SavedExcerciseView: UIView {
     private let setCountLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .dbTypo
+        $0.textAlignment = .right
         $0.numberOfLines = 1
     }
     
