@@ -12,6 +12,10 @@ final class CalendarViewController: UIViewController, View {
     let calendarView = CalendarView()
     private var coordinator: CalendarCoordinatorProtocol? // 이유는 모르겠지만 weak를 쓰면 인스턴스가 메모리에서 해제됨. 따라서 일단 strong으로 구현하자
 
+    // 기록이 있는 날짜를 담아놓을 배열 생성
+    private var recordedDates: [Date] = []
+
+    // RxDataSource 사용을 위한 Model 생성
     typealias RecordSection = SectionModel<String, WorkoutRecord>
 
     let dataSource = RxTableViewSectionedReloadDataSource<RecordSection>(
@@ -32,6 +36,7 @@ final class CalendarViewController: UIViewController, View {
         setDelegates()
         setRegisters()
         setButtonTargets()
+        reactor?.action.onNext(.viewDidLoad)
     }
 
     // MARK: - Init
@@ -53,6 +58,18 @@ final class CalendarViewController: UIViewController, View {
                 state.records.map { SectionModel(model: "", items: [$0]) }  // 섹션당 1개 셀
             }
             .bind(to: calendarView.publicRecordTableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map(\.allRecords) // Reactor의 [WorkoutRecord]
+            .map { records in
+                records.map { $0.date } // [Date]
+            }
+            .distinctUntilChanged() // 동일한 날짜 배열이면 업데이트 방지
+            .bind(with: self) { owner, dates in
+                owner.recordedDates = dates
+                owner.calendarView.publicCalendar.reloadData() // 점 갱신
+            }
             .disposed(by: disposeBag)
 
         // tableView.delegate 설정
@@ -181,8 +198,9 @@ extension CalendarViewController: FSCalendarDataSource {
     /// 캘린더에서 이벤트가 발생한 날짜에 이벤트 점(event dot)을 표시해주는 메서드
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
         let calendar = Calendar.current
-        return WorkoutRecord.mockData.contains(where: {
-            calendar.isDate($0.date, inSameDayAs: date)
-        }) ? 1 : 0
+        
+        return recordedDates.contains {
+            calendar.isDate($0, inSameDayAs: date)
+        } ? 1 : 0
     }
 }
