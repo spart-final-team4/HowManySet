@@ -147,9 +147,15 @@ private extension HomeViewController {
             restInfoView
         )
         
-        topTimerHStackView.addArrangedSubviews(workoutTimeLabel, pauseButton)
+        topTimerHStackView.addArrangedSubviews(
+            workoutTimeLabel,
+            pauseButton
+        )
         
-        buttonHStackView.addArrangedSubviews(stopButton, forwardButton)
+        buttonHStackView.addArrangedSubviews(
+            stopButton,
+            forwardButton
+        )
         
         pagingScrollView.addSubview(pagingScrollContentView)
     }
