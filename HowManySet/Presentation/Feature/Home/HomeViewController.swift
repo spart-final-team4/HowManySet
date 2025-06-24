@@ -429,19 +429,19 @@ private extension HomeViewController {
             // 세트 완료 버튼
             cardView.setCompleteButton.rx.tap
                 .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
-                .bind(onNext: { action in
+                .do(onNext: {
                     print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     
-                    UIView.animate(withDuration: 0.1, animations: {
+                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                     }, completion: { _ in
-                        UIView.animate(withDuration: 0.1) {
+                        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                             cardView.setCompleteButton.transform = .identity
-                        }
+                        })
                     })
-                    reactor.action.onNext(action)
                 })
+                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
+                .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
             
             // 루틴 편집 및 메모 버튼

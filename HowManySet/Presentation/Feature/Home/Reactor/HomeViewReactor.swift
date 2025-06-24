@@ -399,7 +399,8 @@ final class HomeViewReactor: Reactor {
                     updatedCardState: currentState.workoutCardStates[nextIndex],
                     oldCardState: oldCardState,
                     oldCardIndex: oldIndex)),
-                .just(.changeExerciseIndex(nextIndex))
+                .just(.changeExerciseIndex(nextIndex)),
+                .just(.setUpdatingIndex(nextIndex))
             ])
         }//action
     }//mutate
