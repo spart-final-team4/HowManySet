@@ -9,7 +9,8 @@ import UIKit
 import SnapKit
 
 extension UIViewController {
-    func showToast(message: String) {
+    // ScrollView 대응을 위해 현재 보여지는 View의 좌상단 x,y값을 입력받음
+    func showToast(x: CGFloat, y: CGFloat, message: String) {
         // 띄워져 있는 toast 제거
         if let existingToast = view.viewWithTag(9999) {
             existingToast.removeFromSuperview()
@@ -40,8 +41,16 @@ extension UIViewController {
         let padding: CGFloat = 20
         let width: CGFloat = view.frame.width - padding * 2
         let height: CGFloat = 48
-        toastView.frame = CGRect(x: 20,
-                                 y: view.frame.maxY - height - 100,
+        var navBarHeight: CGFloat = 0
+        // 하단 SafeArea 높이
+        var bottomSafeAreaHeight = view.safeAreaInsets.bottom
+        // 네비바 높이
+        if let hgt = navigationController?.navigationBar.frame.height {
+            navBarHeight = hgt
+        }
+        
+        toastView.frame = CGRect(x: padding,
+                                 y: y + UIScreen.main.bounds.height - navBarHeight - bottomSafeAreaHeight - 110,
                                  width: width,
                                  height: height)
         view.addSubview(toastView)

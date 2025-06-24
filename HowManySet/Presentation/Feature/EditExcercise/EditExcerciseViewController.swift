@@ -144,7 +144,8 @@ final class EditExcerciseViewController: UIViewController, View {
             .subscribe(with: self) { owner, alert in
                 switch alert {
                 case .success:
-                    owner.showToast(message: "운동이 추가되었어요!")
+//                    owner.showToast(message: "운동이 추가되었어요!")
+                    owner.showToast(x: owner.scrollView.contentOffset.x, y: owner.scrollView.contentOffset.y, message: "운동이 추가되었어요!")
                     owner.headerView.returnInitialState()
                     owner.contentView.returnInitialState()
                 case .wokkoutNameEmpty:
