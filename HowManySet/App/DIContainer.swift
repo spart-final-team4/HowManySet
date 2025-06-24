@@ -83,7 +83,10 @@ final class DIContainer {
         let reactor = RoutineListViewReactor(
             deleteRoutineUseCase: deleteRoutineUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
-            saveRoutineUseCase: saveRoutineUseCase
+            saveRoutineUseCase: saveRoutineUseCase,
+            fsDeleteRoutineUseCase: fsDeleteRoutineUseCase,
+            fsFetchRoutineUseCase: fsFetchRoutineUseCase,
+            fsSaveRoutineUseCase: fsSaveRoutineUseCase
         )
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator)
