@@ -26,7 +26,12 @@ final class RoutineCompleteViewController: UIViewController, View {
     private let exerciseRecordSavedText = "운동 기록 저장됨"
     private let memoPlaceHolderText = "메모를 입력해 주세요."
     private let confirmText = "확인"
-    
+        
+    private let cardInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 24 : 28
+    private let statInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 20 : 24
+    private let fontSize: CGFloat = UIScreen.main.bounds.width <= 375 ? 18 : 20
+    private let iconSize: CGFloat = UIScreen.main.bounds.width <= 375 ? 22 : 24
+
     // MARK: - UI Components
     private lazy var mainContentsContainer = UIView()
     
@@ -46,6 +51,7 @@ final class RoutineCompleteViewController: UIViewController, View {
         $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .lightGray
         $0.textAlignment = .center
+        $0.numberOfLines = 1
     }
     
     private lazy var cardContentsContainer = UIView().then {
@@ -73,17 +79,19 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var exerciseTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.font = .systemFont(ofSize: fontSize, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
+        $0.numberOfLines = 1
     }
     
     private lazy var exerciseAndSetInfoLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.font = .systemFont(ofSize: fontSize, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
+        $0.numberOfLines = 1
     }
     
     private lazy var timeIcon = UIImageView().then {
@@ -116,8 +124,8 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var shareButton = UIButton().then {
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
-        $0.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        $0.setImage(UIImage(named: "share"), for: .normal)
+        $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
         $0.backgroundColor = .systemGray2
         $0.layer.cornerRadius = 22
@@ -198,22 +206,32 @@ private extension RoutineCompleteViewController {
             memoTextView,
             confirmButton
         )
-        
-        topLabelVStack.addArrangedSubviews(exerciseCompletedLabel, exerciseInfoLabel)
-        cardContentsContainer.addSubviews(progressView, routineStatisticsContainer, shareButton)
+        topLabelVStack.addArrangedSubviews(
+            exerciseCompletedLabel,
+            exerciseInfoLabel
+        )
+        cardContentsContainer.addSubviews(
+            progressView,
+            routineStatisticsContainer,
+            shareButton
+        )
         routineStatisticsContainer.addSubview(routineStatisticsVStack)
-        routineStatisticsVStack.addArrangedSubviews(timeInfoHStack, exerciseInfoHStack)
-        timeInfoHStack.addArrangedSubviews(timeIcon, exerciseTimeLabel)
-        exerciseInfoHStack.addArrangedSubviews(exerciseIcon, exerciseAndSetInfoLabel)
+        routineStatisticsVStack.addArrangedSubviews(
+            timeInfoHStack,
+            exerciseInfoHStack
+        )
+        timeInfoHStack.addArrangedSubviews(
+            timeIcon,
+            exerciseTimeLabel
+        )
+        exerciseInfoHStack.addArrangedSubviews(
+            exerciseIcon,
+            exerciseAndSetInfoLabel
+        )
     }
     
     func setConstraints() {
         
-//        mainContentsContainer.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-//            $0.bottom.equalToSuperview()
-//            $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
-//        }
         mainContentsContainer.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.verticalEdges.equalTo(view.safeAreaLayoutGuide)
@@ -242,26 +260,26 @@ private extension RoutineCompleteViewController {
         }
         
         shareButton.snp.makeConstraints {
-            $0.top.trailing.equalToSuperview().inset(28)
+            $0.top.trailing.equalToSuperview().inset(cardInset)
             $0.width.height.equalTo(44)
         }
         
         routineStatisticsContainer.snp.makeConstraints {
             $0.height.equalToSuperview().multipliedBy(0.31)
-            $0.horizontalEdges.equalToSuperview().inset(28)
-            $0.bottom.equalToSuperview().inset(28)
+            $0.horizontalEdges.equalToSuperview().inset(cardInset)
+            $0.bottom.equalToSuperview().inset(cardInset)
         }
         
         routineStatisticsVStack.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(24)
+            $0.edges.equalToSuperview().inset(statInset)
         }
         
         timeIcon.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(iconSize)
         }
         
         exerciseIcon.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(iconSize)
         }
         
         memoTextView.snp.makeConstraints {
@@ -271,7 +289,7 @@ private extension RoutineCompleteViewController {
         }
         
         confirmButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(20)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(56)
         }
@@ -310,7 +328,7 @@ private extension RoutineCompleteViewController {
         
         exerciseInfoLabel.text = "\(routineName) | \(todayDate) \(exerciseRecordSavedText)"
         progressView.setProgress(CGFloat(routineDidProgress))
-        percentageLabel.text = "\(Int(routineDidProgress * 100))%"
+        percentageLabel.text = "\(min(100, Int(routineDidProgress * 100)))%"
         exerciseTimeLabel.text = totalTime
         exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
         memoTextView.text = routineMemo
@@ -385,9 +403,9 @@ private extension RoutineCompleteViewController {
                 guard let self else { return }
                 print("키보드 나타남")
         
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.1, animations: {
                     self.mainContentsContainer.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight/2)
-                }
+                })
             })
             .disposed(by: disposeBag)
         
@@ -396,9 +414,9 @@ private extension RoutineCompleteViewController {
                 guard let self else { return }
                 print("키보드 사라짐")
 
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.1, animations: {
                     self.mainContentsContainer.transform = .identity
-                }
+                })
             })
             .disposed(by: disposeBag)
     }

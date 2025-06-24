@@ -27,19 +27,20 @@ final class EditAndMemoViewController: UIViewController, View {
     // MARK: - UI Components
     private lazy var containerView = UIView()
     
-    private lazy var editLabel = UILabel().then {
-        $0.text = editText
-        $0.font = .systemFont(ofSize: 20, weight: .semibold)
-    }
-    
-    private lazy var editRoutineButton = UIButton().then {
-        $0.backgroundColor = .disabledButton
-        $0.layer.cornerRadius = 12
-        $0.setTitle(editRoutineButtonText, for: .normal)
-        // 버튼 타이틀 정렬
-        $0.contentHorizontalAlignment = .leading
-        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-    }
+    // TODO: 추후에 배포 후 추가 예정
+//    private lazy var editLabel = UILabel().then {
+//        $0.text = editText
+//        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+//    }
+//    
+//    private lazy var editRoutineButton = UIButton().then {
+//        $0.backgroundColor = .disabledButton
+//        $0.layer.cornerRadius = 12
+//        $0.setTitle(editRoutineButtonText, for: .normal)
+//        // 버튼 타이틀 정렬
+//        $0.contentHorizontalAlignment = .leading
+//        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+//    }
     
     private lazy var memoLabel = UILabel().then {
         $0.text = memoText
@@ -98,7 +99,7 @@ private extension EditAndMemoViewController {
     
     func setViewHierarchy() {
         view.addSubview(containerView)
-        [editLabel, editRoutineButton, memoLabel, memoTextView].forEach {
+        [/*editLabel, editRoutineButton,*/ memoLabel, memoTextView].forEach {
             containerView.addSubview($0)
         }
     }
@@ -111,19 +112,20 @@ private extension EditAndMemoViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(68)
         }
         
-        editLabel.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.equalToSuperview()
-        }
-        
-        editRoutineButton.snp.makeConstraints {
-            $0.top.equalTo(editLabel.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(48)
-        }
+//        editLabel.snp.makeConstraints {
+//            $0.top.equalToSuperview()
+//            $0.leading.equalToSuperview()
+//        }
+//        
+//        editRoutineButton.snp.makeConstraints {
+//            $0.top.equalTo(editLabel.snp.bottom).offset(12)
+//            $0.leading.trailing.equalToSuperview()
+//            $0.height.equalTo(48)
+//        }
         
         memoLabel.snp.makeConstraints {
-            $0.top.equalTo(editRoutineButton.snp.bottom).offset(24)
+//            $0.top.equalTo(editRoutineButton.snp.bottom).offset(24)
+            $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
         }
         
@@ -179,16 +181,16 @@ private extension EditAndMemoViewController {
     
     func bindUIEvents() {
         
-        editRoutineButton.rx.tap
-            .bind(onNext: { [weak self] _ in
-                guard let self else { return }
-                print("루틴 수정 버튼 클릭")
-                self.dismiss(animated: true) {
-                    // TODO: 검토 및 테스트 필요
-                    guard let routine = self.reactor?.currentState.workoutRoutine else { return }
-                    self.coordinator?.presentEditRoutineView(with: routine)
-                }
-            }).disposed(by: disposeBag)
+//        editRoutineButton.rx.tap
+//            .bind(onNext: { [weak self] _ in
+//                guard let self else { return }
+//                print("루틴 수정 버튼 클릭")
+//                self.dismiss(animated: true) {
+//                    // TODO: 검토 및 테스트 필요
+//                    guard let routine = self.reactor?.currentState.workoutRoutine else { return }
+//                    self.coordinator?.presentEditRoutineView(with: routine)
+//                }
+//            }).disposed(by: disposeBag)
         
         // 화면 탭하면 키보드 내리기
         let tapGesture = UITapGestureRecognizer()

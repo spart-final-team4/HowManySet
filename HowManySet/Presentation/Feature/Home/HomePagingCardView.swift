@@ -53,11 +53,6 @@ final class HomePagingCardView: UIView {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     }
     
-    private lazy var exerciseSetLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 14)
-        $0.textColor = .textSecondary
-    }
-    
     lazy var editButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 24), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -68,7 +63,8 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .cardBackground
     }
 
-    lazy var weightRepsButton = UIButton().then {
+    // TODO: 추후에 배포 후 UIButton()으로 변경
+    lazy var weightRepsButton = UIView().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
@@ -86,8 +82,8 @@ final class HomePagingCardView: UIView {
     }
     
     private lazy var weightImageView = UIImageView().then {
-        let config = UIImage.SymbolConfiguration(pointSize: 40)
-        $0.image = UIImage(systemName: "dumbbell", withConfiguration: config)
+        $0.image = UIImage(named: "brandDumbbell")
+        $0.contentMode = .scaleAspectFit
         $0.tintColor = .brand
     }
     
@@ -116,7 +112,7 @@ final class HomePagingCardView: UIView {
     lazy var remainingRestTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
         $0.isHidden = true
-        $0.tintColor = .textSecondary
+        $0.textColor = .black
     }
     
     lazy var setCompleteButton = UIButton().then {
@@ -133,7 +129,7 @@ final class HomePagingCardView: UIView {
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         $0.isUserInteractionEnabled = false
         $0.alpha = 0
-        $0.tintColor = .textSecondary
+        $0.tintColor = .black
     }
     
     lazy var restProgressBar = UIProgressView().then {
@@ -181,15 +177,31 @@ private extension HomePagingCardView {
             weightRepsButton,
             setCompleteButton
         )
-        
-        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
-        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, editButton)
-        exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, exerciseSetLabel)
+        topConentsVStack.addArrangedSubviews(
+            topLineHStack,
+            setProgressBar
+        )
+        topLineHStack.addArrangedSubviews(
+            exerciseInfoHStack,
+            spacer,
+            editButton
+        )
+        exerciseInfoHStack.addArrangedSubviews(
+            exerciseNameLabel /*, exerciseSetLabel*/
+        )
         weightRepsButton.addSubview(weightRepsHStack)
-        weightRepsHStack.addArrangedSubviews(weightInfoVStack,
-                                             repsInfoVStack)
-        weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
-        repsInfoVStack.addArrangedSubviews(repsImageView, repsLabel)
+        weightRepsHStack.addArrangedSubviews(
+            weightInfoVStack,
+            repsInfoVStack
+        )
+        weightInfoVStack.addArrangedSubviews(
+            weightImageView,
+            weightLabel
+        )
+        repsInfoVStack.addArrangedSubviews(
+            repsImageView,
+            repsLabel
+        )
     }
     
     func setConstraints() {
@@ -233,6 +245,10 @@ private extension HomePagingCardView {
             $0.centerY.equalTo(remainingRestTimeLabel)
             $0.trailing.equalTo(remainingRestTimeLabel.snp.leading).offset(-12)
         }
+        
+        weightImageView.snp.makeConstraints {
+            $0.width.height.equalTo(40)
+        }
     }
 }
 
@@ -268,7 +284,6 @@ extension HomePagingCardView {
     func configure(with state: WorkoutCardState) {
                 
         exerciseNameLabel.text = state.currentExerciseName
-        exerciseSetLabel.text = "\(state.currentSetNumber) / \(state.totalSetCount)"
         weightLabel.text = "\(Int(state.currentWeightForSave))\(state.currentUnitForSave)"
         repsLabel.text = "\(state.currentRepsForSave)\(repsText)"
         setProgressBar.updateProgress(currentSet: state.setProgressAmount)
