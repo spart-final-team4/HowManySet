@@ -30,7 +30,7 @@ final class EditExcerciseViewReactor: Reactor {
         case saveRoutineButtonTapped          // 루틴 저장 버튼 클릭
         case changeExerciseName(String)       // 운동 이름 변경
         case changeUnit(String)               // 단위 변경 (kg, lbs 등)
-        case changeExcerciseWeightSet([[Int]]) // 세트 정보 변경 (무게, 반복 수)
+        case changeExcerciseWeightSet([[String]]) // 세트 정보 변경 (무게, 반복 수)
     }
     
     // MARK: - Mutation
@@ -41,7 +41,7 @@ final class EditExcerciseViewReactor: Reactor {
         case saveRoutine                      // 루틴 저장
         case changeExcerciseName(String)      // 운동 이름 갱신
         case changeUnit(String)               // 단위 갱신
-        case changeExcerciseWeightSet([[Int]]) // 세트 정보 갱신
+        case changeExcerciseWeightSet([[String]]) // 세트 정보 갱신
     }
     
     // MARK: - State
@@ -51,7 +51,7 @@ final class EditExcerciseViewReactor: Reactor {
         var currentRoutine: WorkoutRoutine    // 현재 작성 중인 루틴
         var currentExcerciseName: String = "" // 입력된 운동 이름
         var currentUnit: String = "kg"        // 단위 기본값 (kg)
-        var currentWeightSet: [[Int]] = []    // 현재 세트 입력값 (2차원 배열: [무게, 반복수])
+        var currentWeightSet: [[String]] = []    // 현재 세트 입력값 (2차원 배열: [무게, 반복수])
         
         // 홈 화면 관련 데이터
         var caller: ViewCaller
@@ -113,9 +113,9 @@ final class EditExcerciseViewReactor: Reactor {
                 
                 let sets = currentWeightSet.map {
                     WorkoutSet(
-                        weight: Double($0[0]),
+                        weight: Double($0[0]) ?? 0.0,
                         unit: self.currentState.currentUnit,
-                        reps: $0[1])
+                        reps: Int((Double($0[1]) ?? 0.0)))
                 }
                 
                 let newWorkout = Workout(
