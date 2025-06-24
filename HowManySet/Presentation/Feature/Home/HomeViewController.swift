@@ -429,19 +429,19 @@ private extension HomeViewController {
             // 세트 완료 버튼
             cardView.setCompleteButton.rx.tap
                 .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-                .do(onNext: {
+                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
+                .bind(onNext: { action in
                     print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     
-                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
+                    UIView.animate(withDuration: 0.1, animations: {
                         cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                     }, completion: { _ in
-                        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
+                        UIView.animate(withDuration: 0.1) {
                             cardView.setCompleteButton.transform = .identity
-                        })
+                        }
                     })
+                    reactor.action.onNext(action)
                 })
-                .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
-                .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
             
             // 루틴 편집 및 메모 버튼
@@ -664,7 +664,7 @@ extension HomeViewController {
         }.disposed(by: disposeBag)
         
         // TODO: 추후에 리팩토링
-        // 휴식일때 휴식 프로그레스바 및 휴식시간 설정
+        // 휴식일때 휴식 프로그레스바, 휴식시간 설정, 운동 카드 뷰 UI 갱신
         Observable.combineLatest(
             reactor.state.map { $0.isResting },
             reactor.state.map { $0.currentExerciseIndex },
@@ -673,9 +673,8 @@ extension HomeViewController {
             reactor.state.map { $0.restStartTime },
             reactor.state.map { $0.isRestTimerStopped }
         )
-        .filter { !$5 }
         .distinctUntilChanged { $0 == $1 }
-        .observe(on: MainScheduler.asyncInstance)
+        .observe(on: MainScheduler.instance)
         .map { [weak self] (restData: (Bool, Int, Float, Float, Float?, Bool)) -> [(Int, Float, String, Bool, Bool)] in
             guard let self else { return [] }
             
@@ -705,7 +704,7 @@ extension HomeViewController {
                 
                 let cardState = reactor.currentState.workoutCardStates[cardIndex]
                 
-                if isResting && !isRestTimerStopped {
+                if isResting {
                     cardView.restProgressBar.setProgress(progress, animated: true)
                     cardView.remainingRestTimeLabel.text = timeText
                     cardView.showRestUI()
@@ -886,7 +885,7 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
             .distinctUntilChanged { $0 == $1 }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 
                 let (isWorkingout, data) = state
@@ -902,7 +901,7 @@ extension HomeViewController {
         
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,

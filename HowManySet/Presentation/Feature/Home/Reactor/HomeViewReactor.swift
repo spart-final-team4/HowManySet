@@ -387,6 +387,7 @@ final class HomeViewReactor: Reactor {
                 .just(.saveWorkoutData)
             ])
             
+        // 삭제될 시에만 활용
         case let .cardDeleteAnimationCompleted(oldIndex: oldIndex, nextIndex: nextIndex):
             let oldCardState = currentState.workoutCardStates[oldIndex]
             return .concat([
@@ -398,7 +399,6 @@ final class HomeViewReactor: Reactor {
                     updatedCardState: currentState.workoutCardStates[nextIndex],
                     oldCardState: oldCardState,
                     oldCardIndex: oldIndex)),
-                
                 .just(.changeExerciseIndex(nextIndex))
             ])
         }//action
@@ -540,6 +540,8 @@ final class HomeViewReactor: Reactor {
             )
             print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
             
+            // TODO: - saveUsecase 실행
+            
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
                 newState.currentExerciseAllSetsCompleted = true
@@ -604,13 +606,13 @@ final class HomeViewReactor: Reactor {
                 comment: newState.memoInRoutine,
                 date: Date()
             )
-            
-            saveRecordUseCase.execute(item: newState.workoutRecord)
-            if let uid = newState.uid {
-                fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
-            } else {
-                print("사용자 uid가 없습니다!")
-            }
+//            
+//            saveRecordUseCase.execute(item: newState.workoutRecord)
+//            if let uid = newState.uid {
+//                fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
+//            } else {
+//                print("사용자 uid가 없습니다!")
+//            }
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
@@ -726,6 +728,8 @@ private extension HomeViewReactor {
                 return .concat([
                     .just(.setResting(isResting)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
+                    .just(.setRestTimeDataAtProgressBar(restTime)),
+                    restTimer
                 ])
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
