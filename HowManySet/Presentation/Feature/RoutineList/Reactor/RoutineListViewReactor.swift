@@ -7,6 +7,9 @@ final class RoutineListViewReactor: Reactor {
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let saveRoutineUseCase: SaveRoutineUseCase
+    private let fsDeleteRoutineUseCase: FSDeleteRoutineUseCase
+    private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
+    private let fsSaveRoutineUseCase: FSSaveRoutineUseCase
 
     // MARK: - Action is an user interaction
     enum Action {
@@ -26,12 +29,23 @@ final class RoutineListViewReactor: Reactor {
     }
     
     let initialState: State
-    
-    init(deleteRoutineUseCase: DeleteRoutineUseCase, fetchRoutineUseCase: FetchRoutineUseCase, saveRoutineUseCase: SaveRoutineUseCase) {
-        
+
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+
+    init(
+        deleteRoutineUseCase: DeleteRoutineUseCase,
+        fetchRoutineUseCase: FetchRoutineUseCase,
+        saveRoutineUseCase: SaveRoutineUseCase,
+        fsDeleteRoutineUseCase: FSDeleteRoutineUseCase,
+        fsFetchRoutineUseCase: FSFetchRoutineUseCase,
+        fsSaveRoutineUseCase: FSSaveRoutineUseCase,
+    ) {
         self.deleteRoutineUseCase = deleteRoutineUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.saveRoutineUseCase = saveRoutineUseCase
+        self.fsDeleteRoutineUseCase = fsDeleteRoutineUseCase
+        self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
+        self.fsSaveRoutineUseCase = fsSaveRoutineUseCase
         self.initialState = State()
     }
 
@@ -40,13 +54,13 @@ final class RoutineListViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return fetchRoutineUseCase.execute(uid: UUID().uuidString)
+            return fetchRoutineUseCase.execute()
                 .map{ Mutation.updatedRoutine($0) }
                 .asObservable()
 
         case let .deleteRoutine(indexPath):
             let routine = currentState.routines[indexPath.section]
-            deleteRoutineUseCase.execute(uid: UUID().uuidString, item: routine)
+            deleteRoutineUseCase.execute(item: routine)
             return .just(.deleteRoutineAt(indexPath))
         }
     }
@@ -61,7 +75,7 @@ final class RoutineListViewReactor: Reactor {
                 if !routines[i].workouts.isEmpty {
                     newRoutines.append(routines[i])
                 } else {
-                    deleteRoutineUseCase.execute(uid: UUID().uuidString, item: routines[i])
+                    deleteRoutineUseCase.execute(item: routines[i])
                 }
             }
             newState.routines = newRoutines
