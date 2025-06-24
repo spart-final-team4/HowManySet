@@ -99,12 +99,15 @@ final class DIContainer {
         // Firestore 로직 추가
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
         let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
-        let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
+        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
         let fsFetchRecordUseCase = FSFetchRecordUseCase(repository: fsRecordRepository)
 
         let reactor = CalendarViewReactor(
             deleteRecordUseCase: deleteRecordUseCase,
-            fetchRecordUseCase: fetchRecordUseCase
+            fetchRecordUseCase: fetchRecordUseCase,
+//            // Firestore UseCase들 추가
+            fsDeleteRecordUseCase: fsDeleteRecordUseCase,
+            fsFetchRecordUseCase: fsFetchRecordUseCase
         )
         
         return CalendarViewController(reactor: reactor, coordinator: coordinator)
