@@ -54,6 +54,10 @@ final class NicknameInputView: UIView {
         )
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         $0.leftViewMode = .always
+        
+        $0.autocorrectionType = .no // 자동 수정 끔
+        $0.spellCheckingType = .no // 맞춤법 검사 끔
+        $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
     }
     
     /// 하단 "다음" 버튼. 기본 비활성화 상태, 유효성 통과 시 활성화.
