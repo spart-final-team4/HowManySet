@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 extension UIViewController {
     func showToast(message: String) {
@@ -13,32 +14,44 @@ extension UIViewController {
         if let existingToast = view.viewWithTag(9999) {
             existingToast.removeFromSuperview()
         }
-        let toast = UILabel()
-        toast.tag = 9999
-        toast.text = message
-        toast.textColor = .systemBackground
-        toast.backgroundColor = UIColor.separator.withAlphaComponent(0.8)
-        toast.textAlignment = .center
-        toast.font = .systemFont(ofSize: 14, weight: .bold)
-        toast.alpha = 0
-        toast.clipsToBounds = true
-        toast.numberOfLines = 0
+        let toastView = UIView()
+        let checkImage: UIImage = .checkIcon
+        let imageView = UIImageView(image: checkImage)
+        let titleLabel = UILabel()
+        
+        titleLabel.text = message
+        titleLabel.textColor = .white
+        titleLabel.font = .systemFont(ofSize: 14, weight: .bold)
+        titleLabel.textAlignment = .left
+        
+        toastView.tag = 9999
+        toastView.clipsToBounds = true
+        toastView.layer.cornerRadius = 12
+        toastView.backgroundColor = .disabledButton
+        toastView.addSubviews(imageView, titleLabel)
+        imageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(20)
+        }
+        titleLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(imageView.snp.trailing).offset(8)
+        }
         let padding: CGFloat = 20
-        let maxWidth = (view.frame.width - padding * 2) / 2
-        let size = toast.sizeThatFits(CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
-        toast.frame = CGRect(x: view.frame.width/2 - (maxWidth/2),
-                             y: view.frame.maxY - size.height - 100,
-                             width: maxWidth,
-                             height: size.height + 16)
-        toast.layer.cornerRadius = toast.frame.height / 2
-        view.addSubview(toast)
+        let width: CGFloat = view.frame.width - padding * 2
+        let height: CGFloat = 48
+        toastView.frame = CGRect(x: 20,
+                                 y: view.frame.maxY - height - 100,
+                                 width: width,
+                                 height: height)
+        view.addSubview(toastView)
         UIView.animate(withDuration: 0.3, animations: {
-            toast.alpha = 1
+            toastView.alpha = 1
         }) { _ in
             UIView.animate(withDuration: 0.3, delay: 1.5, options: [], animations: {
-                toast.alpha = 0
+                toastView.alpha = 0
             }) { _ in
-                toast.removeFromSuperview()
+                toastView.removeFromSuperview()
             }
         }
     }
