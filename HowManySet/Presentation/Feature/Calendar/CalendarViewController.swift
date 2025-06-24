@@ -35,6 +35,15 @@ final class CalendarViewController: UIViewController, View {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // 캘린더 날짜 선택 해제
+        if let selectedDate = calendarView.publicCalendar.selectedDate {
+            calendarView.publicCalendar.deselect(selectedDate)
+        }
+
+        // Reactor 상태도 초기화
+        reactor?.action.onNext(.clearSelection)
+
+        // 선택된 날짜 기준 fetch
         reactor?.action.onNext(.viewWillAppear)
     }
 
