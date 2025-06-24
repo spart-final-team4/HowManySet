@@ -10,7 +10,7 @@ import Foundation
 /// 하나의 운동 루틴을 나타내는 구조체입니다.
 ///
 /// 루틴 이름과 그에 포함된 여러 개의 운동 목록을 포함합니다.
-struct WorkoutRoutine: Hashable {
+struct WorkoutRoutine: Hashable, Codable {
     
     let id: String
     /// 운동 루틴의 이름입니다.
