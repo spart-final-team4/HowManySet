@@ -144,8 +144,7 @@ final class EditExcerciseViewController: UIViewController, View {
             .subscribe(with: self) { owner, alert in
                 switch alert {
                 case .success:
-                    // TODO: Toast View로 변경예정
-                    owner.present(owner.defaultAlert(title: "저장 성공", message: "운동이 저장되었습니다."), animated: true)
+                    owner.showToast(message: "운동이 추가되었어요!")
                     owner.headerView.returnInitialState()
                     owner.contentView.returnInitialState()
                 case .wokkoutNameEmpty:
