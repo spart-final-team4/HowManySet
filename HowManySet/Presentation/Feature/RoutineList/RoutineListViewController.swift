@@ -1,4 +1,5 @@
 import UIKit
+import RxDataSources
 import RxSwift
 import RxCocoa
 import ReactorKit
@@ -11,13 +12,19 @@ final class RoutineListViewController: UIViewController, View {
     let routineListView = RoutineListView()
     private var coordinator: RoutineListCoordinatorProtocol?
 
-    // DiffableDataSource 정의
-    private var dataSource: UITableViewDiffableDataSource<Section, WorkoutRoutine>!
+    // RxDataSource 사용을 위한 Model 생성
+    typealias RoutineSection = SectionModel<String, WorkoutRoutine>
 
-    // Section 정의
-    enum Section {
-        case main
-    }
+    // RxDataSource 정의
+    let dataSource = RxTableViewSectionedReloadDataSource<RoutineSection>(
+        configureCell: { _, tableView, indexPath, item in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: RoutineCell.identifier, for: indexPath) as? RoutineCell else {
+                return UITableViewCell()
+            }
+            cell.configure(with: item)
+            return cell
+        }
+    )
 
     // MARK: - Init
     init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol) {
@@ -43,7 +50,6 @@ final class RoutineListViewController: UIViewController, View {
         super.viewDidLoad()
         setDelegates()
         setRegisters()
-        configureDataSource()
     }
 
     // MARK: - Bind
@@ -56,17 +62,19 @@ final class RoutineListViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .skip(1)
-            .map { $0.routines }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, items in
-                owner.applySnapshot(with: items)
-            }.disposed(by: disposeBag)
+            .map { state in
+                state.routines.map { SectionModel(model: "", items: [$0]) }  // 루틴마다 하나의 섹션
+            }
+            .bind(to: routineListView.publicRoutineTableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+
+        // tableView.delegate 바인딩
+        routineListView.publicRoutineTableView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
     }
 }
 
-// MARK: - Delegate & DataSource & Register
+// MARK: - Delegate & Register
 private extension RoutineListViewController {
     func setDelegates() {
         routineListView.publicRoutineTableView.delegate = self
@@ -74,37 +82,6 @@ private extension RoutineListViewController {
 
     func setRegisters() {
         routineListView.publicRoutineTableView.register(RoutineCell.self, forCellReuseIdentifier: RoutineCell.identifier)
-    }
-
-    func configureDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, WorkoutRoutine>(
-            tableView: routineListView.publicRoutineTableView
-        ) { tableView, indexPath, routine in
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: RoutineCell.identifier,
-                for: indexPath
-            ) as? RoutineCell else {
-                return UITableViewCell()
-            }
-
-            // 데이터를 cell에 주입
-            cell.configure(with: routine)
-            return cell
-        }
-    }
-}
-
-// MARK: - Snapshot
-extension RoutineListViewController {
-    /// 현재 보여줄 데이터 전체 상태를 전달하는 메서드
-    func applySnapshot(with routines: [WorkoutRoutine], animatingDifferences: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, WorkoutRoutine>()
-        // Section 추가
-        snapshot.appendSections([.main])
-        // Item 추가
-        snapshot.appendItems(routines, toSection: .main)
-        // 실제 적용
-        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 
@@ -120,8 +97,18 @@ extension RoutineListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard let routine = dataSource.itemIdentifier(for: indexPath) else { return }
+        let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
 
         coordinator?.pushEditRoutineView(with: routine)
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = UIView()
+        footer.backgroundColor = .clear
+        return footer
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 16
     }
 }
