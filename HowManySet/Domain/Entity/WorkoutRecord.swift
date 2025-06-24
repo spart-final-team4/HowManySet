@@ -10,7 +10,7 @@ import Foundation
 /// 사용자의 운동 기록을 나타내는 구조체입니다.
 ///
 /// 하나의 운동 루틴 수행에 대한 총 소요 시간, 실제 운동 시간, 날짜, 코멘트 등의 정보를 포함합니다.
-struct WorkoutRecord: Hashable {
+struct WorkoutRecord: Hashable, Codable {
     
     let id: String
     /// 수행한 운동 루틴입니다.
