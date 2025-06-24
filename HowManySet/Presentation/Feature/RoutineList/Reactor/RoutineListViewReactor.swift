@@ -8,16 +8,16 @@ final class RoutineListViewReactor: Reactor {
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let saveRoutineUseCase: SaveRoutineUseCase
 
-    var publicSaveRoutineUseCase: SaveRoutineUseCase { saveRoutineUseCase }
-
     // MARK: - Action is an user interaction
     enum Action {
         case viewWillAppear
+        case deleteRoutine(IndexPath)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
         case updatedRoutine([WorkoutRoutine])
+        case deleteRoutineAt(IndexPath)
     }
     
     // MARK: - State is a current view state
@@ -40,9 +40,14 @@ final class RoutineListViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return fetchRoutineUseCase.execute()
+            return fetchRoutineUseCase.execute(uid: UUID().uuidString)
                 .map{ Mutation.updatedRoutine($0) }
                 .asObservable()
+
+        case let .deleteRoutine(indexPath):
+            let routine = currentState.routines[indexPath.section]
+            deleteRoutineUseCase.execute(uid: UUID().uuidString, item: routine)
+            return .just(.deleteRoutineAt(indexPath))
         }
     }
 
@@ -56,13 +61,17 @@ final class RoutineListViewReactor: Reactor {
                 if !routines[i].workouts.isEmpty {
                     newRoutines.append(routines[i])
                 } else {
-                    deleteRoutineUseCase.execute(item: routines[i])
+                    deleteRoutineUseCase.execute(uid: UUID().uuidString, item: routines[i])
                 }
             }
-            
             newState.routines = newRoutines
+
+        case let .deleteRoutineAt(indexPath):
+            var updated = state.routines
+            updated.remove(at: indexPath.section)
+            newState.routines = updated
         }
-        
+
         return newState
     }
 }
