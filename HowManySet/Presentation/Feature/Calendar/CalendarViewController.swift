@@ -57,7 +57,7 @@ final class CalendarViewController: UIViewController, View {
         // records를 tableView에 바인딩
         reactor.state
             .map { state in
-                state.records.map { SectionModel(model: "", items: [$0]) }  // 섹션당 1개 셀
+                state.selectedRecords.map { SectionModel(model: "", items: [$0]) }  // 섹션당 1개 셀
             }
             .bind(to: calendarView.publicRecordTableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
@@ -158,7 +158,7 @@ extension CalendarViewController: UITableViewDelegate {
         calendarView.publicRecordTableView.deselectRow(at: indexPath, animated: true)
 
         // 해당 record 가져오기
-        guard let record = reactor?.currentState.records[indexPath.row] else { return }
+        guard let record = reactor?.currentState.selectedRecords[indexPath.row] else { return }
 
         coordinator?.presentRecordDetailView(record: record)
     }
