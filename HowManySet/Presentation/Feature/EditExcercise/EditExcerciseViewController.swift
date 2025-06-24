@@ -28,6 +28,8 @@ final class EditExcerciseViewController: UIViewController, View {
     /// Rx 리소스 해제를 위한 DisposeBag입니다.
     var disposeBag = DisposeBag()
     
+    var onDismiss: (() -> Void)?
+    
     // MARK: - UI Components
     
     /// 전체 화면을 스크롤 가능하게 만드는 스크롤 뷰입니다.
@@ -79,6 +81,10 @@ final class EditExcerciseViewController: UIViewController, View {
         setupUI()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        onDismiss?()
+    }
     // MARK: - Binding
     
     /// 리액터 바인딩을 통해 View와 Reactor를 연결합니다.

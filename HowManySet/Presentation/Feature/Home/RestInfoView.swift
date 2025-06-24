@@ -21,6 +21,10 @@ final class RestInfoView: UIView, View {
     private let restResetButtonText = "초기화"
     private let restText = "현재 설정된 휴식 시간"
     private let waterText = "물 한잔 챙겼다면, 클릭!"
+    
+    // SE3 - 375 x 667 pt
+    private let customInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 16 : 20
+    private let buttonHeight: CGFloat =  UIScreen.main.bounds.width <= 375 ? 30 : 36
 
     var disposeBag = DisposeBag()
     
@@ -56,34 +60,34 @@ final class RestInfoView: UIView, View {
     }
     
     lazy var restButton60 = UIButton().then {
-        $0.backgroundColor = .darkGray
+        $0.backgroundColor = .grey5
         $0.setTitle(restButtonText60, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 60
     }
     
     lazy var restButton30 = UIButton().then {
-        $0.backgroundColor = .darkGray
+        $0.backgroundColor = .grey5
         $0.setTitle(restButtonText30, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 30
     }
     
     lazy var restButton10 = UIButton().then {
-        $0.backgroundColor = .darkGray
+        $0.backgroundColor = .grey5
         $0.setTitle(restButtonText10, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 10
     }
     
     lazy var restResetButton = UIButton().then {
         $0.backgroundColor = .background
         $0.setTitle(restResetButtonText, for: .normal)
-        $0.layer.cornerRadius = 18
-        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = buttonHeight/2
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         $0.tag = 0
     }
     
@@ -99,21 +103,22 @@ final class RestInfoView: UIView, View {
         // MARK: - 내부 물 버튼들 생성 및 바인딩
         for _ in 0..<5 {
             let waterButton = UIButton().then {
-                $0.setImage(UIImage(systemName: "waterbottle"), for: .normal)
-                $0.setImage(UIImage(systemName: "waterbottle.fill"), for: .selected)
-                $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 32), forImageIn: .normal)
-                $0.tintColor = .white
-                $0.setTitleColor(.brand, for: .selected)
+                $0.setImage(UIImage(named: "water"), for: .normal)
+                $0.setImage(UIImage(named: "waterFill"), for: .selected)
+                $0.contentMode = .scaleAspectFit
             }
             
             waterButton.rx.tap
                 .bind { [weak waterButton]  in
                     guard let waterButton else { return }
                     waterButton.isSelected.toggle()
-                    waterButton.tintColor = waterButton.isSelected ? .brand : .white
                 }.disposed(by: disposeBag)
             
             $0.addArrangedSubview(waterButton)
+            
+            waterButton.snp.makeConstraints {
+                $0.width.height.equalTo(buttonHeight)
+            }
         }
     }
     
@@ -143,28 +148,34 @@ private extension RestInfoView {
     
     func setViewHiearchy() {
         self.addSubview(contentsVStack)
-        contentsVStack.addArrangedSubviews(restLabelHStack, restButtonHStack,
-                                           waterLabel, waterImageHStack)
-        
-        restLabelHStack.addArrangedSubviews(restLabel, restTimeLabel)
+        contentsVStack.addArrangedSubviews(
+            restLabelHStack,
+            restButtonHStack,
+            waterLabel,
+            waterImageHStack
+        )
+        restLabelHStack.addArrangedSubviews(
+            restLabel,
+            restTimeLabel
+        )
         restButtonHStack.addArrangedSubviews(
             restButton60,
             restButton30,
             restButton10,
-            restResetButton)
+            restResetButton
+        )
     }
     
     func setConstraints() {
         
         contentsVStack.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(12)
-            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.edges.equalToSuperview().inset(customInset)
         }
         
         [restButton60, restButton30, restButton10, restResetButton].forEach {
             $0.snp.makeConstraints {
                 $0.width.equalTo(self).multipliedBy(0.19)
-                $0.height.equalTo(36)
+                $0.height.equalTo(buttonHeight)
             }
         }
     }
@@ -203,13 +214,16 @@ extension RestInfoView {
         // MARK: Action
         [restButton10, restButton30, restButton60, restResetButton].forEach { button in
             button.rx.tap
+                .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
                 .do(onNext: {
                     UIView.animate(withDuration: 0.1,
                                    animations: {
                         button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                        button.alpha = 0.9
                     }, completion: { _ in
                         UIView.animate(withDuration: 0.1) {
                             button.transform = .identity
+                            button.alpha = 1
                         }
                     })
                 })
@@ -221,6 +235,7 @@ extension RestInfoView {
         // MARK: State
         // HomeViewReactor의 상태를 구독하여 RestInfoView의 UI를 업데이트
         reactor.state.map { $0.restTime }
+            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] restTime in
                 guard let self else { return }
                 self.restTimeLabel.text = Int(restTime).toRestTimeLabel()
