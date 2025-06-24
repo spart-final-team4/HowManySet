@@ -18,14 +18,14 @@ final class CalendarViewReactor: Reactor {
     enum Mutation {
         case setAllRecords([WorkoutRecord])
         case setSelectedDate(Date)
-        case setRecords([WorkoutRecord])
+        case setSelectedRecords([WorkoutRecord])
         case deleteRecordAt(IndexPath)
     }
 
     // MARK: - State is a current view state
     struct State {
         var selectedDate: Date = Date()
-        var records: [WorkoutRecord] = []
+        var selectedRecords: [WorkoutRecord] = []
         var allRecords: [WorkoutRecord] = []
     }
 
@@ -51,7 +51,7 @@ final class CalendarViewReactor: Reactor {
                     let filteredRecords = allRecords.filter {
                         Calendar.current.isDate($0.date, inSameDayAs: date)
                     }
-                    return Mutation.setRecords(filteredRecords)
+                    return Mutation.setSelectedRecords(filteredRecords)
                 }
                 .asObservable()
 
@@ -61,7 +61,7 @@ final class CalendarViewReactor: Reactor {
             ])
 
         case let .deleteItem(indexPath):
-            let recordToDelete = currentState.records[indexPath.row]
+            let recordToDelete = currentState.selectedRecords[indexPath.row]
             deleteRecordUseCase.execute(uid: UUID().uuidString, item: recordToDelete)
 
             return .just(.deleteRecordAt(indexPath))
@@ -77,12 +77,12 @@ final class CalendarViewReactor: Reactor {
             newState.allRecords = records
         case let .setSelectedDate(date):
             newState.selectedDate = date
-        case let .setRecords(records):
-            newState.records = records
+        case let .setSelectedRecords(records):
+            newState.selectedRecords = records
         case let .deleteRecordAt(indexPath):
-            var updatedRecords = state.records
+            var updatedRecords = state.selectedRecords
             updatedRecords.remove(at: indexPath.row)
-            newState.records = updatedRecords
+            newState.selectedRecords = updatedRecords
         }
 
         return newState
