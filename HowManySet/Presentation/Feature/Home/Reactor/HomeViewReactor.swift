@@ -909,3 +909,22 @@ extension HomeViewReactor.State {
         )
     }
 }
+
+// MARK: - 운동 진행 상태 UserDefaults에 저장
+// 앱 스위처에서 스와이프 종료 후에도 운동 상태 남기기 위함
+extension HomeViewReactor {
+    
+    func saveCurrentWorkoutState(_ state: HomeViewReactor.State) {
+        if let encoded = try? JSONEncoder().encode(state) {
+            UserDefaults.standard.set(encoded, forKey: "currentWorkoutState")
+        }
+    }
+    
+    func loadCurrentWorkoutState() -> HomeViewReactor.State? {
+        if let data = UserDefaults.standard.data(forKey: "currentWorkoutState"),
+           let state = try? JSONDecoder().decode(HomeViewReactor.State.self, from: data) {
+            return state
+        }
+        return nil
+    }
+}
