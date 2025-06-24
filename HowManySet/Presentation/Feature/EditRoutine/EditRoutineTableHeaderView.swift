@@ -68,6 +68,7 @@ private extension EditRoutineTableHeaderView {
     func setConstraints() {
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(20)
+            $0.trailing.equalToSuperview().inset(20)
             $0.top.equalToSuperview().offset(14)
             $0.bottom.equalToSuperview().offset(-12)
         }

@@ -24,13 +24,18 @@ final class EditRoutineTableFooterView: UITableViewHeaderFooterView {
     private(set) var plusExcerciseButtonTapped = PublishRelay<Void>()
     
     /// 플러스 아이콘 이미지
-    private let plusImageView = UIImageView(image: .plus)
+    private let plusImageView = UIImageView(image: .plus).then {
+        // TODO: 마이너패치 때 기능 구현예정
+        $0.isHidden = true
+    }
     
     /// "새 운동 추가" 텍스트 라벨
     private let plusExcerciseButton = UIButton().then {
         $0.setTitle("새 운동 추가", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 20, weight: .regular)
         $0.setTitleColor(.white, for: .normal)
+        // TODO: 마이너패치 때 기능 구현예정
+        $0.isHidden = true
     }
     
     // MARK: - Initializer

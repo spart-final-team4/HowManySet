@@ -57,8 +57,8 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         let routineNameVC = RoutineNameViewController(reactor: reactor, coordinator: self)
 
         if let sheet = routineNameVC.sheetPresentationController {
-            let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
-
+            let fixedHeight: CGFloat = 300
+            
             sheet.detents = [.custom(resolver: { _ in
                 fixedHeight
             })]

@@ -29,6 +29,7 @@ final class SavedExcerciseView: UIView {
     private let setCountLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 12, weight: .regular)
         $0.textColor = .dbTypo
+        $0.textAlignment = .right
         $0.numberOfLines = 1
     }
     
@@ -87,9 +88,11 @@ private extension SavedExcerciseView {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(4)
+            $0.width.equalToSuperview().multipliedBy(0.5)
         }
         setCountLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
+            $0.leading.equalTo(excerciseNameLabel.snp.trailing).offset(15)
             $0.trailing.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(4)
         }
