@@ -140,16 +140,6 @@ final class DIContainer {
     /// 루틴 완료 화면을 생성하여 반환
     func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor) -> UIViewController {
         
-        let recordRepository = RecordRepositoryImpl()
-        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
-        
-        // Firestore 로직 추가
-        let firestoreService = FirestoreService()
-        let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
-        let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
-
-        let reactor = RoutineCompleteViewReactor(saveRecordUseCase: saveRecordUseCase)
-        
         return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
     }
 }
