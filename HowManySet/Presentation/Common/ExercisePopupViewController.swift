@@ -67,6 +67,7 @@ final class ExercisePopupViewController: UIViewController {
     
     /// 클릭 시 실행할 액션
     private var nextAction: (() -> Void)?
+    private var cancelAction: (() -> Void?)?
     
     override func viewDidLoad() {
         setupUI()
@@ -79,11 +80,13 @@ final class ExercisePopupViewController: UIViewController {
     ///   - leftButtonText: 왼쪽 버튼 텍스트
     ///   - rightButtonText: 오른쪽 버튼 텍스트
     ///   - nextAction: 운동 종료 버튼 클릭 시 실행할 클로저
+    ///   - cancelAction: 계속 하기 버튼 클릭 시 실행할 클로저
     convenience init(title: String,
                      content: String = "",
                      leftButtonText: String,
                      rightButtonText: String,
-                     nextAction: @escaping () -> Void
+                     nextAction: @escaping () -> Void,
+                     cancelAction: @escaping () -> Void?
     ) {
         self.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
@@ -93,10 +96,12 @@ final class ExercisePopupViewController: UIViewController {
         self.leftButton.setTitle(leftButtonText, for: .normal)
         self.rightButton.setTitle(rightButtonText, for: .normal)
         self.nextAction = nextAction
+        self.cancelAction = cancelAction
     }
     
     /// 계속 하기 클릭 시
     @objc private func didTapRightButton() {
+        cancelAction?()
         self.dismiss(animated: true)
     }
     

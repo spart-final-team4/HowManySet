@@ -17,8 +17,8 @@ protocol HomeCoordinatorProtocol: Coordinator {
     )
     func presentEditRoutineView(with routine: WorkoutRoutine)
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
-    func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
-    func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary)
+    func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?)
+    func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?)
 }
 
 /// 홈 흐름 담당 coordinator
@@ -123,7 +123,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     }
     
     /// 유저가 직접 종료 버튼을 눌러서 종료 시
-    func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary) {
+    func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?) {
         
         let endWorkoutVC = ExercisePopupViewController(
             title: "운동을 종료할까요?",
@@ -142,13 +142,13 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
-            })
+            }, cancelAction: onCancel)
         
         navigationController.present(endWorkoutVC, animated: true)
     }
     
     /// 유저가 루틴을 모두 완료했을 시
-    func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary) {
+    func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?) {
         
         let endWorkoutVC = ExercisePopupViewController(
             title: "오늘의 루틴 완료!",
@@ -165,7 +165,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 self.navigationController.setViewControllers([newHomeVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
-            })
+            }, cancelAction: onCancel)
         
         navigationController.present(endWorkoutVC, animated: true)
     }
