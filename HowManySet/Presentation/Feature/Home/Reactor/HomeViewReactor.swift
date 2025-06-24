@@ -60,7 +60,7 @@ struct WorkoutStateForEdit: Equatable, Codable {
     var currentRoutine: WorkoutRoutine
     var currentExcerciseName: String
     var currentUnit: String
-    var currentWeightSet: [[Int]]
+    var currentWeightSet: [[String]]
 }
 
 final class HomeViewReactor: Reactor {
@@ -621,7 +621,7 @@ final class HomeViewReactor: Reactor {
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
             let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
-                [Int(set.weight), set.reps]
+                [String(set.weight), String(set.reps)]
             }
             newState.workoutStateForEdit = WorkoutStateForEdit(
                 currentRoutine: newState.workoutRoutine,
@@ -893,8 +893,8 @@ extension HomeViewReactor {
         )
         
         let firstWorkout = initialRoutine.workouts[0]
-        let weightSet: [[Int]] = firstWorkout.sets.map { set in
-            [Int(set.weight), set.reps]
+        let weightSet: [[String]] = firstWorkout.sets.map { set in
+            [String(set.weight), String(set.reps)]
         }
         let initialWorkoutStateForEdit = WorkoutStateForEdit(
             currentRoutine: initialRoutine,

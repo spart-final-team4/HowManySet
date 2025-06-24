@@ -31,7 +31,7 @@ final class EditExcerciseContentView: UIView {
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExcerciseContentHeaderView()
     private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
-    private(set) var excerciseInfoRelay = BehaviorRelay<[[Int]]>(value: [[]])
+    private(set) var excerciseInfoRelay = BehaviorRelay<[[String]]>(value: [[]])
     
     /// 세트 정보와 추가 버튼을 포함하는 수직 스택뷰입니다.
     private let verticalContentStackView = UIStackView().then {
@@ -115,7 +115,7 @@ final class EditExcerciseContentView: UIView {
                 owner.excerciseInfoRelay.accept(newValue)
             }.disposed(by: disposeBag)
         
-        excerciseInfoRelay.accept(excerciseInfoRelay.value + [[-1, -1]])
+        excerciseInfoRelay.accept(excerciseInfoRelay.value + [["", ""]])
         
         contentView.weightRepsRelay
             .subscribe(with: self) { owner, element in
@@ -210,7 +210,7 @@ private extension EditExcerciseContentView {
 // MARK: - Internal Methods
 extension EditExcerciseContentView {
     
-    func configureSets(with sets: [[Int]]) {
+    func configureSets(with sets: [[String]]) {
         
         verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
@@ -222,7 +222,7 @@ extension EditExcerciseContentView {
             
             // (무게, 개수)
             if set.count == 2 {
-                hContentStackView.configure(weight: set[0], reps: set[1])
+                hContentStackView.configure(weight: Double(set[0]) ?? 0.0, reps: Int(set[1]) ?? 0)
             }
             verticalContentStackView.addArrangedSubview(hContentStackView)
         }
