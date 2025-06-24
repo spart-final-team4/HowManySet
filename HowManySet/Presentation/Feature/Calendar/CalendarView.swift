@@ -74,7 +74,7 @@ private extension CalendarView {
             $0.appearance.selectionColor = .brand // 선택된 날짜의 배경 색상
             $0.appearance.titleSelectionColor = .black // 선택된 날짜 텍스트 색상
             $0.appearance.eventDefaultColor = .success // 이벤트 점의 기본 색상
-            $0.appearance.eventSelectionColor = .success // 선택된 날짜의 이벤트 점 색상
+            $0.appearance.eventSelectionColor = .clear // 선택된 날짜의 이벤트 점 색상
         }
 
         recordTableView.do {
