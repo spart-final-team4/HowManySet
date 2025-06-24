@@ -102,6 +102,18 @@ extension RoutineListViewController: UITableViewDelegate {
         coordinator?.pushEditRoutineView(with: routine)
     }
 
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
+    -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+            self?.reactor?.action.onNext(.deleteRoutine(indexPath))
+            completion(true)
+        }
+
+        deleteAction.backgroundColor = .error
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+
+
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = .clear

@@ -78,13 +78,13 @@ private extension RoutineListView {
         }
 
         routineTableView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(24)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
 
         addNewRoutineButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview().inset(20)
             $0.height.equalTo(56)
