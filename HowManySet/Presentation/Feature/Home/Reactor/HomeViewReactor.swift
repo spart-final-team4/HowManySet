@@ -92,6 +92,8 @@ final class HomeViewReactor: Reactor {
         /// 운동 완료 화면에서 확인 시 다시 저장 (루틴 메모 작성했을시에만)
         case confirmButtonClickedForSaving(newMemo: String?)
         case updateCurrentRoutineMemo(with: String)
+        /// 운동 완료 후 카드 삭제 완료
+        case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -469,6 +471,21 @@ final class HomeViewReactor: Reactor {
                 .just(.updateRoutineMemo(with: newMemo)),
                 .just(.saveWorkoutData)
             ])
+            
+        case let .cardDeleteAnimationCompleted(oldIndex: oldIndex, nextIndex: nextIndex):
+            let oldCardState = currentState.workoutCardStates[oldIndex]
+            return .concat([
+                .just(.manageDataIfForwarded(
+                    isRoutineCompleted: false,
+                    isCurrentExerciseCompleted: true
+                )),
+                .just(.updateWorkoutCardState(
+                    updatedCardState: currentState.workoutCardStates[nextIndex],
+                    oldCardState: oldCardState,
+                    oldCardIndex: oldIndex)),
+                
+                .just(.changeExerciseIndex(nextIndex))
+            ])
         }//action
     }//mutate
     
@@ -520,11 +537,11 @@ final class HomeViewReactor: Reactor {
         case let .manageDataIfForwarded(isRoutineCompleted, isCurrentExerciseCompleted):
             
             if isRoutineCompleted,
-               newState.currentExerciseAllSetsCompleted { // 루틴 전체 완료
+               isCurrentExerciseCompleted { // 루틴 전체 완료
                 newState.isWorkingout = false
                 print("루틴 전체 완료 - \(!newState.isWorkingout)")
                 // MARK: - TODO: 운동 완료 후 기록 저장 등의 추가 작업
-            } else if newState.currentExerciseAllSetsCompleted { // 현재 운동만 완료
+            } else if isCurrentExerciseCompleted { // 현재 운동만 완료
                 // 현재 세트 완료 false로 재설정
                 newState.didExerciseCount += 1
                 print("현재 운동 완료")
@@ -580,6 +597,7 @@ final class HomeViewReactor: Reactor {
             // MARK: - 운동 종료 시 운동 관련 데이터 핸들
             // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
         case let .manageWorkoutData(isEnded):
+            newState.didExerciseCount += 1
             print("🎬 [manageWorkoutData] 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
             
             // 저장될 데이터들
@@ -611,6 +629,7 @@ final class HomeViewReactor: Reactor {
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
                 newState.currentExerciseAllSetsCompleted = true
+                newState.didSetCount += 1
                 
                 newState.workoutCardStates.forEach {
                     print("\($0.currentExerciseName), \( $0.allSetsCompleted)")
@@ -770,7 +789,7 @@ private extension HomeViewReactor {
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer
             ])
-        } else { // 현재 운동의 모든 세트 완료, 다음 운동으로 이동 또는 루틴 종료
+        } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
             
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
             let currentCardState = currentState.workoutCardStates[cardIndex]
@@ -795,21 +814,14 @@ private extension HomeViewReactor {
                 // 완료한 운동 수 업데이트 및 분기 처리
                 // cardState를 nextIndex의 State로 변경 (현재 cardIndex 모든 세트 완료 = false)
                 // 현재 index를 nextIndex로 변경
+    
                 return .concat([
                     .just(.setResting(isResting)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                    .just(.updateWorkoutCardState(
-                        updatedCardState: currentState.workoutCardStates[nextExerciseIndex],
-                        oldCardState: currentCardState,
-                        oldCardIndex: cardIndex)),
-                    .just(.changeExerciseIndex(nextExerciseIndex)),
-                    .just(.manageDataIfForwarded(
-                        isRoutineCompleted: false,
-                        isCurrentExerciseCompleted: true
-                    )),
                     .just(.setRestTimeDataAtProgressBar(restTime)),
                     restTimer
                 ])
+                .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
                 
                 let allCompleted = currentState.workoutCardStates
@@ -829,15 +841,6 @@ private extension HomeViewReactor {
                     return .concat([
                         .just(.setResting(isResting)),
                         .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                        .just(.updateWorkoutCardState(
-                            updatedCardState: currentState.workoutCardStates[nextExerciseIndex],
-                            oldCardState: currentCardState,
-                            oldCardIndex: cardIndex)),
-                        .just(.manageDataIfForwarded(
-                            isRoutineCompleted: false,
-                            isCurrentExerciseCompleted: true
-                        )),
-                        .just(.changeExerciseIndex(nextExerciseIndex)),
                         .just(.setRestTimeDataAtProgressBar(restTime)),
                         restTimer
                     ])
@@ -861,9 +864,7 @@ private extension HomeViewReactor {
 
 // MARK: - LiveActivity State
 extension HomeViewReactor.State {
-    
     var forLiveActivity: WorkoutDataForLiveActivity {
-        
         guard workoutCardStates.indices.contains(currentExerciseIndex) else {
             // 기본 데이터
             return WorkoutDataForLiveActivity(
@@ -891,12 +892,7 @@ extension HomeViewReactor.State {
         let unit = exercise.currentUnitForSave
         let repsText = "회"
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
-        
-        //        print("""
-        //            LIVEACTIVITY INDEX: \(currentExerciseIndex),
-        //            LIVEACTIVITY ISRESTING: \(isResting),
-        //        """)
-        
+
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,
             isWorkingout: isWorkingout,
