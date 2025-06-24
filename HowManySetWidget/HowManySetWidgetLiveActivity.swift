@@ -69,7 +69,6 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 .foregroundStyle(.white)
                                 .font(.system(size: 14))
                                 .fontWeight(.semibold)
-                                .monospacedDigit()
                         }
                     }
                     // MARK: - 운동 중 contents
@@ -187,27 +186,26 @@ struct HowManySetWidgetLiveActivity: Widget {
                 // Expanded UI goes here.  Compose the expanded UI through
                 // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
-                    Image(systemName: "dumbbell")
-                        .foregroundStyle(.brand)
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    Image(systemName: "dumbbell")
-                        .foregroundStyle(.brand)
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    Image(systemName: "dumbbell")
-                        .foregroundStyle(.brand)
-                    // more content
+                    EmptyView()
                 }
             } compactLeading: {
-                Image(systemName: "dumbbell")
-                    .foregroundStyle(.brand)
+                if !context.state.isResting {
+                    Image(systemName: "brandDumbbell")
+                        .foregroundStyle(.brand)
+                } else {
+                    Image(systemName: "waterFill")
+                        .foregroundStyle(.brand)
+                }
             } compactTrailing: {
-                Image(systemName: "dumbbell")
-                    .foregroundStyle(.brand)
+               
             } minimal: {
-                Image(systemName: "dumbbell")
-                    .foregroundStyle(.brand)
+                if !context.state.isResting {
+                    Image(systemName: "brandDumbbell")
+                        .foregroundStyle(.brand)
+                } else {
+                    Image(systemName: "waterFill")
+                        .foregroundStyle(.brand)
+                }
             }
             .keylineTint(.brand)
         }
