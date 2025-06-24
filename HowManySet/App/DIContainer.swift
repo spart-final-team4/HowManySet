@@ -49,13 +49,17 @@ final class DIContainer {
         let fsFetchRoutineUseCase = FSFetchRoutineUseCase(repository: fsRoutineRepository)
         let fsUpdateRoutineUseCase = FSUpdateRoutineUseCase(repository: routineRepository)
         
+        let restoredState = loadCurrentWorkoutState()
+        let initialState = restoredState ?? HomeViewReactor.defaultInitialState()
+        
         let reactor = HomeViewReactor(
             saveRecordUseCase: saveRecordUseCase,
             fsSaveRecordUseCase: fsSaveRecordUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
             fsFetchRoutineUseCase: fsFetchRoutineUseCase,
             updateWorkoutUseCase: updateWorkoutUseCase,
-            fsUpdateRoutineUseCase: fsUpdateRoutineUseCase
+            fsUpdateRoutineUseCase: fsUpdateRoutineUseCase,
+            initialState: initialState
         )
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
