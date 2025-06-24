@@ -112,7 +112,7 @@ final class HomePagingCardView: UIView {
     lazy var remainingRestTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 28, weight: .semibold)
         $0.isHidden = true
-        $0.textColor = .black
+        $0.textColor = .white
     }
     
     lazy var setCompleteButton = UIButton().then {
@@ -129,11 +129,11 @@ final class HomePagingCardView: UIView {
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         $0.isUserInteractionEnabled = false
         $0.alpha = 0
-        $0.tintColor = .black
+        $0.tintColor = .white
     }
     
     lazy var restProgressBar = UIProgressView().then {
-        $0.progressTintColor = .brand
+        $0.progressTintColor = .green7
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
         $0.isHidden = true
