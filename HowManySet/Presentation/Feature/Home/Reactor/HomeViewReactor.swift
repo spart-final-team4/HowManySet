@@ -186,6 +186,7 @@ final class HomeViewReactor: Reactor {
         var workoutStateForEdit: WorkoutStateForEdit?
     }
     
+    // initialState 주입으로 변경
     let initialState: State
     
     private let saveRecordUseCase: SaveRecordUseCase
@@ -208,7 +209,8 @@ final class HomeViewReactor: Reactor {
         fetchRoutineUseCase: FetchRoutineUseCase,
         fsFetchRoutineUseCase: FSFetchRoutineUseCase,
         updateWorkoutUseCase: UpdateWorkoutUseCase,
-        fsUpdateRoutineUseCase: FSUpdateRoutineUseCase
+        fsUpdateRoutineUseCase: FSUpdateRoutineUseCase,
+        initialState: State
     ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fsSaveRecordUseCase = fsSaveRecordUseCase
@@ -216,95 +218,8 @@ final class HomeViewReactor: Reactor {
         self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
         self.updateWorkoutUseCase = updateWorkoutUseCase
         self.fsUpdateRoutineUseCase = fsUpdateRoutineUseCase
-        
-        // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
-        // 루틴 선택 시 초기 값 설정
-        let initialRoutine = routineMockData
-        // 초기 운동 카드 뷰들 state 초기화
-        var initialWorkoutCardStates: [WorkoutCardState] = []
-        /// 루틴 전체의 세트 수
-        var initialTotalSetCountInRoutine = 0
-        // 현재 루틴의 모든 정보를 workoutCardStates에 저장
-        for (i, workout) in initialRoutine.workouts.enumerated() {
-            initialWorkoutCardStates.append(WorkoutCardState(
-                currentExerciseName: workout.name,
-                currentWeight: workout.sets[0].weight,
-                currentUnit: workout.sets[0].unit,
-                currentReps: workout.sets[0].reps,
-                setInfo: workout.sets,
-                setIndex: 0,
-                exerciseIndex: i,
-                totalExerciseCount: initialRoutine.workouts.count,
-                totalSetCount: workout.sets.count,
-                currentExerciseNumber: i + 1,
-                currentSetNumber: 1,
-                setProgressAmount: 0,
-                memoInExercise: workout.comment,
-                allSetsCompleted: false
-            ))
-            initialTotalSetCountInRoutine += workout.sets.count
-        }
-        
-        let initialWorkoutRecord = WorkoutRecord(
-            // TODO: 검토 필요
-            id:  UUID().uuidString,
-            workoutRoutine: initialRoutine,
-            totalTime: 0,
-            workoutTime: 0,
-            comment: recordMockData.comment,
-            date: Date()
-        )
-        
-        let initialWorkoutSummary = WorkoutSummary(
-            routineName: initialRoutine.name,
-            date: Date(),
-            routineDidProgress: 0.0,
-            totalTime: 0,
-            exerciseDidCount: 0,
-            setDidCount: 0,
-            routineMemo: initialWorkoutRecord.comment
-        )
-        
-        let firstWorkout = initialRoutine.workouts[0]
-        let weightSet: [[Int]] = firstWorkout.sets.map { set in
-            [Int(set.weight), set.reps]
-        }
-        
-        let initialWorkoutStateForEdit = WorkoutStateForEdit(
-            currentRoutine: initialRoutine,
-            currentExcerciseName: firstWorkout.name,
-            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
-            currentWeightSet: weightSet
-        )
-        
-        self.initialState = State(
-            workoutRoutine: initialRoutine,
-            workoutCardStates: initialWorkoutCardStates,
-            currentExerciseIndex: 0,
-            updatingIndex: 0,
-            isWorkingout: false,
-            isWorkoutPaused: false,
-            workoutTime: 0,
-            isResting: false,
-            isRestPaused: false,
-            restSecondsRemaining: 60.0,
-            restTime: 60.0, // 기본 60초로 설정
-            date: Date(),
-            memoInRoutine: initialWorkoutRecord.comment,
-            currentExerciseAllSetsCompleted: false,
-            isEditAndMemoViewPresented: false,
-            isEditExerciseViewPresented: false,
-            isRestTimerStopped: false,
-            workoutRecord: initialWorkoutRecord,
-            workoutSummary: initialWorkoutSummary,
-            totalExerciseCount: initialWorkoutCardStates.count,
-            didExerciseCount: 0,
-            totalSetCountInRoutine: initialTotalSetCountInRoutine,
-            didSetCount: 0,
-            uid: FirebaseAuthService().fetchCurrentUser()?.uid,
-            workoutStateForEdit: nil
-        )
-    }
+        self.initialState = initialState
+    }//init
     
     // MARK: - Mutate(실제로 일어날 변화 구현) Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
@@ -594,9 +509,12 @@ final class HomeViewReactor: Reactor {
         case let .pauseAndPlayRest(isPaused):
             newState.isRestPaused = isPaused
             
-            // MARK: - 운동 종료 시 운동 관련 데이터 핸들
-            // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
+        // MARK: - 운동 종료 시 운동 관련 데이터 핸들
+        // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
         case let .manageWorkoutData(isEnded):
+            // 운동 완료 시 UserDefaults에 있는 운동 상태 제거
+            UserDefaults.standard.removeObject(forKey: "currentWorkoutState")
+            
             newState.didExerciseCount += 1
             print("🎬 [manageWorkoutData] 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
             
@@ -721,7 +639,8 @@ final class HomeViewReactor: Reactor {
             print("Updating인 CARDINDEX: \(cardIndex)")
             newState.updatingIndex = cardIndex
             
-        }//mutation
+        }//switch mutation
+        // 상태 변경 후 항상 UserDefaults로 상태 저장
         saveCurrentWorkoutState(newState)
         
         return newState
@@ -910,21 +829,114 @@ extension HomeViewReactor.State {
     }
 }
 
-// MARK: - 운동 진행 상태 UserDefaults에 저장
+// MARK: - 운동 진행 상태 UserDefaults
 // 앱 스위처에서 스와이프 종료 후에도 운동 상태 남기기 위함
-extension HomeViewReactor {
-    
-    func saveCurrentWorkoutState(_ state: HomeViewReactor.State) {
-        if let encoded = try? JSONEncoder().encode(state) {
-            UserDefaults.standard.set(encoded, forKey: "currentWorkoutState")
-        }
+
+/// UserDefaults로 운동상태 Save
+func saveCurrentWorkoutState(_ state: HomeViewReactor.State) {
+    if let encoded = try? JSONEncoder().encode(state) {
+        UserDefaults.standard.set(encoded, forKey: "currentWorkoutState")
     }
-    
-    func loadCurrentWorkoutState() -> HomeViewReactor.State? {
-        if let data = UserDefaults.standard.data(forKey: "currentWorkoutState"),
-           let state = try? JSONDecoder().decode(HomeViewReactor.State.self, from: data) {
-            return state
+}
+
+/// UserDefaults에서 운동상태 Load
+func loadCurrentWorkoutState() -> HomeViewReactor.State? {
+    if let data = UserDefaults.standard.data(forKey: "currentWorkoutState"),
+       let state = try? JSONDecoder().decode(HomeViewReactor.State.self, from: data) {
+        return state
+    }
+    return nil
+}
+
+// MARK: defaultInitialState
+extension HomeViewReactor {
+    static func defaultInitialState() -> State {
+        // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
+        // 루틴 선택 시 초기 값 설정
+        let initialRoutine = WorkoutRoutine.mockData[0]
+        // 초기 운동 카드 뷰들 state 초기화
+        var initialWorkoutCardStates: [WorkoutCardState] = []
+        /// 루틴 전체의 세트 수
+        var initialTotalSetCountInRoutine = 0
+        // 현재 루틴의 모든 정보를 workoutCardStates에 저장
+        for (i, workout) in initialRoutine.workouts.enumerated() {
+            initialWorkoutCardStates.append(WorkoutCardState(
+                currentExerciseName: workout.name,
+                currentWeight: workout.sets[0].weight,
+                currentUnit: workout.sets[0].unit,
+                currentReps: workout.sets[0].reps,
+                setInfo: workout.sets,
+                setIndex: 0,
+                exerciseIndex: i,
+                totalExerciseCount: initialRoutine.workouts.count,
+                totalSetCount: workout.sets.count,
+                currentExerciseNumber: i + 1,
+                currentSetNumber: 1,
+                setProgressAmount: 0,
+                memoInExercise: workout.comment,
+                allSetsCompleted: false
+            ))
+            initialTotalSetCountInRoutine += workout.sets.count
         }
-        return nil
+        
+        let initialWorkoutRecord = WorkoutRecord(
+            // TODO: 검토 필요
+            id:  UUID().uuidString,
+            workoutRoutine: initialRoutine,
+            totalTime: 0,
+            workoutTime: 0,
+            comment: "",
+            date: Date()
+        )
+        
+        let initialWorkoutSummary = WorkoutSummary(
+            routineName: initialRoutine.name,
+            date: Date(),
+            routineDidProgress: 0.0,
+            totalTime: 0,
+            exerciseDidCount: 0,
+            setDidCount: 0,
+            routineMemo: initialWorkoutRecord.comment
+        )
+        
+        let firstWorkout = initialRoutine.workouts[0]
+        let weightSet: [[Int]] = firstWorkout.sets.map { set in
+            [Int(set.weight), set.reps]
+        }
+        let initialWorkoutStateForEdit = WorkoutStateForEdit(
+            currentRoutine: initialRoutine,
+            currentExcerciseName: firstWorkout.name,
+            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
+            currentWeightSet: weightSet
+        )
+        
+        return State(
+            workoutRoutine: initialRoutine,
+            workoutCardStates: initialWorkoutCardStates,
+            currentExerciseIndex: 0,
+            updatingIndex: 0,
+            isWorkingout: false,
+            isWorkoutPaused: false,
+            workoutTime: 0,
+            isResting: false,
+            isRestPaused: false,
+            restSecondsRemaining: 60.0,
+            restTime: 60.0, // 기본 60초로 설정
+            restStartTime: nil,
+            date: Date(),
+            memoInRoutine: initialWorkoutRecord.comment,
+            currentExerciseAllSetsCompleted: false,
+            isEditAndMemoViewPresented: false,
+            isEditExerciseViewPresented: false,
+            isRestTimerStopped: false,
+            workoutRecord: initialWorkoutRecord,
+            workoutSummary: initialWorkoutSummary,
+            totalExerciseCount: initialWorkoutCardStates.count,
+            didExerciseCount: 0,
+            totalSetCountInRoutine: initialTotalSetCountInRoutine,
+            didSetCount: 0,
+            uid: FirebaseAuthService().fetchCurrentUser()?.uid,
+            workoutStateForEdit: initialWorkoutStateForEdit
+        )
     }
 }
