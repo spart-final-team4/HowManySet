@@ -63,9 +63,10 @@ final class EditExcerciseViewReactor: Reactor {
         case workoutNameTooLong
         case workoutNameTooShort
         case workoutInvalidCharacters
-        case wokkoutNameEmpty
-        case success
+        case workoutNameEmpty
+        case workoutContainsZero
         case workoutEmpty
+        case success
     }
     
     // MARK: - Properties
@@ -185,13 +186,16 @@ final class EditExcerciseViewReactor: Reactor {
     // MARK: - 유효성 검사
     func validationWorkout(workout: Workout) -> ValidWorkout {
         if workout.name.isEmpty {
-            return ValidWorkout.wokkoutNameEmpty
+            return ValidWorkout.workoutNameEmpty
         }
         if workout.name.count > 25 {
             return ValidWorkout.workoutNameTooLong
         }
         if workout.name.count <= 1 {
             return ValidWorkout.workoutNameTooShort
+        }
+        if workout.sets.contains(where: { $0.reps == 0 || $0.weight == 0}) {
+            return ValidWorkout.workoutContainsZero
         }
         if workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0}) {
             return ValidWorkout.workoutInvalidCharacters
