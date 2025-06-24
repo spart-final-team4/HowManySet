@@ -82,15 +82,41 @@ final class AuthViewController: UIViewController, View {
         appleAuthController?.presentationContextProvider = self
         appleAuthController?.performRequests()
     }
+}
 
+// MARK: - Alert
+extension AuthViewController {
     private func showErrorAlert(_ error: Error) {
+        let (title, message) = getSecureErrorMessage(error)
+        
         let alert = UIAlertController(
-            title: "로그인 실패",
-            message: error.localizedDescription,
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
+    }
+
+    private func getSecureErrorMessage(_ error: Error) -> (title: String, message: String) {
+        print("🔴 로그인 오류: \(error.localizedDescription)")
+        
+        let title = "로그인 실패"
+        let message: String
+        
+        if let nsError = error as NSError? {
+            switch nsError.domain {
+            case "FIRAuthErrorDomain":
+                message = "로그인 정보를 확인해 주세요."
+            case NSURLErrorDomain:
+                message = "네트워크 연결을 확인해 주세요."
+            default:
+                message = "일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요."
+            }
+        } else {
+            message = "일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요."
+        }
+        return (title, message)
     }
 }
 
