@@ -504,6 +504,9 @@ final class HomeViewReactor: Reactor {
                 if newState.restSecondsRemaining.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
+                    
+                    // 휴식 종료 시 푸시 알림
+                    NotificationService.shared.sendRestFinishedNotification()
                 }
             }
             
