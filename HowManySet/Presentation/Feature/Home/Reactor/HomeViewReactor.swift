@@ -180,37 +180,40 @@ final class HomeViewReactor: Reactor {
         var totalSetCountInRoutine: Int
         var didSetCount: Int
         /// 현재 사용자 uid
-        var uid: String
+        var uid: String?
         var workoutStateForEdit: WorkoutStateForEdit?
     }
     
     let initialState: State
     
-    private let saveRecordUseCase: SaveRecordUseCaseProtocol
+    private let saveRecordUseCase: SaveRecordUseCase
     private let fsSaveRecordUseCase: FSSaveRecordUseCase
-    private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
-    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
-    private let fetchRoutineUseCase: FetchRoutineUseCaseProtocol
+//    private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
+//    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
+    private let fetchRoutineUseCase: FetchRoutineUseCase
     private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
+    private let updateWorkoutUseCase: UpdateWorkoutUseCase
+    // TODO: 추후에 FSUpdateWorkoutUseCase 적용
+    private let fsUpdateRoutineUseCase: FSUpdateRoutineUseCase
     
+    // TODO: 추후에 실제 데이터 Fetch로 변경
     private let routineMockData = WorkoutRoutine.mockData[0]
     private let recordMockData = WorkoutRecord.mockData[0]
     
-    //    private let firstFetchedRoutineData
-    
-    init(saveRecordUseCase: SaveRecordUseCaseProtocol,
-         fsSaveRecordUseCase: FSSaveRecordUseCase,
-         deleteRecordUseCase: DeleteRecordUseCaseProtocol,
-         fsDeleteRecordUseCase: FSDeleteRecordUseCase,
-         fetchRoutineUseCase: FetchRoutineUseCaseProtocol,
-         fsFetchRoutineUseCase: FSFetchRoutineUseCase
+    init(
+        saveRecordUseCase: SaveRecordUseCase,
+        fsSaveRecordUseCase: FSSaveRecordUseCase,
+        fetchRoutineUseCase: FetchRoutineUseCase,
+        fsFetchRoutineUseCase: FSFetchRoutineUseCase,
+        updateWorkoutUseCase: UpdateWorkoutUseCase,
+        fsUpdateRoutineUseCase: FSUpdateRoutineUseCase
     ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fsSaveRecordUseCase = fsSaveRecordUseCase
-        self.deleteRecordUseCase = deleteRecordUseCase
-        self.fsDeleteRecordUseCase = fsDeleteRecordUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
+        self.updateWorkoutUseCase = updateWorkoutUseCase
+        self.fsUpdateRoutineUseCase = fsUpdateRoutineUseCase
         
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
@@ -296,7 +299,7 @@ final class HomeViewReactor: Reactor {
             didExerciseCount: 0,
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
-            uid: "UID",
+            uid: FirebaseAuthService().fetchCurrentUser()?.uid,
             workoutStateForEdit: nil
         )
     }
@@ -627,6 +630,15 @@ final class HomeViewReactor: Reactor {
             newState.workoutCardStates[currentExerciseIndex].memoInExercise = newMemo
             print("📋 변경된메모: \(String(describing: newMemo)), \(String(describing: newState.workoutCardStates[currentExerciseIndex].memoInExercise))")
             
+            let currentWorkout = Workout(
+                id: newState.uid ?? "",
+                name: newState.workoutCardStates[currentExerciseIndex].currentExerciseName,
+                sets: newState.workoutCardStates[currentExerciseIndex].setInfo,
+                comment: newState.workoutCardStates[currentExerciseIndex].memoInExercise
+            )
+            
+            updateWorkoutUseCase.execute(item: currentWorkout)
+                        
         case let .stopRestTimer(isStopped):
             if isStopped {
                 newState.isResting = false
@@ -640,20 +652,19 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
             }
             
-            // MARK: - 현재 운동 데이터 저장
-            // 메모 창 dismiss시, 운동 완료 시 등등
+        // MARK: - 현재 운동 데이터 저장
+        // 메모 창 dismiss시, 운동 완료 시 등등
         case .saveWorkoutData:
-            // TODO: - 기존 데이터 삭제 필요
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
             
             newState.workoutRoutine = WorkoutRoutine(
-                id: UUID().uuidString,
+                id: newState.uid ?? "",
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
             newState.workoutRecord = WorkoutRecord(
-                id: UUID().uuidString,
+                id: newState.uid ?? "",
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -661,8 +672,12 @@ final class HomeViewReactor: Reactor {
                 date: Date()
             )
             
-            self.saveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
-            self.fsSaveRecordUseCase.execute(uid: newState.uid, item: newState.workoutRecord)
+            saveRecordUseCase.execute(item: newState.workoutRecord)
+            if let uid = newState.uid {
+                fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
+            } else {
+                print("사용자 uid가 없습니다!")
+            }
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]

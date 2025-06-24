@@ -847,7 +847,11 @@ extension HomeViewController {
                     self.coordinator?.presentEditExerciseView(
                         routineName: currentRoutineName,
                         workoutStateForEdit: workout,
-                        onDismiss: {                                                    reactor.action.onNext(.editExerciseViewPresented(at: self.getCurrentVisibleExerciseIndex(), isPresented: false)) // getCurrentVisibleExerciseIndex로 현재 index를 가져온 후 수행
+                        onDismiss: {
+                            reactor.action.onNext(.editExerciseViewPresented(
+                                at: self.getCurrentVisibleExerciseIndex(),
+                                isPresented: false)
+                            ) // getCurrentVisibleExerciseIndex로 현재 index를 가져온 후 수행
                         }
                     )
                 }
