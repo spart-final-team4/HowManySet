@@ -177,15 +177,31 @@ private extension HomePagingCardView {
             weightRepsButton,
             setCompleteButton
         )
-        
-        topConentsVStack.addArrangedSubviews(topLineHStack, setProgressBar)
-        topLineHStack.addArrangedSubviews(exerciseInfoHStack, spacer, editButton)
-        exerciseInfoHStack.addArrangedSubviews(exerciseNameLabel, /*exerciseSetLabel*/)
+        topConentsVStack.addArrangedSubviews(
+            topLineHStack,
+            setProgressBar
+        )
+        topLineHStack.addArrangedSubviews(
+            exerciseInfoHStack,
+            spacer,
+            editButton
+        )
+        exerciseInfoHStack.addArrangedSubviews(
+            exerciseNameLabel /*, exerciseSetLabel*/
+        )
         weightRepsButton.addSubview(weightRepsHStack)
-        weightRepsHStack.addArrangedSubviews(weightInfoVStack,
-                                             repsInfoVStack)
-        weightInfoVStack.addArrangedSubviews(weightImageView, weightLabel)
-        repsInfoVStack.addArrangedSubviews(repsImageView, repsLabel)
+        weightRepsHStack.addArrangedSubviews(
+            weightInfoVStack,
+            repsInfoVStack
+        )
+        weightInfoVStack.addArrangedSubviews(
+            weightImageView,
+            weightLabel
+        )
+        repsInfoVStack.addArrangedSubviews(
+            repsImageView,
+            repsLabel
+        )
     }
     
     func setConstraints() {
