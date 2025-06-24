@@ -20,7 +20,9 @@ final class CalendarViewController: UIViewController, View {
 
     let dataSource = RxTableViewSectionedReloadDataSource<RecordSection>(
         configureCell: { dataSource, tableView, indexPath, item in
-            let cell = tableView.dequeueReusableCell(withIdentifier: RecordCell.identifier) as! RecordCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: RecordCell.identifier, for: indexPath) as? RecordCell else {
+                return UITableViewCell()
+            }
             cell.configure(with: item)
             return cell
         }
@@ -72,7 +74,7 @@ final class CalendarViewController: UIViewController, View {
             }
             .disposed(by: disposeBag)
 
-        // tableView.delegate 설정
+        // tableView.delegate 바인딩
         calendarView.publicRecordTableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
