@@ -8,19 +8,18 @@
 import UIKit
 import FirebaseFirestore
 
+/// 의존성 주입 컨테이너
+/// - 출시 수준의 완전한 DI 구현
 final class DIContainer {
     
-    /// 온보딩 화면을 생성하여 반환
-    func makeOnBoardingViewController(coordinator: OnBoardingCoordinator) -> UIViewController {
-        //        let repository
-        //        let useCase
+    /// 온보딩 화면을 생성하여 반환 (닉네임 입력 + 온보딩 통합)
+    func makeOnBoardingViewController(coordinator: OnBoardingCoordinatorProtocol) -> UIViewController {
         let reactor = OnBoardingViewReactor()
-        
         return OnBoardingViewController(reactor: reactor, coordinator: coordinator)
     }
     
     /// 인증 화면을 생성하여 반환
-    func makeAuthViewController(coordinator: AuthCoordinator) -> UIViewController {
+    func makeAuthViewController(coordinator: AuthCoordinatorProtocol) -> UIViewController {
         let firebaseAuthService = FirebaseAuthService()
         let repository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
         let useCase = AuthUseCase(repository: repository)
@@ -81,11 +80,6 @@ final class DIContainer {
             deleteRoutineUseCase: deleteRoutineUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
             saveRoutineUseCase: saveRoutineUseCase
-//            ,
-//            // Firestore UseCase들 추가
-//            fsFetchRoutineUseCase: fsFetchRoutineUseCase,
-//            fsSaveRoutineUseCase: fsSaveRoutineUseCase,
-//            fsDeleteRoutineUseCase: fsDeleteRoutineUseCase
         )
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator)
@@ -107,10 +101,6 @@ final class DIContainer {
         let reactor = CalendarViewReactor(
             saveRecordUseCase: saveRecordUseCase,
             fetchRecordUseCase: fetchRecordUseCase
-//            ,
-//            // Firestore UseCase들 추가
-//            fsSaveRecordUseCase: fsSaveRecordUseCase,
-//            fsFetchRecordUseCase: fsFetchRecordUseCase
         )
         
         return CalendarViewController(reactor: reactor, coordinator: coordinator)
@@ -134,7 +124,6 @@ final class DIContainer {
             repository: fsUserSettingRespository
         )
         
-        // AuthUseCase 추가
         let firebaseAuthService = FirebaseAuthService()
         let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
         let authUseCase = AuthUseCase(repository: authRepository)
@@ -143,10 +132,6 @@ final class DIContainer {
             fetchUserSettingUseCase: fetchUserSettingUseCase,
             saveUserSettingUseCase: saveUserSettingUseCase,
             authUseCase: authUseCase
-//            ,
-//            // Firestore UseCase들 추가
-//            fsFetchUserSettingUseCase: fsFetchUserSettingUseCase,
-//            fsSaveUserSettingUseCase: fsSaveUserSettingUseCase
         )
         
         return MyPageViewController(reactor: reactor, coordinator: coordinator)
@@ -154,6 +139,16 @@ final class DIContainer {
     
     /// 루틴 완료 화면을 생성하여 반환
     func makeRoutineCompleteViewController(coordinator: RoutineCompleteCoordinator, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor) -> UIViewController {
+        
+        let recordRepository = RecordRepositoryImpl()
+        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+        
+        // Firestore 로직 추가
+        let firestoreService = FirestoreService()
+        let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
+        let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
+
+        let reactor = RoutineCompleteViewReactor(saveRecordUseCase: saveRecordUseCase)
         
         return RoutineCompleteViewController(coordinator: coordinator, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
     }

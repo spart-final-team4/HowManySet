@@ -39,8 +39,7 @@ final class AuthCoordinator: AuthCoordinatorProtocol {
     /// 로그인 완료 시 호출
     /// 후처리 로직 추가 후 finishFlow 호출
     func completeAuth() {
-        // 비즈니스 로직 추가
-        print(#function)
+        print("🟢 AuthCoordinator: 로그인 완료")
         finishFlow?()
     }
 }
