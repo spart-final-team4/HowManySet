@@ -63,4 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // 필요시 리소스 해제 등 처리
     }
+    
+    // 앱 종료 시 라이브 액티비티 종료
+    func applicationWillTerminate(_ application: UIApplication) {
+        LiveActivityService.shared.stop()
+    }
 }
