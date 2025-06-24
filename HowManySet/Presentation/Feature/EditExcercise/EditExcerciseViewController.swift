@@ -272,7 +272,7 @@ private extension EditExcerciseViewController {
         
         footerView.snp.makeConstraints {
             $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalToSuperview().multipliedBy(0.1125)
+            $0.height.equalTo(92)
         }
     }
 }
