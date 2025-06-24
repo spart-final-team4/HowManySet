@@ -37,6 +37,8 @@ extension Workout {
             sets: [
                 WorkoutSet(weight: 60, unit: "kg", reps: 10),
                 WorkoutSet(weight: 70, unit: "kg", reps: 8),
+                WorkoutSet(weight: 80, unit: "kg", reps: 6),
+                WorkoutSet(weight: 80, unit: "kg", reps: 6),
                 WorkoutSet(weight: 80, unit: "kg", reps: 6)
             ],
             comment: "폼에 집중하기"
@@ -47,6 +49,8 @@ extension Workout {
             sets: [
                 WorkoutSet(weight: 80, unit: "kg", reps: 10),
                 WorkoutSet(weight: 100, unit: "kg", reps: 8),
+                WorkoutSet(weight: 120, unit: "kg", reps: 6),
+                WorkoutSet(weight: 120, unit: "kg", reps: 6),
                 WorkoutSet(weight: 120, unit: "kg", reps: 6)
             ],
             comment: "무릎 조심"
@@ -74,6 +78,12 @@ extension Workout {
             name: "랫풀 다운",
             sets: [
                 WorkoutSet(weight: 40, unit: "kg", reps: 12),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10),
+                WorkoutSet(weight: 45, unit: "kg", reps: 10),
                 WorkoutSet(weight: 45, unit: "kg", reps: 10)
             ],
             comment: nil
