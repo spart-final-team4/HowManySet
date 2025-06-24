@@ -10,7 +10,7 @@ final class RoutineListViewController: UIViewController, View {
     var disposeBag = DisposeBag()
 
     let routineListView = RoutineListView()
-    private var coordinator: RoutineListCoordinatorProtocol?
+    private weak var coordinator: RoutineListCoordinatorProtocol?
 
     // RxDataSource 사용을 위한 Model 생성
     typealias RoutineSection = SectionModel<String, WorkoutRoutine>
@@ -41,6 +41,7 @@ final class RoutineListViewController: UIViewController, View {
     override func loadView() {
         view = routineListView
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         reactor?.action.onNext(.viewWillAppear)

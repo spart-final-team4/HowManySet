@@ -10,7 +10,7 @@ final class CalendarViewController: UIViewController, View {
     var disposeBag = DisposeBag()
 
     let calendarView = CalendarView()
-    private var coordinator: CalendarCoordinatorProtocol? // 이유는 모르겠지만 weak를 쓰면 인스턴스가 메모리에서 해제됨. 따라서 일단 strong으로 구현하자
+    private weak var coordinator: CalendarCoordinatorProtocol? 
 
     // 기록이 있는 날짜를 담아놓을 배열 생성
     private var recordedDates: [Date] = []
