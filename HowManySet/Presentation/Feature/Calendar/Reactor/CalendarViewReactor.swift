@@ -11,7 +11,7 @@ final class CalendarViewReactor: Reactor {
 
     // MARK: - Action is an user interaction
     enum Action {
-        case viewDidLoad
+        case viewWillAppear
         case selectDate(Date)
         case deleteItem(IndexPath)
     }
@@ -52,7 +52,7 @@ final class CalendarViewReactor: Reactor {
     // MARK: - Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidLoad:
+        case .viewWillAppear:
             return fetchRecordUseCase.execute()
                 .map { Mutation.setAllRecords($0) }
                 .asObservable()

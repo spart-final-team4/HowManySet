@@ -33,12 +33,16 @@ final class CalendarViewController: UIViewController, View {
         view = calendarView
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reactor?.action.onNext(.viewWillAppear)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setDelegates()
         setRegisters()
         setButtonTargets()
-        reactor?.action.onNext(.viewDidLoad)
     }
 
     // MARK: - Init
