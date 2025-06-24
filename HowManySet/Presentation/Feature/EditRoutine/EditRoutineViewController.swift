@@ -91,7 +91,7 @@ final class EditRoutineViewController: UIViewController, View {
     
     func presentBottomSheetVC() {
         if let sheet = editRoutineBottomSheetViewController.sheetPresentationController {
-            let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.27
+            let fixedHeight: CGFloat = 200
 
             sheet.detents = [.custom(resolver: { _ in
                 fixedHeight
