@@ -91,7 +91,7 @@ extension RoutineListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         /* height를 기본값으로 지정하는 이유
          => 다른 기기에서 셀 내부의 내용이 다 잘림. 어차피 스크롤이 되기 때문에 기본값으로 지정해줘도 괜찮다고 생각함. */
-        132
+        116
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
