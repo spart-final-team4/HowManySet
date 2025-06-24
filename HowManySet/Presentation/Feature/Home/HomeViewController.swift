@@ -326,8 +326,10 @@ private extension HomeViewController {
                     $0.leading.equalToSuperview()
                         .offset(cardInset + CGFloat(i) * screenWidth)
                 }
-                cardView.transform = .identity
-                cardView.alpha = 1
+                UIView.performWithoutAnimation {
+                    cardView.transform = .identity
+                    cardView.alpha = 1
+                }
             }
             
             pagingScrollContentView.snp.remakeConstraints {
@@ -758,10 +760,10 @@ extension HomeViewController {
             .withLatestFrom(
                 reactor.state.map { $0.currentExerciseIndex }
             )
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] currentIndex in
                 guard let self else { return }
-                                
+                
                 // 삭제할 카드 찾기 (exerciseIndex 기준)
                 guard let cardToHideIndex = self.pagingCardViewContainer.firstIndex(
                     where: { $0.index == currentIndex }
@@ -772,68 +774,68 @@ extension HomeViewController {
                 
                 let cardToHide = self.pagingCardViewContainer[cardToHideIndex]
                 let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
+                let maxProgress = reactor.currentState.workoutCardStates[currentPage].setProgressAmount + 1
                 
-                // 카드 삭제 애니메이션
-                UIView.performWithoutAnimation {
-                    // 스케일 다운 및 페이드 아웃
-                    cardToHide.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-                    cardToHide.alpha = 0.1
-                }
-                
-                cardToHide.isHidden = true
-                
-                // 현재 보이는 카드 중에서의 인덱스 찾기
-                guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
-                    print("⚠️ 현재 visible 카드 인덱스를 찾을 수 없습니다.")
-                    return
-                }
-                
-                // 다음 페이지 계산
-                let newPage: Int
-                if currentVisibleIndex >= visibleCardsBeforeHiding.count - 1 {
-                    // 마지막 카드인 경우, 이전 페이지로
-                    newPage = max(0, currentVisibleIndex - 1)
-                } else {
-                    // 마지막이 아닌 경우, 현재 페이지 유지
-                    newPage = currentVisibleIndex
-                }
-                
-                print("💻 삭제 전 visible 카드 수: \(visibleCardsBeforeHiding.count), 현재 visible 인덱스: \(currentVisibleIndex), 새로운 페이지: \(newPage)")
-                
-                
-                // 남은 visible 카드 확인
-                let remainingVisibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
-                
-                if remainingVisibleCards.isEmpty {
-                    print("🎉 모든 운동 완료!")
-                    // 운동 완료 처리
-                    if let reactor = self.reactor {
-                        self.coordinator?.popUpCompletedWorkoutAlert {
-                            reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                            return reactor.currentState.workoutSummary
-                        }
-                    }
-                    return
-                }
-                
-                // 유효한 페이지 범위로 조정
-                let finalNewPage = min(newPage, remainingVisibleCards.count - 1)
-                
-                print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
-                
-                // 레이아웃 재조정
-                self.setExerciseCardViewslayout(
-                    cardContainer: self.pagingCardViewContainer,
-                    newPage: finalNewPage
-                )
-                
-                // Reactor에 페이지 변경 알림
-                if remainingVisibleCards.indices.contains(finalNewPage) {
-                    let newExerciseIndex = remainingVisibleCards[finalNewPage].index
-                    print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
+                self.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
+                    guard let self else { return }
                     
-                    if let reactor = self.reactor {
-                        reactor.action.onNext(.pageChanged(to: newExerciseIndex))
+                    self.animateCardDeletion(cardToHide) { [weak self] in
+                        guard let self else { return }
+                                                
+                        // 현재 보이는 카드 중에서의 인덱스 찾기
+                        guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
+                            print("⚠️ 현재 visible 카드 인덱스를 찾을 수 없습니다.")
+                            return
+                        }
+                        
+                        // 다음 페이지 계산
+                        let newPage: Int
+                        if currentVisibleIndex >= visibleCardsBeforeHiding.count - 1 {
+                            // 마지막 카드인 경우, 이전 페이지로
+                            newPage = max(0, currentVisibleIndex - 1)
+                        } else {
+                            // 마지막이 아닌 경우, 현재 페이지 유지
+                            newPage = currentVisibleIndex
+                        }
+                        
+                        print("💻 삭제 전 visible 카드 수: \(visibleCardsBeforeHiding.count), 현재 visible 인덱스: \(currentVisibleIndex), 새로운 페이지: \(newPage)")
+                        
+                        
+                        // 남은 visible 카드 확인
+                        let remainingVisibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
+                        
+                        // 유효한 페이지 범위로 조정
+                        let finalNewPage = min(newPage, remainingVisibleCards.count - 1)
+                        
+                        print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
+                        
+                        // 레이아웃 재조정
+                        self.setExerciseCardViewslayout(
+                            cardContainer: self.pagingCardViewContainer,
+                            newPage: finalNewPage
+                        )
+                        
+                        // Reactor에 페이지 변경 알림
+                        if remainingVisibleCards.indices.contains(finalNewPage) {
+                            let newExerciseIndex = remainingVisibleCards[finalNewPage].index
+                            print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
+                            
+                            if let reactor = self.reactor {
+                                reactor.action.onNext(.pageChanged(to: newExerciseIndex))
+                                reactor.action.onNext(.cardDeleteAnimationCompleted(oldIndex: currentIndex, nextIndex: newExerciseIndex))
+                            }
+                        } else if remainingVisibleCards.isEmpty {
+                            // 모든 운동 완료 시
+                            print("🎉 모든 운동 완료!")
+                            // 운동 완료 처리
+                            if let reactor = self.reactor {
+                                self.coordinator?.popUpCompletedWorkoutAlert {
+                                    reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                                    return reactor.currentState.workoutSummary
+                                }
+                            }
+                            return
+                        }
                     }
                 }
             }).disposed(by: disposeBag)
@@ -972,5 +974,36 @@ private extension HomeViewController {
             }
             .subscribe()
             .disposed(by: liveActivityDisposeBag)
+    }
+}
+
+
+// MARK: - 애니메이션 메서드들
+private extension HomeViewController {
+    
+    /// 프로그레스바 완료
+    func animateProgressBarCompletion(
+        _ cardView: HomePagingCardView,
+        with progress: Int,
+        completion: @escaping () -> Void
+    ) {
+        // 프로그레스바를 100%로
+        cardView.setProgressBar.updateProgress(currentSet: progress)
+        completion()
+    }
+    
+    /// 카드 삭제 애니메이션
+    func animateCardDeletion(_ cardView: HomePagingCardView, completion: @escaping () -> Void) {
+        // 카드가 위로 사라지면서 페이드아웃
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
+            cardView.transform = CGAffineTransform(translationX: 0, y: -cardView.frame.height)
+            .scaledBy(x: 0.8, y: 0.8)
+            cardView.alpha = 0.1
+        }, completion: { _ in
+            cardView.isHidden = true
+            cardView.transform = .identity
+            cardView.alpha = 1
+            completion()
+        })
     }
 }
