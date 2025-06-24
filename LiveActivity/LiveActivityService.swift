@@ -14,7 +14,7 @@ final class LiveActivityService {
     
     var activity: Activity<HowManySetWidgetAttributes>?
     
-    private init() {}
+    init() {}
     
     func start(with data: WorkoutDataForLiveActivity) {
         guard activity == nil else { return }
@@ -45,10 +45,10 @@ final class LiveActivityService {
     }
     
     func stop() {
-        
         Task {
-            guard activity == nil else { return }
-            await self.activity?.end(nil, dismissalPolicy: .immediate)
+            for activity in Activity<HowManySetWidgetAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
         }
     }
 }
