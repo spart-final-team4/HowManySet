@@ -26,6 +26,7 @@ final class TabBarCoordinator: Coordinator {
     init(tabBarController: UITabBarController, container: DIContainer) {
         self.tabBarController = tabBarController
         self.container = container
+        tabBarController.setValue(CustomTabbar(), forKey: "tabBar")
     }
     
     /// 탭바 초기화 및 각 탭의 네비게이션 및 코디네이터 시작
@@ -79,5 +80,16 @@ final class TabBarCoordinator: Coordinator {
     private func navigateToAuth() {
         // AppCoordinator에게 인증 화면으로 전환 요청
         finishFlow?()
+    }
+}
+
+// Tabbar Height를 조정하기 위해 서브클래싱
+fileprivate final class CustomTabbar: UITabBar {
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        var size = super.sizeThatFits(size)
+        let height = 60
+        let safeAreaBottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        size.height = 60 + safeAreaBottom
+        return size
     }
 }
