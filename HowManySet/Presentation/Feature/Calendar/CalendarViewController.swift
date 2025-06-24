@@ -163,6 +163,7 @@ extension CalendarViewController: UITableViewDelegate {
         coordinator?.presentRecordDetailView(record: record)
     }
 
+    /// trailing -> leading 방향으로 스와이프하는 메서드
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
             self?.reactor?.action.onNext(.deleteItem(indexPath)) // Reactor로 이벤트 전달
@@ -173,12 +174,14 @@ extension CalendarViewController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 
+    /// tableView의 섹션 안에 있는 footerView를 설정하는 메서드
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = .clear
         return footer
     }
 
+    /// tableView의 섹션 안에 있는 footerView의 높이를 정하는 메서드
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         16 // 원하는 spacing 값
     }

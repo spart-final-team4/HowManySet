@@ -94,6 +94,7 @@ extension RoutineListViewController: UITableViewDelegate {
         116
     }
 
+    /// TableView Cell이 선택되었을 때 실행하는 메서드
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
@@ -102,6 +103,7 @@ extension RoutineListViewController: UITableViewDelegate {
         coordinator?.pushEditRoutineView(with: routine)
     }
 
+    /// trailing -> leading 방향으로 스와이프하는 메서드
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
     -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
@@ -113,13 +115,14 @@ extension RoutineListViewController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 
-
+    /// tableView의 섹션 안에 있는 footerView를 설정하는 메서드
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = .clear
         return footer
     }
 
+    /// tableView의 섹션 안에 있는 footerView의 높이를 정하는 메서드
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 16
     }
