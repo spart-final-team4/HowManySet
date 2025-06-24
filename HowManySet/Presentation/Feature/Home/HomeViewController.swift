@@ -1003,15 +1003,18 @@ private extension HomeViewController {
         with progress: Int,
         completion: @escaping () -> Void
     ) {
-        // 프로그레스바를 100%로
-        cardView.setProgressBar.updateProgress(currentSet: progress)
-        completion()
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
+            // 프로그레스바를 100%로
+            cardView.setProgressBar.updateProgress(currentSet: progress)
+        }, completion: { _ in
+            completion()
+        })
     }
     
     /// 카드 삭제 애니메이션
     func animateCardDeletion(_ cardView: HomePagingCardView, completion: @escaping () -> Void) {
         // 카드가 위로 사라지면서 페이드아웃
-        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
+        UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: {
             cardView.transform = CGAffineTransform(translationX: 0, y: -cardView.frame.height)
             .scaledBy(x: 0.8, y: 0.8)
             cardView.alpha = 0.1
