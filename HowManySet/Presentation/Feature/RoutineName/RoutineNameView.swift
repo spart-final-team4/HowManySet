@@ -75,7 +75,8 @@ private extension RoutineNameView {
 
     func setConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.top.horizontalEdges.equalToSuperview().inset(28)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(30)
+            $0.horizontalEdges.equalToSuperview().inset(28)
         }
 
         routineNameTF.snp.makeConstraints {
@@ -85,7 +86,7 @@ private extension RoutineNameView {
         }
 
         nextButton.snp.makeConstraints {
-            $0.top.equalTo(routineNameTF.snp.bottom).offset(38)
+            $0.top.equalTo(routineNameTF.snp.bottom).offset(40)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(56)
         }
