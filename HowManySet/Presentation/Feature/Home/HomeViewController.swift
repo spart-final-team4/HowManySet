@@ -532,10 +532,12 @@ extension HomeViewController {
             .bind(onNext: { [weak self] stop in
                 guard let self else { return }
                 // 팝업 창에서 종료 버튼을 누를 때에만 액션 실행
-                self.coordinator?.popUpEndWorkoutAlert {
+                self.coordinator?.popUpEndWorkoutAlert(onConfirm: {
                     reactor.action.onNext(stop(true))
                     return reactor.currentState.workoutSummary
-                }
+                }, onCancel: {
+                    return nil
+                })
             })
             .disposed(by: disposeBag)
         
@@ -774,7 +776,7 @@ extension HomeViewController {
                 
                 let cardToHide = self.pagingCardViewContainer[cardToHideIndex]
                 let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
-                let maxProgress = reactor.currentState.workoutCardStates[currentPage].setProgressAmount + 1
+                let maxProgress = reactor.currentState.workoutCardStates[cardToHideIndex].setProgressAmount + 1
                 
                 self.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
                     guard let self else { return }
@@ -829,10 +831,17 @@ extension HomeViewController {
                             print("🎉 모든 운동 완료!")
                             // 운동 완료 처리
                             if let reactor = self.reactor {
-                                self.coordinator?.popUpCompletedWorkoutAlert {
+                                self.coordinator?.popUpCompletedWorkoutAlert(onConfirm: {
                                     reactor.action.onNext(.stopButtonClicked(isEnded: true))
                                     return reactor.currentState.workoutSummary
-                                }
+                                }, onCancel: { [weak self] in
+                                    guard let self else { return }
+                                    // 계속하기 클릭 시 hidden 해제
+                                    self.pagingCardViewContainer.forEach {
+                                        $0.isHidden = false
+                                    }
+                                    self.setExerciseCardViewslayout(cardContainer: self.pagingCardViewContainer, newPage: 0)
+                                })
                             }
                             return
                         }
@@ -954,6 +963,13 @@ private extension HomeViewController {
                                             setDidCount: 0,
                                             routineMemo: nil
                                         )
+                                    } onCancel: { [weak self] in
+                                        guard let self else { return }
+                                        // 계속하기 클릭 시 hidden 해제
+                                        self.pagingCardViewContainer.forEach {
+                                            $0.isHidden = false
+                                        }
+                                        self.setExerciseCardViewslayout(cardContainer: self.pagingCardViewContainer, newPage: 0)
                                     }
                                     observer.onCompleted()
                                 }
