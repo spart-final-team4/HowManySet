@@ -4,15 +4,14 @@ import ReactorKit
 
 final class RecordDetailViewReactor: Reactor {
     // MARK: - UseCase
-    private let saveRecordUseCase: SaveRecordUseCase
-    private let fetchRecordUseCase: FetchRecordUseCase
+    private let updateRecordUseCase: UpdateRecordUseCase
+    // TODO: FSUpdateRecordUseCase
 
     // MARK: - Action is an user interaction
     enum Action {
         case tapConfirm
         case tapSave
         case updateMemo(String?)
-        case refreshRecord
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -21,7 +20,6 @@ final class RecordDetailViewReactor: Reactor {
         case setMemo(String?)
         case setSaveButtonEnabled(Bool)
         case updateOriginalMemo(String?)
-        case setFetchedRecord(WorkoutRecord)
     }
     
     // MARK: - State is a current view state
@@ -37,12 +35,10 @@ final class RecordDetailViewReactor: Reactor {
     let initialState: State
 
     // MARK: - Init
-    init(saveRecordUseCase: SaveRecordUseCase,
-         fetchRecordUseCase: FetchRecordUseCase,
+    init(updateRecordUseCase: UpdateRecordUseCase,
          record: WorkoutRecord
     ) {
-        self.saveRecordUseCase = saveRecordUseCase
-        self.fetchRecordUseCase = fetchRecordUseCase
+        self.updateRecordUseCase = updateRecordUseCase
         self.initialState = State(
             record: record,
             memo: record.comment,
@@ -67,10 +63,19 @@ final class RecordDetailViewReactor: Reactor {
                 return .empty()
             }
 
-            let updatedRecord = currentState.record.withUpdatedComment(memo)
+            let record = currentState.record
+            // 직접 WorkoutRecord를 복사하면서 comment만 변경
+            let updatedRecord = WorkoutRecord(
+                id: record.id,
+                workoutRoutine: record.workoutRoutine,
+                totalTime: record.totalTime,
+                workoutTime: record.workoutTime,
+                comment: memo,
+                date: record.date
+            )
 
-            // 실제 저장 UseCase 호출
-            saveRecordUseCase.execute(uid: "", item: updatedRecord)
+            // 업데이트 실행
+            updateRecordUseCase.execute(item: updatedRecord)
 
             print("변경된 메모 저장: \(memo)") // ✅ print
             return Observable.from([
@@ -81,19 +86,13 @@ final class RecordDetailViewReactor: Reactor {
         case let .updateMemo(text):
             let trimmed = text?.trimmingCharacters(in: .whitespacesAndNewlines)
             let current = (trimmed == "메모를 입력해주세요.") ? nil : trimmed
-            let original = currentState.record.comment?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let original = currentState.originalMemo?.trimmingCharacters(in: .whitespacesAndNewlines)
             let isChanged = (current != original) && !(current?.isEmpty ?? true)
 
             return Observable.from([
                 .setMemo(text),
                 .setSaveButtonEnabled(isChanged)
             ])
-
-        case .refreshRecord:
-            // 실제 fetch 흐름
-            return fetchRecordUseCase.execute(uid: "")
-                .map { Mutation.setFetchedRecord($0.first ?? self.currentState.record) }
-                .asObservable()
         }
     }
 
@@ -109,10 +108,6 @@ final class RecordDetailViewReactor: Reactor {
             newState.isSaveButtonEnabled = isEnabled
         case let .updateOriginalMemo(newMemo):
             newState.originalMemo = newMemo
-        case let .setFetchedRecord(record): // fetch 처리
-            newState.record = record
-            newState.memo = record.comment
-            newState.originalMemo = record.comment
         }
 
         return newState

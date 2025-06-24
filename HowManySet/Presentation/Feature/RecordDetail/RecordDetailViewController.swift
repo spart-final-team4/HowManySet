@@ -84,12 +84,6 @@ final class RecordDetailViewController: UIViewController, View {
         bindKeyboardNotifications()
         bindTapToDismissKeyboard()
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        reactor?.action.onNext(.refreshRecord)
-    }
 }
 
 // MARK: - UI Methods & Reactor Bind
