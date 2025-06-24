@@ -116,7 +116,7 @@ final class EditExcerciseViewReactor: Reactor {
                     WorkoutSet(
                         weight: Double($0[0]) ?? 0.0,
                         unit: self.currentState.currentUnit,
-                        reps: Int((Double($0[1]) ?? 0.0)))
+                        reps: Int($0[1]) ?? 0)
                 }
                 
                 let newWorkout = Workout(

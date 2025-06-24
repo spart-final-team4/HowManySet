@@ -61,7 +61,7 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
         $0.clipsToBounds = true
         $0.textColor = .white
         $0.layer.cornerRadius = 12
-        $0.keyboardType = .decimalPad
+        $0.keyboardType = .numberPad
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
