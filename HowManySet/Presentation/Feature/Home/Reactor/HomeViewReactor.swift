@@ -513,6 +513,7 @@ final class HomeViewReactor: Reactor {
         // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
         case let .manageWorkoutData(isEnded):
             // 운동 완료 시 UserDefaults에 있는 운동 상태 제거
+            print("🗑️ currentWorkoutState 제거")
             UserDefaults.standard.removeObject(forKey: "currentWorkoutState")
             
             newState.didExerciseCount += 1
@@ -616,6 +617,9 @@ final class HomeViewReactor: Reactor {
                 print("사용자 uid가 없습니다!")
             }
             
+            print("🗑️ currentWorkoutState 제거")
+            UserDefaults.standard.removeObject(forKey: "currentWorkoutState")
+            
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
             let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
@@ -711,7 +715,6 @@ private extension HomeViewReactor {
                 restTimer
             ])
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
-            
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
             let currentCardState = currentState.workoutCardStates[cardIndex]
             print("🗂️🗂️ 초기 nextExerciseIndex: \(nextExerciseIndex)")
@@ -729,18 +732,10 @@ private extension HomeViewReactor {
             print("🗂️ 현재 index: \(currentState.currentExerciseIndex), 🗂️ 다음 index: \(nextExerciseIndex)")
             
             if nextExerciseIndex != cardIndex {
-                
-                // 휴식 초기화
-                // 현재 운동 모든세트 완료 = true
-                // 완료한 운동 수 업데이트 및 분기 처리
-                // cardState를 nextIndex의 State로 변경 (현재 cardIndex 모든 세트 완료 = false)
-                // 현재 index를 nextIndex로 변경
-    
+            
                 return .concat([
                     .just(.setResting(isResting)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                    .just(.setRestTimeDataAtProgressBar(restTime)),
-                    restTimer
                 ])
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
