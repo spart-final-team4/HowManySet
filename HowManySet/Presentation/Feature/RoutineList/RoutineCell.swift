@@ -86,7 +86,7 @@ private extension RoutineCell {
 
     func setConstraints() {
         contentView.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(8)
+            $0.verticalEdges.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
         }
 
