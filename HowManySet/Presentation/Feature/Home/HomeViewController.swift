@@ -703,8 +703,10 @@ extension HomeViewController {
                 guard let cardView = self.pagingCardViewContainer.first(where: { $0.index == cardIndex }) else { return }
                 
                 let cardState = reactor.currentState.workoutCardStates[cardIndex]
+                // MARK: - 변경된 운동 정보(세트 수, 무게, 횟수)들로 업데이트
+                cardView.configure(with: cardState)
                 
-                if isResting {
+                if isResting && !isRestTimerStopped {
                     cardView.restProgressBar.setProgress(progress, animated: true)
                     cardView.remainingRestTimeLabel.text = timeText
                     cardView.showRestUI()
@@ -712,8 +714,6 @@ extension HomeViewController {
                 } else {
                     cardView.restProgressBar.setProgress(progress, animated: false)
                     cardView.remainingRestTimeLabel.text = timeText
-                    // 변경된 운동 정보(세트 수, 무게, 횟수)들로 업데이트
-                    cardView.configure(with: cardState)
                     cardView.showExerciseUI()
                     self.restInfoView.showRestInfo()
                 }
