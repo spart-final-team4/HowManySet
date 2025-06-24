@@ -143,35 +143,21 @@ final class EditExcerciseViewController: UIViewController, View {
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, alert in
                 switch alert {
-                case .excerciseSavefailure:
-                    let alert = UIAlertController(
-                        title: "입력 오류",
-                        message: "운동 항목을 올바르게 입력해 주세요.",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "확인", style: .default))
-                    owner.present(alert, animated: true)
-                    
-                case .excerciseSaveSuccess:
-                    let alert = UIAlertController(
-                        title: "저장 완료",
-                        message: "운동이 저장되었습니다",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "확인", style: .default))
-                    owner.present(alert, animated: true) {
-                        owner.headerView.returnInitialState()
-                        owner.contentView.returnInitialState()
-                    }
-                    
-                case .saveRoutineFailure:
-                    let alert = UIAlertController(
-                        title: "저장 실패",
-                        message: "현재 저장된 운동 목록이 없습니다.",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "확인", style: .default))
-                    owner.present(alert, animated: true)
+                case .success:
+                    // TODO: Toast View로 변경예정
+                    owner.present(owner.defaultAlert(title: "저장 성공", message: "운동이 저장되었습니다."), animated: true)
+                    owner.headerView.returnInitialState()
+                    owner.contentView.returnInitialState()
+                case .wokkoutNameEmpty:
+                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름을 입력해주세요."), animated: true)
+                case .workoutEmpty:
+                    owner.present(owner.defaultAlert(title: "오류", message: "현재 저장된 운동 항목이 없습니다."), animated: true)
+                case .workoutInvalidCharacters:
+                    owner.present(owner.defaultAlert(title: "오류", message: "운동 세트와 개수를 입력해주세요."), animated: true)
+                case .workoutNameTooLong:
+                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 길어요."), animated: true)
+                case .workoutNameTooShort:
+                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 짧아요."), animated: true)
                 }
             }
             .disposed(by: disposeBag)
