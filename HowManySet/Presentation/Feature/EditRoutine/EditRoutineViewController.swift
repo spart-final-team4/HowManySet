@@ -163,7 +163,8 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentEditExcerciseVC() {
-        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor())
+        guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
+        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(workout: workout))
         present(vc, animated: true)
     }
     
