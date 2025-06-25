@@ -35,7 +35,7 @@ final class MyPageViewReactor: Reactor {
     /// 상태 변화를 나타내는 Mutation (내부 상태 조작용)
     enum Mutation {
         /// 특정 셀 타입에 대한 화면 전환 지시
-        case presentTo(MyPageCellType)
+        case presentTo(MyPageCellType?)
         /// 로그아웃 성공
         case logoutSuccess
         /// 계정 삭제 성공
@@ -79,8 +79,11 @@ final class MyPageViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .cellTapped(let cell):
-            return .just(.presentTo(cell))
-            
+            return Observable.concat([
+                .just(.presentTo(cell)),
+                .just(.presentTo(nil)) // nil로 초기화(자동 재방출 방지)
+            ])
+
         case .loadUserName:
             // 🟢 Firestore에서 사용자 정보 fetch
             return fetchUserNameFromFirestore()
