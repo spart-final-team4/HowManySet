@@ -19,10 +19,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
+    private let homeCoordinator: HomeCoordinator
 
-    init(navigationController: UINavigationController, container: DIContainer) {
+    init(navigationController: UINavigationController, container: DIContainer, homeCoordinator: HomeCoordinator) {
         self.navigationController = navigationController
         self.container = container
+        self.homeCoordinator = homeCoordinator
     }
     
     /// 루틴 리스트 화면 시작
@@ -90,7 +92,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
 
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
     func pushEditRoutineView(with routine: WorkoutRoutine) {
-        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator)
         editRoutineCoordinator.start()
     }
 }
