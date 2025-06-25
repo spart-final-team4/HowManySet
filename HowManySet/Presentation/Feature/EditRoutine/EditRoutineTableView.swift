@@ -29,9 +29,10 @@ final class EditRoutineTableView: UITableView {
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
         delegate = self
-        dragInteractionEnabled = true
-        dragDelegate = self
-        dropDelegate = self
+        // TODO: 마이너 패치때 도입
+//        dragInteractionEnabled = true
+//        dragDelegate = self
+//        dropDelegate = self
         bind()
         backgroundColor = .background
     }
