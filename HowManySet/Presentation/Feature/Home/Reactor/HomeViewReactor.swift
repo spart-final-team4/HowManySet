@@ -824,6 +824,7 @@ extension HomeViewReactor.State {
 }
 
 // MARK: - 운동 진행 상태 UserDefaults
+// TODO: - 추후에 살릴 수도 있음
 // 앱 스위처에서 스와이프 종료 후에도 운동 상태 남기기 위함
 
 ///// UserDefaults로 운동상태 Save
@@ -845,6 +846,7 @@ extension HomeViewReactor.State {
 // MARK: InitialState 관련
 extension HomeViewReactor {
     
+    // TODO: 아마 제거 예정
     /// defaultInitialState - 초기에 MockData를 받아오는 InitialState (기존 운동시작시 바로 시작했을 때)
     /// 아마 추후에 제거될 예정임!
     static func defaultInitialState() -> State {
@@ -1004,7 +1006,7 @@ extension HomeViewReactor {
             workoutCardStates: initialWorkoutCardStates,
             currentExerciseIndex: 0,
             updatingIndex: 0,
-            isWorkingout: true, // 바로 운동 시작 되도록 true
+            isWorkingout: false,
             isWorkoutPaused: false,
             workoutTime: 0,
             isResting: false,

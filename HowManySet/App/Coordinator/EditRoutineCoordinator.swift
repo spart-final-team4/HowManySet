@@ -54,8 +54,8 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
             print("HOMEVC 다운캐스팅 실패!")
         }
         
-        // navigation 스택을 홈으로 초기화
-        navigationController.setViewControllers([homeVC], animated: false)
+        homeVC.navigationItem.hidesBackButton = true
+        navigationController.pushViewController(homeVC, animated: true)
     }
     
 }
