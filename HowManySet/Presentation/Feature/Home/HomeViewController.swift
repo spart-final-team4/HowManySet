@@ -89,7 +89,7 @@ final class HomeViewController: UIViewController, View {
     private lazy var pageController = UIPageControl().then {
         $0.currentPage = 0
         $0.numberOfPages = 0
-        $0.hidesForSinglePage = true
+        $0.hidesForSinglePage = false
     }
     
     private lazy var pagingScrollContentView = UIView()
@@ -99,7 +99,6 @@ final class HomeViewController: UIViewController, View {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
-        
     }
     
     @available(*, unavailable)
@@ -113,7 +112,6 @@ final class HomeViewController: UIViewController, View {
         print(#function)
         
         setupUI()
-        
     }
 }
 
@@ -196,19 +194,7 @@ private extension HomeViewController {
             $0.height.equalToSuperview().multipliedBy(0.15)
         }
     }
-    
-//    /// 운동 시작 시 표현되는 뷰 설정
-//    func showStartRoutineUI() {
-//                
-//        [topTimerHStackView,
-//         buttonHStackView,
-//         pageController,
-//         pagingScrollView,
-//         restInfoView].forEach {
-//            $0.isHidden = false
-//        }
-//    }
-    
+
     /// 스크롤 뷰 기준으로 레이아웃 재설정
     func remakeOtherViewsWithScrollView() {
         
@@ -426,7 +412,7 @@ private extension HomeViewController {
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
-            // TODO: 배포 후 수정
+            // MARK: - TODO: 배포 후 수정
 //            // 해당 페이지 운동 종목 버튼
 //            cardView.weightRepsButton.rx.tap
 //                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
@@ -463,23 +449,7 @@ extension HomeViewController {
         print(#function)
         
         // MARK: - Action
-        // 루틴 시작 버튼 클릭 시
-//        routineStartCardView.routineSelectButton.rx.tap
-//            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-//            .bind(onNext: { [weak self] _ in
-//                guard let self else { return }
-//                UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
-//                    self.routineStartCardView.routineSelectButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-//                }, completion: { _ in
-//                    UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
-//                        self.routineStartCardView.routineSelectButton.transform = .identity
-//                    }, completion: { _ in
-//                        self.coordinator?.pushRoutineListView()
-//                    })
-//                })
-//            })
-//            .disposed(by: disposeBag)
-        
+        // 운동 중지 버튼 클릭 시
         pauseButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .map { Reactor.Action.workoutPauseButtonClicked }
@@ -501,6 +471,7 @@ extension HomeViewController {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        // 운동 종료 버튼 클릭 시
         stopButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(onNext: { [weak self] in
@@ -564,16 +535,6 @@ extension HomeViewController {
         
         
         // MARK: - State
-        // 초기 뷰 현재 날짜 표시
-        reactor.state.map { $0.isWorkingout }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .filter { !$0 }
-            .bind { [weak self] _ in
-                guard let self else { return }
-//                self.routineStartCardView.todayDateLabel.text = reactor.currentState.date.toDateLabel()
-            }.disposed(by: disposeBag)
-        
         // 운동 시작 시 동작
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
@@ -588,7 +549,6 @@ extension HomeViewController {
             .bind(onNext: { [weak self] cardStates in
                 guard let self else { return }
                 print("--- 운동시작 ---")
-//                self.showStartRoutineUI()
                 self.configureExerciseCardViews(cardStates: cardStates)
             }).disposed(by: disposeBag)
         
