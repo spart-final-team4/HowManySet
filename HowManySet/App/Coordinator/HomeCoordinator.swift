@@ -8,7 +8,7 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-    func presentRoutineListView()
+    func pushRoutineListView()
     func presentEditAndMemoView()
     func presentEditExerciseView(
         routineName: String,
@@ -50,10 +50,15 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         homeViewReactor = reactor
     }
     
-    /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 present
-    func presentRoutineListView() {
-        let routineListCoordinator = RoutineListCoordinator(navigationController: navigationController, container: container)
-        routineListCoordinator.startModal()
+    func pop() {
+        navigationController.popViewController(animated: false)
+    }
+    
+    /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 push
+    /// 기존 HomeVC pop
+    func pushRoutineListView() {
+        let routineListCoordinator = RoutineListCoordinator(navigationController: navigationController, container: container, homeCoordinator: self)
+        routineListCoordinator.start()
     }
     
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
@@ -99,22 +104,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
     /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
     func presentEditRoutineView(with routine: WorkoutRoutine) {
-        let routineRepository = RoutineRepositoryImpl()
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
-        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
-        let reactor = EditRoutineViewReactor(with: routine,
-                                             saveRoutineUseCase: saveRoutineUseCase,
-                                             deleteRoutineUseCase: deleteRoutineUseCase,
-                                             updateRoutineUseCase: updateRoutineUseCase)
-        let editRoutineVC = EditRoutineViewController(reactor: reactor)
-        
-        if let sheet = editRoutineVC.sheetPresentationController {
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = true
-        }
-        
-        navigationController.present(editRoutineVC, animated: true)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: self)
+        editRoutineCoordinator.startModal()
     }
     
     /// 운동 완료 화면으로 이동

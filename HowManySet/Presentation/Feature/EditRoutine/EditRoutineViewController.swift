@@ -21,12 +21,27 @@ final class EditRoutineViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
+    private let startText = "시작"
+    
+    private let coordinator: EditRoutineCoordinatorProtocol
+    
     /// 운동 루틴 리스트를 보여주는 테이블 뷰
     private let tableView = EditRoutineTableView()
     private let editRoutineBottomSheetViewController = EditRoutineBottomSheetViewController()
+        
+    /// 운동 시작 버튼 - 클릭 시 바로 홈화면에서 운동 시작
+    private lazy var startButton = UIButton().then {
+        $0.setTitle(startText, for: .normal)
+        $0.setTitleColor(.background, for: .normal)
+        $0.backgroundColor = .brand
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.layer.cornerRadius = 12
+    }
+
     /// 초기화 메서드 - reactor 주입
     /// - Parameter reactor: EditRoutine 화면의 상태 및 액션을 관리하는 리액터 객체
-    init(reactor: EditRoutineViewReactor) {
+    init(reactor: EditRoutineViewReactor, coordinator: EditRoutineCoordinatorProtocol) {
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
@@ -79,6 +94,22 @@ final class EditRoutineViewController: UIViewController, View {
         editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
             .map{ Reactor.Action.changeListOrder }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        startButton.rx.tap
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .bind(onNext: { [weak self] _ in
+                guard let self else { return }
+                UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
+                    self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                }, completion: { _ in
+                    UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+                        self.startButton.transform = .identity
+                    }, completion: { _ in
+                        self.coordinator.navigateToHomeViewWithWorkoutStarted()
+                    })
+                })
+            })
             .disposed(by: disposeBag)
         
         reactor.state
@@ -142,13 +173,21 @@ private extension EditRoutineViewController {
     
     /// 서브뷰를 뷰 계층에 추가
     func setViewHierarchy() {
-        view.addSubviews(tableView)
+        view.addSubviews(tableView, startButton)
     }
     
     /// SnapKit을 이용한 레이아웃 제약 설정
     func setConstraints() {
+        
         tableView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(startButton.snp.top)
+        }
+        
+        startButton.snp.makeConstraints {
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.height.equalTo(56)
         }
     }
 }
