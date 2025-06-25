@@ -20,14 +20,18 @@ final class HomeStartCoordinator: HomeStartCoordinatorProtocol {
     
     /// DI 컨테이너
     private let container: DIContainer
-        
+    
+    /// 기존에 생성된 routineListCoordinator를 계속 사용해야하기에 여기에 주입
+    private let routineListCoordinator: RoutineListCoordinator
+
     /// coordinator 생성자
     /// - Parameters:
     ///   - navigationController: 홈 시작 흐름용 navigation
     ///   - container: DI 컨테이너
-    init(navigationController: UINavigationController, container: DIContainer) {
+    init(navigationController: UINavigationController, container: DIContainer, routineListCoordinator: RoutineListCoordinator) {
         self.navigationController = navigationController
         self.container = container
+        self.routineListCoordinator = routineListCoordinator
     }
     
     /// 홈 시작뷰 시작
@@ -38,7 +42,6 @@ final class HomeStartCoordinator: HomeStartCoordinatorProtocol {
     
     /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 push
     func pushRoutineListView() {
-        let routineListCoordinator = RoutineListCoordinator(navigationController: navigationController, container: container)
-        routineListCoordinator.start()
+        routineListCoordinator.startModal()
     }
 }
