@@ -71,11 +71,13 @@ final class EditRoutineTableViewCell: UITableViewCell {
     
     /// 셀을 모델 데이터로 구성하는 메서드
     /// - Parameter model: 운동 정보를 담고 있는 `EditRoutioneCellModel` 객체
-    func configure(model: EditRoutioneCellModel) {
+    func configure(model: EditRoutioneCellModel, caller: ViewCaller) {
         self.titleLabel.text = model.name
         self.setTextLabel.text = model.setText
         self.weightTextLabel.text = model.weightText
         self.repsTextLabel.text = model.repsText
+        
+        self.moreButton.isHidden = caller == .fromHome ? true : false
     }
 }
 
