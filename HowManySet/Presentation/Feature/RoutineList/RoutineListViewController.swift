@@ -101,7 +101,7 @@ extension RoutineListViewController: UITableViewDelegate {
 
         let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
 
-        coordinator?.pushEditRoutineView(with: routine)
+        coordinator?.presentEditRoutinView(with: routine)
     }
 
     /// trailing -> leading 방향으로 스와이프하는 메서드

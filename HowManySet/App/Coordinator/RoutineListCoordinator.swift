@@ -11,6 +11,7 @@ protocol RoutineListCoordinatorProtocol: Coordinator {
     func presentRoutineNameView()
     func pushEditExcerciseView(routineName: String)
     func pushEditRoutineView(with: WorkoutRoutine)
+    func presentEditRoutinView(with: WorkoutRoutine)
 }
 
 /// 루틴 리스트 화면 관련 coordinator
@@ -92,5 +93,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     func pushEditRoutineView(with routine: WorkoutRoutine) {
         let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
         editRoutineCoordinator.start()
+        // TODO: 탭바위치 변경되어야 함
+    }
+    
+    func presentEditRoutinView(with routine: WorkoutRoutine) {
+        self.navigationController.dismiss(animated: true)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
+        editRoutineCoordinator.startModal()
     }
 }
