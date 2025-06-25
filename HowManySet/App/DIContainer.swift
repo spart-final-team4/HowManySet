@@ -160,9 +160,11 @@ final class DIContainer {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
         let editRoutineViewReactor = EditRoutineViewReactor(with: routine,
                                              saveRoutineUseCase: saveRoutineUseCase,
-                                             deleteRoutineUseCase: deleteRoutineUseCase)
+                                             deleteRoutineUseCase: deleteRoutineUseCase,
+                                             updateRoutineUseCase: updateRoutineUseCase)
         
         return EditRoutineViewController(reactor: editRoutineViewReactor, coordinator: coordinator)
     }
