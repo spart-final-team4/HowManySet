@@ -43,7 +43,10 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     /// 메인 홈 화면 운동중 상태로 이동
     func navigateToHomeViewWithWorkoutStarted() {
         let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
-        let (homeVC, _) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: homeCoordinator, routine: routine)
+        let (homeVC, homeViewReactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: homeCoordinator, routine: routine)
+        
+        // 여기서 바로 routineSelected 실행하여 운동 시작
+        homeViewReactor.action.onNext(.routineSelected)
         
         // navigation 스택을 홈으로 초기화
         navigationController.setViewControllers([homeVC], animated: false)

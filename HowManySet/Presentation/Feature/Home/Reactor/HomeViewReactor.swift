@@ -227,7 +227,8 @@ final class HomeViewReactor: Reactor {
         print(#function)
         
         switch action {
-            // 초기 루틴 선택 시
+            /// 초기 루틴 선택 시
+            /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
         case .routineSelected:
             // 모든 카드 뷰의 상태를 초기화하고, 첫 운동의 첫 세트를 보여줌
             let updatedCardStates = currentState.workoutRoutine.workouts.enumerated().map { (i, workout) in
