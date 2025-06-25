@@ -11,6 +11,8 @@ final class NotificationService {
     
     static let shared = NotificationService()
     
+    private init() {}
+    
     func requestNotification() { UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             print("알림 권한 granted: \(granted)")
         }
