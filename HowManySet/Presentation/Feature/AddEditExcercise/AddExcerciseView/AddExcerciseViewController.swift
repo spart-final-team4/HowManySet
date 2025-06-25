@@ -19,9 +19,9 @@ import ReactorKit
 /// - 세트(중량/횟수) 편집
 /// - 운동 항목 추가 및 루틴 저장
 /// - 유효성 검증 실패 시 Alert 표시
-final class EditExcerciseViewController: UIViewController, View {
+final class AddExcerciseViewController: UIViewController, View {
     
-    typealias Reactor = EditExcerciseViewReactor
+    typealias Reactor = AddExcerciseViewReactor
     
     // MARK: - Properties
     
@@ -61,7 +61,7 @@ final class EditExcerciseViewController: UIViewController, View {
     
     /// 리액터를 주입받아 초기화합니다.
     /// - Parameter reactor: 운동 편집 기능을 제어하는 Reactor
-    init(reactor: EditExcerciseViewReactor) {
+    init(reactor: AddExcerciseViewReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
@@ -90,7 +90,7 @@ final class EditExcerciseViewController: UIViewController, View {
     /// 리액터 바인딩을 통해 View와 Reactor를 연결합니다.
     ///
     /// 버튼 탭, 입력값 변경, 상태 변화에 따른 Alert 및 화면 dismiss 처리를 수행합니다.
-    func bind(reactor: EditExcerciseViewReactor) {
+    func bind(reactor: AddExcerciseViewReactor) {
         
         // 운동 추가 버튼 탭
         footerView.addExcerciseButtonTapped
@@ -147,7 +147,7 @@ final class EditExcerciseViewController: UIViewController, View {
         // Alert 표시 (저장 성공/실패, 유효성 실패 등)
         reactor.alertRelay
             .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { (owner: EditExcerciseViewController, alert) in
+            .subscribe(with: self) { (owner: AddExcerciseViewController, alert) in
                 switch alert {
                 case .success:
                     owner.showToast(x: owner.scrollView.contentOffset.x, y: owner.scrollView.contentOffset.y, message: "운동이 추가되었어요!")
@@ -197,7 +197,7 @@ final class EditExcerciseViewController: UIViewController, View {
 
 // MARK: - UI Layout Methods
 
-private extension EditExcerciseViewController {
+private extension AddExcerciseViewController {
     
     /// 전체 UI 구성 흐름을 설정합니다.
     func setupUI() {

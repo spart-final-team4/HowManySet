@@ -46,4 +46,9 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     func navigateToHomeViewWithWorkoutStarted() {
         homeCoordinator.startWorkout(with: routine)
     }
+    
+    func moveToEditExcercise(with excercise: Workout) {
+        
+    }
+    
 }
