@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RoutineCompleteCoordinatorProtocol: Coordinator {
-    
+    func navigateToHomeView()
 }
 
 /// 루틴 완료 흐름 담당 coordinator를 반환
