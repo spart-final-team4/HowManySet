@@ -210,4 +210,9 @@ final class DIContainer {
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
     }
+    
+    /// 홈 시작 화면(운동 전) VC 생성하여 반환
+    func makeHomeStartViewController(coordinator: HomeStartCoordinator) -> UIViewController {
+        return HomeStartViewController(coordinator: coordinator)
+    }
 }
