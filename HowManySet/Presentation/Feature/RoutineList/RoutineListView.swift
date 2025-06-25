@@ -49,10 +49,10 @@ private extension RoutineListView {
         }
 
         addNewRoutineButton.do {
-            $0.backgroundColor = .brand // 임의로 색상 변경함‼️
+            $0.backgroundColor = .green6
             $0.setTitle("새 루틴 구성", for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .regular)
-            $0.setTitleColor(.black, for: .normal) // 임의로 색상 변경함‼️
+            $0.setTitleColor(.background, for: .normal)
             $0.layer.cornerRadius = 12
             clipsToBounds = true
         }

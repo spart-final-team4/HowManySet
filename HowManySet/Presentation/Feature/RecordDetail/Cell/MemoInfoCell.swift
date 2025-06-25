@@ -24,7 +24,7 @@ final class MemoInfoCell: UICollectionViewCell {
     func configure(comment: String?) {
         let isEmpty = (comment?.isEmpty ?? true)
         memoTextView.text = isEmpty ? placeholderText : comment
-        memoTextView.textColor = isEmpty ? .systemGray3 : .white
+        memoTextView.textColor = isEmpty ? .grey3 : .white
         memoTextView.layer.borderWidth = 0
     }
 }

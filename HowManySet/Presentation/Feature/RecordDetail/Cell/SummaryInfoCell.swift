@@ -64,7 +64,7 @@ private extension SummaryInfoCell {
 
     func setAppearance() {
         startToEndLabel.do {
-            $0.textColor = .systemGray3
+            $0.textColor = .grey3
             $0.font = .systemFont(ofSize: 14, weight: .regular)
             $0.textAlignment = .center
         }
@@ -78,7 +78,7 @@ private extension SummaryInfoCell {
 
         // 세번째
         dividerView.do {
-            $0.backgroundColor = .systemGray5
+            $0.backgroundColor = .grey5
         }
 
         // 네번째
@@ -135,7 +135,7 @@ private extension SummaryInfoCell {
 
         let valueLabel = UILabel().then {
             $0.text = value
-            $0.textColor = .brand
+            $0.textColor = .green6
             $0.font = .systemFont(ofSize: 14, weight: .medium)
             $0.textAlignment = .center
         }
