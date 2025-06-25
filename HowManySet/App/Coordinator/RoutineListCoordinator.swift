@@ -20,10 +20,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
+    private let homeNavigationController: UINavigationController
 
-    init(navigationController: UINavigationController, container: DIContainer) {
+    init(navigationController: UINavigationController, container: DIContainer,     homeNavigationController: UINavigationController) {
         self.navigationController = navigationController
         self.container = container
+        self.homeNavigationController = homeNavigationController
     }
     
     /// 루틴 리스트 화면 시작
@@ -91,14 +93,14 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
 
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
     func pushEditRoutineView(with routine: WorkoutRoutine) {
-        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: homeNavigationController)
         editRoutineCoordinator.start()
         // TODO: 탭바위치 변경되어야 함
     }
     
     func presentEditRoutinView(with routine: WorkoutRoutine) {
         self.navigationController.dismiss(animated: true)
-        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: homeNavigationController)
         editRoutineCoordinator.startModal()
     }
 }

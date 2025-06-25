@@ -40,8 +40,7 @@ final class TabBarCoordinator: Coordinator {
         let myPageNav = UINavigationController()
         
         // 각 탭의 코디네이터 생성
-        
-        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container)
+        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container, homeNavigationController: homeStartNav)
         if let routineListCoordinator {
             homeStartCoordinator = HomeStartCoordinator(navigationController: homeStartNav, container: container, routineListCoordinator: routineListCoordinator)
         }
