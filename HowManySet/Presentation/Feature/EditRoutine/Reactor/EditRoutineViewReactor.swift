@@ -13,6 +13,7 @@ final class EditRoutineViewReactor: Reactor {
     
     private let saveRoutineUseCase: SaveRoutineUseCase
     private let deleteRoutineUseCase: DeleteRoutineUseCase
+    private let updateRoutineUseCase: UpdateRoutineUseCase
     // Action is an user interaction
     enum Action {
         case viewDidLoad
@@ -32,7 +33,7 @@ final class EditRoutineViewReactor: Reactor {
         case removeSelectedWorkout
         case changeListOrder
         case plusExcerciseButtonTapped
-        case reorderRoutine(WorkoutRoutine)
+        case reorderRoutine(source: IndexPath, destination: IndexPath)
     }
     
     // State is a current view state
@@ -46,11 +47,13 @@ final class EditRoutineViewReactor: Reactor {
     
     init(with routine: WorkoutRoutine,
          saveRoutineUseCase: SaveRoutineUseCase,
-         deleteRoutineUseCase: DeleteRoutineUseCase
+         deleteRoutineUseCase: DeleteRoutineUseCase,
+         updateRoutineUseCase: UpdateRoutineUseCase
     ) {
         self.initialState = State(routine: routine)
         self.saveRoutineUseCase = saveRoutineUseCase
         self.deleteRoutineUseCase = deleteRoutineUseCase
+        self.updateRoutineUseCase = updateRoutineUseCase
     }
     
     // Action -> Mutation
@@ -69,10 +72,12 @@ final class EditRoutineViewReactor: Reactor {
         case .plusExcerciseButtonTapped:
             return .just(.plusExcerciseButtonTapped)
         case .reorderWorkout(source: let source, destination: let destination):
-            var new = currentState.routine
-            new.workouts.swapAt(source.item, destination.item)
-            deleteRoutineUseCase.execute(item: currentState.routine)
-            return .just(.reorderRoutine(new))
+            guard source != destination,
+                  source.row < currentState.routine.workouts.count,
+                  destination.row < currentState.routine.workouts.count
+            else { return .empty() }
+            return .just(.reorderRoutine(source: source, destination: destination))
+                .observe(on: MainScheduler.asyncInstance)
         }
     }
     
@@ -99,9 +104,17 @@ final class EditRoutineViewReactor: Reactor {
             break
         case .plusExcerciseButtonTapped:
             break
-        case .reorderRoutine(let routine):
-            var newRoutine = routine
-            saveRoutineUseCase.execute(item: routine)
+        case .reorderRoutine(let source, let destination):
+            break
+            // TODO: 마이너 패치로 들어감
+//            var newRoutine = state.routine
+//            var sourceItem = newRoutine.workouts[source.row]
+//            var destinationItem = newRoutine.workouts[destination.row]
+//            
+//            newRoutine.workouts[source.row] = destinationItem
+//            newRoutine.workouts[destination.row] = sourceItem
+//            updateRoutineUseCase.execute(item: newRoutine)
+//            newState.routine = newRoutine
         }
         return newState
     }
