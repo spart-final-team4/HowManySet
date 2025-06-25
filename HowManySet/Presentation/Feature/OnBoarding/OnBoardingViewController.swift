@@ -38,6 +38,11 @@ final class OnBoardingViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -54,6 +59,7 @@ final class OnBoardingViewController: UIViewController {
         nicknameInputView.isHidden = false
         
         bindUIEvents()
+        setupKeyboardObserver()
     }
 }
 
@@ -111,6 +117,8 @@ private extension OnBoardingViewController {
         nicknameInputView.isHidden = true
         onboardingView.isHidden = false
         currentPageIndex = 0
+        
+        dismissKeyboard()
     }
     
     /// 닉네임 유효성에 따라 "다음" 버튼 활성화/비활성화 및 스타일 변경.
@@ -225,17 +233,54 @@ private extension OnBoardingViewController {
 }
 
 private extension OnBoardingViewController {
-    func bindUIEvents() {
-        // 화면 탭하면 키보드 내리기
-        let tapGesture = UITapGestureRecognizer()
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+    func setupKeyboardObserver() {
 
-        tapGesture.rx.event
-            .bind { [weak self] _ in
-                guard let self else { return }
-                self.view.endEditing(true)
-            }
-            .disposed(by: disposeBag)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    /// 키보드가 나타날 때 버튼 위로 이동
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        let safeAreaBottom = view.safeAreaInsets.bottom
+        let adjustedKeyboardHeight = keyboardHeight - safeAreaBottom
+        
+        nicknameInputView.adjustButtonForKeyboard(keyboardHeight: adjustedKeyboardHeight)
+        
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    /// 키보드가 사라질 때 버튼을 원래 위치로 복원
+    @objc func keyboardWillHide(notification: NSNotification) {
+        nicknameInputView.adjustButtonForKeyboard(keyboardHeight: 0)
+        
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    func bindUIEvents() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = true
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

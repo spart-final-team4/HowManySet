@@ -54,6 +54,11 @@ final class NicknameInputView: UIView {
         )
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         $0.leftViewMode = .always
+        
+        $0.autocorrectionType = .no // 자동 수정 끔
+        $0.spellCheckingType = .no // 맞춤법 검사 끔
+        $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
+        $0.autocapitalizationType = .none // 자동 대문자 변환 끔
     }
     
     /// 하단 "다음" 버튼. 기본 비활성화 상태, 유효성 통과 시 활성화.
@@ -67,6 +72,9 @@ final class NicknameInputView: UIView {
         $0.backgroundColor = .darkGray
         $0.setTitleColor(.lightGray, for: .normal)
     }
+    
+    /// nextButton 제약조건 (키보드 대응용)
+    private var nextButtonConstraint: Constraint?
 
     /**
      닉네임 입력 뷰를 초기화하고 UI 요소를 배치합니다.
@@ -75,9 +83,16 @@ final class NicknameInputView: UIView {
         super.init(frame: frame)
         setupUI()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    /// 키보드 높이에 따라 버튼 위치만 조정
+    /// - Parameter keyboardHeight: 키보드 높이 (0이면 원래 위치로 복원)
+    func adjustButtonForKeyboard(keyboardHeight: CGFloat) {
+        let bottomInset = keyboardHeight > 0 ? keyboardHeight + 20 : 28
+        nextButtonConstraint?.update(inset: bottomInset)
     }
 }
 
@@ -113,8 +128,8 @@ private extension NicknameInputView {
         }
         nextButton.snp.makeConstraints {
             $0.directionalHorizontalEdges.equalToSuperview().inset(20)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(28)
             $0.height.equalTo(56)
+            nextButtonConstraint = $0.bottom.equalTo(self.safeAreaLayoutGuide).inset(28).constraint
         }
     }
 }
