@@ -26,8 +26,10 @@ final class EditRoutineViewController: UIViewController, View {
     private let coordinator: EditRoutineCoordinatorProtocol
     
     /// 운동 루틴 리스트를 보여주는 테이블 뷰
-    private let tableView = EditRoutineTableView()
+    private lazy var tableView = EditRoutineTableView(frame: .zero, style: .plain, caller: caller)
     private let editRoutineBottomSheetViewController = EditRoutineBottomSheetViewController()
+    
+    private var caller: ViewCaller
         
     /// 운동 시작 버튼 - 클릭 시 바로 홈화면에서 운동 시작
     private lazy var startButton = UIButton().then {
@@ -40,8 +42,9 @@ final class EditRoutineViewController: UIViewController, View {
 
     /// 초기화 메서드 - reactor 주입
     /// - Parameter reactor: EditRoutine 화면의 상태 및 액션을 관리하는 리액터 객체
-    init(reactor: EditRoutineViewReactor, coordinator: EditRoutineCoordinatorProtocol) {
+    init(reactor: EditRoutineViewReactor, coordinator: EditRoutineCoordinatorProtocol, caller: ViewCaller) {
         self.coordinator = coordinator
+        self.caller = caller
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
