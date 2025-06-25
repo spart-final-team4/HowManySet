@@ -56,7 +56,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         } else {
             showHomeStartView()
         }
-    }
+    } 
     
     private func showHomeView(with routine: WorkoutRoutine) {
         let (homeVC, reactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: self, routine: routine)

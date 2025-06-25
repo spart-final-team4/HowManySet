@@ -10,13 +10,15 @@ final class RoutineListView: UIView {
     // FooterView 구성
     private let footerView = UIView()
     
-    private var topInset: CGFloat
+    private var caller: ViewCaller
 
     // MARK: - Init
-    init(frame: CGRect, topInset: CGFloat) {
-        self.topInset = topInset
+    init(frame: CGRect, caller: ViewCaller) {
+        self.caller = caller
         super.init(frame: frame)
         setupUI()
+        
+        setHiddenWithCaller()
     }
     
     required init?(coder: NSCoder) {
@@ -76,7 +78,7 @@ private extension RoutineListView {
 
     func setConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).inset(topInset)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
         }
 
@@ -104,5 +106,14 @@ private extension RoutineListView {
 
         // 테이블 뷰에 적용
         routineTableView.tableFooterView = footerView
+    }
+}
+
+// MARK: - Private Methods
+private extension RoutineListView {
+    
+    /// 홈에서 띄울 시 버튼 hidden 
+    func setHiddenWithCaller() {
+        addNewRoutineButton.isHidden = caller == .fromHome ? true : false
     }
 }
