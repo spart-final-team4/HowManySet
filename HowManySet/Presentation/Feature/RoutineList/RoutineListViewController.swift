@@ -11,9 +11,7 @@ final class RoutineListViewController: UIViewController, View {
     
     private var caller: ViewCaller
     
-    var topInset: CGFloat
-
-    private lazy var routineListView = RoutineListView(frame: .zero, topInset: topInset)
+    private lazy var routineListView = RoutineListView(frame: .zero, caller: caller)
     
     private weak var coordinator: RoutineListCoordinatorProtocol?
 
@@ -34,7 +32,6 @@ final class RoutineListViewController: UIViewController, View {
     // MARK: - Init
     init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol, caller: ViewCaller) {
         self.caller = caller
-        self.topInset = caller == ViewCaller.fromHome ? 32 : 0
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
