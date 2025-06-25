@@ -40,6 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
             // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
             LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
+            
+            NotificationService.shared.requestNotification()
         
         return true
     }
