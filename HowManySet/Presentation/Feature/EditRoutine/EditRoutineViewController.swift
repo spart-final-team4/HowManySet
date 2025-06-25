@@ -21,9 +21,20 @@ final class EditRoutineViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
+    private let startText = "시작"
+    
     /// 운동 루틴 리스트를 보여주는 테이블 뷰
     private let tableView = EditRoutineTableView()
     private let editRoutineBottomSheetViewController = EditRoutineBottomSheetViewController()
+        
+    private lazy var startButton = UIButton().then {
+        $0.setTitle(startText, for: .normal)
+        $0.setTitleColor(.background, for: .normal)
+        $0.backgroundColor = .brand
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.layer.cornerRadius = 12
+    }
+
     /// 초기화 메서드 - reactor 주입
     /// - Parameter reactor: EditRoutine 화면의 상태 및 액션을 관리하는 리액터 객체
     init(reactor: EditRoutineViewReactor) {
@@ -142,13 +153,21 @@ private extension EditRoutineViewController {
     
     /// 서브뷰를 뷰 계층에 추가
     func setViewHierarchy() {
-        view.addSubviews(tableView)
+        view.addSubviews(tableView, startButton)
     }
     
     /// SnapKit을 이용한 레이아웃 제약 설정
     func setConstraints() {
+        
         tableView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(startButton.snp.top)
+        }
+        
+        startButton.snp.makeConstraints {
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.height.equalTo(56)
         }
     }
 }
