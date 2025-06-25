@@ -38,7 +38,7 @@ final class RoutineListViewReactor: Reactor {
         saveRoutineUseCase: SaveRoutineUseCase,
         fsDeleteRoutineUseCase: FSDeleteRoutineUseCase,
         fsFetchRoutineUseCase: FSFetchRoutineUseCase,
-        fsSaveRoutineUseCase: FSSaveRoutineUseCase,
+        fsSaveRoutineUseCase: FSSaveRoutineUseCase
     ) {
         self.deleteRoutineUseCase = deleteRoutineUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
