@@ -52,12 +52,9 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         let home = homeVC as? HomeViewController
         if let home {
             home.bindLiveActivityEvents(reactor: homeViewReactor)
-        } else {
-            print("HOMEVC 다운캐스팅 실패!")
         }
         
         homeVC.navigationItem.hidesBackButton = true
-        navigationController.pushViewController(homeVC, animated: false)
         homeNavigationController.setViewControllers([homeVC], animated: false)
         homeNavigationController.tabBarController?.selectedIndex = 0
     }
