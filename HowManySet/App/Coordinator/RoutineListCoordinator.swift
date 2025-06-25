@@ -31,7 +31,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     /// 루틴 리스트 화면 시작
     /// 탭바에서 루틴 리스트 화면 진입 시 호출
     func start() {
-        let routineListVC = container.makeRoutineListViewController(coordinator: self)
+        let routineListVC = container.makeRoutineListViewController(coordinator: self, caller: .fromTabBar)
         
         navigationController.pushViewController(routineListVC, animated: true)
     }
@@ -39,7 +39,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     /// 루틴 리스트 화면 모달 시작
     /// 홈 화면에서 버튼 눌러 모달로 루틴 리스트 화면 호출 시
     func startModal() {
-        let routineListVC = container.makeRoutineListViewController(coordinator: self)
+        let routineListVC = container.makeRoutineListViewController(coordinator: self, caller: .fromHome)
         
         if let sheet = routineListVC.sheetPresentationController {
             sheet.detents = [.large()]
@@ -84,7 +84,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
             workoutStateForEdit: nil, // 탭바에서 push시에는 필요없음
-            caller: ViewCaller.forAdding // 탭바에서 push
+            caller: ViewCaller.fromTabBar // 탭바에서 push
         )
         let editExcerciseVC = EditExcerciseViewController(reactor: reactor)
         

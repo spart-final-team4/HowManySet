@@ -67,7 +67,7 @@ final class DIContainer {
     }
     
     /// 루틴 리스트 화면을 생성하여 반환
-    func makeRoutineListViewController(coordinator: RoutineListCoordinator) -> UIViewController {
+    func makeRoutineListViewController(coordinator: RoutineListCoordinator, caller: ViewCaller) -> UIViewController {
         let routineRepository = RoutineRepositoryImpl()
         
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
@@ -90,7 +90,7 @@ final class DIContainer {
             fsSaveRoutineUseCase: fsSaveRoutineUseCase
         )
         
-        return RoutineListViewController(reactor: reactor, coordinator: coordinator)
+        return RoutineListViewController(reactor: reactor, coordinator: coordinator, caller: caller)
     }
     
     /// 캘린더 화면을 생성하여 반환

@@ -9,9 +9,12 @@ final class RoutineListView: UIView {
     private let routineTableView = UITableView()
     // FooterView 구성
     private let footerView = UIView()
+    
+    private var topInset: CGFloat
 
     // MARK: - Init
-    override init(frame: CGRect) {
+    init(frame: CGRect, topInset: CGFloat) {
+        self.topInset = topInset
         super.init(frame: frame)
         setupUI()
     }
@@ -38,7 +41,7 @@ private extension RoutineListView {
     func setAppearance() {
         titleLabel.do {
             $0.text = "루틴 리스트"
-            $0.font = .systemFont(ofSize: 36, weight: .regular)
+            $0.font = .systemFont(ofSize: 36, weight: .medium)
             $0.textColor = .white
         }
 
@@ -73,7 +76,7 @@ private extension RoutineListView {
 
     func setConstraints() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide).inset(topInset)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
         }
 

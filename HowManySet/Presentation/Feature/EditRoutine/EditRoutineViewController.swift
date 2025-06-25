@@ -145,7 +145,7 @@ final class EditRoutineViewController: UIViewController, View {
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
                 saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
                 workoutStateForEdit: nil,
-                caller: .forEditing)
+                caller: .fromHome)
         )
         self.present(vc, animated: true)
     }

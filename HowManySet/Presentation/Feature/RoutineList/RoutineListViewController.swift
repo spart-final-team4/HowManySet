@@ -8,8 +8,13 @@ import SnapKit
 final class RoutineListViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
+    
+    private var caller: ViewCaller
+    
+    var topInset: CGFloat
 
-    let routineListView = RoutineListView()
+    private lazy var routineListView = RoutineListView(frame: .zero, topInset: topInset)
+    
     private weak var coordinator: RoutineListCoordinatorProtocol?
 
     // RxDataSource 사용을 위한 Model 생성
@@ -27,7 +32,9 @@ final class RoutineListViewController: UIViewController, View {
     )
 
     // MARK: - Init
-    init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol) {
+    init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol, caller: ViewCaller) {
+        self.caller = caller
+        self.topInset = caller == ViewCaller.fromHome ? 32 : 0
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
