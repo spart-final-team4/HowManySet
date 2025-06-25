@@ -100,7 +100,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     func presentEditRoutinView(with routine: WorkoutRoutine) {
         self.navigationController.dismiss(animated: true)
         if let homeCoordinator {
-            let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator, homeNavigationController: nil)
+            let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator)
             editRoutineCoordinator.startModal()
         }
     }

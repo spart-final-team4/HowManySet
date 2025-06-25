@@ -18,14 +18,12 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     private let container: DIContainer
     private let routine: WorkoutRoutine
     private let homeCoordinator: HomeCoordinator
-    private let homeNavigationController: UINavigationController?
 
-    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine, homeCoordinator: HomeCoordinator, homeNavigationController: UINavigationController?) {
+    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine, homeCoordinator: HomeCoordinator) {
         self.navigationController = navigationController
         self.container = container
         self.routine = routine
         self.homeCoordinator = homeCoordinator
-        self.homeNavigationController = homeNavigationController
     }
     
     func start() {
