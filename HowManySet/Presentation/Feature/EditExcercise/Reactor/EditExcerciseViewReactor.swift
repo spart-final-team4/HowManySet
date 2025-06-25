@@ -129,8 +129,12 @@ final class EditExcerciseViewReactor: Reactor {
                 if case .success = self.validationWorkout(workout: newWorkout) {
                     observer.onNext(.addExcercise(newWorkout))
                 }
-                self.alertRelay.accept(self.validationWorkout(workout: newWorkout))
                 observer.onCompleted()
+                
+                DispatchQueue.main.async {
+                    self.alertRelay.accept(self.validationWorkout(workout: newWorkout))
+                }
+                
                 return Disposables.create()
             }
             

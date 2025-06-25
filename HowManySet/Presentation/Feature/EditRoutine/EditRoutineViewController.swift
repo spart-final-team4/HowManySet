@@ -61,6 +61,7 @@ final class EditRoutineViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         tableView.dragDropRelay
+            .distinctUntilChanged { $0.source == $1.source && $0.destination == $1.destination }
             .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -107,15 +108,15 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentEditExerciseVC() {
-            let vc = EditExcerciseViewController(
-                reactor: EditExcerciseViewReactor(
-                    routineName: reactor?.currentState.routine.name ?? "알수없음",
-                    saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
-                    workoutStateForEdit: nil,
-                    caller: .forEditing)
-            )
-            self.present(vc, animated: true)
-        }
+        let vc = EditExcerciseViewController(
+            reactor: EditExcerciseViewReactor(
+                routineName: reactor?.currentState.routine.name ?? "알수없음",
+                saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
+                workoutStateForEdit: nil,
+                caller: .forEditing)
+        )
+        self.present(vc, animated: true)
+    }
 }
 
 // MARK: - UI 구성 관련 private 메서드
