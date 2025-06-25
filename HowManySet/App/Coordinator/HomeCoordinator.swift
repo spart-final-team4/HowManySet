@@ -8,6 +8,8 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
+//    func startFromEditRoutine() -> (UIViewController, HomeViewReactor)
+    func pushRoutineListView() 
     func presentEditAndMemoView()
     func presentEditExerciseView(
         routineName: String,
@@ -32,6 +34,11 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     // EditAndMemoView에 동일한 reactor 주입 위해 보관
     private var homeViewReactor: HomeViewReactor?
+    
+    private var isWorkoutStarted: Bool = false
+    private var currentRoutine: WorkoutRoutine?
+    
+    weak var routineListCoordinator: RoutineListCoordinator?
         
     /// coordinator 생성자
     /// - Parameters:
@@ -44,9 +51,57 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// 홈 뷰 시작
     func start() {
-        let (homeVC, reactor) = container.makeHomeViewController(coordinator: self)
-        navigationController.pushViewController(homeVC, animated: true)
+        if isWorkoutStarted, let routine = currentRoutine {
+            showHomeView(with: routine)
+        } else {
+            showHomeStartView()
+        }
+    }
+    
+    private func showHomeView(with routine: WorkoutRoutine) {
+        let (homeVC, reactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: self, routine: routine)
         homeViewReactor = reactor
+        reactor.action.onNext(.routineSelected)
+        if let homeVC = homeVC as? HomeViewController {
+            homeVC.bindLiveActivityEvents(reactor: reactor)
+        }
+        homeVC.navigationItem.hidesBackButton = true
+        navigationController.tabBarController?.selectedIndex = 0
+        navigationController.setViewControllers([homeVC], animated: false)
+    }
+
+    private func showHomeStartView() {
+        let homeStartVC = container.makeHomeStartViewController(coordinator: self)
+        navigationController.setViewControllers([homeStartVC], animated: false)
+    }
+
+    // 운동 시작
+    func startWorkout(with routine: WorkoutRoutine) {
+        isWorkoutStarted = true
+        currentRoutine = routine
+        showHomeView(with: routine)
+    }
+
+    // 운동 종료
+    func beforeWorkout() {
+        isWorkoutStarted = false
+        currentRoutine = nil
+        showHomeStartView()
+    }
+    
+//    /// EditRoutineCoordinator에서 사용하기 위한 start
+//    func startFromEditRoutine() -> (UIViewController, HomeViewReactor) {
+//        let (homeVC, reactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: self, routine: routine)
+//        navigationController.pushViewController(homeVC, animated: true)
+//        homeViewReactor = reactor
+//        return (homeVC, reactor)
+//    }
+    
+    /// 시작화면에서 운동 시작하기 버튼 클릭 시 루틴 리스트 push
+    func pushRoutineListView() {
+        if let routineListCoordinator {
+            routineListCoordinator.startModal()
+        }
     }
     
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
@@ -60,7 +115,6 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             }]
             sheet.prefersGrabberVisible = true
         }
-                
         navigationController.present(editAndMemoVC, animated: true)
     }
     
@@ -92,14 +146,14 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
     /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
     func presentEditRoutineView(with routine: WorkoutRoutine) {
-        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: navigationController)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: self, homeNavigationController: nil)
         editRoutineCoordinator.startModal()
     }
     
     /// 운동 완료 화면으로 이동
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary) {
         guard let homeViewReactor else { return }
-        let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor)
+        let routineCompleteCoordinator = RoutineCompleteCoordinator(navigationController: navigationController, container: container, workoutSummary: workoutSummary, homeViewReactor: homeViewReactor, homeCoordinator: self)
         routineCompleteCoordinator.start()
     }
     
@@ -119,8 +173,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 
                 // HomeVC 초기화
                 self.navigationController.popToRootViewController(animated: false)
-                let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
-                self.navigationController.setViewControllers([newHomeVC], animated: false)
+                let homeStartVC = self.container.makeHomeStartViewController(coordinator: self)
+                self.navigationController.setViewControllers([homeStartVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
             }, cancelAction: onCancel)
@@ -142,13 +196,12 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 let workoutSummary = onConfirm()
                 
                 self.navigationController.popToRootViewController(animated: false)
-                let (newHomeVC, _) = self.container.makeHomeViewController(coordinator: self)
-                self.navigationController.setViewControllers([newHomeVC], animated: false)
+                let homeStartVC = self.container.makeHomeStartViewController(coordinator: self)
+                self.navigationController.setViewControllers([homeStartVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
             }, cancelAction: onCancel)
         
         navigationController.present(endWorkoutVC, animated: true)
     }
-    
 }

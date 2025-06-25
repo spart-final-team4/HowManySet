@@ -17,12 +17,14 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     private let navigationController: UINavigationController
     private let container: DIContainer
     private let routine: WorkoutRoutine
-    private let homeNavigationController: UINavigationController
+    private let homeCoordinator: HomeCoordinator
+    private let homeNavigationController: UINavigationController?
 
-    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine, homeNavigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine, homeCoordinator: HomeCoordinator, homeNavigationController: UINavigationController?) {
         self.navigationController = navigationController
         self.container = container
         self.routine = routine
+        self.homeCoordinator = homeCoordinator
         self.homeNavigationController = homeNavigationController
     }
     
@@ -44,20 +46,6 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     
     /// 메인 홈 화면 운동중 상태로 이동
     func navigateToHomeViewWithWorkoutStarted() {
-        let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
-        let (homeVC, homeViewReactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: homeCoordinator, routine: routine)
-        
-        // 여기서 바로 routineSelected 실행하여 운동 시작
-        homeViewReactor.action.onNext(.routineSelected)
-        let home = homeVC as? HomeViewController
-        if let home {
-            home.bindLiveActivityEvents(reactor: homeViewReactor)
-        }
-        
-        homeVC.navigationItem.hidesBackButton = true
-        homeNavigationController.setViewControllers([homeVC], animated: false)
-        homeNavigationController.tabBarController?.selectedIndex = 0
+        homeCoordinator.startWorkout(with: routine)
     }
-    
 }
-
