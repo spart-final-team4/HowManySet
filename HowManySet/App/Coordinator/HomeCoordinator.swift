@@ -99,22 +99,8 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         
     /// EditAndMemo 모달에서 루틴 수정 버튼 클릭 시 루틴 편집 화면 present
     func presentEditRoutineView(with routine: WorkoutRoutine) {
-        let routineRepository = RoutineRepositoryImpl()
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
-        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
-        let reactor = EditRoutineViewReactor(with: routine,
-                                             saveRoutineUseCase: saveRoutineUseCase,
-                                             deleteRoutineUseCase: deleteRoutineUseCase,
-                                             updateRoutineUseCase: updateRoutineUseCase)
-        let editRoutineVC = EditRoutineViewController(reactor: reactor)
-        
-        if let sheet = editRoutineVC.sheetPresentationController {
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = true
-        }
-        
-        navigationController.present(editRoutineVC, animated: true)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
+        editRoutineCoordinator.startModal()
     }
     
     /// 운동 완료 화면으로 이동

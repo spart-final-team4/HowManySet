@@ -23,7 +23,6 @@ final class EditRoutineViewReactor: Reactor {
         case changeListOrder
         case plusExcerciseButtonTapped
         case reorderWorkout(source: IndexPath, destination: IndexPath)
-        case startButtonTapped
     }
     
     // Mutate is a state mani
@@ -79,9 +78,6 @@ final class EditRoutineViewReactor: Reactor {
             else { return .empty() }
             return .just(.reorderRoutine(source: source, destination: destination))
                 .observe(on: MainScheduler.asyncInstance)
-        case .startButtonTapped:
-            print("STARTBUTTONTAPPED!")
-            return .just(.sendCurrentRoutineToHome)
         }
     }
     
