@@ -17,11 +17,13 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     private let navigationController: UINavigationController
     private let container: DIContainer
     private let routine: WorkoutRoutine
+    private let homeNavigationController: UINavigationController
 
-    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine) {
+    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine, homeNavigationController: UINavigationController) {
         self.navigationController = navigationController
         self.container = container
         self.routine = routine
+        self.homeNavigationController = homeNavigationController
     }
     
     func start() {
@@ -56,6 +58,8 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         
         homeVC.navigationItem.hidesBackButton = true
         navigationController.pushViewController(homeVC, animated: false)
+        homeNavigationController.setViewControllers([homeVC], animated: false)
+        homeNavigationController.tabBarController?.selectedIndex = 0
     }
     
 }
