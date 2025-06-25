@@ -193,7 +193,7 @@ extension RecordDetailViewController {
 
                 // 텍스트 업데이트 시 리액터로 전달
                 textView.rx.text.orEmpty
-                    .skip(until: textView.rx.didBeginEditing)
+//                    .skip(until: textView.rx.didBeginEditing)
                     .distinctUntilChanged()
                     .map { RecordDetailViewReactor.Action.updateMemo($0) }
                     .bind(to: reactor.action)
