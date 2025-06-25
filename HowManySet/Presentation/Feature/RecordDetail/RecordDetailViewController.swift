@@ -91,6 +91,9 @@ extension RecordDetailViewController {
     /// 리액터 Binding
     func bind(reactor: RecordDetailViewReactor) {
         let record = reactor.currentState.record
+        let headerView = recordDetailView.publicHeaderView
+        
+        recordDetailView.publicHeaderView.configure(with: record)
 
         // 요약뷰 구성
         let summarySection = RecordDetailSectionModel(
@@ -121,26 +124,37 @@ extension RecordDetailViewController {
         // 레이아웃 업데이트
         recordDetailView.updateLayout(with: allSections)
 
-        // MARK: - Data Binding
         // 이후에 collecitonView에 데이터 바인딩
         Observable.just(allSections)
             .bind(to: recordDetailView.publicCollectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
-        // SummaryInfoCell의 확인 버튼 바인딩
-        recordDetailView.publicCollectionView.rx
-            .willDisplayCell
-            .compactMap { $0.cell as? SummaryInfoCell }
-            .flatMap { cell in
-                cell.publicConfirmButton.rx.tap
-                    .map { RecordDetailViewReactor.Action.tapConfirm }
-            }
+        // MARK: - Data Binding
+
+        // 저장 버튼 탭
+        headerView.publicSaveButton.rx.tap
+            .map { RecordDetailViewReactor.Action.tapSave }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        // Action 처리 결과에 따라 모달 닫기
+        // 확인 버튼 탭
+        headerView.publicConfirmButton.rx.tap
+            .map { RecordDetailViewReactor.Action.tapConfirm }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        // 저장 버튼 활성화 상태 바인딩
         reactor.state
-            .map { $0.shouldDismiss }
+            .map(\.isSaveButtonEnabled)
+            .distinctUntilChanged()
+            .bind(with: self) { owner, isEnabled in
+                owner.recordDetailView.publicHeaderView.updateSaveButtonEnabled(isEnabled)
+            }
+            .disposed(by: disposeBag)
+
+        // shouldDismiss 상태 변화 -> 모달 닫기
+        reactor.state
+            .map(\.shouldDismiss)
             .distinctUntilChanged()
             .filter { $0 }
             .bind(with: self) { owner, _ in
@@ -155,14 +169,14 @@ extension RecordDetailViewController {
             .bind(with: self) { (owner: RecordDetailViewController, cell: MemoInfoCell) in
                 let textView = cell.publicMemoTextView
 
-                // 1. placeholder 로직
+                // placeholder 로직
                 textView.rx.didBeginEditing
                     .bind(with: owner) { _, _ in
                         if textView.text == "메모를 입력해주세요." {
-                            textView.text = ""
+                            textView.text = nil
                             textView.textColor = .white
                         }
-                        textView.layer.borderColor = UIColor.systemGray.cgColor
+                        textView.layer.borderColor = UIColor.grey3.cgColor
                         textView.layer.borderWidth = 1
                     }
                     .disposed(by: owner.disposeBag)
@@ -171,17 +185,18 @@ extension RecordDetailViewController {
                     .bind(with: owner) { _, _ in
                         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             textView.text = "메모를 입력해주세요."
-                            textView.textColor = .systemGray3
+                            textView.textColor = .grey3
                         }
                         textView.layer.borderWidth = 0
                     }
                     .disposed(by: owner.disposeBag)
 
-                // 2. 텍스트 업데이트 리액터로 전달
+                // 텍스트 업데이트 시 리액터로 전달
                 textView.rx.text.orEmpty
+                    .skip(until: textView.rx.didBeginEditing)
                     .distinctUntilChanged()
                     .map { RecordDetailViewReactor.Action.updateMemo($0) }
-                    .bind(to: owner.reactor!.action)
+                    .bind(to: reactor.action)
                     .disposed(by: owner.disposeBag)
             }
             .disposed(by: disposeBag)

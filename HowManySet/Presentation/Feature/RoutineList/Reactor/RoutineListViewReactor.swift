@@ -7,17 +7,20 @@ final class RoutineListViewReactor: Reactor {
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let saveRoutineUseCase: SaveRoutineUseCase
-
-    var publicSaveRoutineUseCase: SaveRoutineUseCase { saveRoutineUseCase }
+    private let fsDeleteRoutineUseCase: FSDeleteRoutineUseCase
+    private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
+    private let fsSaveRoutineUseCase: FSSaveRoutineUseCase
 
     // MARK: - Action is an user interaction
     enum Action {
         case viewWillAppear
+        case deleteRoutine(IndexPath)
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
         case updatedRoutine([WorkoutRoutine])
+        case deleteRoutineAt(IndexPath)
     }
     
     // MARK: - State is a current view state
@@ -26,12 +29,23 @@ final class RoutineListViewReactor: Reactor {
     }
     
     let initialState: State
-    
-    init(deleteRoutineUseCase: DeleteRoutineUseCase, fetchRoutineUseCase: FetchRoutineUseCase, saveRoutineUseCase: SaveRoutineUseCase) {
-        
+
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+
+    init(
+        deleteRoutineUseCase: DeleteRoutineUseCase,
+        fetchRoutineUseCase: FetchRoutineUseCase,
+        saveRoutineUseCase: SaveRoutineUseCase,
+        fsDeleteRoutineUseCase: FSDeleteRoutineUseCase,
+        fsFetchRoutineUseCase: FSFetchRoutineUseCase,
+        fsSaveRoutineUseCase: FSSaveRoutineUseCase
+    ) {
         self.deleteRoutineUseCase = deleteRoutineUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.saveRoutineUseCase = saveRoutineUseCase
+        self.fsDeleteRoutineUseCase = fsDeleteRoutineUseCase
+        self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
+        self.fsSaveRoutineUseCase = fsSaveRoutineUseCase
         self.initialState = State()
     }
 
@@ -43,6 +57,11 @@ final class RoutineListViewReactor: Reactor {
             return fetchRoutineUseCase.execute()
                 .map{ Mutation.updatedRoutine($0) }
                 .asObservable()
+
+        case let .deleteRoutine(indexPath):
+            let routine = currentState.routines[indexPath.section]
+            deleteRoutineUseCase.execute(item: routine)
+            return .just(.deleteRoutineAt(indexPath))
         }
     }
 
@@ -59,10 +78,14 @@ final class RoutineListViewReactor: Reactor {
                     deleteRoutineUseCase.execute(item: routines[i])
                 }
             }
-            
             newState.routines = newRoutines
+
+        case let .deleteRoutineAt(indexPath):
+            var updated = state.routines
+            updated.remove(at: indexPath.section)
+            newState.routines = updated
         }
-        
+
         return newState
     }
 }

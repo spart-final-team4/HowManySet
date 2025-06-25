@@ -73,12 +73,12 @@ private extension RecordCell {
         }
 
         setsLabel.do {
-            $0.textColor = .textSecondary
+            $0.textColor = .white
             $0.font = .systemFont(ofSize: 14, weight: .regular)
         }
 
         timeLabel.do {
-            $0.textColor = .textSecondary
+            $0.textColor = .white
             $0.font = .systemFont(ofSize: 14, weight: .regular)
         }
     }
@@ -94,6 +94,11 @@ private extension RecordCell {
     }
 
     func setConstraints() {
+        contentView.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+        }
+
         labelStackView.snp.makeConstraints {
             $0.verticalEdges.equalToSuperview().inset(16)
             $0.horizontalEdges.equalToSuperview().inset(20)

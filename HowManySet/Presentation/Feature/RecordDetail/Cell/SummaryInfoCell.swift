@@ -6,11 +6,6 @@ final class SummaryInfoCell: UICollectionViewCell {
     // MARK: - Properties
     static let identifier = "SummaryInfoCell"
 
-    private let headerHStackView = UIStackView()
-    private let routineNameLabel = UILabel()
-    private let editButton = UIButton()
-    private let confirmButton = UIButton()
-    private let headerVStackView = UIStackView()
     private let startToEndLabel = UILabel()
 
     private let totalSummaryStackView = UIStackView()
@@ -32,8 +27,6 @@ final class SummaryInfoCell: UICollectionViewCell {
     // MARK: - configure
     /// WorkoutRecord의 데이터를 받아오는 메서드
     func configure(with record: WorkoutRecord) {
-        // 루틴명
-        routineNameLabel.text = record.workoutRoutine.name
 
         // 시작~종료 시간
         let endTime = record.date
@@ -60,11 +53,6 @@ final class SummaryInfoCell: UICollectionViewCell {
     }
 }
 
-// MARK: - Computed Properties
-extension SummaryInfoCell {
-    var publicConfirmButton: UIButton { confirmButton }
-}
-
 // MARK: - SummaryInfoCell UI 관련 extension
 private extension SummaryInfoCell {
     func setupUI() {
@@ -75,34 +63,8 @@ private extension SummaryInfoCell {
     }
 
     func setAppearance() {
-        // 첫번째
-        headerHStackView.do {
-            $0.axis = .horizontal
-            $0.alignment = .center
-            $0.distribution = .equalSpacing
-        }
-        routineNameLabel.do {
-            $0.textColor = .white
-            $0.font = .systemFont(ofSize: 18, weight: .semibold)
-            $0.textAlignment = .center
-        }
-        editButton.do {
-            $0.setTitle("수정", for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-            $0.setTitleColor(.textTertiary, for: .normal)
-        }
-        confirmButton.do {
-            $0.setTitle("확인", for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-            $0.setTitleColor(.brand, for: .normal)
-        }
-        headerVStackView.do {
-            $0.axis = .vertical
-            $0.alignment = .fill
-            $0.spacing = 8
-        }
         startToEndLabel.do {
-            $0.textColor = .systemGray3
+            $0.textColor = .grey3
             $0.font = .systemFont(ofSize: 14, weight: .regular)
             $0.textAlignment = .center
         }
@@ -116,7 +78,7 @@ private extension SummaryInfoCell {
 
         // 세번째
         dividerView.do {
-            $0.backgroundColor = .systemGray5
+            $0.backgroundColor = .grey5
         }
 
         // 네번째
@@ -128,11 +90,8 @@ private extension SummaryInfoCell {
     }
 
     func setViewHierarchy() {
-        headerHStackView.addArrangedSubviews(editButton, routineNameLabel, confirmButton)
-        headerVStackView.addArrangedSubviews(headerHStackView, startToEndLabel)
-
         contentView.addSubviews(
-            headerVStackView,
+            startToEndLabel,
             totalSummaryStackView,
             dividerView,
             workoutDetailTitleLabel
@@ -140,14 +99,15 @@ private extension SummaryInfoCell {
     }
 
     func setConstraints() {
-        headerVStackView.snp.makeConstraints {
+
+        startToEndLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(8)
-            $0.horizontalEdges.equalToSuperview()
+            $0.centerX.equalToSuperview()
         }
 
         totalSummaryStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
-            $0.top.equalTo(headerVStackView.snp.bottom).offset(20)
+            $0.top.equalTo(startToEndLabel.snp.bottom).offset(20)
         }
 
         dividerView.snp.makeConstraints {
@@ -175,7 +135,7 @@ private extension SummaryInfoCell {
 
         let valueLabel = UILabel().then {
             $0.text = value
-            $0.textColor = .brand
+            $0.textColor = .green6
             $0.font = .systemFont(ofSize: 14, weight: .medium)
             $0.textAlignment = .center
         }

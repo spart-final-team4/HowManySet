@@ -47,8 +47,8 @@ extension RoutineNameViewController {
             .bind(with: self) { owner, isEnabled in
                 let button = owner.routineNameView.publicNextButton
                 button.isEnabled = isEnabled
-                button.backgroundColor = isEnabled ? .brand : .disabledButton
-                button.setTitleColor(isEnabled ? .black : .dbTypo, for: .normal)
+                button.backgroundColor = isEnabled ? .green6 : .disabledButton
+                button.setTitleColor(isEnabled ? .background : .dbTypo, for: .normal)
             }
             .disposed(by: disposeBag)
 

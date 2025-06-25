@@ -45,13 +45,14 @@ private extension RoutineListView {
         routineTableView.do {
             $0.backgroundColor = .clear
             $0.separatorStyle = .none
+            $0.showsVerticalScrollIndicator = false
         }
 
         addNewRoutineButton.do {
-            $0.backgroundColor = .brand // 임의로 색상 변경함‼️
+            $0.backgroundColor = .green6
             $0.setTitle("새 루틴 구성", for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .regular)
-            $0.setTitleColor(.black, for: .normal) // 임의로 색상 변경함‼️
+            $0.setTitleColor(.background, for: .normal)
             $0.layer.cornerRadius = 12
             clipsToBounds = true
         }
@@ -77,13 +78,13 @@ private extension RoutineListView {
         }
 
         routineTableView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(24)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
 
         addNewRoutineButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview().inset(20)
             $0.height.equalTo(56)
