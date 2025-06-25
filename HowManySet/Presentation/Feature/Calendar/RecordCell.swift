@@ -73,12 +73,12 @@ private extension RecordCell {
         }
 
         setsLabel.do {
-            $0.textColor = .textSecondary
+            $0.textColor = .white
             $0.font = .systemFont(ofSize: 14, weight: .regular)
         }
 
         timeLabel.do {
-            $0.textColor = .textSecondary
+            $0.textColor = .white
             $0.font = .systemFont(ofSize: 14, weight: .regular)
         }
     }

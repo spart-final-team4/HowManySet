@@ -44,7 +44,7 @@ private extension CalendarView {
         }
 
         calendarContainerView.do {
-            $0.backgroundColor = .cardContentBG // 달력의 배경 색상 /* 추후 색상 변경 예정‼️ */
+            $0.backgroundColor = .grey5 // 달력의 배경 색상
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
@@ -63,7 +63,7 @@ private extension CalendarView {
             $0.appearance.headerTitleOffset = CGPoint(x: 0, y: -3) // 캘린더 헤더 위치 조정
 
             // 달력 요일
-            $0.appearance.weekdayTextColor = .textTertiary // 달력 요일 텍스트 색상 /* 추후 색상 변경 예정‼️ */
+            $0.appearance.weekdayTextColor = .grey3 // 달력 요일 텍스트 색상
             $0.appearance.weekdayFont = .systemFont(ofSize: 16, weight: .regular) // 달력 요일 텍스트 폰트
 
             // 달력 일반 날짜
@@ -71,7 +71,7 @@ private extension CalendarView {
             $0.appearance.titleFont = .systemFont(ofSize: 16, weight: .regular) // 달력 일반 날짜 텍스트 폰트
             $0.appearance.titleTodayColor = .brand // 오늘 날짜 텍스트의 색상
             $0.appearance.todayColor = .clear // 오늘 날짜의 배경 색상
-            $0.appearance.selectionColor = .brand // 선택된 날짜의 배경 색상
+            $0.appearance.selectionColor = .green6 // 선택된 날짜의 배경 색상
             $0.appearance.titleSelectionColor = .black // 선택된 날짜 텍스트 색상
             $0.appearance.eventDefaultColor = .success // 이벤트 점의 기본 색상
             $0.appearance.eventSelectionColor = .clear // 선택된 날짜의 이벤트 점 색상

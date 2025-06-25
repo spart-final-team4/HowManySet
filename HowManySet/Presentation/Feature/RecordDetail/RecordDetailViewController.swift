@@ -176,7 +176,7 @@ extension RecordDetailViewController {
                             textView.text = nil
                             textView.textColor = .white
                         }
-                        textView.layer.borderColor = UIColor.systemGray.cgColor
+                        textView.layer.borderColor = UIColor.grey3.cgColor
                         textView.layer.borderWidth = 1
                     }
                     .disposed(by: owner.disposeBag)
@@ -185,7 +185,7 @@ extension RecordDetailViewController {
                     .bind(with: owner) { _, _ in
                         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             textView.text = "메모를 입력해주세요."
-                            textView.textColor = .systemGray3
+                            textView.textColor = .grey3
                         }
                         textView.layer.borderWidth = 0
                     }

@@ -63,7 +63,7 @@ private extension RecordDetailHeaderView {
         confirmButton.do {
             $0.setTitle("확인", for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-            $0.setTitleColor(.brand, for: .normal)
+            $0.setTitleColor(.green6, for: .normal)
         }
     }
 
