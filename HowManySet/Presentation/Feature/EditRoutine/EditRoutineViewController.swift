@@ -143,8 +143,8 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentEditExerciseVC() {
-        let vc = EditExcerciseViewController(
-            reactor: EditExcerciseViewReactor(
+        let vc = AddExcerciseViewController(
+            reactor: AddExcerciseViewReactor(
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
                 saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
                 workoutStateForEdit: nil,
