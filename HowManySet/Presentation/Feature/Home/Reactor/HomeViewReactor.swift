@@ -991,8 +991,8 @@ extension HomeViewReactor {
         )
         
         let firstWorkout = initialRoutine.workouts[0]
-        let weightSet: [[Int]] = firstWorkout.sets.map { set in
-            [Int(set.weight), set.reps]
+        let weightSet: [[String]] = firstWorkout.sets.map { set in
+            [String(set.weight), String(set.reps)]
         }
         let initialWorkoutStateForEdit = WorkoutStateForEdit(
             currentRoutine: initialRoutine,
