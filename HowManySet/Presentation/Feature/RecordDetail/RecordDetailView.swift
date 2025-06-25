@@ -4,6 +4,8 @@ import Then
 
 final class RecordDetailView: UIView {
 
+    private let recordDetailHeaderView = RecordDetailHeaderView()
+
     /// 동적 레이아웃을 적용한 컬렉션 뷰
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewCompositionalLayout { _, _ in
@@ -25,6 +27,10 @@ final class RecordDetailView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+extension RecordDetailView {
+    var publicHeaderView: RecordDetailHeaderView { recordDetailHeaderView }
 }
 
 // MARK: - Record Detail UI 관련 extension
@@ -50,12 +56,19 @@ private extension RecordDetailView {
     }
 
     func setViewHierarchy() {
-        addSubview(collectionView)
+        addSubviews(recordDetailHeaderView, collectionView)
     }
 
     func setConstraints() {
+        recordDetailHeaderView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(44)
+        }
+
         collectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(recordDetailHeaderView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
 }
@@ -95,7 +108,7 @@ private extension RecordDetailView {
             subitems: [item]
         )
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 28, leading: 28, bottom: 20, trailing: 28)
+        section.contentInsets = .init(top: 0, leading: 28, bottom: 20, trailing: 28)
         return section
     }
 
