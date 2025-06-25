@@ -125,4 +125,9 @@ extension EditExcerciseHeaderView {
     func configure(with text: String) {
         exerciseNameTextField.text = text
     }
+    
+    func editConfigure(with text: String) {
+        exerciseNameTextField.text = text
+        titleLabel.text = "운동 이름"
+    }
 }

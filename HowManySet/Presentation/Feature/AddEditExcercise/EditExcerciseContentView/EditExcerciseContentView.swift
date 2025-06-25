@@ -232,3 +232,20 @@ extension EditExcerciseContentView {
         excerciseInfoRelay.accept(sets)
     }
 }
+
+extension EditExcerciseContentView {
+    
+    func configureEditSets(with sets: [WorkoutSet]) {
+        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
+        
+        for i in 0..<sets.count {
+            let index = i+1
+            let hContentStackView = EditExcerciseHorizontalContentStackView(order: index)
+            hContentStackView.configure(weight: sets[i].weight, reps: sets[i].reps)
+            verticalContentStackView.addArrangedSubview(hContentStackView)
+        }
+        verticalContentStackView.addArrangedSubview(addContentButton)
+    }
+}
