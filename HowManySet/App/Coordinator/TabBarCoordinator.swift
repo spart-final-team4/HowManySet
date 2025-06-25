@@ -18,18 +18,15 @@ final class TabBarCoordinator: Coordinator {
     private let container: DIContainer
     
     // 각 탭에 대한 Coordinator
-    private var homeNav: UINavigationController
-    private var homeCoordinator: HomeCoordinator
+    private var homeCoordinator: HomeCoordinator?
     private var routineListCoordinator: RoutineListCoordinator?
     private var calendarCoordinator: CalendarCoordinator?
     private var myPageCoordinator: MyPageCoordinator?
     
     
-    init(tabBarController: UITabBarController, container: DIContainer, homeCoordinator: HomeCoordinator, homeNav: UINavigationController) {
+    init(tabBarController: UITabBarController, container: DIContainer) {
         self.tabBarController = tabBarController
         self.container = container
-        self.homeCoordinator = homeCoordinator
-        self.homeNav = homeNav
         tabBarController.setValue(CustomTabbar(), forKey: "tabBar")
     }
     
@@ -37,12 +34,14 @@ final class TabBarCoordinator: Coordinator {
     func start() {
         
         // 각 탭에 대한 UINavigationController
+        let homeNav = UINavigationController()
         let routineListNav = UINavigationController()
         let calendarNav = UINavigationController()
         let myPageNav = UINavigationController()
         
         // 각 탭의 코디네이터 생성
-        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container, homeCoordinator: homeCoordinator)
+        homeCoordinator = HomeCoordinator(navigationController: homeNav, container: container)
+        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container)
         calendarCoordinator = CalendarCoordinator(navigationController: calendarNav, container: container)
         myPageCoordinator = MyPageCoordinator(navigationController: myPageNav, container: container)
         
@@ -53,7 +52,7 @@ final class TabBarCoordinator: Coordinator {
         }
         
         // 각 코디네이터 start()
-        homeCoordinator.start()
+        homeCoordinator?.start()
         routineListCoordinator?.start()
         calendarCoordinator?.start()
         myPageCoordinator?.start()
