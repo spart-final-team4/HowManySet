@@ -531,17 +531,18 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         stopButton.rx.tap
-            .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
-            .map { Reactor.Action.stopButtonClicked }
-            .bind(onNext: { [weak self] stop in
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .bind(onNext: { [weak self] in
                 guard let self else { return }
-                // 팝업 창에서 종료 버튼을 누를 때에만 액션 실행
-                self.coordinator?.popUpEndWorkoutAlert(onConfirm: {
-                    reactor.action.onNext(stop(true))
-                    return reactor.currentState.workoutSummary
-                }, onCancel: {
-                    return nil
-                })
+                self.coordinator?.popUpEndWorkoutAlert(
+                    onConfirm: {
+                        reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                        return reactor.currentState.workoutSummary
+                    },
+                    onCancel: {
+                        return nil
+                    }
+                )
             })
             .disposed(by: disposeBag)
         

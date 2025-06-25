@@ -17,11 +17,13 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     private let navigationController: UINavigationController
     private let container: DIContainer
     private let routine: WorkoutRoutine
+    private let homeCoordinator: HomeCoordinator
 
-    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine) {
+    init(navigationController: UINavigationController, container: DIContainer, routine: WorkoutRoutine, homeCoordinator: HomeCoordinator) {
         self.navigationController = navigationController
         self.container = container
         self.routine = routine
+        self.homeCoordinator = homeCoordinator
     }
     
     func start() {
@@ -42,7 +44,6 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     
     /// 메인 홈 화면 운동중 상태로 이동
     func navigateToHomeViewWithWorkoutStarted() {
-        let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
         let (homeVC, homeViewReactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: homeCoordinator, routine: routine)
         
         // 여기서 바로 routineSelected 실행하여 운동 시작
@@ -55,7 +56,7 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         }
         
         homeVC.navigationItem.hidesBackButton = true
-        navigationController.pushViewController(homeVC, animated: true)
+        navigationController.pushViewController(homeVC, animated: false)
     }
     
 }
