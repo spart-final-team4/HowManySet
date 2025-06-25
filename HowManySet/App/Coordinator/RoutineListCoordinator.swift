@@ -93,9 +93,11 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
         let reactor = EditRoutineViewReactor(with: routine,
                                              saveRoutineUseCase: saveRoutineUseCase,
-                                             deleteRoutineUseCase: deleteRoutineUseCase)
+                                             deleteRoutineUseCase: deleteRoutineUseCase,
+                                             updateRoutineUseCase: updateRoutineUseCase)
         let editRoutineVC = EditRoutineViewController(reactor: reactor)
         
         navigationController.pushViewController(editRoutineVC, animated: true)
