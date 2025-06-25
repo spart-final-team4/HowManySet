@@ -18,7 +18,7 @@ final class TabBarCoordinator: Coordinator {
     private let container: DIContainer
     
     // 각 탭에 대한 Coordinator
-    private var homeCoordinator: HomeCoordinator?
+    private var homeStartCoordinator: HomeStartCoordinator?
     private var routineListCoordinator: RoutineListCoordinator?
     private var calendarCoordinator: CalendarCoordinator?
     private var myPageCoordinator: MyPageCoordinator?
@@ -34,13 +34,13 @@ final class TabBarCoordinator: Coordinator {
     func start() {
         
         // 각 탭에 대한 UINavigationController
-        let homeNav = UINavigationController()
+        let homeStartNav = UINavigationController()
         let routineListNav = UINavigationController()
         let calendarNav = UINavigationController()
         let myPageNav = UINavigationController()
         
         // 각 탭의 코디네이터 생성
-        homeCoordinator = HomeCoordinator(navigationController: homeNav, container: container)
+        homeStartCoordinator = HomeStartCoordinator(navigationController: homeStartNav, container: container)
         routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container)
         calendarCoordinator = CalendarCoordinator(navigationController: calendarNav, container: container)
         myPageCoordinator = MyPageCoordinator(navigationController: myPageNav, container: container)
@@ -52,13 +52,13 @@ final class TabBarCoordinator: Coordinator {
         }
         
         // 각 코디네이터 start()
-        homeCoordinator?.start()
+        homeStartCoordinator?.start()
         routineListCoordinator?.start()
         calendarCoordinator?.start()
         myPageCoordinator?.start()
         
         tabBarController.viewControllers = [
-            homeNav,
+            homeStartNav,
             routineListNav,
             calendarNav,
             myPageNav
@@ -70,7 +70,7 @@ final class TabBarCoordinator: Coordinator {
         tabBarController.tabBar.unselectedItemTintColor = .gray
         
         // 탭바 아이템 설정
-        homeNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "house"), selectedImage: nil)
+        homeStartNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "house"), selectedImage: nil)
         routineListNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "list.dash"), selectedImage: nil)
         calendarNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "calendar"), selectedImage: nil)
         myPageNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "person"), selectedImage: nil)
