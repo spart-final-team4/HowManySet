@@ -29,10 +29,21 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         navigationController.pushViewController(editRoutineVC, animated: true)
     }
     
+    func startModal() {
+        let editRoutineVC = container.makeEditRoutineViewController(coordinator: self, with: routine)
+        
+        if let sheet = editRoutineVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        navigationController.present(editRoutineVC, animated: true)
+    }
+    
     /// 메인 홈 화면 운동중 상태로 이동
     func navigateToHomeViewWithWorkoutStarted() {
         let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
-        let (homeVC, homeViewReactor) = container.makeHomeViewController(coordinator: homeCoordinator)
+        let (homeVC, _) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: homeCoordinator, routine: routine)
         
         // navigation 스택을 홈으로 초기화
         navigationController.setViewControllers([homeVC], animated: false)

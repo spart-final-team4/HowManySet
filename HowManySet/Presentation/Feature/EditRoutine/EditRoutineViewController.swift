@@ -23,10 +23,13 @@ final class EditRoutineViewController: UIViewController, View {
     
     private let startText = "시작"
     
+    private let coordinator: EditRoutineCoordinatorProtocol
+    
     /// 운동 루틴 리스트를 보여주는 테이블 뷰
     private let tableView = EditRoutineTableView()
     private let editRoutineBottomSheetViewController = EditRoutineBottomSheetViewController()
         
+    /// 운동 시작 버튼 - 클릭 시 바로 홈화면에서 운동 시작
     private lazy var startButton = UIButton().then {
         $0.setTitle(startText, for: .normal)
         $0.setTitleColor(.background, for: .normal)
@@ -37,7 +40,8 @@ final class EditRoutineViewController: UIViewController, View {
 
     /// 초기화 메서드 - reactor 주입
     /// - Parameter reactor: EditRoutine 화면의 상태 및 액션을 관리하는 리액터 객체
-    init(reactor: EditRoutineViewReactor) {
+    init(reactor: EditRoutineViewReactor, coordinator: EditRoutineCoordinatorProtocol) {
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
@@ -94,18 +98,18 @@ final class EditRoutineViewController: UIViewController, View {
         
         startButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .do(onNext: { [weak self] _ in
+            .bind(onNext: { [weak self] _ in
                 guard let self else { return }
                 UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
                     self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                 }, completion: { _ in
                     UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
                         self.startButton.transform = .identity
+                    }, completion: { _ in
+                        self.coordinator.navigateToHomeViewWithWorkoutStarted()
                     })
                 })
             })
-            .map { Reactor.Action.startButtonTapped }
-            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         reactor.state
