@@ -8,7 +8,7 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-    func presentRoutineListView()
+    func pushRoutineListView()
     func presentEditAndMemoView()
     func presentEditExerciseView(
         routineName: String,
@@ -50,10 +50,10 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         homeViewReactor = reactor
     }
     
-    /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 present
-    func presentRoutineListView() {
+    /// 빈 화면에서 +버튼 클릭 시 루틴 리스트 push
+    func pushRoutineListView() {
         let routineListCoordinator = RoutineListCoordinator(navigationController: navigationController, container: container)
-        routineListCoordinator.startModal()
+        routineListCoordinator.start()
     }
     
     /// 운동 종목 뷰 메뉴 버튼 클릭 시 옵션 bottom sheet present
