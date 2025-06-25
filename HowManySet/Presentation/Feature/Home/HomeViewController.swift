@@ -495,7 +495,7 @@ extension HomeViewController {
         // 루틴 시작 버튼 클릭 시
         routineStartCardView.routineSelectButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .do(onNext: { [weak self] _ in
+            .bind(onNext: { [weak self] _ in
                 guard let self else { return }
                 UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
                     self.routineStartCardView.routineSelectButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
@@ -503,14 +503,15 @@ extension HomeViewController {
                     UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
                         self.routineStartCardView.routineSelectButton.transform = .identity
                     }, completion: { _ in
-                        // 루틴 시작 시 라이브 액티비티 실행
-                        self.bindLiveActivityEvents(reactor: reactor)
+//                        // 루틴 시작 시 라이브 액티비티 실행
+//                        self.bindLiveActivityEvents(reactor: reactor)
                         // TODO: 추후에 루틴 리스트 화면에서 실행됨
+                        self.coordinator?.pushRoutineListView()
                     })
                 })
             })
-            .map { Reactor.Action.routineSelected }
-            .bind(to: reactor.action)
+//            .map { Reactor.Action.routineSelected }
+//            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         pauseButton.rx.tap
