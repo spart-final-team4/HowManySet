@@ -28,24 +28,24 @@ final class EditExcerciseFooterView: UIStackView {
     
     private let disposeBag = DisposeBag()
     
-    /// 운동 추가 버튼 - 회색 스타일
+    /// 운동 추가 버튼 - 브랜드색 스타일
     private let addExcerciseButton = UIButton().then {
         $0.setTitle("운동 추가", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
-        $0.setTitleColor(.systemGray, for: .normal)
+        $0.setTitleColor(.background, for: .normal)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.backgroundColor = .systemGray5
+        $0.backgroundColor = .brand
     }
     
-    /// 루틴 저장 버튼 - 브랜드 색상 강조 스타일
+    /// 루틴 저장 버튼 - 흰색 스타일
     private let saveRoutineButton = UIButton().then {
         $0.setTitle("루틴 저장", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
         $0.setTitleColor(.background, for: .normal)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.backgroundColor = .brand
+        $0.backgroundColor = .white
     }
     
     /// 기본 생성자 - 수평 스택뷰로 구성 및 UI 초기화
@@ -94,7 +94,7 @@ private extension EditExcerciseFooterView {
     
     /// 스택뷰 내 하위 버튼 추가
     func setViewHierarchy() {
-        self.addArrangedSubviews(addExcerciseButton, saveRoutineButton)
+        self.addArrangedSubviews(saveRoutineButton, addExcerciseButton)
     }
 }
 
