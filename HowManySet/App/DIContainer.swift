@@ -83,7 +83,10 @@ final class DIContainer {
         let reactor = RoutineListViewReactor(
             deleteRoutineUseCase: deleteRoutineUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
-            saveRoutineUseCase: saveRoutineUseCase
+            saveRoutineUseCase: saveRoutineUseCase,
+            fsDeleteRoutineUseCase: fsDeleteRoutineUseCase,
+            fsFetchRoutineUseCase: fsFetchRoutineUseCase,
+            fsSaveRoutineUseCase: fsSaveRoutineUseCase
         )
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator)
@@ -93,18 +96,21 @@ final class DIContainer {
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
         let recordRepository = RecordRepositoryImpl()
         
-        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+        let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
 
         // Firestore 로직 추가
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
         let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
-        let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
+        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
         let fsFetchRecordUseCase = FSFetchRecordUseCase(repository: fsRecordRepository)
 
         let reactor = CalendarViewReactor(
-            saveRecordUseCase: saveRecordUseCase,
-            fetchRecordUseCase: fetchRecordUseCase
+            deleteRecordUseCase: deleteRecordUseCase,
+            fetchRecordUseCase: fetchRecordUseCase,
+//            // Firestore UseCase들 추가
+            fsDeleteRecordUseCase: fsDeleteRecordUseCase,
+            fsFetchRecordUseCase: fsFetchRecordUseCase
         )
         
         return CalendarViewController(reactor: reactor, coordinator: coordinator)

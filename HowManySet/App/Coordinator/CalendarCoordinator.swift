@@ -39,7 +39,13 @@ final class CalendarCoordinator: CalendarCoordinatorProtocol {
     /// 기록 상세 화면 모달 present
     /// large sheet 스타일 + grabber 표시
     func presentRecordDetailView(record: WorkoutRecord) {
-        let reactor = RecordDetailViewReactor(record: record)
+        let recordRepository = RecordRepositoryImpl()
+        let updateRecordUseCase = UpdateRecordUseCase(repository: recordRepository)
+
+        let reactor = RecordDetailViewReactor(
+            updateRecordUseCase: updateRecordUseCase,
+            record: record
+        )
         let recordDetailVC = RecordDetailViewController(reactor: reactor)
         
         if let sheet = recordDetailVC.sheetPresentationController {

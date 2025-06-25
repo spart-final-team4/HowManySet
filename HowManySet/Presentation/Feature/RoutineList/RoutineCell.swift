@@ -46,7 +46,7 @@ private extension RoutineCell {
 
     func setAppearance() {
         contentView.do {
-            $0.backgroundColor = .cardBackground
+            $0.backgroundColor = .grey5
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
@@ -86,7 +86,7 @@ private extension RoutineCell {
 
     func setConstraints() {
         contentView.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(8)
+            $0.verticalEdges.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
         }
 

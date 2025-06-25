@@ -1,4 +1,5 @@
 import UIKit
+import RxDataSources
 import RxSwift
 import RxCocoa
 import ReactorKit
@@ -9,11 +10,41 @@ final class CalendarViewController: UIViewController, View {
     var disposeBag = DisposeBag()
 
     let calendarView = CalendarView()
-    private var coordinator: CalendarCoordinatorProtocol? // 이유는 모르겠지만 weak를 쓰면 인스턴스가 메모리에서 해제됨. 따라서 일단 strong으로 구현하자
+    private weak var coordinator: CalendarCoordinatorProtocol? 
+
+    // 기록이 있는 날짜를 담아놓을 배열 생성
+    private var recordedDates: [Date] = []
+
+    // RxDataSource 사용을 위한 Model 생성
+    typealias RecordSection = SectionModel<String, WorkoutRecord>
+
+    let dataSource = RxTableViewSectionedReloadDataSource<RecordSection>(
+        configureCell: { dataSource, tableView, indexPath, item in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: RecordCell.identifier, for: indexPath) as? RecordCell else {
+                return UITableViewCell()
+            }
+            cell.configure(with: item)
+            return cell
+        }
+    )
 
     // MARK: - Life Cycle
     override func loadView() {
         view = calendarView
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // 캘린더 날짜 선택 해제
+        if let selectedDate = calendarView.publicCalendar.selectedDate {
+            calendarView.publicCalendar.deselect(selectedDate)
+        }
+
+        // Reactor 상태도 초기화
+        reactor?.action.onNext(.clearSelection)
+
+        // 선택된 날짜 기준 fetch
+        reactor?.action.onNext(.viewWillAppear)
     }
 
     override func viewDidLoad() {
@@ -38,16 +69,25 @@ final class CalendarViewController: UIViewController, View {
     func bind(reactor: CalendarViewReactor) {
         // records를 tableView에 바인딩
         reactor.state
-            .map(\.records)
-            .bind(to: calendarView.publicRecordTableView.rx.items(
-                cellIdentifier: RecordCell.identifier,
-                cellType: RecordCell.self
-            )) { _, record, cell in
-                cell.configure(with: record)
+            .map { state in
+                state.selectedRecords.map { SectionModel(model: "", items: [$0]) }  // 섹션당 1개 셀
+            }
+            .bind(to: calendarView.publicRecordTableView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map(\.allRecords) // Reactor의 [WorkoutRecord]
+            .map { records in
+                records.map { $0.date } // [Date]
+            }
+            .distinctUntilChanged() // 동일한 날짜 배열이면 업데이트 방지
+            .bind(with: self) { owner, dates in
+                owner.recordedDates = dates
+                owner.calendarView.publicCalendar.reloadData() // 점 갱신
             }
             .disposed(by: disposeBag)
 
-        // tableView.delegate 설정
+        // tableView.delegate 바인딩
         calendarView.publicRecordTableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
@@ -122,7 +162,7 @@ private extension CalendarViewController {
 extension CalendarViewController: UITableViewDelegate {
     /// TableView Cell의 높이를 설정하는 메서드
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        136
+        120
     }
 
     /// TableView Cell이 선택되었을 때 실행하는 메서드
@@ -131,9 +171,32 @@ extension CalendarViewController: UITableViewDelegate {
         calendarView.publicRecordTableView.deselectRow(at: indexPath, animated: true)
 
         // 해당 record 가져오기
-        guard let record = reactor?.currentState.records[indexPath.row] else { return }
+        guard let record = reactor?.currentState.selectedRecords[indexPath.row] else { return }
 
         coordinator?.presentRecordDetailView(record: record)
+    }
+
+    /// trailing -> leading 방향으로 스와이프하는 메서드
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+            self?.reactor?.action.onNext(.deleteItem(indexPath)) // Reactor로 이벤트 전달
+                    completion(true)
+                }
+
+        deleteAction.backgroundColor = .error
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+
+    /// tableView의 섹션 안에 있는 footerView를 설정하는 메서드
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = UIView()
+        footer.backgroundColor = .clear
+        return footer
+    }
+
+    /// tableView의 섹션 안에 있는 footerView의 높이를 정하는 메서드
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        16 // 원하는 spacing 값
     }
 }
 
@@ -153,8 +216,9 @@ extension CalendarViewController: FSCalendarDataSource {
     /// 캘린더에서 이벤트가 발생한 날짜에 이벤트 점(event dot)을 표시해주는 메서드
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
         let calendar = Calendar.current
-        return WorkoutRecord.mockData.contains(where: {
-            calendar.isDate($0.date, inSameDayAs: date)
-        }) ? 1 : 0
+        
+        return recordedDates.contains {
+            calendar.isDate($0, inSameDayAs: date)
+        } ? 1 : 0
     }
 }
