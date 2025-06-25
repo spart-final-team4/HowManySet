@@ -95,13 +95,13 @@ private extension CalendarView {
     }
 
     func setViewHierarchy() {
-        [
+        addSubviews(
             titleLabel,
             calendarContainerView,
             previousMonthButton,
             nextMonthButton,
             recordTableView
-        ].forEach { addSubviews($0) }
+        )
 
         calendarContainerView.addSubview(calendar)
     }
