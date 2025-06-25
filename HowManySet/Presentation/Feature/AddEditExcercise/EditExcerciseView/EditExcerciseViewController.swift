@@ -37,8 +37,17 @@ final class EditExcerciseViewController: UIViewController, View {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
     func bind(reactor: EditExcerciseViewReactor) {
-        
+        reactor.state
+            .map{ $0.workout }
+            .subscribe(onNext: { [weak self] state in
+                self?.headerView.editConfigure(with: state.name)
+                self?.contentView.configureEditSets(with: state.sets)
+            }).disposed(by: disposeBag)
     }
     
 }
