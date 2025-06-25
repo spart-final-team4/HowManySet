@@ -27,7 +27,7 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
     
     /// 삭제 버튼이 탭되었을 때 이벤트를 방출하는 PublishRelay입니다.
     private(set) var removeButtonTap = PublishRelay<Void>()
-    private(set) var weightRepsRelay = BehaviorRelay<[Int]>(value: [-1, -1])
+    private(set) var weightRepsRelay = BehaviorRelay<[String]>(value: [])
     
     var order: Int = 0
     
@@ -61,7 +61,7 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
         $0.clipsToBounds = true
         $0.textColor = .white
         $0.layer.cornerRadius = 12
-        $0.keyboardType = .decimalPad
+        $0.keyboardType = .numberPad
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
@@ -129,7 +129,7 @@ private extension EditExcerciseHorizontalContentStackView {
                 weightTextField.rx.text.orEmpty,
                 repsTextField.rx.text.orEmpty
             )
-            .map{ [Int($0) ?? -1, Int($1) ?? -1] }
+            .map{ [$0, $1] }
             .bind(to: weightRepsRelay)
             .disposed(by: disposeBag)
 
@@ -158,7 +158,7 @@ private extension EditExcerciseHorizontalContentStackView {
 // MARK: - Internal Methods
 extension EditExcerciseHorizontalContentStackView {
     
-    func configure(weight: Int, reps: Int) {
+    func configure(weight: Double, reps: Int) {
         self.weightTextField.text = "\(weight)"
         self.repsTextField.text = "\(reps)"
     }

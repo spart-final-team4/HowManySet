@@ -147,14 +147,13 @@ final class EditExcerciseViewController: UIViewController, View {
         // Alert 표시 (저장 성공/실패, 유효성 실패 등)
         reactor.alertRelay
             .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, alert in
+            .subscribe(with: self) { (owner: EditExcerciseViewController, alert) in
                 switch alert {
                 case .success:
-//                    owner.showToast(message: "운동이 추가되었어요!")
                     owner.showToast(x: owner.scrollView.contentOffset.x, y: owner.scrollView.contentOffset.y, message: "운동이 추가되었어요!")
                     owner.headerView.returnInitialState()
                     owner.contentView.returnInitialState()
-                case .wokkoutNameEmpty:
+                case .workoutNameEmpty:
                     owner.present(owner.defaultAlert(title: "오류", message: "운동 이름을 입력해주세요."), animated: true)
                 case .workoutEmpty:
                     owner.present(owner.defaultAlert(title: "오류", message: "현재 저장된 운동 항목이 없습니다."), animated: true)
@@ -164,6 +163,8 @@ final class EditExcerciseViewController: UIViewController, View {
                     owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 길어요."), animated: true)
                 case .workoutNameTooShort:
                     owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 짧아요."), animated: true)
+                case .workoutContainsZero:
+                    owner.present(owner.defaultAlert(title: "오류", message: "0은 입력할 수 없습니다."), animated: true)
                 }
             }
             .disposed(by: disposeBag)
