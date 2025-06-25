@@ -10,7 +10,7 @@ import UIKit
 protocol RoutineListCoordinatorProtocol: Coordinator {
     func presentRoutineNameView()
     func pushEditExcerciseView(routineName: String)
-    func pushEditRoutineView(with: WorkoutRoutine)
+//    func pushEditRoutineView(with: WorkoutRoutine)
     func presentEditRoutinView(with: WorkoutRoutine)
 }
 
@@ -20,12 +20,11 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
-    private let homeNavigationController: UINavigationController
+    weak var homeCoordinator: HomeCoordinator?
 
-    init(navigationController: UINavigationController, container: DIContainer,     homeNavigationController: UINavigationController) {
+    init(navigationController: UINavigationController, container: DIContainer) {
         self.navigationController = navigationController
         self.container = container
-        self.homeNavigationController = homeNavigationController
     }
     
     /// 루틴 리스트 화면 시작
@@ -40,13 +39,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     /// 홈 화면에서 버튼 눌러 모달로 루틴 리스트 화면 호출 시
     func startModal() {
         let routineListVC = container.makeRoutineListViewController(coordinator: self, caller: .fromHome)
-        
         if let sheet = routineListVC.sheetPresentationController {
             sheet.detents = [.large()]
             sheet.prefersGrabberVisible = true
         }
-        
-        navigationController.present(routineListVC, animated: true)
+        let nav = UINavigationController(rootViewController: routineListVC)
+        navigationController.present(nav, animated: true)
     }
     
     /// 루틴명 편집 화면으로 모달 표시
@@ -92,15 +90,18 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     }
 
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
-    func pushEditRoutineView(with routine: WorkoutRoutine) {
-        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: homeNavigationController)
-        editRoutineCoordinator.start()
-        // TODO: 탭바위치 변경되어야 함
-    }
+//    func pushEditRoutineView(with routine: WorkoutRoutine) {
+//        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: homeNavigationController)
+//        editRoutineCoordinator.start()
+//        // TODO: 탭바위치 변경되어야 함
+//    }
     
+    /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 present
     func presentEditRoutinView(with routine: WorkoutRoutine) {
         self.navigationController.dismiss(animated: true)
-        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: homeNavigationController)
-        editRoutineCoordinator.startModal()
+        if let homeCoordinator {
+            let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator, homeNavigationController: nil)
+            editRoutineCoordinator.startModal()
+        }
     }
 }

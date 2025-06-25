@@ -18,11 +18,10 @@ final class TabBarCoordinator: Coordinator {
     private let container: DIContainer
     
     // 각 탭에 대한 Coordinator
-    private var homeStartCoordinator: HomeStartCoordinator?
+    private var homeCoordinator: HomeCoordinator?
     private var routineListCoordinator: RoutineListCoordinator?
     private var calendarCoordinator: CalendarCoordinator?
     private var myPageCoordinator: MyPageCoordinator?
-    
     
     init(tabBarController: UITabBarController, container: DIContainer) {
         self.tabBarController = tabBarController
@@ -34,18 +33,19 @@ final class TabBarCoordinator: Coordinator {
     func start() {
         
         // 각 탭에 대한 UINavigationController
-        let homeStartNav = UINavigationController()
+        let homeNav = UINavigationController()
         let routineListNav = UINavigationController()
         let calendarNav = UINavigationController()
         let myPageNav = UINavigationController()
         
         // 각 탭의 코디네이터 생성
-        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container, homeNavigationController: homeStartNav)
-        if let routineListCoordinator {
-            homeStartCoordinator = HomeStartCoordinator(navigationController: homeStartNav, container: container, routineListCoordinator: routineListCoordinator)
-        }
+        homeCoordinator = HomeCoordinator(navigationController: homeNav, container: container)
+        routineListCoordinator = RoutineListCoordinator(navigationController: routineListNav, container: container)
         calendarCoordinator = CalendarCoordinator(navigationController: calendarNav, container: container)
         myPageCoordinator = MyPageCoordinator(navigationController: myPageNav, container: container)
+        
+        homeCoordinator?.routineListCoordinator = routineListCoordinator
+        routineListCoordinator?.homeCoordinator = homeCoordinator
         
         // 🔥 MyPageCoordinator의 finishFlow 설정 (로그아웃/계정삭제 시 호출됨)
         myPageCoordinator?.finishFlow = { [weak self] in
@@ -54,13 +54,13 @@ final class TabBarCoordinator: Coordinator {
         }
         
         // 각 코디네이터 start()
-        homeStartCoordinator?.start()
+        homeCoordinator?.start()
         routineListCoordinator?.start()
         calendarCoordinator?.start()
         myPageCoordinator?.start()
         
         tabBarController.viewControllers = [
-            homeStartNav,
+            homeNav,
             routineListNav,
             calendarNav,
             myPageNav
@@ -72,7 +72,7 @@ final class TabBarCoordinator: Coordinator {
         tabBarController.tabBar.unselectedItemTintColor = .gray
         
         // 탭바 아이템 설정
-        homeStartNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "house"), selectedImage: nil)
+        homeNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "house"), selectedImage: nil)
         routineListNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "list.dash"), selectedImage: nil)
         calendarNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "calendar"), selectedImage: nil)
         myPageNav.tabBarItem = UITabBarItem(title: nil, image: UIImage(systemName: "person"), selectedImage: nil)

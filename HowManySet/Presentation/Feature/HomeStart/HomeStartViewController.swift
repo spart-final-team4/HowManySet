@@ -13,7 +13,7 @@ import RxSwift
 final class HomeStartViewController: UIViewController {    
     
     // MARK: - Properties
-    private weak var coordinator: HomeStartCoordinatorProtocol?
+    private weak var coordinator: HomeCoordinatorProtocol?
     
     private var disposeBag = DisposeBag()
 
@@ -30,7 +30,7 @@ final class HomeStartViewController: UIViewController {
     }
         
     // MARK: - Initializer
-    init(coordinator: HomeStartCoordinatorProtocol) {
+    init(coordinator: HomeCoordinatorProtocol) {
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }

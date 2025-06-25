@@ -27,45 +27,6 @@ final class DIContainer {
         return AuthViewController(reactor: reactor, coordinator: coordinator)
     }
     
-    // TODO: 아마 추후에 제거 예정
-    /// 홈 화면을 생성하여 반환
-    func makeHomeViewController(coordinator: HomeCoordinator) -> (UIViewController, HomeViewReactor) {
-        let recordRepository = RecordRepositoryImpl()
-        let routineRepository = RoutineRepositoryImpl()
-        let workoutRepository = WorkoutRepositoryImpl()
-        
-        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
-//        let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
-        let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
-        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
-        
-        // Firestore 로직 추가
-        let firestoreService: FirestoreServiceProtocol = FirestoreService()
-        
-        let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
-        let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
-//        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
-        
-        let fsRoutineRepository = FSRoutineRepositoryImpl(firestoreService: firestoreService)
-        let fsFetchRoutineUseCase = FSFetchRoutineUseCase(repository: fsRoutineRepository)
-        let fsUpdateRoutineUseCase = FSUpdateRoutineUseCase(repository: routineRepository)
-        
-//        let restoredState = loadCurrentWorkoutState()
-        let initialState = HomeViewReactor.defaultInitialState()
-        
-        let reactor = HomeViewReactor(
-            saveRecordUseCase: saveRecordUseCase,
-            fsSaveRecordUseCase: fsSaveRecordUseCase,
-            fetchRoutineUseCase: fetchRoutineUseCase,
-            fsFetchRoutineUseCase: fsFetchRoutineUseCase,
-            updateWorkoutUseCase: updateWorkoutUseCase,
-            fsUpdateRoutineUseCase: fsUpdateRoutineUseCase,
-            initialState: initialState
-        )
-        
-        return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)
-    }
-    
     /// 루틴 리스트 화면을 생성하여 반환
     func makeRoutineListViewController(coordinator: RoutineListCoordinator, caller: ViewCaller) -> UIViewController {
         let routineRepository = RoutineRepositoryImpl()
@@ -212,7 +173,7 @@ final class DIContainer {
     }
     
     /// 홈 시작 화면(운동 전) VC 생성하여 반환
-    func makeHomeStartViewController(coordinator: HomeStartCoordinator) -> UIViewController {
+    func makeHomeStartViewController(coordinator: HomeCoordinator) -> UIViewController {
         return HomeStartViewController(coordinator: coordinator)
     }
 }
