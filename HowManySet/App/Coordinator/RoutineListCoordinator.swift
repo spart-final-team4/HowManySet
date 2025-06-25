@@ -90,16 +90,7 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
 
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
     func pushEditRoutineView(with routine: WorkoutRoutine) {
-        let routineRepository = RoutineRepositoryImpl()
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
-        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
-        let reactor = EditRoutineViewReactor(with: routine,
-                                             saveRoutineUseCase: saveRoutineUseCase,
-                                             deleteRoutineUseCase: deleteRoutineUseCase,
-                                             updateRoutineUseCase: updateRoutineUseCase)
-        let editRoutineVC = EditRoutineViewController(reactor: reactor)
-        
-        navigationController.pushViewController(editRoutineVC, animated: true)
+        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine)
+        editRoutineCoordinator.start()
     }
 }
