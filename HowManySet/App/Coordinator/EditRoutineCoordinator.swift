@@ -47,6 +47,12 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         
         // 여기서 바로 routineSelected 실행하여 운동 시작
         homeViewReactor.action.onNext(.routineSelected)
+        let home = homeVC as? HomeViewController
+        if let home {
+            home.bindLiveActivityEvents(reactor: homeViewReactor)
+        } else {
+            print("HOMEVC 다운캐스팅 실패!")
+        }
         
         // navigation 스택을 홈으로 초기화
         navigationController.setViewControllers([homeVC], animated: false)
