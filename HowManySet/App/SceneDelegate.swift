@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import GoogleSignIn
+import KakaoSDKAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -22,7 +24,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.appCoordinator = coordinator
         coordinator.start()
     }
-
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            
+            if GIDSignIn.sharedInstance.handle(url) {
+                return
+            }
+            
+            if AuthApi.isKakaoTalkLoginUrl(url) {
+                _ = AuthController.handleOpenUrl(url: url)
+                return
+            }
+        }
+    }
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         LiveActivityService.shared.stop()
     }
