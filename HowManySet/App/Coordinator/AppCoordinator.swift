@@ -145,11 +145,7 @@ final class AppCoordinator: Coordinator {
     /// 메인 탭바 흐름 시작
     private func showTabBarFlow() {
         print("🏠 메인 화면 표시")
-        
-        let homeNav = UINavigationController()
-        let homeCoordinator = HomeCoordinator(navigationController: homeNav, container: container)
-
-        let tabBarCoordinator = TabBarCoordinator(tabBarController: UITabBarController(), container: container, homeCoordinator: homeCoordinator, homeNav: homeNav)
+        let tabBarCoordinator = TabBarCoordinator(tabBarController: UITabBarController(), container: container)
         
         tabBarCoordinator.finishFlow = { [weak self, weak tabBarCoordinator] in
             guard let self, let tabBarCoordinator else { return }
