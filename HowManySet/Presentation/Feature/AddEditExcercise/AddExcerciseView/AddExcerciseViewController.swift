@@ -55,7 +55,7 @@ final class AddExcerciseViewController: UIViewController, View {
     private let currentView = EditExcerciseCurrentStackView()
     
     /// 운동 추가 및 저장 버튼을 포함하는 하단 푸터 뷰입니다.
-    private let footerView = EditExcerciseFooterView()
+    private let footerView = AddExcerciseFooterView()
     
     // MARK: - Initializer
     
@@ -121,6 +121,7 @@ final class AddExcerciseViewController: UIViewController, View {
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
 
