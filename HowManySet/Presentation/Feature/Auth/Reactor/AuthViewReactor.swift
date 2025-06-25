@@ -40,24 +40,48 @@ final class AuthViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .tapKakaoLogin:
+            LoadingIndicator.showLoadingIndicator()
             return useCase.loginWithKakao()
                 .map(Mutation.loginSuccess)
                 .catch { .just(.loginFailed($0)) }
+                .do(onNext: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                }, onError: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                })
 
         case .tapGoogleLogin:
+            LoadingIndicator.showLoadingIndicator()
             return useCase.loginWithGoogle()
                 .map(Mutation.loginSuccess)
                 .catch { .just(.loginFailed($0)) }
+                .do(onNext: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                }, onError: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                })
 
         case .tapAppleLogin(let token, let nonce):
+            LoadingIndicator.showLoadingIndicator()
             return useCase.loginWithApple(token: token, nonce: nonce)
                 .map(Mutation.loginSuccess)
                 .catch { .just(.loginFailed($0)) }
+                .do(onNext: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                }, onError: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                })
 
         case .tapAnonymousLogin:
+            LoadingIndicator.showLoadingIndicator()
             return useCase.loginAnonymously()
                 .map(Mutation.loginSuccess)
                 .catch { .just(.loginFailed($0)) }
+                .do(onNext: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                }, onError: { _ in
+                    LoadingIndicator.hideLoadingIndicator()
+                })
         }
     }
 
