@@ -17,12 +17,12 @@ final class HomeStartViewController: UIViewController {
     
     private var disposeBag = DisposeBag()
 
-    private let homeText = "홈"
+    private let homeText = "메인"
     
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
         $0.text = homeText
-        $0.font = .systemFont(ofSize: 36, weight: .bold)
+        $0.font = .systemFont(ofSize: 36, weight: .medium)
     }
     
     private lazy var routineStartCardView = HomeRoutineStartCardView().then {

@@ -76,7 +76,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
             workoutStateForEdit: workoutStateForEdit,
-            caller: ViewCaller.forEditing
+            caller: ViewCaller.fromHome
         )
         let editExerciseVC = EditExcerciseViewController(reactor: reactor)
         
