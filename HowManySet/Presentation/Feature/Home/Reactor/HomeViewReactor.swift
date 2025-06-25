@@ -109,7 +109,7 @@ final class HomeViewReactor: Reactor {
         case workoutTimeUpdating
         case restRemainingSecondsUpdating
         case pauseAndPlayWorkout(Bool)
-        case pauseAndPlayRest(Bool)
+        case pauseRest(Bool)
         /// 운동 데이터 업데이트, 운동 종료시 처리 포함
         case manageWorkoutData(isEnded: Bool)
         /// 스킵(다음) 버튼 클릭 시 분기처리 및 완료항목 업데이트
@@ -285,7 +285,9 @@ final class HomeViewReactor: Reactor {
                 return .just(.stopRestTimer(true))
             } else {
                 // 그 외엔 휴식 없이 바로 진행
-                return handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
+                return .concat([
+                    handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
+                ])
             }
             
         case .workoutPauseButtonClicked:
@@ -303,11 +305,14 @@ final class HomeViewReactor: Reactor {
                 
                 return .concat([
                     .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused)),
-                    .just(.pauseAndPlayRest(false)),
+                    .just(.pauseRest(!currentState.isRestPaused)),
                     restTimer
                 ])
             } else {
-                return .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused))
+                return .concat([
+                    .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused)),
+                    .just(.pauseRest(!currentState.isRestPaused))
+                ])
             }
             
             // 하단 휴식 버튼 누를 시 동작
@@ -335,13 +340,13 @@ final class HomeViewReactor: Reactor {
                     .observe(on: MainScheduler.asyncInstance)
                 
                 return .concat([
-                    .just(.pauseAndPlayRest(false)),
+                    .just(.pauseRest(false)),
                     restTimer
                 ])
             } else {
                 // 재생 상태 → 일시정지로 전환
                 // interval 종료, 남은 시간만 보존
-                return .just(.pauseAndPlayRest(true))
+                return .just(.pauseRest(true))
             }
             
         case .stopButtonClicked(let isEnded):
@@ -511,7 +516,7 @@ final class HomeViewReactor: Reactor {
                 }
             }
             
-        case let .pauseAndPlayRest(isPaused):
+        case let .pauseRest(isPaused):
             newState.isRestPaused = isPaused
             
         // MARK: - 운동 종료 시 운동 관련 데이터 핸들
@@ -711,6 +716,7 @@ private extension HomeViewReactor {
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer
             ])
+            .observe(on: MainScheduler.instance)
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
             let currentCardState = currentState.workoutCardStates[cardIndex]
@@ -751,6 +757,7 @@ private extension HomeViewReactor {
                         .just(.setRestTime(0)),
                         .just(.manageWorkoutData(isEnded: true))
                     ])
+                    .observe(on: MainScheduler.instance)
                 } else { // 운동 끝나지 않은 카드 1개 남았을 떄
                     print("남은 카드 1개")
                     return .concat([
@@ -759,6 +766,7 @@ private extension HomeViewReactor {
                         .just(.setRestTimeDataAtProgressBar(restTime)),
                         restTimer
                     ])
+                    .observe(on: MainScheduler.instance)
                 }
             }
         }
