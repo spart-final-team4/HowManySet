@@ -91,6 +91,9 @@ extension RecordDetailViewController {
     /// 리액터 Binding
     func bind(reactor: RecordDetailViewReactor) {
         let record = reactor.currentState.record
+        let headerView = recordDetailView.publicHeaderView
+        
+        recordDetailView.publicHeaderView.configure(with: record)
 
         // 요약뷰 구성
         let summarySection = RecordDetailSectionModel(
@@ -127,45 +130,25 @@ extension RecordDetailViewController {
             .disposed(by: disposeBag)
 
         // MARK: - Data Binding
-        // collectionView에 있는 셀 탭 -> Reactor 액션 전달
-        recordDetailView.publicCollectionView.rx
-            .willDisplayCell
-            .compactMap { $0.cell as? SummaryInfoCell }
-            .take(1)
-            .bind(with: self) { (owner: RecordDetailViewController, cell: SummaryInfoCell) in
-                // 저장 버튼 탭
-                cell.publicSaveButton.rx.tap
-                    .map { RecordDetailViewReactor.Action.tapSave }
-                    .bind(to: reactor.action)
-                    .disposed(by: owner.disposeBag)
 
-                // 확인 버튼 탭
-                cell.publicConfirmButton.rx.tap
-                    .map { RecordDetailViewReactor.Action.tapConfirm }
-                    .bind(to: reactor.action)
-                    .disposed(by: owner.disposeBag)
-
-                // 저장 버튼 활성화 상태 바인딩
-                reactor.state
-                    .map(\.isSaveButtonEnabled)
-                    .distinctUntilChanged()
-                    .bind(with: owner) { _, isEnabled in
-                        cell.updateSaveButtonEnabled(isEnabled)
-                    }
-                    .disposed(by: owner.disposeBag)
-            }
+        // 저장 버튼 탭
+        headerView.publicSaveButton.rx.tap
+            .map { RecordDetailViewReactor.Action.tapSave }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        // 저장 버튼 상태 변화 → 보이는 SummaryInfoCell에 직접 반영
+        // 확인 버튼 탭
+        headerView.publicConfirmButton.rx.tap
+            .map { RecordDetailViewReactor.Action.tapConfirm }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        // 저장 버튼 활성화 상태 바인딩
         reactor.state
             .map(\.isSaveButtonEnabled)
             .distinctUntilChanged()
             .bind(with: self) { owner, isEnabled in
-                owner.recordDetailView.publicCollectionView.visibleCells.forEach { cell in
-                    if let summaryCell = cell as? SummaryInfoCell {
-                        summaryCell.updateSaveButtonEnabled(isEnabled)
-                    }
-                }
+                owner.recordDetailView.publicHeaderView.updateSaveButtonEnabled(isEnabled)
             }
             .disposed(by: disposeBag)
 
