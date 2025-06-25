@@ -60,6 +60,9 @@ final class OnboardingView: UIView {
         $0.contentMode = .scaleAspectFit
     }
     
+    /// centerImage와 nextButton 중앙에 pageIndicator 배치를 위한 spacerView
+    let spacerView = UIView()
+    
     /// 온보딩 진행 상황을 표시하는 페이지 인디케이터(UIPageControl).
     let pageIndicator = UIPageControl().then {
         $0.numberOfPages = 5
@@ -108,7 +111,7 @@ private extension OnboardingView {
     
     /// 서브뷰 계층 구조 설정
     func setViewHierarchy() {
-        self.addSubviews(closeButton, titleLabel, subTitleLabel, centerImageView, pageIndicator, nextButton)
+        self.addSubviews(closeButton, titleLabel, subTitleLabel, centerImageView, spacerView, pageIndicator, nextButton)
     }
     
     /// SnapKit을 활용한 오토레이아웃 제약조건 설정
@@ -130,15 +133,21 @@ private extension OnboardingView {
         }
         
         centerImageView.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(60)
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(55)
             $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(40)
+            $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(centerImageView.snp.width).multipliedBy(1.2)
         }
         
-        pageIndicator.snp.makeConstraints {
-            $0.top.equalTo(centerImageView.snp.bottom).offset(24)
+        spacerView.snp.makeConstraints {
+            $0.top.equalTo(centerImageView.snp.bottom)
+            $0.bottom.equalTo(nextButton.snp.top)
             $0.centerX.equalToSuperview()
+        }
+
+        pageIndicator.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalTo(spacerView.snp.centerY)
             $0.height.equalTo(16)
         }
         
