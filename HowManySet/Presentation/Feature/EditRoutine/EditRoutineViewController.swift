@@ -92,6 +92,22 @@ final class EditRoutineViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        startButton.rx.tap
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .do(onNext: { [weak self] _ in
+                guard let self else { return }
+                UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
+                    self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                }, completion: { _ in
+                    UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+                        self.startButton.transform = .identity
+                    })
+                })
+            })
+            .map { Reactor.Action.startButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         reactor.state
             .compactMap{ $0.routine }
             .distinctUntilChanged()
