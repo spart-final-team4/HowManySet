@@ -822,6 +822,7 @@ extension HomeViewController {
                 let contentState = data
                 print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
+                    LiveActivityService.shared.stop()
                     LiveActivityService.shared.start(with: contentState)
                 } else {
                     LiveActivityService.shared.stop()
