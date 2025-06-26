@@ -13,7 +13,7 @@ import ReactorKit
 
 final class EditExcerciseViewReactor: Reactor {
     
-    private let updateWorkoutUseCase: UpdateWorkoutUseCaseProtocol
+    private let updateWorkoutUseCase: UpdateWorkoutUseCase
     
     enum Action {
         case saveExcerciseButtonTapped((name: String, weightSet: [[String]]))
@@ -30,10 +30,22 @@ final class EditExcerciseViewReactor: Reactor {
         var currentUnit: String = "kg"
     }
     
+    /// 운동 저장 결과 상태
+    enum ValidWorkout {
+        case workoutNameTooLong
+        case workoutNameTooShort
+        case workoutInvalidCharacters
+        case workoutNameEmpty
+        case workoutContainsZero
+        case workoutEmpty
+        case success
+    }
+    
+    let alertRelay = PublishRelay<ValidWorkout>()
     var initialState: State
     
     init(workout: Workout,
-         updateWorkoutUseCase: UpdateWorkoutUseCaseProtocol
+         updateWorkoutUseCase: UpdateWorkoutUseCase
     ) {
         self.initialState = State(workout: workout,
                                   currentUnit: workout.sets[0].unit)
@@ -52,11 +64,49 @@ final class EditExcerciseViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .saveExcercise((let newName, let newWeightSet)):
-            break
+            var newWorkout = newState.workout
+            newWorkout.name = newName
+            newWorkout.sets = mappingSets(with: newWeightSet)
+            if case .success = validationWorkout(workout: newWorkout) {
+                updateWorkoutUseCase.execute(item: newWorkout)
+            }
+            alertRelay.accept(validationWorkout(workout: newWorkout))
         case .changeUnit(let unit):
             newState.currentUnit = unit
         }
         return newState
     }
     
+    // MARK: - 유효성 검사
+    private func validationWorkout(workout: Workout) -> ValidWorkout {
+        if workout.name.isEmpty {
+            return ValidWorkout.workoutNameEmpty
+        }
+        if workout.name.count > 25 {
+            return ValidWorkout.workoutNameTooLong
+        }
+        if workout.name.count <= 1 {
+            return ValidWorkout.workoutNameTooShort
+        }
+        if workout.sets.contains(where: { $0.reps == 0 || $0.weight == 0}) {
+            return ValidWorkout.workoutContainsZero
+        }
+        if workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0}) {
+            return ValidWorkout.workoutInvalidCharacters
+        }
+        
+        return ValidWorkout.success
+    }
+    
+    private func mappingSets(with array: [[String]]) -> [WorkoutSet] {
+        var arr = array
+        var newSets = [WorkoutSet]()
+        arr.removeFirst()
+        arr.forEach { element in
+            newSets.append(WorkoutSet(weight: Double(element[0]) ?? 0.0,
+                                      unit: currentState.currentUnit,
+                                      reps: Int(element[1]) ?? 1))
+        }
+        return newSets
+    }
 }
