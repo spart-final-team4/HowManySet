@@ -19,10 +19,7 @@ final class HomeViewController: UIViewController, View {
     private weak var coordinator: HomeCoordinatorProtocol?
         
     var disposeBag = DisposeBag()
-    
-    /// LiveActivity용 disposable
-    private var liveActivityDisposeBag = DisposeBag()
-    
+        
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
     
@@ -855,19 +852,13 @@ extension HomeViewController {
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
             }
             .disposed(by: disposeBag)
-    }//bind
-}
-
-// MARK: LiveActivity
-extension HomeViewController {
-    
-    func bindLiveActivityEvents(reactor: HomeViewReactor) {
+        
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .startWith(Notification(name: UIApplication.willEnterForegroundNotification))
             .flatMapLatest { [weak self] _ -> Observable<Void> in
                 guard let self else { return .empty() }
-                return Observable<Int>.interval(.milliseconds(300), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+                return Observable<Int>.interval(.milliseconds(100), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
                     .flatMap { _ in
                         Observable.merge(
                             Observable.create { observer in
@@ -921,12 +912,12 @@ extension HomeViewController {
                                 }
                                 return Disposables.create()
                             }
-                        ).throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+                        ).throttle(.milliseconds(100), scheduler: MainScheduler.instance)
                     }
             }
             .subscribe()
-            .disposed(by: liveActivityDisposeBag)
-    }
+            .disposed(by: disposeBag)
+    }//bind
 }
 
 
