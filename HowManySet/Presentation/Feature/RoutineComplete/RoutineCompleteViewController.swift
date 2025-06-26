@@ -132,7 +132,9 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var memoTextView = UITextView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = .grey8
+        $0.text = memoPlaceHolderText
+        $0.textColor = .grey3
         $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.layer.cornerRadius = 12
         $0.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
@@ -306,16 +308,19 @@ extension RoutineCompleteViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == memoPlaceHolderText {
-            textView.text = ""
+            textView.text = nil
             textView.textColor = .white
         }
+        textView.layer.borderColor = UIColor.grey3.cgColor
+        textView.layer.borderWidth = 1
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = memoPlaceHolderText
-            textView.textColor = .placeholderText
+            textView.textColor = .grey3
         }
+        textView.layer.borderWidth = 0
     }
 }
 
@@ -337,6 +342,14 @@ private extension RoutineCompleteViewController {
         exerciseTimeLabel.text = totalTime
         exerciseAndSetInfoLabel.text = "\(exerciseDidCount)개 운동, \(setDidCount)세트"
         memoTextView.text = routineMemo
+
+        // placeholder 적용 조건 판단
+        if memoTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            memoTextView.text = memoPlaceHolderText
+            memoTextView.textColor = .grey3
+        } else {
+            memoTextView.textColor = .white
+        }
     }
 }
 
