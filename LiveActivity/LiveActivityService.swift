@@ -49,6 +49,7 @@ final class LiveActivityService {
             for activity in Activity<HowManySetWidgetAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
                 print("🎮 LIVEACTIVITY 종료!")
+                LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
             }
         }
     }
