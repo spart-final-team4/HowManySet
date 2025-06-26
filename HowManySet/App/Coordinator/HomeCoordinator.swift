@@ -63,9 +63,6 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         let (homeVC, reactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: self, routine: routine)
         homeViewReactor = reactor
         reactor.action.onNext(.routineSelected)
-        if let homeVC = homeVC as? HomeViewController {
-            homeVC.bindLiveActivityEvents(reactor: reactor)
-        }
         homeVC.navigationItem.hidesBackButton = true
         navigationController.tabBarController?.selectedIndex = 0
         navigationController.setViewControllers([homeVC], animated: false)

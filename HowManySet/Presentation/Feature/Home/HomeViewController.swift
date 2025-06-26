@@ -874,33 +874,8 @@ extension HomeViewController {
                             Observable.create { observer in
                                 LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
                                     print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
-                                    reactor.action.onNext(.forwardButtonClicked(at: index))
-                                    observer.onCompleted()
-                                }
-                                return Disposables.create()
-                            },
-                            Observable.create { observer in
-                                LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
-                                    print("운동 종료 polling 이벤트 감지!")
-                                    self.coordinator?.popUpEndWorkoutAlert {
-                                        reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                                        return self.reactor?.currentState.workoutSummary ??
-                                        WorkoutSummary(
-                                            routineName: "",
-                                            date: Date(),
-                                            routineDidProgress: 0,
-                                            totalTime: 0,
-                                            exerciseDidCount: 0,
-                                            setDidCount: 0,
-                                            routineMemo: nil
-                                        )
-                                    } onCancel: { [weak self] in
-                                        guard let self else { return }
-                                        // 계속하기 클릭 시 hidden 해제
-                                        self.pagingCardViewContainer.forEach {
-                                            $0.isHidden = false
-                                        }
-                                        self.setExerciseCardViewslayout(cardContainer: self.pagingCardViewContainer, newPage: 0)
+                                    DispatchQueue.main.async {
+                                        reactor.action.onNext(.forwardButtonClicked(at: index))
                                     }
                                     observer.onCompleted()
                                 }
