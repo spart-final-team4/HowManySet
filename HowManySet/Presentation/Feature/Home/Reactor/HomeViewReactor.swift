@@ -768,7 +768,7 @@ extension HomeViewReactor.State {
             // 기본 데이터
             return WorkoutDataForLiveActivity(
                 workoutTime: 0,
-                isWorkingout: false,
+                isWorkingout: true,
                 exerciseName: "",
                 exerciseInfo: "",
                 isResting: false,
@@ -897,7 +897,7 @@ extension HomeViewReactor {
             workoutCardStates: initialWorkoutCardStates,
             currentExerciseIndex: 0,
             updatingIndex: 0,
-            isWorkingout: false,
+            isWorkingout: true,
             isWorkoutPaused: false,
             workoutTime: 0,
             isResting: false,
