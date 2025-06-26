@@ -88,6 +88,9 @@ private extension EditExcerciseHeaderView {
     /// 텍스트 필드 변경을 `exerciseNameRelay`에 바인딩합니다.
     func bind() {
         exerciseNameTextField.rx.text
+            .do(onNext: { str in
+                print("exerciseNameTextField.rx.text")
+            })
             .compactMap { $0 }
             .distinctUntilChanged()
             .bind(to: exerciseNameRelay)
@@ -127,6 +130,7 @@ extension EditExcerciseHeaderView {
     }
     
     func editConfigure(with text: String) {
+        if text == exerciseNameTextField.text { return }
         exerciseNameTextField.text = text
         titleLabel.text = "운동 이름"
     }

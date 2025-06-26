@@ -20,7 +20,7 @@ struct WorkoutSet: Hashable, Codable {
     /// 무게의 단위입니다.
     ///
     /// 예: `"kg"`, `"lb"` 등
-    let unit: String
+    var unit: String
     
     /// 반복 횟수입니다.
     ///
