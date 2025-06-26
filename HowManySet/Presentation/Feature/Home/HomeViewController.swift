@@ -813,7 +813,7 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
             .distinctUntilChanged { $0 == $1 }
-            .observe(on: MainScheduler.asyncInstance)
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 
                 let (isWorkingout, data) = state
@@ -829,6 +829,7 @@ extension HomeViewController {
         
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
@@ -858,7 +859,7 @@ extension HomeViewController {
             .startWith(Notification(name: UIApplication.willEnterForegroundNotification))
             .flatMapLatest { [weak self] _ -> Observable<Void> in
                 guard let self else { return .empty() }
-                return Observable<Int>.interval(.milliseconds(500), scheduler: MainScheduler.instance)
+                return Observable<Int>.interval(.milliseconds(100), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
                     .flatMap { _ in
                         Observable.merge(
                             Observable.create { observer in
