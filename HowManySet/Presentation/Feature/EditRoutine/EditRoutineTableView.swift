@@ -68,6 +68,9 @@ final class EditRoutineTableView: UITableView {
                 }
                 
                 cell.moreButtonTapped
+                    .do(onDispose: {
+                        print("cell.moreButtonTapped dispose")
+                    })
                     .subscribe(with: self) { owner, _ in
                         owner.cellMoreButtonTapped.accept(indexPath)
                     }.disposed(by: cell.disposeBag)
