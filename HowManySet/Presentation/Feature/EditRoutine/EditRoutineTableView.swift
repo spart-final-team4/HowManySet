@@ -19,6 +19,8 @@ final class EditRoutineTableView: UITableView {
     private(set) var footerViewTapped = PublishRelay<Void>()
     private(set) var dragDropRelay = PublishRelay<(source: IndexPath, destination: IndexPath)>()
     
+    private var caller: ViewCaller
+    
     /// RxDataSources를 위한 DataSource 타입 별칭
     typealias DataSource = RxTableViewSectionedReloadDataSource<EditRoutineSection>
 
@@ -26,7 +28,8 @@ final class EditRoutineTableView: UITableView {
     var rxDataSource: DataSource?
 
     // MARK: - Initializer
-    override init(frame: CGRect, style: UITableView.Style) {
+    init(frame: CGRect, style: UITableView.Style, caller: ViewCaller) {
+        self.caller = caller
         super.init(frame: frame, style: style)
         delegate = self
         // TODO: 마이너 패치때 도입
@@ -69,7 +72,7 @@ final class EditRoutineTableView: UITableView {
                     owner.cellMoreButtonTapped.accept(indexPath)
                 }.disposed(by: cell.disposeBag)
                 
-            cell.configure(model: item)
+            cell.configure(model: item, caller: self.caller)
             return cell
             })
         rxDataSource?.canMoveRowAtIndexPath = { _, _ in return true }

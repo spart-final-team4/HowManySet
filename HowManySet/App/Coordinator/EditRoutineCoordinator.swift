@@ -27,12 +27,12 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     }
     
     func start() {
-        let editRoutineVC = container.makeEditRoutineViewController(coordinator: self, with: routine)
+        let editRoutineVC = container.makeEditRoutineViewController(coordinator: self, with: routine, caller: .fromTabBar)
         navigationController.pushViewController(editRoutineVC, animated: true)
     }
     
     func startModal() {
-        let editRoutineVC = container.makeEditRoutineViewController(coordinator: self, with: routine)
+        let editRoutineVC = container.makeEditRoutineViewController(coordinator: self, with: routine, caller: .fromHome)
         
         if let sheet = editRoutineVC.sheetPresentationController {
             sheet.detents = [.large()]
