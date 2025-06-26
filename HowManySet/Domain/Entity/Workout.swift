@@ -15,7 +15,7 @@ struct Workout: Hashable, Codable {
     /// 운동 이름입니다.
     ///
     /// 예: `"벤치프레스"`, `"스쿼트"` 등
-    let name: String
+    var name: String
     
     /// 운동에 포함된 세트 목록입니다.
     ///

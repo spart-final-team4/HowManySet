@@ -17,16 +17,19 @@ final class EditExcerciseViewReactor: Reactor {
         case saveExcerciseButtonTapped
         case changeExcerciseWeightSet([[String]])
         case changeUnit(String)
+        case changeExcerciseName(String)
     }
     
     enum Mutation {
         case saveExcercise
         case changeExcerciseWeightSet([[String]])
-        case changeUnit(String) 
+        case changeUnit(String)
+        case changeExcerciseName(String)
     }
     
     struct State {
         var workout: Workout
+        var currentWorkoutName: String = ""
         var currentUnit: String = "kg"
     }
     
@@ -43,6 +46,8 @@ final class EditExcerciseViewReactor: Reactor {
             return .just(.changeExcerciseWeightSet(newWeightSet))
         case .changeUnit(let unit):
             return .just(.changeUnit(unit))
+        case .changeExcerciseName(let newName):
+            return .just(.changeExcerciseName(newName))
         }
     }
     
@@ -52,15 +57,20 @@ final class EditExcerciseViewReactor: Reactor {
         case .saveExcercise:
             break
         case .changeExcerciseWeightSet(let newWeightSet):
-            print(newWeightSet)
-        case .changeUnit(let unit):
-            var sets = newState.workout.sets
-            var newSets: [WorkoutSet] = []
-            sets.forEach { item in
-                newSets.append(WorkoutSet(weight: item.weight, unit: unit, reps: item.reps))
+            var newSet: [WorkoutSet] = []
+            for i in 1..<newWeightSet.count {
+                let weightSet = newWeightSet[i]
+                newSet.append(WorkoutSet(weight: Double(weightSet[0]) ?? 0.0,
+                                         unit: currentState.currentUnit,
+                                         reps: Int(weightSet[1]) ?? 1))
             }
-            newState.workout.sets = newSets
+            newState.workout.sets = newSet
+        case .changeUnit(let unit):
+            newState.currentUnit = unit
+        case .changeExcerciseName(let newName):
+            newState.currentWorkoutName = newName
         }
         return newState
     }
+    
 }

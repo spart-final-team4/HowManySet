@@ -240,7 +240,7 @@ extension EditExcerciseContentView {
         excerciseInfoRelay.accept([[""]])
         for i in 0..<sets.count {
             // 세트 순서를 결정
-            let order = verticalContentStackView.subviews.count - 1
+            let order = i + 1
             let contentView = EditExcerciseHorizontalContentStackView(order: order)
             let weight = sets[i].weight
             let reps = sets[i].reps
