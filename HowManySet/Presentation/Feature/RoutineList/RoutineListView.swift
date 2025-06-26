@@ -9,11 +9,16 @@ final class RoutineListView: UIView {
     private let routineTableView = UITableView()
     // FooterView 구성
     private let footerView = UIView()
+    
+    private var caller: ViewCaller
 
     // MARK: - Init
-    override init(frame: CGRect) {
+    init(frame: CGRect, caller: ViewCaller) {
+        self.caller = caller
         super.init(frame: frame)
         setupUI()
+        
+        setHiddenWithCaller()
     }
     
     required init?(coder: NSCoder) {
@@ -38,7 +43,7 @@ private extension RoutineListView {
     func setAppearance() {
         titleLabel.do {
             $0.text = "루틴 리스트"
-            $0.font = .systemFont(ofSize: 36, weight: .regular)
+            $0.font = .systemFont(ofSize: 36, weight: .medium)
             $0.textColor = .white
         }
 
@@ -101,5 +106,14 @@ private extension RoutineListView {
 
         // 테이블 뷰에 적용
         routineTableView.tableFooterView = footerView
+    }
+}
+
+// MARK: - Private Methods
+private extension RoutineListView {
+    
+    /// 홈에서 띄울 시 버튼 hidden 
+    func setHiddenWithCaller() {
+        addNewRoutineButton.isHidden = caller == .fromHome ? true : false
     }
 }

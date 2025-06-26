@@ -8,6 +8,6 @@
 import Foundation
 
 enum ViewCaller {
-    case forAdding
-    case forEditing
+    case fromTabBar
+    case fromHome
 }
