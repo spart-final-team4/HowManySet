@@ -830,6 +830,7 @@ extension HomeViewController {
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
@@ -858,16 +859,17 @@ extension HomeViewController {
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .startWith(Notification(name: UIApplication.willEnterForegroundNotification))
-            .flatMapLatest { [weak self] _ -> Observable<Void> in
-                guard let self else { return .empty() }
-                return Observable<Int>.interval(.milliseconds(100), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .flatMapLatest { _ -> Observable<Void> in
+                return Observable<Int>.interval(.milliseconds(100), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
                     .flatMap { _ in
                         Observable.merge(
                             Observable.create { observer in
                                 LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
                                     print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
-                                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                                    observer.onCompleted()
+                                    DispatchQueue.main.async {
+                                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
+                                        observer.onNext(())
+                                    }
                                 }
                                 return Disposables.create()
                             },
@@ -876,20 +878,22 @@ extension HomeViewController {
                                     print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
                                     DispatchQueue.main.async {
                                         reactor.action.onNext(.forwardButtonClicked(at: index))
+                                        observer.onNext(())
                                     }
-                                    observer.onCompleted()
                                 }
                                 return Disposables.create()
                             },
                             Observable.create { observer in
                                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
                                     print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
-                                    reactor.action.onNext(.restPauseButtonClicked)
-                                    observer.onCompleted()
+                                    DispatchQueue.main.async {
+                                        reactor.action.onNext(.restPauseButtonClicked)
+                                        observer.onNext(())
+                                    }
                                 }
                                 return Disposables.create()
                             }
-                        ).throttle(.milliseconds(100), scheduler: MainScheduler.instance)
+                        )
                     }
             }
             .subscribe()
