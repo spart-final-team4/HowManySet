@@ -139,7 +139,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 
                                 HStack(spacing: 10) {
                                     if #available(iOS 17.0, *) {
-                                        Button(intent: SkipRestIntent(index: context.state.currentIndex)) {
+                                        Button(intent: SkipIntent(index: context.state.currentIndex)) {
                                             Image(systemName: "forward.end.fill")
                                                 .foregroundStyle(.brand)
                                                 .fontWeight(.semibold)
