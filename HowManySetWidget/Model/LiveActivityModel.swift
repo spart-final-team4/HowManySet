@@ -13,6 +13,7 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var isWorkingout: Bool
     var exerciseName: String
     var exerciseInfo: String
+    var currentRoutineCompleted: Bool
     var isResting: Bool
     var restSecondsRemaining: Float
     var isRestPaused: Bool
