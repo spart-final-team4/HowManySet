@@ -8,8 +8,11 @@ import SnapKit
 final class RoutineListViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
-
-    let routineListView = RoutineListView()
+    
+    private var caller: ViewCaller
+    
+    private lazy var routineListView = RoutineListView(frame: .zero, caller: caller)
+    
     private weak var coordinator: RoutineListCoordinatorProtocol?
 
     // RxDataSource 사용을 위한 Model 생성
@@ -27,7 +30,8 @@ final class RoutineListViewController: UIViewController, View {
     )
 
     // MARK: - Init
-    init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol) {
+    init(reactor: RoutineListViewReactor, coordinator: RoutineListCoordinatorProtocol, caller: ViewCaller) {
+        self.caller = caller
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
@@ -101,7 +105,7 @@ extension RoutineListViewController: UITableViewDelegate {
 
         let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
 
-        coordinator?.pushEditRoutineView(with: routine)
+        coordinator?.presentEditRoutinView(with: routine)
     }
 
     /// trailing -> leading 방향으로 스와이프하는 메서드

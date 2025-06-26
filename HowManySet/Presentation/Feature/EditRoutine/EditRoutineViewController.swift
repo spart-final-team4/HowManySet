@@ -100,13 +100,14 @@ final class EditRoutineViewController: UIViewController, View {
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(onNext: { [weak self] _ in
                 guard let self else { return }
-                UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
+                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                     self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                 }, completion: { _ in
-                    UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         self.startButton.transform = .identity
                     }, completion: { _ in
                         self.coordinator.navigateToHomeViewWithWorkoutStarted()
+                        self.dismiss(animated: true)
                     })
                 })
             })
@@ -144,7 +145,7 @@ final class EditRoutineViewController: UIViewController, View {
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
                 saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
                 workoutStateForEdit: nil,
-                caller: .forEditing)
+                caller: .fromHome)
         )
         self.present(vc, animated: true)
     }

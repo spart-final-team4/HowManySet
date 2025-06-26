@@ -18,12 +18,14 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
     private let container: DIContainer
     private let workoutSummary: WorkoutSummary
     private let homeViewReactor: HomeViewReactor
+    private let homeCoordinator: HomeCoordinator
 
-    init(navigationController: UINavigationController, container: DIContainer, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor) {
+    init(navigationController: UINavigationController, container: DIContainer, workoutSummary: WorkoutSummary, homeViewReactor: HomeViewReactor, homeCoordinator: HomeCoordinator) {
         self.navigationController = navigationController
         self.container = container
         self.workoutSummary = workoutSummary
         self.homeViewReactor = homeViewReactor
+        self.homeCoordinator = homeCoordinator
     }
     
     func start() {
@@ -32,16 +34,10 @@ final class RoutineCompleteCoordinator: RoutineCompleteCoordinatorProtocol {
         navigationController.pushViewController(routineCompleteVC, animated: true)
     }
     
-    /// 메인 홈 화면으로 이동
-    /// 초기화 하고 push or just pop?
+    /// 메인 홈 시작화면으로 이동
     func navigateToHomeView() {
-        // TODO: 운동 상태 초기화 코드
-        
-        let homeCoordinator = HomeCoordinator(navigationController: navigationController, container: container)
-        let (homeVC, _) = container.makeHomeViewController(coordinator: homeCoordinator)
-        
+        let homeStartVC = container.makeHomeStartViewController(coordinator: homeCoordinator)
         // navigation 스택을 홈으로 초기화
-        navigationController.setViewControllers([homeVC], animated: false)
+        navigationController.setViewControllers([homeStartVC], animated: false)
     }
-    
 }

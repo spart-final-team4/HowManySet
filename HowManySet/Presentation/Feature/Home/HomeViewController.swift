@@ -17,9 +17,7 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
-    
-    private let homeText = "홈"
-    
+        
     var disposeBag = DisposeBag()
     
     /// LiveActivity용 disposable
@@ -36,15 +34,9 @@ final class HomeViewController: UIViewController, View {
     private let cardWidth = UIScreen.main.bounds.width - 40
     
     // MARK: - UI Components
-    private lazy var titleLabel = UILabel().then {
-        $0.text = homeText
-        $0.font = .systemFont(ofSize: 36, weight: .bold)
-    }
-    
     private lazy var topTimerHStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 16
-        $0.isHidden = true
     }
     
     private lazy var workoutTimeLabel = UILabel().then {
@@ -61,7 +53,6 @@ final class HomeViewController: UIViewController, View {
         $0.axis = .horizontal
         $0.spacing = 16
         $0.alignment = .trailing
-        $0.isHidden = true
     }
     
     private lazy var stopButton = UIButton().then {
@@ -80,28 +71,25 @@ final class HomeViewController: UIViewController, View {
         $0.tintColor = .white
     }
     
-    private lazy var routineStartCardView = HomeRoutineStartCardView().then {
-        $0.layer.cornerRadius = 20
+    private lazy var cardContainer = UIView().then {
+        $0.alpha = 0
     }
     
     private lazy var restInfoView = RestInfoView(frame: .zero, homeViewReactor: self.reactor!).then {
         $0.backgroundColor = .cardBackground
         $0.layer.cornerRadius = 20
-        $0.isHidden = true
     }
     
     // MARK: - 페이징 스크롤 뷰 관련
     private lazy var pagingScrollView = UIScrollView().then {
         $0.showsHorizontalScrollIndicator = false
         $0.isPagingEnabled = true
-        $0.isHidden = true
     }
     
     private lazy var pageController = UIPageControl().then {
         $0.currentPage = 0
         $0.numberOfPages = 0
-        $0.hidesForSinglePage = true
-        $0.isHidden = true
+        $0.hidesForSinglePage = false
     }
     
     private lazy var pagingScrollContentView = UIView()
@@ -111,7 +99,6 @@ final class HomeViewController: UIViewController, View {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
-        
     }
     
     @available(*, unavailable)
@@ -125,7 +112,6 @@ final class HomeViewController: UIViewController, View {
         print(#function)
         
         setupUI()
-        
     }
 }
 
@@ -138,10 +124,9 @@ private extension HomeViewController {
     
     func setViewHiearchy() {
         view.addSubviews(
-            titleLabel,
             topTimerHStackView,
             buttonHStackView,
-            routineStartCardView,
+            cardContainer,
             pagingScrollView,
             pageController,
             restInfoView
@@ -162,22 +147,16 @@ private extension HomeViewController {
     
     func setConstraints() {
         
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
-        }
-        
         topTimerHStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
+            $0.bottom.equalTo(cardContainer.snp.top).offset(-32)
         }
         
         buttonHStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(routineStartCardView.snp.top).offset(-32)
+            $0.bottom.equalTo(cardContainer.snp.top).offset(-32)
         }
         
         stopButton.snp.makeConstraints {
@@ -188,7 +167,7 @@ private extension HomeViewController {
             $0.width.height.equalTo(44)
         }
         
-        routineStartCardView.snp.makeConstraints {
+        cardContainer.snp.makeConstraints {
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalToSuperview().multipliedBy(0.45)
         }
@@ -204,7 +183,7 @@ private extension HomeViewController {
         }
         
         pageController.snp.makeConstraints {
-            $0.top.equalTo(routineStartCardView.snp.bottom).offset(16)
+            $0.top.equalTo(cardContainer.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
         }
         
@@ -215,31 +194,9 @@ private extension HomeViewController {
             $0.height.equalToSuperview().multipliedBy(0.15)
         }
     }
-    
-    /// 운동 시작 시 표현되는 뷰 설정
-    func showStartRoutineUI() {
-        
-        routineStartCardView.isHidden = true
-        
-        [topTimerHStackView,
-         buttonHStackView,
-         pageController,
-         pagingScrollView,
-         restInfoView].forEach {
-            $0.isHidden = false
-        }
-        
-        titleLabel.alpha = 0
-    }
-    
+
     /// 스크롤 뷰 기준으로 레이아웃 재설정
     func remakeOtherViewsWithScrollView() {
-        
-        titleLabel.snp.remakeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(pagingScrollView.snp.top).offset(-32)
-        }
         
         topTimerHStackView.snp.remakeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -455,7 +412,7 @@ private extension HomeViewController {
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
-            // TODO: 배포 후 수정
+            // MARK: - TODO: 배포 후 수정
 //            // 해당 페이지 운동 종목 버튼
 //            cardView.weightRepsButton.rx.tap
 //                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
@@ -492,23 +449,7 @@ extension HomeViewController {
         print(#function)
         
         // MARK: - Action
-        // 루틴 시작 버튼 클릭 시
-        routineStartCardView.routineSelectButton.rx.tap
-            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .bind(onNext: { [weak self] _ in
-                guard let self else { return }
-                UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseInOut], animations: {
-                    self.routineStartCardView.routineSelectButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
-                        self.routineStartCardView.routineSelectButton.transform = .identity
-                    }, completion: { _ in
-                        self.coordinator?.pushRoutineListView()
-                    })
-                })
-            })
-            .disposed(by: disposeBag)
-        
+        // 운동 중지 버튼 클릭 시
         pauseButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .map { Reactor.Action.workoutPauseButtonClicked }
@@ -530,6 +471,7 @@ extension HomeViewController {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        // 운동 종료 버튼 클릭 시
         stopButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(onNext: { [weak self] in
@@ -593,16 +535,6 @@ extension HomeViewController {
         
         
         // MARK: - State
-        // 초기 뷰 현재 날짜 표시
-        reactor.state.map { $0.isWorkingout }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .filter { !$0 }
-            .bind { [weak self] _ in
-                guard let self else { return }
-                self.routineStartCardView.todayDateLabel.text = reactor.currentState.date.toDateLabel()
-            }.disposed(by: disposeBag)
-        
         // 운동 시작 시 동작
         reactor.state.map { $0.isWorkingout }
             .distinctUntilChanged()
@@ -617,7 +549,6 @@ extension HomeViewController {
             .bind(onNext: { [weak self] cardStates in
                 guard let self else { return }
                 print("--- 운동시작 ---")
-                self.showStartRoutineUI()
                 self.configureExerciseCardViews(cardStates: cardStates)
             }).disposed(by: disposeBag)
         
