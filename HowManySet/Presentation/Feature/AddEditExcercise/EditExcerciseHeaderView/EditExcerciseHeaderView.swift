@@ -133,5 +133,6 @@ extension EditExcerciseHeaderView {
         if text == exerciseNameTextField.text { return }
         exerciseNameTextField.text = text
         titleLabel.text = "운동 이름"
+        exerciseNameRelay.accept(text)
     }
 }
