@@ -17,7 +17,6 @@ final class LiveActivityService {
     init() {}
     
     func start(with data: WorkoutDataForLiveActivity) {
-        guard activity == nil else { return }
         let attributes = HowManySetWidgetAttributes()
         let contentState = HowManySetWidgetAttributes.ContentState(from: data)
         
@@ -50,8 +49,6 @@ final class LiveActivityService {
             for activity in Activity<HowManySetWidgetAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
                 print("🎮 LIVEACTIVITY 종료!")
-                self.activity = nil
-                LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
             }
         }
     }
