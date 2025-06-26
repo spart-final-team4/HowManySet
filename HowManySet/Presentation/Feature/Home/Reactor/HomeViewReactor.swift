@@ -222,6 +222,7 @@ final class HomeViewReactor: Reactor {
                 .observe(on: MainScheduler.asyncInstance)
             
             return .concat([
+                .just(.setWorkoutStartDate(Date())),
                 .just(.setWorkingout(true)),
                 workoutTimer,
                 .just(.initializeWorkoutCardStates(updatedCardStates))
@@ -649,6 +650,7 @@ final class HomeViewReactor: Reactor {
             
         case let .setAccumulatedWorkoutTime(time):
             newState.accumulatedWorkoutTime = time
+            newState.workoutTime = Int(time)
             
         case .setCurrentRoutineCompleted:
             newState.currentRoutineCompleted = true
