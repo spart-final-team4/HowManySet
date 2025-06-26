@@ -42,14 +42,23 @@ final class EditExcerciseViewController: UIViewController, View {
     }
     
     func bind(reactor: EditExcerciseViewReactor) {
+        
+        headerView.exerciseNameRelay
+            .map { Reactor.Action.changeExcerciseName($0) }
+            .skip(1)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         contentView.excerciseInfoRelay
             .observe(on: MainScheduler.asyncInstance)
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
+            .skip(1)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         contentView.unitSelectionRelay
             .map { Reactor.Action.changeUnit($0) }
+            .skip(1)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -60,6 +69,7 @@ final class EditExcerciseViewController: UIViewController, View {
                 self?.headerView.editConfigure(with: workout.name)
                 self?.contentView.configureEditSets(with: workout.sets)
             }).disposed(by: disposeBag)
+        
     }
     
 }
