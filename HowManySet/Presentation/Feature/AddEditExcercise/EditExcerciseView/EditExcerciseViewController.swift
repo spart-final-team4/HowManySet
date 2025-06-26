@@ -43,12 +43,6 @@ final class EditExcerciseViewController: UIViewController, View {
     
     func bind(reactor: EditExcerciseViewReactor) {
         
-        headerView.exerciseNameRelay
-            .map { Reactor.Action.changeExcerciseName($0) }
-            .skip(1)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
         contentView.excerciseInfoRelay
             .observe(on: MainScheduler.asyncInstance)
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
@@ -62,13 +56,22 @@ final class EditExcerciseViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        footerView.saveExcerciseButtonRelay
+            .do(onNext: { [weak self] in
+                self?.dismiss(animated: true)
+            })
+            .map { Reactor.Action.saveExcerciseButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         reactor.state
             .map{ $0.workout }
             .distinctUntilChanged()
-            .subscribe(onNext: { [weak self] workout in
-                self?.headerView.editConfigure(with: workout.name)
-                self?.contentView.configureEditSets(with: workout.sets)
-            }).disposed(by: disposeBag)
+            .subscribe(with: self) { owner, workout in
+                print("update state")
+                owner.contentView.configureEditSets(with: workout.sets)
+                owner.headerView.editConfigure(with: workout.name)
+            }.disposed(by: disposeBag)
         
     }
     

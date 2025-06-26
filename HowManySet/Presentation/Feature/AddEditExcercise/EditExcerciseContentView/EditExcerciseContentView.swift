@@ -237,7 +237,7 @@ extension EditExcerciseContentView {
         
         verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
-        excerciseInfoRelay.accept([[""]])
+        
         for i in 0..<sets.count {
             // 세트 순서를 결정
             let order = i + 1
@@ -262,6 +262,7 @@ extension EditExcerciseContentView {
                 }.disposed(by: disposeBag)
             
             contentView.weightRepsRelay
+                .skip(1)
                 .subscribe(with: self) { owner, element in
                     if owner.excerciseInfoRelay.value.count > contentView.order {
                         var newValue = owner.excerciseInfoRelay.value
@@ -270,7 +271,7 @@ extension EditExcerciseContentView {
                     }
                 }.disposed(by: disposeBag)
             contentView.configure(weight: weight, reps: reps)
-            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
+//            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
         }
     }
 }
