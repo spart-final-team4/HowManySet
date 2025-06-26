@@ -24,6 +24,7 @@ import Then
     - Then 라이브러리로 UI 요소 선언 및 속성 초기화
     - 배경색, 버튼 컬러 등은 Asset Catalog의 명명 규칙을 따름
     - MVVM 구조에서 View 역할만 담당하며, 상태/이벤트 처리는 ViewController 또는 ViewModel에서 수행
+    - iPhone SE (375pt 이하) 화면 크기 대응
 
  - 사용 예시:
     ```
@@ -32,6 +33,10 @@ import Then
     ```
  */
 final class OnboardingView: UIView {
+    
+    // MARK: - SE3 대응 (375 x 667 pt)
+    private let customInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 16 : 20
+    private let imageHeightMultiplier: CGFloat = UIScreen.main.bounds.width <= 375 ? 1.0 : 1.3
     
     /// 오른쪽 상단 닫기(X) 버튼. 온보딩 화면을 종료할 때 사용.
     let closeButton = UIButton(type: .system).then {
@@ -118,25 +123,25 @@ private extension OnboardingView {
     func setConstraints() {
         closeButton.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(12)
-            $0.trailing.equalToSuperview().inset(20)
+            $0.trailing.equalToSuperview().inset(customInset)
             $0.width.height.equalTo(32)
         }
         
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(56)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(customInset)
         }
         
         subTitleLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(customInset)
         }
         
         centerImageView.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(55)
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(45)
             $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(centerImageView.snp.width).multipliedBy(1.2)
+            $0.leading.trailing.equalToSuperview().inset(customInset)
+            $0.height.equalTo(centerImageView.snp.width).multipliedBy(imageHeightMultiplier)
         }
         
         spacerView.snp.makeConstraints {
@@ -152,7 +157,7 @@ private extension OnboardingView {
         }
         
         nextButton.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(20)
+            $0.left.right.equalToSuperview().inset(customInset)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(32)
             $0.height.equalTo(56)
         }
