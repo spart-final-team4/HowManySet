@@ -21,11 +21,13 @@ final class AuthViewReactor: Reactor {
     enum Mutation {
         case loginSuccess(User)
         case loginFailed(Error)
+        case setLoading(Bool)
     }
 
     struct State {
         var user: User?
         var error: Error?
+        var isLoading: Bool = false
     }
 
     let initialState = State()
@@ -38,36 +40,42 @@ final class AuthViewReactor: Reactor {
     }
 
     func mutate(action: Action) -> Observable<Mutation> {
+        let loginObservable: Observable<User>
+
         switch action {
         case .tapKakaoLogin:
-            return useCase.loginWithKakao()
-                .map(Mutation.loginSuccess)
-                .catch { .just(.loginFailed($0)) }
+            loginObservable = useCase.loginWithKakao()
 
         case .tapGoogleLogin:
-            return useCase.loginWithGoogle()
-                .map(Mutation.loginSuccess)
-                .catch { .just(.loginFailed($0)) }
+            loginObservable = useCase.loginWithGoogle()
 
         case .tapAppleLogin(let token, let nonce):
-            return useCase.loginWithApple(token: token, nonce: nonce)
-                .map(Mutation.loginSuccess)
-                .catch { .just(.loginFailed($0)) }
+            loginObservable = useCase.loginWithApple(token: token, nonce: nonce)
 
         case .tapAnonymousLogin:
-            return useCase.loginAnonymously()
-                .map(Mutation.loginSuccess)
-                .catch { .just(.loginFailed($0)) }
+            loginObservable = useCase.loginAnonymously()
         }
+
+        return Observable.concat([
+            .just(.setLoading(true)), // ✅ 로딩 시작
+            loginObservable
+                .map(Mutation.loginSuccess)
+                .catch { .just(.loginFailed($0)) },
+            .just(.setLoading(false)) // ✅ 로딩 종료
+        ])
     }
 
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
+        case .setLoading(let isLoading):
+            newState.isLoading = isLoading
+
         case .loginSuccess(let user):
             newState.user = user
             newState.error = nil
             coordinator.completeAuth()
+
         case .loginFailed(let error):
             newState.error = error
         }
