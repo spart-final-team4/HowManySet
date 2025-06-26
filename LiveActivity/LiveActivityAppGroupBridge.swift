@@ -21,7 +21,7 @@ final class LiveActivityAppGroupEventBridge {
     }
     
     func checkSkipRestEvent(completion: (Int) -> Void) {
-        checkEvent(indexKey: "SkipRestIndex", timestampKey: "SkipRestTimestamp", completion: completion)
+        checkEvent(indexKey: "SkipIndex", timestampKey: "SkipRestTimestamp", completion: completion)
     }
     
     func checkPlayAndPauseRestEvent(completion: (Int) -> Void) {
@@ -59,7 +59,7 @@ final class LiveActivityAppGroupEventBridge {
         if let defaults = UserDefaults(suiteName: appGroupID) {
             defaults.removeObject(forKey: "SetCompleteIndex")
             defaults.removeObject(forKey: "SetCompleteTimestamp")
-            defaults.removeObject(forKey: "SkipRestIndex")
+            defaults.removeObject(forKey: "SkipIndex")
             defaults.removeObject(forKey: "SkipRestTimestamp")
             defaults.removeObject(forKey: "PlayAndPauseRestIndex")
             defaults.removeObject(forKey: "PlayAndPauseRestTimestamp")
