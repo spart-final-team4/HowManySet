@@ -369,9 +369,9 @@ final class HomeViewReactor: Reactor {
         // 백그라운드 시간도 포함한 운동 시간 설정
         case .adjustWorkoutTimeOnForeground:
             if let startDate = currentState.workoutStartDate {
-                let elapsedTime = Date.timeIntervalSince(startDate)
+                let elapsedTime = Date().timeIntervalSince(startDate)
                 return .concat([
-                    .just(.setAccumulatedWorkoutTime(currentState.accumulatedWorkoutTime)),
+                    .just(.setAccumulatedWorkoutTime(currentState.accumulatedWorkoutTime + elapsedTime)),
                     .just(.setWorkoutStartDate(Date())) // 다시 시작 시각 기록 (초기화)
                 ])
             } else {
