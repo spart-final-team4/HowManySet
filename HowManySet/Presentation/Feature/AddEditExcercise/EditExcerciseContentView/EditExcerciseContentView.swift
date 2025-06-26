@@ -234,7 +234,10 @@ extension EditExcerciseContentView {
 extension EditExcerciseContentView {
     
     func configureEditSets(with sets: [WorkoutSet]) {
-        var initailValue: [[String]] = [[]]
+        
+        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
+        excerciseInfoRelay.accept([[""]])
         for i in 0..<sets.count {
             // 세트 순서를 결정
             let order = verticalContentStackView.subviews.count - 1

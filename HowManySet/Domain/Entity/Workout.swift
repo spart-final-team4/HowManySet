@@ -20,7 +20,7 @@ struct Workout: Hashable, Codable {
     /// 운동에 포함된 세트 목록입니다.
     ///
     /// `WorkoutSet` 타입의 배열로, 각 세트의 반복 횟수, 무게 등을 포함할 수 있습니다.
-    let sets: [WorkoutSet]
+    var sets: [WorkoutSet]
     
     /// 운동에 대한 메모 또는 코멘트입니다. 선택 사항입니다.
     ///
