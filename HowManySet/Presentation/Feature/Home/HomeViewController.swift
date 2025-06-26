@@ -115,6 +115,7 @@ final class HomeViewController: UIViewController, View {
 // MARK: - UI Methods
 private extension HomeViewController {
     func setupUI() {
+        view.backgroundColor = .background
         setViewHiearchy()
         setConstraints()
     }
