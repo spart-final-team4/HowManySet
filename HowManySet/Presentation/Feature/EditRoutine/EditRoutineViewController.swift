@@ -164,7 +164,9 @@ final class EditRoutineViewController: UIViewController, View {
     
     func presentEditExcerciseVC() {
         guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
-        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(workout: workout))
+        let repository = WorkoutRepositoryImpl()
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
+        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
         present(vc, animated: true)
     }
     
