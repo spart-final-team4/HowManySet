@@ -82,8 +82,6 @@ final class EditExcerciseContentView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        setThreeCells()  // 기본 3개의 세트 생성
-        
     }
     
     /// XIB/Storyboard 초기화는 지원하지 않습니다.
@@ -136,7 +134,7 @@ final class EditExcerciseContentView: UIView {
     }
     
     /// 초기 상태에서 3개의 세트를 자동 추가합니다.
-    private func setThreeCells() {
+    func setInitialState() {
         for _ in 1...3 {
             addContentView()
         }
@@ -149,7 +147,7 @@ final class EditExcerciseContentView: UIView {
             addContentButton
         )
         excerciseInfoRelay.accept([[]])
-        setThreeCells()
+        setInitialState()
     }
 }
 
