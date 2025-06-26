@@ -40,6 +40,8 @@ final class HomeViewReactor: Reactor {
         case updateCurrentRoutineMemo(with: String)
         /// 운동 완료 후 카드 삭제 완료
         case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
+        /// background -> foreground로 올때 운동 시간 조정
+        case adjustWorkoutTimeOnForeground
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -87,7 +89,9 @@ final class HomeViewReactor: Reactor {
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
         // 백그라운드 관련
+        /// 운동 시작 시각 설정
         case setWorkoutStartDate(Date?)
+        /// 총 누적된 운동 시간 (+background) 설정
         case setAccumulatedWorkoutTime(TimeInterval)
     }
     
@@ -135,7 +139,7 @@ final class HomeViewReactor: Reactor {
         // 백그라운드 용
         /// 운동 시작 시각
         var workoutStartDate: Date?
-        /// 총 누적된 시간
+        /// 총 누적된 운동 시간 (+background)
         var accumulatedWorkoutTime: TimeInterval
     }
     
@@ -361,6 +365,19 @@ final class HomeViewReactor: Reactor {
                 .just(.changeExerciseIndex(nextIndex)),
                 .just(.setUpdatingIndex(nextIndex))
             ])
+            
+        // 백그라운드 시간도 포함한 운동 시간 설정
+        case .adjustWorkoutTimeOnForeground:
+            if let startDate = currentState.workoutStartDate {
+                let elapsedTime = Date.timeIntervalSince(startDate)
+                return .concat([
+                    .just(.setAccumulatedWorkoutTime(currentState.accumulatedWorkoutTime)),
+                    .just(.setWorkoutStartDate(Date())) // 다시 시작 시각 기록 (초기화)
+                ])
+            } else {
+                return .empty()
+            }
+            
         }//action
     }//mutate
     
@@ -611,9 +628,9 @@ final class HomeViewReactor: Reactor {
     }//reduce
 }
 
-// MARK: - Private Methods
 private extension HomeViewReactor {
     
+    // MARK: - handleWorkoutFlow
     /// 스킵(다음) 버튼 클릭 시 mutate내에서 실행되는 전반적인 기능 로직
     func handleWorkoutFlow(
         _ cardIndex: Int,
@@ -730,6 +747,7 @@ private extension HomeViewReactor {
         }
     }
     
+    // MARK: - convertWorkoutCardStatesToWorkouts
     /// [WorkoutCardState] -> [Workout] 로 변환
     func convertWorkoutCardStatesToWorkouts(cardStates: [WorkoutCardState]) -> [Workout] {
         return cardStates.map { card in
