@@ -650,14 +650,14 @@ extension HomeViewController {
         .disposed(by: disposeBag)
         
         // 중지 시 휴식 버튼, 프로그레스바 동작 관련
-        reactor.state.map { ($0.isRestPaused, $0.isWorkoutPaused, $0.isRestTimerStopped) }
+        reactor.state.map { ($0.isRestPaused, $0.isWorkoutPaused) }
             .distinctUntilChanged { $0 == $1 }
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] isRestPaused, isWorkoutPaused, isRestTimerStopped in
+            .bind { [weak self] isRestPaused, isWorkoutPaused in
                 guard let self else { return }
                 
                 self.pagingCardViewContainer.forEach {
-                    if isRestPaused || isWorkoutPaused || isRestTimerStopped {
+                    if isRestPaused || isWorkoutPaused {
                         $0.restPlayPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
                         // 정지처럼 보이게
                         let currentProgress = $0.restProgressBar.progress
@@ -813,7 +813,7 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .filter { $0.0 }
             .distinctUntilChanged { $0 == $1 }
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 
                 let (isWorkingout, data) = state

@@ -116,7 +116,7 @@ final class DIContainer {
     }
     
     /// 운동 편집 뷰를 생성하여 반환
-    func makeEditRoutineViewController(coordinator: EditRoutineCoordinator, with routine: WorkoutRoutine) -> UIViewController {
+    func makeEditRoutineViewController(coordinator: EditRoutineCoordinator, with routine: WorkoutRoutine, caller: ViewCaller) -> UIViewController {
         
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
@@ -127,7 +127,7 @@ final class DIContainer {
                                              deleteRoutineUseCase: deleteRoutineUseCase,
                                              updateRoutineUseCase: updateRoutineUseCase)
         
-        return EditRoutineViewController(reactor: editRoutineViewReactor, coordinator: coordinator)
+        return EditRoutineViewController(reactor: editRoutineViewReactor, coordinator: coordinator, caller: caller)
     }
     
     /// 홈 화면을 운동중 상태와 루틴 편집 뷰에서 받아온 WorkoutRoutine으로 reactor intialState를 변경 후 생성하여 반환

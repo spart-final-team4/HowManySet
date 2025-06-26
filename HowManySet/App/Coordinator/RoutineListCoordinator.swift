@@ -10,7 +10,7 @@ import UIKit
 protocol RoutineListCoordinatorProtocol: Coordinator {
     func presentRoutineNameView()
     func pushEditExcerciseView(routineName: String)
-//    func pushEditRoutineView(with: WorkoutRoutine)
+    func pushEditRoutineView(with: WorkoutRoutine)
     func presentEditRoutinView(with: WorkoutRoutine)
 }
 
@@ -90,11 +90,13 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     }
 
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 push
-//    func pushEditRoutineView(with routine: WorkoutRoutine) {
-//        let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeNavigationController: homeNavigationController)
-//        editRoutineCoordinator.start()
-//        // TODO: 탭바위치 변경되어야 함
-//    }
+    func pushEditRoutineView(with routine: WorkoutRoutine) {
+        if let homeCoordinator {
+            let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator)
+            editRoutineCoordinator.start()
+        }
+        // TODO: 탭바위치 변경되어야 함
+    }
     
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 present
     func presentEditRoutinView(with routine: WorkoutRoutine) {
