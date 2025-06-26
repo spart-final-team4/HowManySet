@@ -49,10 +49,16 @@ final class EditAndMemoViewController: UIViewController, View {
     
     lazy var memoTextView = UITextView().then {
         $0.backgroundColor = .bsInputFieldBG
-        $0.textColor = .lightGray
+        $0.text = memoPlaceHolderText
+        $0.textColor = .grey3
         $0.font = .systemFont(ofSize: 16)
         $0.layer.cornerRadius = 12
         $0.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+
+        // 키보드 관련
+        $0.autocorrectionType = .no // 자동 수정 끔
+        $0.spellCheckingType = .no // 맞춤법 검사 끔
+        $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
     }
     
     
@@ -76,6 +82,7 @@ final class EditAndMemoViewController: UIViewController, View {
         bindUIEvents()
         
         memoTextView.delegate = self
+        applyInitialMemoPlaceholderIfNeeded()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -142,27 +149,37 @@ private extension EditAndMemoViewController {
 extension EditAndMemoViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == .placeholderText {
+        if textView.text == memoPlaceHolderText {
+            textView.text = nil
             textView.textColor = .white
-        } else {
-            return
         }
+        textView.layer.borderColor = UIColor.grey4.cgColor
+        textView.layer.borderWidth = 1
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = memoPlaceHolderText
-            textView.textColor = .lightGray
+            textView.textColor = .grey3
         } else {
             let text = textView.text
             textView.textColor = .white
             print("📋 입력된 메모: \(String(describing: text))")
         }
+        textView.layer.borderWidth = 0
     }
 }
 
 extension EditAndMemoViewController {
-    
+    /// placeholder 상태 강제 적용 메서드
+    private func applyInitialMemoPlaceholderIfNeeded() {
+        let text = memoTextView.text ?? ""
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || text == memoPlaceHolderText {
+            memoTextView.text = memoPlaceHolderText
+            memoTextView.textColor = .grey3
+        }
+    }
+
     func bind(reactor: HomeViewReactor) {
         
         reactor.state.map { $0.currentExerciseIndex }
@@ -170,7 +187,14 @@ extension EditAndMemoViewController {
             .bind { [weak self] index in
                 guard let self else { return }
                 let memoText = reactor.currentState.workoutCardStates[index].memoInExercise
-                self.memoTextView.text = memoText
+
+                if memoText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+                    self.memoTextView.text = self.memoPlaceHolderText
+                    self.memoTextView.textColor = .grey3
+                } else {
+                    self.memoTextView.text = memoText
+                    self.memoTextView.textColor = .white
+                }
             }
             .disposed(by: disposeBag)
     }
