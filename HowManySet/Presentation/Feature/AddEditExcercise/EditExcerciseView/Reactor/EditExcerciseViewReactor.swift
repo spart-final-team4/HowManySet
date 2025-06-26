@@ -13,30 +13,33 @@ import ReactorKit
 
 final class EditExcerciseViewReactor: Reactor {
     
+    private let updateWorkoutUseCase: UpdateWorkoutUseCaseProtocol
+    
     enum Action {
         case saveExcerciseButtonTapped
         case changeExcerciseWeightSet([[String]])
         case changeUnit(String)
-        case changeExcerciseName(String)
     }
     
     enum Mutation {
         case saveExcercise
         case changeExcerciseWeightSet([[String]])
         case changeUnit(String)
-        case changeExcerciseName(String)
     }
     
     struct State {
         var workout: Workout
-        var currentWorkoutName: String = ""
         var currentUnit: String = "kg"
     }
     
     var initialState: State
     
-    init(workout: Workout) {
-        self.initialState = State(workout: workout)
+    init(workout: Workout,
+         updateWorkoutUseCase: UpdateWorkoutUseCaseProtocol
+    ) {
+        self.initialState = State(workout: workout,
+                                  currentUnit: workout.sets[0].unit)
+        self.updateWorkoutUseCase = updateWorkoutUseCase
     }
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
@@ -46,8 +49,6 @@ final class EditExcerciseViewReactor: Reactor {
             return .just(.changeExcerciseWeightSet(newWeightSet))
         case .changeUnit(let unit):
             return .just(.changeUnit(unit))
-        case .changeExcerciseName(let newName):
-            return .just(.changeExcerciseName(newName))
         }
     }
     
@@ -67,8 +68,6 @@ final class EditExcerciseViewReactor: Reactor {
             newState.workout.sets = newSet
         case .changeUnit(let unit):
             newState.currentUnit = unit
-        case .changeExcerciseName(let newName):
-            newState.currentWorkoutName = newName
         }
         return newState
     }
