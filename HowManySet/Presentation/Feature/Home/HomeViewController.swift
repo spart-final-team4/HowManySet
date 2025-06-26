@@ -479,6 +479,7 @@ extension HomeViewController {
                 self.coordinator?.popUpEndWorkoutAlert(
                     onConfirm: {
                         reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                        LiveActivityService.shared.stop() // 라이브 액티비티 종료
                         return reactor.currentState.workoutSummary
                     },
                     onCancel: {
@@ -768,6 +769,7 @@ extension HomeViewController {
                             if let reactor = self.reactor {
                                 self.coordinator?.popUpCompletedWorkoutAlert(onConfirm: {
                                     reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                                    LiveActivityService.shared.stop() // 라이브 액티비티 종료
                                     return reactor.currentState.workoutSummary
                                 }, onCancel: { [weak self] in
                                     guard let self else { return }
@@ -811,14 +813,14 @@ extension HomeViewController {
         
         // MARK: - LiveActivity 관련
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
+            .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
-            .distinctUntilChanged { $0 == $1 }
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .observe(on: MainScheduler.asyncInstance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 
                 let (isWorkingout, data) = state
                 let contentState = data
-                
+                print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
                     LiveActivityService.shared.start(with: contentState)
                 } else {
@@ -926,6 +928,13 @@ extension HomeViewController {
             }
             .subscribe()
             .disposed(by: liveActivityDisposeBag)
+        
+        
+        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .bind { _ in
+                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
