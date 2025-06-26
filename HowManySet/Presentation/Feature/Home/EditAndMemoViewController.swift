@@ -54,6 +54,11 @@ final class EditAndMemoViewController: UIViewController, View {
         $0.font = .systemFont(ofSize: 16)
         $0.layer.cornerRadius = 12
         $0.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+
+        // 키보드 관련
+        $0.autocorrectionType = .no // 자동 수정 끔
+        $0.spellCheckingType = .no // 맞춤법 검사 끔
+        $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
     }
     
     
