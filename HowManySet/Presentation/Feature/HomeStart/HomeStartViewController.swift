@@ -53,6 +53,7 @@ final class HomeStartViewController: UIViewController {
 // MARK: - UI Methods
 private extension HomeStartViewController {
     func setupUI() {
+        view.backgroundColor = .background
         setViewHiearchy()
         setConstraints()
     }
