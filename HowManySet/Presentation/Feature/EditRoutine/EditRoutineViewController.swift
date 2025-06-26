@@ -65,7 +65,9 @@ final class EditRoutineViewController: UIViewController, View {
         
         tableView.cellMoreButtonTapped
             .do(onNext: { [weak self] indexPath in
-                self?.presentBottomSheetVC()})
+                self?.presentBottomSheetVC()
+                print("cellMoreButtonTapped")
+            })
             .map{ Reactor.Action.cellButtonTapped($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -140,10 +142,11 @@ final class EditRoutineViewController: UIViewController, View {
             .bind(to: reactor!.action)
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
         
-        editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
-            .map{ Reactor.Action.changeListOrder }
-            .bind(to: reactor!.action)
-            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
+        // TODO: 순서변경 마이너패치때
+//        editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
+//            .map{ Reactor.Action.changeListOrder }
+//            .bind(to: reactor!.action)
+//            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
 
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
     }
