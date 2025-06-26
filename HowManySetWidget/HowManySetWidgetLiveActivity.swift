@@ -21,6 +21,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var isWorkingout: Bool
         var exerciseName: String
         var exerciseInfo: String
+        var currentRoutineCompleted: Bool
         
         // 휴식 중 관련
         var isResting: Bool
@@ -50,7 +51,7 @@ struct HowManySetWidgetLiveActivity: Widget {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
-                if context.state.isWorkingout {
+                if !context.state.currentRoutineCompleted {
                     VStack(alignment: .leading, spacing: 10) {
                         if !context.state.isResting {
                             HStack {
@@ -176,7 +177,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         .frame(maxWidth: .infinity, maxHeight: 14)
                         
                     }
-                } else { // 운동 종료시
+                } else { // 현재 루틴의 모든 운동 완료 시
                     VStack {
                         HStack(alignment: .center, spacing: 10) {
                             Image(.mainIcon)
@@ -235,6 +236,7 @@ extension HowManySetWidgetAttributes.ContentState {
         self.isWorkingout = data.isWorkingout
         self.exerciseName = data.exerciseName
         self.exerciseInfo = data.exerciseInfo
+        self.currentRoutineCompleted = data.currentRoutineCompleted
         self.isResting = data.isResting
         self.restSecondsRemaining = Int(data.restSecondsRemaining)
         self.isRestPaused = data.isRestPaused
@@ -257,6 +259,7 @@ extension HowManySetWidgetAttributes.ContentState {
             isWorkingout: true,
             exerciseName: "랫풀다운",
             exerciseInfo: "60kg x 10회",
+            currentRoutineCompleted: false,
             isResting: false,
             restSecondsRemaining: 0,
             isRestPaused: false,
@@ -272,6 +275,7 @@ extension HowManySetWidgetAttributes.ContentState {
             isWorkingout: false,
             exerciseName: "랫풀다운",
             exerciseInfo: "60kg x 10회",
+            currentRoutineCompleted: false,
             isResting: true,
             restSecondsRemaining: 30,
             isRestPaused: false,

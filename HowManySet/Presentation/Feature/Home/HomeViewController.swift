@@ -809,6 +809,7 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // MARK: - LiveActivity 관련
+        // LiveActivity start/stop
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
@@ -826,9 +827,9 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
+        // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .observe(on: MainScheduler.instance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
@@ -836,6 +837,7 @@ extension HomeViewController {
                     isWorkingout: data.isWorkingout,
                     exerciseName: data.exerciseName,
                     exerciseInfo: data.exerciseInfo,
+                    currentRoutineCompleted: data.currentRoutineCompleted,
                     isResting: data.isResting,
                     restSecondsRemaining: Int(data.restSecondsRemaining),
                     isRestPaused: data.isRestPaused,
@@ -932,7 +934,7 @@ private extension HomeViewController {
     ) {
         UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
             // 프로그레스바를 100%로
-            cardView.setProgressBar.updateProgress(currentSet: progress)
+//            cardView.setProgressBar.updateProgress(currentSet: progress)
         }, completion: { _ in
             completion()
         })

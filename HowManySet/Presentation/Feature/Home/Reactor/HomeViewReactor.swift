@@ -93,6 +93,8 @@ final class HomeViewReactor: Reactor {
         case setWorkoutStartDate(Date?)
         /// 총 누적된 운동 시간 (+background) 설정
         case setAccumulatedWorkoutTime(TimeInterval)
+        /// 현재 루틴 완료 설정
+        case setCurrentRoutineCompleted
     }
     
     // MARK: - State is a current view state
@@ -141,6 +143,8 @@ final class HomeViewReactor: Reactor {
         var workoutStartDate: Date?
         /// 총 누적된 운동 시간 (+background)
         var accumulatedWorkoutTime: TimeInterval
+        /// 현재 루틴의 모든 운동 완료
+        var currentRoutineCompleted: Bool
     }
     
     // initialState 주입으로 변경
@@ -623,6 +627,9 @@ final class HomeViewReactor: Reactor {
         case let .setAccumulatedWorkoutTime(time):
             newState.accumulatedWorkoutTime = time
             
+        case .setCurrentRoutineCompleted:
+            newState.currentRoutineCompleted = true
+            
         }//switch mutation
         return newState
     }//reduce
@@ -726,15 +733,19 @@ private extension HomeViewReactor {
                 if allCompleted { // 모든 운동 루틴 완료 시
                     print("--- 모든 운동 루틴 완료! ---")
                     return .concat([
-                        .just(.stopRestTimer(true)),
-                        .just(.setWorkingout(false)),
+                        .just(.setCurrentRoutineCompleted),
+                        .just(.manageDataIfForwarded(
+                            isRoutineCompleted: true,
+                            isCurrentExerciseCompleted: true
+                        )),
                         .just(.setResting(false)),
                         .just(.setRestTime(0)),
+                        .just(.stopRestTimer(true)),
                         .just(.manageWorkoutData(isEnded: true))
                     ])
                     .observe(on: MainScheduler.instance)
-                } else { // 운동 끝나지 않은 카드 1개 남았을 떄
-                    print("남은 카드 1개")
+                } else { // 다음 운동 없을 때, 운동 끝나기 전 세트
+                    print("다음 운동 없음")
                     return .concat([
                         .just(.setResting(isResting)),
                         .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
@@ -771,6 +782,7 @@ extension HomeViewReactor.State {
                 isWorkingout: true,
                 exerciseName: "",
                 exerciseInfo: "",
+                currentRoutineCompleted: false,
                 isResting: false,
                 restSecondsRemaining: 0,
                 isRestPaused: false,
@@ -797,6 +809,7 @@ extension HomeViewReactor.State {
             isWorkingout: isWorkingout,
             exerciseName: exercise.currentExerciseName,
             exerciseInfo: exerciseInfo,
+            currentRoutineCompleted: currentRoutineCompleted,
             isResting: isResting,
             restSecondsRemaining: restSecondsRemaining,
             isRestPaused: isRestPaused,
@@ -919,7 +932,8 @@ extension HomeViewReactor {
             didSetCount: 0,
             uid: FirebaseAuthService().fetchCurrentUser()?.uid,
             workoutStateForEdit: initialWorkoutStateForEdit,
-            accumulatedWorkoutTime: 0
+            accumulatedWorkoutTime: 0,
+            currentRoutineCompleted: false
         )
     }
 }
