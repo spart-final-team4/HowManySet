@@ -60,8 +60,23 @@ final class AuthViewController: UIViewController, View {
             .map { Reactor.Action.tapAnonymousLogin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-
-        reactor.state.compactMap { $0.error }
+        
+        reactor.state
+            .map { $0.isLoading }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { isLoading in
+                if isLoading {
+                    LoadingIndicator.showLoadingIndicator()
+                } else {
+                    LoadingIndicator.hideLoadingIndicator()
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .compactMap { $0.error }
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] error in
                 self?.showErrorAlert(error)
             })
