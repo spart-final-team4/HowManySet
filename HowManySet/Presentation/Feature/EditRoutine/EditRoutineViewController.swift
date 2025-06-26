@@ -164,11 +164,16 @@ final class EditRoutineViewController: UIViewController, View {
         let repository = WorkoutRepositoryImpl()
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
         let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
+        
         vc.saveResultRelay
             .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner in
-                owner.showToast(x: 0, y: 0, message: "저장되었어요!")
+            .subscribe(with: self) { owner, result in
+                if result {
+                    owner.showToast(x: 0, y: 0, message: "저장되었어요!")
+                    owner.reactor?.action.onNext(.viewDidLoad)
+                }
             }.disposed(by: vc.disposeBag)
+        
         present(vc, animated: true)
     }
     
