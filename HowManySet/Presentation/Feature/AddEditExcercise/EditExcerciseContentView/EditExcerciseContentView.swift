@@ -271,7 +271,7 @@ extension EditExcerciseContentView {
                     }
                 }.disposed(by: disposeBag)
             contentView.configure(weight: weight, reps: reps)
-//            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
+            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
         }
     }
 }

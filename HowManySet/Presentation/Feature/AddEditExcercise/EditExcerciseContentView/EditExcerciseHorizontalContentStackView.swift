@@ -127,16 +127,10 @@ private extension EditExcerciseHorizontalContentStackView {
     
     func bind() {
         weightTextField.rx.text.orEmpty
-            .do(onNext: { str in
-                print("weightTextField Text: \(str)")
-            })
             .bind(to: weightRelay)
             .disposed(by: disposeBag)
         
         repsTextField.rx.text.orEmpty
-            .do(onNext: { str in
-                print("repsTextField Text: \(str)")
-            })
             .bind(to: repsRelay)
             .disposed(by: disposeBag)
         
@@ -145,9 +139,6 @@ private extension EditExcerciseHorizontalContentStackView {
                 weightRelay,
                 repsRelay
             )
-            .do(onNext: { weight, reps in
-                print(weight, reps)
-            })
             .map{ [$0, $1] }
             .distinctUntilChanged()
             .bind(to: weightRepsRelay)
