@@ -125,9 +125,6 @@ final class EditRoutineViewController: UIViewController, View {
         }
         
         editRoutineBottomSheetViewController.excerciseChangeButtonSubject
-            .do(onNext: { _ in
-                print("editRoutineBottomSheetViewController.excerciseChangeButtonSubject bind")
-            })
             .bind(to: changeExcerciseTapped)
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
         
@@ -167,6 +164,11 @@ final class EditRoutineViewController: UIViewController, View {
         let repository = WorkoutRepositoryImpl()
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
         let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
+        vc.saveResultRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner in
+                owner.showToast(x: 0, y: 0, message: "저장되었어요!")
+            }.disposed(by: vc.disposeBag)
         present(vc, animated: true)
     }
     
