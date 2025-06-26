@@ -43,143 +43,158 @@ struct HowManySetWidgetLiveActivity: Widget {
     
     private let buttonSize: CGFloat = 50
     private let restSecondsRemainigLabelSize: CGFloat = 46
-    private let restLabel = "휴식"
+    private let restText = "휴식"
+    private let completeText = "모든 운동을 완료하셨습니다!"
     
     var body: some WidgetConfiguration {
-        
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
-            VStack() {
-                VStack(alignment: .leading, spacing: 10) {
-                    if !context.state.isResting {
-                        HStack {
-                            Image(systemName: "timer")
-                                .foregroundStyle(.brand)
-                            Text(String(context.state.workoutTime.toWorkOutTimeLabel()))
-                                .foregroundStyle(.white)
-                                .font(.system(size: 14))
-                                .fontWeight(.semibold)
-                                .monospacedDigit()
-                            }
-                    } else {
-                        HStack {
-                            Image(systemName: "dumbbell")
-                                .foregroundStyle(.brand)
-                            Text(String(context.state.exerciseName))
-                                .foregroundStyle(.white)
-                                .font(.system(size: 14))
-                                .fontWeight(.semibold)
-                        }
-                    }
-                    // MARK: - 운동 중 contents
-                    if !context.state.isResting {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(context.state.exerciseName)
-                                    .font(.system(size: 20))
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.white)
-                                Text(context.state.exerciseInfo)
-                                    .font(.system(size: 16))
-                                    .fontWeight(.regular)
-                                    .foregroundStyle(Color("DBTypo"))
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 10) {
-                                if #available(iOS 17.0, *) {
-                                    Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
-                                        Image(systemName: "checkmark")
-                                            .foregroundStyle(.brand)
-                                            .fontWeight(.bold)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(Circle().fill(Color("green10")))
-                                    .buttonStyle(.borderless)
-                                } else {
-                                    // Fallback on earlier versions
-                                }
-                                
-//                                if #available(iOS 17.0, *) {
-//                                    Button(intent: StopWorkoutIntent(index: context.state.currentIndex)) {
-//                                        Image(systemName: "xmark")
-//                                            .foregroundStyle(.white)
-//                                            .fontWeight(.bold)
-//                                            .font(.title3)
-//                                    }
-//                                    .frame(width: buttonSize, height: buttonSize)
-//                                    .background(Circle().fill(Color("RoundButtonBG")))
-//                                    .buttonStyle(.borderless)
-//                                } else {
-//                                    // Fallback on earlier versions
-//                                }
-                            }
-                        }
-                    }
-                    // MARK: - 휴식 중 contents
-                    else {
-                        HStack {
-                            HStack(alignment: .lastTextBaseline, spacing: 5) {
-                                Text(restLabel)
-                                    .font(.system(size: 16))
-                                    .fontWeight(.bold)
+            VStack {
+                if context.state.isWorkingout {
+                    VStack(alignment: .leading, spacing: 10) {
+                        if !context.state.isResting {
+                            HStack {
+                                Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(context.state.restSecondsRemaining.toRestTimeLabel())
-                                    .font(.system(size: restSecondsRemainigLabelSize))
-                                    .fontWeight(.semibold)
+                                Text(String(context.state.workoutTime.toWorkOutTimeLabel()))
                                     .foregroundStyle(.white)
+                                    .font(.system(size: 14))
+                                    .fontWeight(.semibold)
                                     .monospacedDigit()
                             }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: 10) {
-                                if #available(iOS 17.0, *) {
-                                    Button(intent: SkipRestIntent(index: context.state.currentIndex)) {
-                                        Image(systemName: "forward.end.fill")
-                                            .foregroundStyle(.brand)
-                                            .fontWeight(.semibold)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(Circle().fill(Color("green10")))
-                                    .buttonStyle(.borderless)
-                                } else {
-                                    // Fallback on earlier versions
-                                }
-                                
-                                if #available(iOS 17.0, *) {
-                                    Button(intent: PlayAndPauseRestIntent()) {
-                                        Image(systemName: context.state.isRestPaused ? "play.fill" : "pause.fill")
-                                            .foregroundStyle(.white)
-                                            .fontWeight(.semibold)
-                                            .font(.title3)
-                                    }
-                                    .frame(width: buttonSize, height: buttonSize)
-                                    .background(Circle().fill(Color("RoundButtonBG")))
-                                    .buttonStyle(.borderless)
-                                } else {
-                                    // Fallback on earlier versions
-                                }
-
+                        } else {
+                            HStack {
+                                Image(systemName: "dumbbell")
+                                    .foregroundStyle(.brand)
+                                Text(String(context.state.exerciseName))
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 14))
+                                    .fontWeight(.semibold)
                             }
                         }
+                        // MARK: - 운동 중 contents
+                        if !context.state.isResting {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(context.state.exerciseName)
+                                        .font(.system(size: 20))
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.white)
+                                    Text(context.state.exerciseInfo)
+                                        .font(.system(size: 16))
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(Color("DBTypo"))
+                                }
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 10) {
+                                    if #available(iOS 17.0, *) {
+                                        Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
+                                            Image(systemName: "checkmark")
+                                                .foregroundStyle(.brand)
+                                                .fontWeight(.bold)
+                                                .font(.title3)
+                                        }
+                                        .frame(width: buttonSize, height: buttonSize)
+                                        .background(Circle().fill(Color("green10")))
+                                        .buttonStyle(.borderless)
+                                    } else {
+                                        // Fallback on earlier versions
+                                    }
+                                    
+                                    //                                if #available(iOS 17.0, *) {
+                                    //                                    Button(intent: StopWorkoutIntent(index: context.state.currentIndex)) {
+                                    //                                        Image(systemName: "xmark")
+                                    //                                            .foregroundStyle(.white)
+                                    //                                            .fontWeight(.bold)
+                                    //                                            .font(.title3)
+                                    //                                    }
+                                    //                                    .frame(width: buttonSize, height: buttonSize)
+                                    //                                    .background(Circle().fill(Color("RoundButtonBG")))
+                                    //                                    .buttonStyle(.borderless)
+                                    //                                } else {
+                                    //                                    // Fallback on earlier versions
+                                    //                                }
+                                }
+                            }
+                        }
+                        // MARK: - 휴식 중 contents
+                        else {
+                            HStack {
+                                HStack(alignment: .lastTextBaseline, spacing: 5) {
+                                    Text(restText)
+                                        .font(.system(size: 16))
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.brand)
+                                    Text(context.state.restSecondsRemaining.toRestTimeLabel())
+                                        .font(.system(size: restSecondsRemainigLabelSize))
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.white)
+                                        .monospacedDigit()
+                                }
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 10) {
+                                    if #available(iOS 17.0, *) {
+                                        Button(intent: SkipRestIntent(index: context.state.currentIndex)) {
+                                            Image(systemName: "forward.end.fill")
+                                                .foregroundStyle(.brand)
+                                                .fontWeight(.semibold)
+                                                .font(.title3)
+                                        }
+                                        .frame(width: buttonSize, height: buttonSize)
+                                        .background(Circle().fill(Color("green10")))
+                                        .buttonStyle(.borderless)
+                                    } else {
+                                        // Fallback on earlier versions
+                                    }
+                                    
+                                    if #available(iOS 17.0, *) {
+                                        Button(intent: PlayAndPauseRestIntent()) {
+                                            Image(systemName: context.state.isRestPaused ? "play.fill" : "pause.fill")
+                                                .foregroundStyle(.white)
+                                                .fontWeight(.semibold)
+                                                .font(.title3)
+                                        }
+                                        .frame(width: buttonSize, height: buttonSize)
+                                        .background(Circle().fill(Color("RoundButtonBG")))
+                                        .buttonStyle(.borderless)
+                                    } else {
+                                        // Fallback on earlier versions
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        // MARK: - ProgressBar
+                        SetProgressBarForLiveActivity(
+                            totalSets: context.state.totalSet,
+                            currentSet: context.state.currentSet
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: 14)
+                        
                     }
-                    // MARK: - ProgressBar
-                    SetProgressBarForLiveActivity(
-                        totalSets: context.state.totalSet,
-                        currentSet: context.state.currentSet
-                    )
-                    .frame(maxWidth: .infinity, maxHeight: 14)
-
-                }//VStack
-            }//VStack
+                } else { // 운동 종료시
+                    VStack {
+                        HStack(alignment: .center, spacing: 10) {
+                            Image(.mainIcon)
+                            Text(completeText)
+                                .font(.system(size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                            Image(systemName: "chevron.right.2")
+                                .foregroundStyle(.brand)
+                                .fontWeight(.semibold)
+                                .font(.title3)
+                        }
+                    }
+                }//else
+            }
             .padding(.all, 18)
             .frame(height: 170)
             .background(Color("Background"))
-            
         } dynamicIsland: { context in
             // MARK: - DynamicIsland
             DynamicIsland {
@@ -197,7 +212,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         .foregroundStyle(.brand)
                 }
             } compactTrailing: {
-               
+                
             } minimal: {
                 if !context.state.isResting {
                     Image(systemName: "brandDumbbell")
