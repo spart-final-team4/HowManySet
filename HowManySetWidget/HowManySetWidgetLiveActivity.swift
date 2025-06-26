@@ -175,22 +175,23 @@ struct HowManySetWidgetLiveActivity: Widget {
                             currentSet: context.state.currentSet
                         )
                         .frame(maxWidth: .infinity, maxHeight: 14)
-                        
                     }
                 } else { // 현재 루틴의 모든 운동 완료 시
-                    VStack {
-                        HStack(alignment: .center, spacing: 10) {
-                            Image(.mainIcon)
-                            Text(completeText)
-                                .font(.system(size: 16))
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                            Image(systemName: "chevron.right.2")
-                                .foregroundStyle(.brand)
-                                .fontWeight(.semibold)
-                                .font(.title3)
-                        }
-                    }
+                    HStack(alignment: .center, spacing: 20) {
+                        Image(systemName: "dumbbell.fill")
+                            .foregroundStyle(.brand)
+                            .fontWeight(.semibold)
+                            .font(.title)
+                        Text(completeText)
+                            .font(.system(size: 18))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                        Image(systemName: "chevron.right.2")
+                            .foregroundStyle(.brand)
+                            .fontWeight(.semibold)
+                            .font(.title)
+                    }//HStack
+                    .frame(maxWidth: .infinity)
                 }//else
             }
             .padding(.all, 18)

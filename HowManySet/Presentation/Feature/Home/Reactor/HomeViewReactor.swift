@@ -42,6 +42,7 @@ final class HomeViewReactor: Reactor {
         case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
         /// background -> foreground로 올때 운동 시간 조정
         case adjustWorkoutTimeOnForeground
+        case routineCompleted
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -354,23 +355,41 @@ final class HomeViewReactor: Reactor {
                 .just(.saveWorkoutData)
             ])
             
-        // 삭제될 시에만 활용
+            // 삭제될 시에만 활용
         case let .cardDeleteAnimationCompleted(oldIndex: oldIndex, nextIndex: nextIndex):
-            let oldCardState = currentState.workoutCardStates[oldIndex]
-            return .concat([
-                .just(.manageDataIfForwarded(
-                    isRoutineCompleted: false,
-                    isCurrentExerciseCompleted: true
-                )),
-                .just(.updateWorkoutCardState(
-                    updatedCardState: currentState.workoutCardStates[nextIndex],
-                    oldCardState: oldCardState,
-                    oldCardIndex: oldIndex)),
-                .just(.changeExerciseIndex(nextIndex)),
-                .just(.setUpdatingIndex(nextIndex))
-            ])
+            var oldCardState = currentState.workoutCardStates[oldIndex]
+            oldCardState.setProgressAmount += 1
             
-        // 백그라운드 시간도 포함한 운동 시간 설정
+            if oldIndex != nextIndex {
+                return .concat([
+                    .just(.manageDataIfForwarded(
+                        isRoutineCompleted: false,
+                        isCurrentExerciseCompleted: true
+                    )),
+                    .just(.updateWorkoutCardState(
+                        updatedCardState: currentState.workoutCardStates[nextIndex],
+                        oldCardState: oldCardState,
+                        oldCardIndex: oldIndex)),
+                    .just(.changeExerciseIndex(nextIndex)),
+                    .just(.setUpdatingIndex(nextIndex))
+                ])
+            } else {
+                print("--- 모든 운동 루틴 완료! ---")
+                return .concat([
+                    .just(.setCurrentRoutineCompleted),
+                    .just(.manageDataIfForwarded(
+                        isRoutineCompleted: true,
+                        isCurrentExerciseCompleted: true
+                    )),
+                    .just(.setResting(false)),
+                    .just(.setRestTime(0)),
+                    .just(.stopRestTimer(true)),
+                    .just(.manageWorkoutData(isEnded: true)),
+                ])
+                
+            }
+            
+            // 백그라운드 시간도 포함한 운동 시간 설정
         case .adjustWorkoutTimeOnForeground:
             if let startDate = currentState.workoutStartDate {
                 let elapsedTime = Date().timeIntervalSince(startDate)
@@ -381,6 +400,10 @@ final class HomeViewReactor: Reactor {
             } else {
                 return .empty()
             }
+            
+        case .routineCompleted:
+            print("☑️ 루틴 완료: \(currentState.currentRoutineCompleted)")
+            return .just(.setCurrentRoutineCompleted)
             
         }//action
     }//mutate
@@ -629,6 +652,7 @@ final class HomeViewReactor: Reactor {
             
         case .setCurrentRoutineCompleted:
             newState.currentRoutineCompleted = true
+            print("☑️ 루틴 완료: \(newState.currentRoutineCompleted)")
             
         }//switch mutation
         return newState
@@ -701,7 +725,8 @@ private extension HomeViewReactor {
             .observe(on: MainScheduler.instance)
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
-            let currentCardState = currentState.workoutCardStates[cardIndex]
+            var currentCardState = currentState.workoutCardStates[cardIndex]
+            currentCardState.setProgressAmount += 1
             print("🗂️🗂️ 초기 nextExerciseIndex: \(nextExerciseIndex)")
             
             // 다음,이전 인덱스가 존재하고 다음,이전 카드 모든 세트 완료 시
@@ -720,6 +745,10 @@ private extension HomeViewReactor {
             
                 return .concat([
                     .just(.setResting(isResting)),
+                    .just(.updateWorkoutCardState(
+                        updatedCardState: currentCardState,
+                        oldCardState: nil,
+                        oldCardIndex: nil)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
                     .just(.setRestTimeDataAtProgressBar(restTime)),
                     restTimer
@@ -727,6 +756,7 @@ private extension HomeViewReactor {
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
                 
+                // TODO: 현재 이부분 거치지 않음 (추후 수정)
                 let allCompleted = currentState.workoutCardStates
                     .allSatisfy { $0.allSetsCompleted }
                 
