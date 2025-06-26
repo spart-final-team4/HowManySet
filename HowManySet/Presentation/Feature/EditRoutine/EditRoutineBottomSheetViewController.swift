@@ -21,7 +21,7 @@ import RxCocoa
 /// iOS 15 이상에서 deprecated된 `contentEdgeInsets`는 추후 `UIButton.Configuration` 기반으로 전환 권장됩니다.
 final class EditRoutineBottomSheetViewController: UIViewController {
     
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     private(set) var excerciseChangeButtonSubject = PublishRelay<Void>()
     private(set) var removeExcerciseButtonSubject = PublishRelay<Void>()
     private(set) var changeExcerciseListButtonSubject = PublishRelay<Void>()
@@ -97,15 +97,6 @@ private extension EditRoutineBottomSheetViewController {
         changeExcerciseListButton.rx.tap
             .bind(to: changeExcerciseListButtonSubject)
             .disposed(by: disposeBag)
-        
-        Observable
-            .merge(excerciseChangeButton.rx.tap.asObservable(),
-                   removeExcerciseButton.rx.tap.asObservable(),
-                   changeExcerciseListButton.rx.tap.asObservable())
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, _ in
-                owner.dismiss(animated: true)
-            }.disposed(by: disposeBag)
     }
     
     /// 뷰의 기본 배경 색상 설정
