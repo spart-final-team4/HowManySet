@@ -26,7 +26,7 @@ final class EditRoutineViewController: UIViewController, View {
     private let coordinator: EditRoutineCoordinatorProtocol
     
     /// 운동 루틴 리스트를 보여주는 테이블 뷰
-    private let tableView = EditRoutineTableView()
+    private lazy var tableView = EditRoutineTableView(frame: .zero, style: .plain, caller: self.caller)
     private let changeExcerciseTapped = PublishRelay<Void>()
     private var caller: ViewCaller
     /// 운동 시작 버튼 - 클릭 시 바로 홈화면에서 운동 시작
