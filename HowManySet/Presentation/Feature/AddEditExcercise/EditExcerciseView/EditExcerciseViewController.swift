@@ -42,8 +42,14 @@ final class EditExcerciseViewController: UIViewController, View {
     }
     
     func bind(reactor: EditExcerciseViewReactor) {
+        contentView.excerciseInfoRelay
+            .map { Reactor.Action.changeExcerciseWeightSet($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         reactor.state
             .map{ $0.workout }
+            .distinctUntilChanged()
             .subscribe(onNext: { [weak self] state in
                 self?.headerView.editConfigure(with: state.name)
                 self?.contentView.configureEditSets(with: state.sets)

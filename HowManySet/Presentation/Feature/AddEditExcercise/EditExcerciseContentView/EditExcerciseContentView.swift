@@ -234,16 +234,40 @@ extension EditExcerciseContentView {
 extension EditExcerciseContentView {
     
     func configureEditSets(with sets: [WorkoutSet]) {
-        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
-        
+        var initailValue: [[String]] = [[]]
         for i in 0..<sets.count {
-            let index = i+1
-            let hContentStackView = EditExcerciseHorizontalContentStackView(order: index)
-            hContentStackView.configure(weight: sets[i].weight, reps: sets[i].reps)
-            verticalContentStackView.addArrangedSubview(hContentStackView)
+            // 세트 순서를 결정
+            let order = verticalContentStackView.subviews.count - 1
+            let contentView = EditExcerciseHorizontalContentStackView(order: order)
+            let weight = sets[i].weight
+            let reps = sets[i].reps
+            
+            // 기존 추가 버튼 제거 후, 새로운 세트와 함께 다시 추가
+            verticalContentStackView.removeArrangedSubview(addContentButton)
+            addContentButton.removeFromSuperview()
+            verticalContentStackView.addArrangedSubviews(contentView, addContentButton)
+            
+            contentView.removeButtonTap
+                .observe(on: MainScheduler.instance)
+                .subscribe(with: self) { owner, _ in
+                    owner.verticalContentStackView.removeArrangedSubview(contentView)
+                    contentView.removeFromSuperview()
+                    owner.reorder()
+                    var newValue = owner.excerciseInfoRelay.value
+                    newValue.remove(at: contentView.order)
+                    owner.excerciseInfoRelay.accept(newValue)
+                }.disposed(by: disposeBag)
+            
+            contentView.weightRepsRelay
+                .subscribe(with: self) { owner, element in
+                    if owner.excerciseInfoRelay.value.count > contentView.order {
+                        var newValue = owner.excerciseInfoRelay.value
+                        newValue[contentView.order] = element
+                        owner.excerciseInfoRelay.accept(newValue)
+                    }
+                }.disposed(by: disposeBag)
+            contentView.configure(weight: weight, reps: reps)
+            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
         }
-        verticalContentStackView.addArrangedSubview(addContentButton)
     }
 }

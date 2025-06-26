@@ -8,8 +8,14 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
+import RxCocoa
+import RxRelay
 
 final class EditExcerciseFooterView: UIView {
+    
+    private let disposeBag = DisposeBag()
+    private(set) var saveExcerciseButtonRelay: PublishRelay<Void> = .init()
     
     private let saveExcerciseButton = UIButton().then {
         $0.setTitle("저장하기", for: .normal)
@@ -42,7 +48,9 @@ private extension EditExcerciseFooterView {
     }
     
     func bind() {
-        
+        saveExcerciseButton.rx.tap
+            .bind(to: saveExcerciseButtonRelay)
+            .disposed(by: disposeBag)
     }
     
     /// 외형 스타일 설정 (배경색 등)
