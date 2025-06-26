@@ -43,13 +43,6 @@ final class EditExcerciseViewController: UIViewController, View {
     
     func bind(reactor: EditExcerciseViewReactor) {
         
-        contentView.excerciseInfoRelay
-            .observe(on: MainScheduler.asyncInstance)
-            .map { Reactor.Action.changeExcerciseWeightSet($0) }
-            .skip(1)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
         contentView.unitSelectionRelay
             .map { Reactor.Action.changeUnit($0) }
             .skip(1)
@@ -57,10 +50,9 @@ final class EditExcerciseViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         footerView.saveExcerciseButtonRelay
-            .do(onNext: { [weak self] in
-                self?.dismiss(animated: true)
-            })
-            .map { Reactor.Action.saveExcerciseButtonTapped }
+            .map { [unowned self] in
+                Reactor.Action.saveExcerciseButtonTapped((self.getCurrentName(), self.getCurrentWorkoutSets()))
+            }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -68,7 +60,6 @@ final class EditExcerciseViewController: UIViewController, View {
             .map{ $0.workout }
             .distinctUntilChanged()
             .subscribe(with: self) { owner, workout in
-                print("update state")
                 owner.contentView.configureEditSets(with: workout.sets)
                 owner.headerView.editConfigure(with: workout.name)
             }.disposed(by: disposeBag)
@@ -135,5 +126,15 @@ private extension EditExcerciseViewController {
             $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalTo(52)
         }
+    }
+}
+
+private extension EditExcerciseViewController {
+    func getCurrentWorkoutSets() -> [[String]] {
+        return contentView.excerciseInfoRelay.value
+    }
+    
+    func getCurrentName() -> String {
+        return headerView.exerciseNameRelay.value
     }
 }
