@@ -815,7 +815,7 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
-            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 
                 let (isWorkingout, data) = state
@@ -849,6 +849,12 @@ extension HomeViewController {
                 LiveActivityService.shared.update(state: contentState)
             }
             .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .bind { _ in
+                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
+            }
+            .disposed(by: disposeBag)
     }//bind
 }
 
@@ -861,15 +867,13 @@ extension HomeViewController {
             .startWith(Notification(name: UIApplication.willEnterForegroundNotification))
             .flatMapLatest { [weak self] _ -> Observable<Void> in
                 guard let self else { return .empty() }
-                return Observable<Int>.interval(.milliseconds(100), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+                return Observable<Int>.interval(.milliseconds(300), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
                     .flatMap { _ in
                         Observable.merge(
                             Observable.create { observer in
                                 LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
                                     print("세트 완료 버튼 polling 이벤트 감지! 인덱스: \(index)")
-                                    DispatchQueue.main.async {
-                                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                                    }
+                                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
                                     observer.onCompleted()
                                 }
                                 return Disposables.create()
@@ -877,9 +881,7 @@ extension HomeViewController {
                             Observable.create { observer in
                                 LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
                                     print("휴식 스킵 polling 이벤트 감지! 인덱스: \(index)")
-                                    DispatchQueue.main.async {
-                                        reactor.action.onNext(.forwardButtonClicked(at: index))
-                                    }
+                                    reactor.action.onNext(.forwardButtonClicked(at: index))
                                     observer.onCompleted()
                                 }
                                 return Disposables.create()
@@ -888,9 +890,7 @@ extension HomeViewController {
                                 LiveActivityAppGroupEventBridge.shared.checkStopWorkoutEvent {
                                     print("운동 종료 polling 이벤트 감지!")
                                     self.coordinator?.popUpEndWorkoutAlert {
-                                        DispatchQueue.main.async {
-                                            reactor.action.onNext(.stopButtonClicked(isEnded: true))
-                                        }
+                                        reactor.action.onNext(.stopButtonClicked(isEnded: true))
                                         return self.reactor?.currentState.workoutSummary ??
                                         WorkoutSummary(
                                             routineName: "",
@@ -916,25 +916,16 @@ extension HomeViewController {
                             Observable.create { observer in
                                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
                                     print("휴식 재생/일시정지 polling 이벤트 감지! 인덱스: \(index)")
-                                    DispatchQueue.main.async {
-                                        reactor.action.onNext(.restPauseButtonClicked)
-                                    }
+                                    reactor.action.onNext(.restPauseButtonClicked)
                                     observer.onCompleted()
                                 }
                                 return Disposables.create()
                             }
-                        )
+                        ).throttle(.milliseconds(300), scheduler: MainScheduler.instance)
                     }
             }
             .subscribe()
             .disposed(by: liveActivityDisposeBag)
-        
-        
-        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
-            .bind { _ in
-                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
-            }
-            .disposed(by: disposeBag)
     }
 }
 
