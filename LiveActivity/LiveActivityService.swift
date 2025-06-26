@@ -22,13 +22,14 @@ final class LiveActivityService {
         let contentState = HowManySetWidgetAttributes.ContentState(from: data)
         
         do {
+            print("🎮 LiveActivity DO")
             let activityContent = ActivityContent(state: contentState, staleDate: nil)
             let activity = try Activity<HowManySetWidgetAttributes>.request(
                 attributes: attributes,
                 content: activityContent
             )
             self.activity = activity
-            print("Activity: ", activity)
+            print("🎮 LiveActivity STARTED!: ", activity)
         } catch {
             print(error)
         }
@@ -48,7 +49,8 @@ final class LiveActivityService {
         Task {
             for activity in Activity<HowManySetWidgetAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
-                print("LIVEACTIVITY 종료!")
+                print("🎮 LIVEACTIVITY 종료!")
+                self.activity = nil
                 LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
             }
         }
