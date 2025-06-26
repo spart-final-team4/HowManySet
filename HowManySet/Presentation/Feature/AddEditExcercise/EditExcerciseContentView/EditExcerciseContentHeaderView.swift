@@ -49,7 +49,6 @@ final class EditExcerciseContentHeaderView: UIView {
 
 private extension EditExcerciseContentHeaderView {
     
-
     /// 전체 UI 구성 흐름을 정의합니다.
     func setupUI() {
         setViewHierarchy()
@@ -92,3 +91,13 @@ private extension EditExcerciseContentHeaderView {
     }
 }
 
+extension EditExcerciseContentHeaderView {
+    func configureUnitSegment(unit: String) {
+        if unit == "kg" {
+            unitSegmentControl.selectedSegmentIndex = 0
+        } else if unit == "lbs" {
+            unitSegmentControl.selectedSegmentIndex = 1
+        }
+        unitSelectionRelay.accept(unit)
+    }
+}
