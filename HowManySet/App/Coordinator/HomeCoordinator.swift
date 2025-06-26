@@ -58,6 +58,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         }
     } 
     
+    /// 운동 시작 후 운동 중 화면을 보여주는 메서드
     private func showHomeView(with routine: WorkoutRoutine) {
         let (homeVC, reactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: self, routine: routine)
         homeViewReactor = reactor
@@ -69,33 +70,26 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         navigationController.tabBarController?.selectedIndex = 0
         navigationController.setViewControllers([homeVC], animated: false)
     }
-
+    
+    /// 운동 시작전 HomeStartView를 보여주는 메서드
     private func showHomeStartView() {
         let homeStartVC = container.makeHomeStartViewController(coordinator: self)
         navigationController.setViewControllers([homeStartVC], animated: false)
     }
 
-    // 운동 시작
+    /// 운동 시작 후 (운동 중 true, routine값 설정, 운동 중 화면 처리)
     func startWorkout(with routine: WorkoutRoutine) {
         isWorkoutStarted = true
         currentRoutine = routine
         showHomeView(with: routine)
     }
 
-    // 운동 종료
+    /// 운동 시작 전 (운동 중 false, routine nil, 운동 시작 전 화면 처리)
     func beforeWorkout() {
         isWorkoutStarted = false
         currentRoutine = nil
         showHomeStartView()
     }
-    
-//    /// EditRoutineCoordinator에서 사용하기 위한 start
-//    func startFromEditRoutine() -> (UIViewController, HomeViewReactor) {
-//        let (homeVC, reactor) = container.makeHomeViewControllerWithWorkoutStarted(coordinator: self, routine: routine)
-//        navigationController.pushViewController(homeVC, animated: true)
-//        homeViewReactor = reactor
-//        return (homeVC, reactor)
-//    }
     
     /// 시작화면에서 운동 시작하기 버튼 클릭 시 루틴 리스트 push
     func pushRoutineListView() {
