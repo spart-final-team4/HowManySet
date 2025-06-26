@@ -761,6 +761,7 @@ extension HomeViewController {
                             }
                         } else if remainingVisibleCards.isEmpty {
                             // 모든 운동 완료 시
+                            reactor.action.onNext(.cardDeleteAnimationCompleted(oldIndex: currentIndex, nextIndex: currentIndex))
                             print("🎉 모든 운동 완료!")
                             // 운동 완료 처리
                             if let reactor = self.reactor {
