@@ -38,6 +38,7 @@ final class EditExcerciseViewReactor: Reactor {
         case workoutNameEmpty
         case workoutContainsZero
         case workoutEmpty
+        case workoutSetsEmpty
         case success
     }
     
@@ -94,6 +95,9 @@ final class EditExcerciseViewReactor: Reactor {
         if workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0}) {
             return ValidWorkout.workoutInvalidCharacters
         }
+        if workout.sets.isEmpty {
+            return ValidWorkout.workoutSetsEmpty
+        }
         
         return ValidWorkout.success
     }
@@ -103,9 +107,9 @@ final class EditExcerciseViewReactor: Reactor {
         var newSets = [WorkoutSet]()
         arr.removeFirst()
         arr.forEach { element in
-            newSets.append(WorkoutSet(weight: Double(element[0]) ?? 0.0,
+            newSets.append(WorkoutSet(weight: Double(element[0]) ?? -1,
                                       unit: currentState.currentUnit,
-                                      reps: Int(element[1]) ?? 1))
+                                      reps: Int(element[1]) ?? -1))
         }
         return newSets
     }
