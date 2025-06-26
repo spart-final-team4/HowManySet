@@ -238,6 +238,8 @@ extension EditExcerciseContentView {
         verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
         
+        configureUnitSegment(unit: sets[0].unit)
+        
         for i in 0..<sets.count {
             // 세트 순서를 결정
             let order = i + 1
@@ -273,5 +275,9 @@ extension EditExcerciseContentView {
             contentView.configure(weight: weight, reps: reps)
             excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
         }
+    }
+    
+    func configureUnitSegment(unit: String) {
+        headerView.configureUnitSegment(unit: unit)
     }
 }
