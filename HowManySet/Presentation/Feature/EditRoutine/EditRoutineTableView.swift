@@ -50,30 +50,31 @@ final class EditRoutineTableView: UITableView {
     func bind() {
         rxDataSource = DataSource(
             configureCell: { (dataSource, tableView, indexPath, item) in
-
-            // 셀, 헤더, 푸터 등록
-            tableView.register(EditRoutineTableHeaderView.self,
-                               forHeaderFooterViewReuseIdentifier: EditRoutineTableHeaderView.identifier)
-            tableView.register(EditRoutineTableFooterView.self,
-                               forHeaderFooterViewReuseIdentifier: EditRoutineTableFooterView.identifier)
-            tableView.register(EditRoutineTableViewCell.self,
-                               forCellReuseIdentifier: EditRoutineTableViewCell.identifier)
-
-            // 셀 구성
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: EditRoutineTableViewCell.identifier,
-                for: indexPath
-            ) as? EditRoutineTableViewCell else {
-                return UITableViewCell()
-            }
-            
-            cell.moreButtonTapped
-                .subscribe(with: self) { owner, _ in
-                    owner.cellMoreButtonTapped.accept(indexPath)
-                }.disposed(by: cell.disposeBag)
+                
+                // 셀, 헤더, 푸터 등록
+                tableView.register(EditRoutineTableHeaderView.self,
+                                   forHeaderFooterViewReuseIdentifier: EditRoutineTableHeaderView.identifier)
+                tableView.register(EditRoutineTableFooterView.self,
+                                   forHeaderFooterViewReuseIdentifier: EditRoutineTableFooterView.identifier)
+                tableView.register(EditRoutineTableViewCell.self,
+                                   forCellReuseIdentifier: EditRoutineTableViewCell.identifier)
+                
+                // 셀 구성
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: EditRoutineTableViewCell.identifier,
+                    for: indexPath
+                ) as? EditRoutineTableViewCell else {
+                    return UITableViewCell()
+                }
+                
+                cell.moreButtonTapped
+                    .subscribe(with: self) { owner, _ in
+                        owner.cellMoreButtonTapped.accept(indexPath)
+                    }.disposed(by: cell.disposeBag)
                 
             cell.configure(model: item, caller: self.caller)
-            return cell
+                cell.selectionStyle = .none
+                return cell
             })
         rxDataSource?.canMoveRowAtIndexPath = { _, _ in return true }
     }
