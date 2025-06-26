@@ -43,16 +43,22 @@ final class EditExcerciseViewController: UIViewController, View {
     
     func bind(reactor: EditExcerciseViewReactor) {
         contentView.excerciseInfoRelay
+            .observe(on: MainScheduler.asyncInstance)
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        contentView.unitSelectionRelay
+            .map { Reactor.Action.changeUnit($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         reactor.state
             .map{ $0.workout }
             .distinctUntilChanged()
-            .subscribe(onNext: { [weak self] state in
-                self?.headerView.editConfigure(with: state.name)
-                self?.contentView.configureEditSets(with: state.sets)
+            .subscribe(onNext: { [weak self] workout in
+                self?.headerView.editConfigure(with: workout.name)
+                self?.contentView.configureEditSets(with: workout.sets)
             }).disposed(by: disposeBag)
     }
     

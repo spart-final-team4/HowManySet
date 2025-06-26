@@ -16,15 +16,18 @@ final class EditExcerciseViewReactor: Reactor {
     enum Action {
         case saveExcerciseButtonTapped
         case changeExcerciseWeightSet([[String]])
+        case changeUnit(String)
     }
     
     enum Mutation {
         case saveExcercise
         case changeExcerciseWeightSet([[String]])
+        case changeUnit(String) 
     }
     
     struct State {
         var workout: Workout
+        var currentUnit: String = "kg"
     }
     
     var initialState: State
@@ -38,6 +41,8 @@ final class EditExcerciseViewReactor: Reactor {
             return .just(.saveExcercise)
         case .changeExcerciseWeightSet(let newWeightSet):
             return .just(.changeExcerciseWeightSet(newWeightSet))
+        case .changeUnit(let unit):
+            return .just(.changeUnit(unit))
         }
     }
     
@@ -48,6 +53,13 @@ final class EditExcerciseViewReactor: Reactor {
             break
         case .changeExcerciseWeightSet(let newWeightSet):
             print(newWeightSet)
+        case .changeUnit(let unit):
+            var sets = newState.workout.sets
+            var newSets: [WorkoutSet] = []
+            sets.forEach { item in
+                newSets.append(WorkoutSet(weight: item.weight, unit: unit, reps: item.reps))
+            }
+            newState.workout.sets = newSets
         }
         return newState
     }
