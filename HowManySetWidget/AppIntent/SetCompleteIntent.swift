@@ -24,10 +24,11 @@ public struct SetCompleteIntent: AppIntent, LiveActivityIntent {
     
     public func perform() async throws -> some IntentResult {
         print("[Intent] perform 호출! index: \(String(describing: index))")
-        let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
-        sharedDefaults?.set(index, forKey: "SetCompleteIndex")
-        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "SetCompleteTimestamp")
+        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.suiteName)
+        sharedDefaults?.set(index, forKey: LiveActivityDefaultsName.shared.setCompleteIndex)
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: LiveActivityDefaultsName.shared.SetCompleteTimeStamp)
         sharedDefaults?.synchronize()
+        NotificationCenter.default.post(name: .setCompleteEvent, object: nil)
         return .result()
     }
 }
