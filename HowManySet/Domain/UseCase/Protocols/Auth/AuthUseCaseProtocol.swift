@@ -13,7 +13,6 @@ import RxSwift
 /// 비즈니스 규칙을 추상화합니다. Repository 계층과 Presentation 계층 사이의
 /// 중간 역할을 담당합니다.
 public protocol AuthUseCaseProtocol {
-    
     /// 카카오 계정으로 로그인을 수행합니다
     ///
     /// 로그인 성공 시 UserDefaults에 백업 데이터를 저장하며,
@@ -21,7 +20,7 @@ public protocol AuthUseCaseProtocol {
     /// - Returns: 로그인된 사용자 정보를 방출하는 Observable
     func loginWithKakao() -> Observable<User>
     
-    /// 구글 계정으로 로그인을 수행합니다
+    /// 구글 계정로 로그인을 수행합니다
     ///
     /// 로그인 성공 시 UserDefaults에 백업 데이터를 저장하며,
     /// 기존 온보딩 상태를 유지합니다.
@@ -89,4 +88,25 @@ public protocol AuthUseCaseProtocol {
     /// - Parameter uid: 사용자 고유 식별자
     /// - Returns: 온보딩 상태 초기화 완료를 알리는 Observable
     func resetUserOnboardingStatus(uid: String) -> Observable<Void>
+    
+    /// 닉네임 유효성 검사
+    ///
+    /// - Parameter nickname: 검사할 닉네임
+    /// - Returns: 유효성 결과를 방출하는 Observable
+    func checkNicknameValid(_ nickname: String) -> Observable<Bool>
+    
+    /// 온보딩 프로세스를 완료합니다 (uid 없이 내부에서 처리)
+    ///
+    /// 현재 로그인된 사용자의 uid를 내부적으로 관리하여,
+    /// Presentation 계층에서는 uid를 직접 전달하지 않습니다.
+    /// - Returns: 온보딩 완료를 알리는 Observable
+    func completeOnboarding() -> Observable<Void>
+    
+    /// 닉네임 설정을 완료합니다 (uid 없이 내부에서 처리)
+    ///
+    /// 현재 로그인된 사용자의 uid를 내부적으로 관리하여,
+    /// Presentation 계층에서는 uid를 직접 전달하지 않습니다.
+    /// - Parameter nickname: 설정할 닉네임
+    /// - Returns: 닉네임 설정 완료를 알리는 Observable
+    func completeNicknameSetting(nickname: String) -> Observable<Void>
 }

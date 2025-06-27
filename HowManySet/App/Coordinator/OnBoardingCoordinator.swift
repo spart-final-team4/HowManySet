@@ -29,6 +29,9 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
     
     /// RxSwift DisposeBag
     private let disposeBag = DisposeBag()
+    
+    /// 완료 처리 중 플래그 (중복 호출 방지)
+    private var isCompleting = false
 
     /// 생성자 - 의존성 주입 및 윈도우 연결
     init(navigationController: UINavigationController, container: DIContainer) {
@@ -39,7 +42,7 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
     /// 온보딩 흐름 시작
     func start() {
         let onboardingVC = container.makeOnBoardingViewController(coordinator: self)
-        navigationController.pushViewController(onboardingVC, animated: true)
+        navigationController.pushViewController(onboardingVC, animated: false)
     }
 
     /// 닉네임 설정 완료 시 호출
@@ -70,6 +73,12 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
 
     /// 온보딩 완료 시 호출
     func completeOnBoarding() {
+        // 중복 호출 방지
+        guard !isCompleting else { return }
+        isCompleting = true
+        
+        print("🟢 OnBoardingCoordinator: 온보딩 완료 처리 시작")
+        
         let firebaseAuthService = FirebaseAuthService()
         let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
         let authUseCase = AuthUseCase(repository: authRepository)
@@ -81,7 +90,9 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
                     // 사용자가 없으면 로컬 저장만 하고 완료
                     print("🟡 OnBoardingCoordinator: 현재 사용자가 없음 - 로컬 저장만 진행")
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-                    self?.finishFlow?()
+                    DispatchQueue.main.async {
+                        self?.finishFlow?()
+                    }
                     return Observable.empty()
                 }
                 return authUseCase.completeOnboarding(uid: user.uid)
