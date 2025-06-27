@@ -14,7 +14,7 @@ final class EditRoutineViewReactor: Reactor {
     private let saveRoutineUseCase: SaveRoutineUseCase
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let updateRoutineUseCase: UpdateRoutineUseCase
-    private let fetchRoutineUseCase: FetchRoutineUseCase
+    private let deleteWorkoutUseCase: DeleteWorkoutUseCase
     
     private let disposeBag = DisposeBag()
     // Action is an user interaction
@@ -52,13 +52,13 @@ final class EditRoutineViewReactor: Reactor {
          saveRoutineUseCase: SaveRoutineUseCase,
          deleteRoutineUseCase: DeleteRoutineUseCase,
          updateRoutineUseCase: UpdateRoutineUseCase,
-         fetchRoutineUseCase: FetchRoutineUseCase
+         deleteWorkoutUseCase: DeleteWorkoutUseCase
     ) {
         self.initialState = State(routine: routine)
         self.saveRoutineUseCase = saveRoutineUseCase
         self.deleteRoutineUseCase = deleteRoutineUseCase
         self.updateRoutineUseCase = updateRoutineUseCase
-        self.fetchRoutineUseCase = fetchRoutineUseCase
+        self.deleteWorkoutUseCase = deleteWorkoutUseCase
     }
     
     // Action -> Mutation
@@ -106,10 +106,9 @@ final class EditRoutineViewReactor: Reactor {
         case .removeSelectedWorkout:
             var newRoutine = newState.routine
             guard let workout = currentState.currentSeclectedWorkout else { return newState }
-            deleteRoutineUseCase.execute(item: currentState.routine)
+            deleteWorkoutUseCase.execute(item: workout)
             guard let indexPath = currentState.currentSeclectedIndexPath else { return newState }
             newRoutine.workouts.remove(at: indexPath.row)
-            saveRoutineUseCase.execute(item: newRoutine)
             newState.routine = newRoutine
         case .changeListOrder:
             break
