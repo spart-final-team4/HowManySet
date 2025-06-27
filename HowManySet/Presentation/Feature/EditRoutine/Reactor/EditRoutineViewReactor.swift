@@ -15,6 +15,7 @@ final class EditRoutineViewReactor: Reactor {
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let updateRoutineUseCase: UpdateRoutineUseCase
     private let deleteWorkoutUseCase: DeleteWorkoutUseCase
+    private let fetchRoutineUseCase: FetchRoutineUseCase
     
     private let disposeBag = DisposeBag()
     // Action is an user interaction
@@ -49,12 +50,14 @@ final class EditRoutineViewReactor: Reactor {
     let initialState: State
     
     init(with routine: WorkoutRoutine,
+         fetchRoutineUseCase: FetchRoutineUseCase,
          saveRoutineUseCase: SaveRoutineUseCase,
          deleteRoutineUseCase: DeleteRoutineUseCase,
          updateRoutineUseCase: UpdateRoutineUseCase,
          deleteWorkoutUseCase: DeleteWorkoutUseCase
     ) {
         self.initialState = State(routine: routine)
+        self.fetchRoutineUseCase = fetchRoutineUseCase
         self.saveRoutineUseCase = saveRoutineUseCase
         self.deleteRoutineUseCase = deleteRoutineUseCase
         self.updateRoutineUseCase = updateRoutineUseCase
