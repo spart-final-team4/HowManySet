@@ -206,11 +206,11 @@ struct HowManySetWidgetLiveActivity: Widget {
                         if !context.state.isResting {
                             Image(systemName: "dumbbell")
                                 .foregroundStyle(.brand)
-                                .font(.system(size: buttonSizeAtDynamic))
+                                .font(.largeTitle)
                         } else {
                             Image(systemName: "timer")
                                 .foregroundStyle(.brand)
-                                .font(.system(size: buttonSizeAtDynamic))
+                                .font(.largeTitle)
                         }
                     }
                     .padding(.leading, 12)
@@ -218,7 +218,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                 }
                 DynamicIslandExpandedRegion(.center) {
                     if !context.state.isResting {
-                        HStack(spacing: 10) {
+                        HStack(spacing: 12) {
                             Text(context.state.exerciseName)
                                 .font(.title2)
                                 .fontWeight(.semibold)
@@ -229,8 +229,9 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 .foregroundStyle(.grey3)
                         }
                         .padding(.top, 10)
+                        Spacer()
                     } else {
-                        HStack(spacing: 10) {
+                        HStack(spacing: 12) {
                             Text(restText)
                                 .font(.title2)
                                 .fontWeight(.semibold)
@@ -241,6 +242,8 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 .foregroundStyle(.grey3)
                         }
                         .padding(.top, 10)
+                        .padding(.trailing, 40)
+                        Spacer()
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
