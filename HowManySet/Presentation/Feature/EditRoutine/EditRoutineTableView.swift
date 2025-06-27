@@ -67,15 +67,12 @@ final class EditRoutineTableView: UITableView {
                     return UITableViewCell()
                 }
                 
-                cell.moreButtonTapped
-                    .do(onDispose: {
-                        print("cell.moreButtonTapped dispose")
-                    })
-                    .subscribe(with: self) { owner, _ in
-                        owner.cellMoreButtonTapped.accept(indexPath)
-                    }.disposed(by: cell.disposeBag)
                 
-            cell.configure(model: item, caller: self.caller)
+                cell.configure(indexPath: indexPath,
+                               model: item,
+                               caller: self.caller)
+                cell.bind(indexPath: indexPath,
+                          relay: self.cellMoreButtonTapped)
                 cell.selectionStyle = .none
                 return cell
             })

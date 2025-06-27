@@ -16,7 +16,6 @@ import RxSwift
 final class EditRoutineTableViewCell: UITableViewCell {
     
     var disposeBag = DisposeBag()
-    var moreButtonTapped = PublishRelay<Void>()
     
     /// 셀 재사용을 위한 식별자
     static var identifier: String {
@@ -71,13 +70,21 @@ final class EditRoutineTableViewCell: UITableViewCell {
     
     /// 셀을 모델 데이터로 구성하는 메서드
     /// - Parameter model: 운동 정보를 담고 있는 `EditRoutioneCellModel` 객체
-    func configure(model: EditRoutioneCellModel, caller: ViewCaller) {
+    func configure(indexPath: IndexPath,
+                   model: EditRoutioneCellModel,
+                   caller: ViewCaller) {
         self.titleLabel.text = model.name
         self.setTextLabel.text = model.setText
         self.weightTextLabel.text = model.weightText
         self.repsTextLabel.text = model.repsText
         
         self.moreButton.isHidden = caller == .fromHome ? true : false
+    }
+    func bind(indexPath: IndexPath, relay: PublishRelay<IndexPath>) {
+        moreButton.rx.tap
+            .map{ indexPath }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -89,13 +96,6 @@ private extension EditRoutineTableViewCell {
         setAppearance()
         setViewHierarchy()
         setConstraints()
-        bind()
-    }
-    
-    func bind() {
-        moreButton.rx.tap
-            .bind(to: moreButtonTapped)
-            .disposed(by: disposeBag)
     }
     
     /// 셀 배경색 및 기본 속성 설정
