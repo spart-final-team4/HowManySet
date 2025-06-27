@@ -90,8 +90,15 @@ final class CalendarViewController: UIViewController, View {
         // tableView.delegate 바인딩
         calendarView.publicRecordTableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-        
-        
+
+        // NotificationCenter 이벤트 수신 바인딩
+        NotificationCenter.default.rx.notification(.didDismissRecordDetail)
+            .bind(with: self) { owner, _ in
+                let selectedDate = owner.reactor?.currentState.selectedDate ?? Date()
+                owner.reactor?.action.onNext(.selectDate(selectedDate))
+            }
+            .disposed(by: disposeBag)
+
         // 화면 탭하면 키보드 내리기
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
