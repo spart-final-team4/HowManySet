@@ -153,17 +153,13 @@ final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
     private let fsSaveRecordUseCase: FSSaveRecordUseCase
-    //    private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
-    //    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
     // TODO: 추후에 FSUpdateWorkoutUseCase 적용
     private let fsUpdateRoutineUseCase: FSUpdateRoutineUseCase
+    private let updateRecordUseCase: UpdateRecordUseCase
     
-    // TODO: 추후에 실제 데이터 Fetch로 변경
-    private let routineMockData = WorkoutRoutine.mockData[0]
-    private let recordMockData = WorkoutRecord.mockData[0]
     
     init(
         saveRecordUseCase: SaveRecordUseCase,
@@ -172,6 +168,7 @@ final class HomeViewReactor: Reactor {
         fsFetchRoutineUseCase: FSFetchRoutineUseCase,
         updateWorkoutUseCase: UpdateWorkoutUseCase,
         fsUpdateRoutineUseCase: FSUpdateRoutineUseCase,
+        updateRecordUseCase: UpdateRecordUseCase,
         initialState: State
     ) {
         self.saveRecordUseCase = saveRecordUseCase
@@ -180,6 +177,7 @@ final class HomeViewReactor: Reactor {
         self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
         self.updateWorkoutUseCase = updateWorkoutUseCase
         self.fsUpdateRoutineUseCase = fsUpdateRoutineUseCase
+        self.updateRecordUseCase = updateRecordUseCase
         self.initialState = initialState
     }//init
     
@@ -556,9 +554,7 @@ final class HomeViewReactor: Reactor {
                 routineMemo: newState.memoInRoutine
             )
             print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
-            
-            // TODO: - saveUsecase 실행
-            
+                        
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
                 newState.currentExerciseAllSetsCompleted = true
@@ -604,8 +600,7 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
             }
             
-            // MARK: - 현재 운동 데이터 저장
-            // 메모 창 dismiss시, 운동 완료 시 등등
+        // MARK: - 현재 운동 데이터 저장(메모 창 dismiss시, 운동 완료 시)
         case .saveWorkoutData:
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
@@ -615,15 +610,7 @@ final class HomeViewReactor: Reactor {
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
-            newState.workoutRecord = WorkoutRecord(
-                id: UUID().uuidString,
-                workoutRoutine: newState.workoutRoutine,
-                totalTime: newState.workoutTime,
-                workoutTime: newState.workoutTime,
-                comment: newState.memoInRoutine,
-                date: Date()
-            )
-            
+                    
             if let uid = newState.uid {
                 fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
             } else {
@@ -768,6 +755,7 @@ private extension HomeViewReactor {
             } else { // nextExerciseIndex == cardIndex일때
                 
                 // TODO: 현재 이부분 거치지 않음 (추후 수정)
+                // 현재 cardDeleteAnimationCompleted에서 종료 시 처리
                 let allCompleted = currentState.workoutCardStates
                     .allSatisfy { $0.allSetsCompleted }
                 

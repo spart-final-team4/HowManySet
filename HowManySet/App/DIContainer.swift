@@ -150,22 +150,19 @@ final class DIContainer {
         let workoutRepository = WorkoutRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
-//        let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
+        let updateRecordUseCase = UpdateRecordUseCase(repository: recordRepository)
         
         // Firestore 로직 추가
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
         
         let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
         let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
-//        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
-        
         let fsRoutineRepository = FSRoutineRepositoryImpl(firestoreService: firestoreService)
         let fsFetchRoutineUseCase = FSFetchRoutineUseCase(repository: fsRoutineRepository)
         let fsUpdateRoutineUseCase = FSUpdateRoutineUseCase(repository: routineRepository)
         
-//        let restoredState = loadCurrentWorkoutState()
         let initialState = HomeViewReactor.fetchedInitialState(routine: routine)
         
         let reactor = HomeViewReactor(
@@ -175,6 +172,7 @@ final class DIContainer {
             fsFetchRoutineUseCase: fsFetchRoutineUseCase,
             updateWorkoutUseCase: updateWorkoutUseCase,
             fsUpdateRoutineUseCase: fsUpdateRoutineUseCase,
+            updateRecordUseCase: updateRecordUseCase,
             initialState: initialState
         )
         
