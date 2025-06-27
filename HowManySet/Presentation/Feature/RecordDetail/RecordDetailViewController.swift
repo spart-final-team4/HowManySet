@@ -157,6 +157,7 @@ extension RecordDetailViewController {
             .map(\.didUpdateMemo)
             .distinctUntilChanged()
             .filter { $0 }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(with: self) { owner, _ in
                 owner.showToast(x: 0, y: -20, message: "메모가 수정되었습니다.")
                 // tapSave가 되었을 때만(한 번만) 반응하기 위해 false로 다시 설정
@@ -205,7 +206,7 @@ extension RecordDetailViewController {
 
                 // 텍스트 업데이트 시 리액터로 전달
                 textView.rx.text.orEmpty
-//                    .skip(until: textView.rx.didBeginEditing)
+                    .skip(until: textView.rx.didBeginEditing)
                     .distinctUntilChanged()
                     .map { RecordDetailViewReactor.Action.updateMemo($0) }
                     .bind(to: reactor.action)
