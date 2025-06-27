@@ -171,6 +171,8 @@ extension RecordDetailViewController {
             .distinctUntilChanged()
             .filter { $0 }
             .bind(with: self) { owner, _ in
+                // Notification 전송
+                NotificationCenter.default.post(name: .didDismissRecordDetail, object: nil)
                 owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
