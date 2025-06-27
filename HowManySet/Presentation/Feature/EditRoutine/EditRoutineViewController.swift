@@ -26,11 +26,9 @@ final class EditRoutineViewController: UIViewController, View {
     private let coordinator: EditRoutineCoordinatorProtocol
     
     /// 운동 루틴 리스트를 보여주는 테이블 뷰
-    private lazy var tableView = EditRoutineTableView(frame: .zero, style: .plain, caller: caller)
-    private let editRoutineBottomSheetViewController = EditRoutineBottomSheetViewController()
-    
+    private lazy var tableView = EditRoutineTableView(frame: .zero, style: .plain, caller: self.caller)
+    private let changeExcerciseTapped = PublishRelay<Void>()
     private var caller: ViewCaller
-        
     /// 운동 시작 버튼 - 클릭 시 바로 홈화면에서 운동 시작
     private lazy var startButton = UIButton().then {
         $0.setTitle(startText, for: .normal)
@@ -64,38 +62,24 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func bind(reactor: EditRoutineViewReactor) {
+        
         tableView.cellMoreButtonTapped
             .do(onNext: { [weak self] indexPath in
-                self?.presentBottomSheetVC()})
+                self?.presentBottomSheetVC()
+                print("cellMoreButtonTapped")
+            })
             .map{ Reactor.Action.cellButtonTapped($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         tableView.footerViewTapped
-            .do(onNext: { [weak self] in
-                self?.presentEditExerciseVC()
-            }).map { Reactor.Action.plusExcerciseButtonTapped }
+            .map { Reactor.Action.plusExcerciseButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         tableView.dragDropRelay
             .distinctUntilChanged { $0.source == $1.source && $0.destination == $1.destination }
             .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        editRoutineBottomSheetViewController.excerciseChangeButtonSubject
-            .map{ Reactor.Action.changeWorkoutInfo }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        editRoutineBottomSheetViewController.removeExcerciseButtonSubject
-            .map{ Reactor.Action.removeSelectedWorkout }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
-            .map{ Reactor.Action.changeListOrder }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -126,6 +110,9 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentBottomSheetVC() {
+        
+        let editRoutineBottomSheetViewController = EditRoutineBottomSheetViewController()
+        
         if let sheet = editRoutineBottomSheetViewController.sheetPresentationController {
             let fixedHeight: CGFloat = 200
 
@@ -138,13 +125,35 @@ final class EditRoutineViewController: UIViewController, View {
             sheet.prefersEdgeAttachedInCompactHeight = true // iPhone에서 전체화면 방지
             sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
         }
+        
+        editRoutineBottomSheetViewController.excerciseChangeButtonSubject
+            .bind(to: changeExcerciseTapped)
+            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
+        
+        changeExcerciseTapped
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, _ in
+                owner.dismiss(animated: true)
+                owner.presentEditExcerciseVC()
+            }.disposed(by: editRoutineBottomSheetViewController.disposeBag)
+        
+        editRoutineBottomSheetViewController.removeExcerciseButtonSubject
+            .map{ Reactor.Action.removeSelectedWorkout }
+            .bind(to: reactor!.action)
+            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
+        
+        // TODO: 순서변경 마이너패치때
+//        editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
+//            .map{ Reactor.Action.changeListOrder }
+//            .bind(to: reactor!.action)
+//            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
 
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
     }
     
-    func presentEditExerciseVC() {
-        let vc = EditExcerciseViewController(
-            reactor: EditExcerciseViewReactor(
+    func presentAddExerciseVC() {
+        let vc = AddExerciseViewController(
+            reactor: AddExerciseViewReactor(
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
                 saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
                 workoutStateForEdit: nil,
@@ -152,6 +161,25 @@ final class EditRoutineViewController: UIViewController, View {
         )
         self.present(vc, animated: true)
     }
+    
+    func presentEditExcerciseVC() {
+        guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
+        let repository = WorkoutRepositoryImpl()
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
+        let vc = EditExerciseViewController(reactor: EditExerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
+        
+        vc.saveResultRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, result in
+                if result {
+                    owner.showToast(x: 0, y: 0, message: "저장되었어요!")
+                    owner.reactor?.action.onNext(.viewDidLoad)
+                }
+            }.disposed(by: vc.disposeBag)
+        
+        present(vc, animated: true)
+    }
+    
 }
 
 // MARK: - UI 구성 관련 private 메서드

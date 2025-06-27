@@ -21,10 +21,11 @@ import RxCocoa
 /// iOS 15 이상에서 deprecated된 `contentEdgeInsets`는 추후 `UIButton.Configuration` 기반으로 전환 권장됩니다.
 final class EditRoutineBottomSheetViewController: UIViewController {
     
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     private(set) var excerciseChangeButtonSubject = PublishRelay<Void>()
     private(set) var removeExcerciseButtonSubject = PublishRelay<Void>()
-    private(set) var changeExcerciseListButtonSubject = PublishRelay<Void>()
+    // TODO: 순서변경 마이너패치때
+//    private(set) var changeExcerciseListButtonSubject = PublishRelay<Void>()
     
     /// 운동 정보 변경 버튼
     private lazy var excerciseChangeButton = UIButton().then {
@@ -60,6 +61,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
         $0.backgroundColor = .disabledButton
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
+        $0.isHidden = true
     }
     
     /// 버튼들을 수직으로 배치하는 스택 뷰
@@ -94,18 +96,10 @@ private extension EditRoutineBottomSheetViewController {
         removeExcerciseButton.rx.tap
             .bind(to: removeExcerciseButtonSubject)
             .disposed(by: disposeBag)
-        changeExcerciseListButton.rx.tap
-            .bind(to: changeExcerciseListButtonSubject)
-            .disposed(by: disposeBag)
-        
-        Observable
-            .merge(excerciseChangeButton.rx.tap.asObservable(),
-                   removeExcerciseButton.rx.tap.asObservable(),
-                   changeExcerciseListButton.rx.tap.asObservable())
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, _ in
-                owner.dismiss(animated: true)
-            }.disposed(by: disposeBag)
+        // TODO: 순서변경 마이너패치때
+//        changeExcerciseListButton.rx.tap
+//            .bind(to: changeExcerciseListButtonSubject)
+//            .disposed(by: disposeBag)
     }
     
     /// 뷰의 기본 배경 색상 설정
@@ -122,7 +116,7 @@ private extension EditRoutineBottomSheetViewController {
     func setConstraints() {
         stackView.snp.makeConstraints {
             $0.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
-            $0.height.equalTo(150)
+            $0.height.equalTo(120)
         }
     }
 }

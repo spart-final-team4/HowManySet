@@ -20,7 +20,7 @@ import RxCocoa
 /// - 삭제 버튼 (`removeButton`)
 ///
 /// Rx로 삭제 버튼의 탭 이벤트를 외부에 전달할 수 있도록 `removeButtonTap`을 제공합니다.
-final class EditExcerciseHorizontalContentStackView: UIStackView {
+final class EditExerciseHorizontalContentStackView: UIStackView {
     
     /// Rx 자원 해제를 위한 DisposeBag입니다.
     private let disposeBag = DisposeBag()
@@ -28,6 +28,8 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
     /// 삭제 버튼이 탭되었을 때 이벤트를 방출하는 PublishRelay입니다.
     private(set) var removeButtonTap = PublishRelay<Void>()
     private(set) var weightRepsRelay = BehaviorRelay<[String]>(value: [])
+    private(set) var weightRelay = BehaviorRelay<String>(value: "")
+    private(set) var repsRelay = BehaviorRelay<String>(value: "")
     
     var order: Int = 0
     
@@ -113,7 +115,7 @@ final class EditExcerciseHorizontalContentStackView: UIStackView {
 
 // MARK: - UI 구성 관련 메서드
 
-private extension EditExcerciseHorizontalContentStackView {
+private extension EditExerciseHorizontalContentStackView {
     
     /// 전체 UI 구성 흐름을 정의합니다.
     func setupUI() {
@@ -124,12 +126,21 @@ private extension EditExcerciseHorizontalContentStackView {
     }
     
     func bind() {
+        weightTextField.rx.text.orEmpty
+            .bind(to: weightRelay)
+            .disposed(by: disposeBag)
+        
+        repsTextField.rx.text.orEmpty
+            .bind(to: repsRelay)
+            .disposed(by: disposeBag)
+        
         Observable
             .combineLatest(
-                weightTextField.rx.text.orEmpty,
-                repsTextField.rx.text.orEmpty
+                weightRelay,
+                repsRelay
             )
             .map{ [$0, $1] }
+            .distinctUntilChanged()
             .bind(to: weightRepsRelay)
             .disposed(by: disposeBag)
 
@@ -156,10 +167,12 @@ private extension EditExcerciseHorizontalContentStackView {
 }
 
 // MARK: - Internal Methods
-extension EditExcerciseHorizontalContentStackView {
+extension EditExerciseHorizontalContentStackView {
     
     func configure(weight: Double, reps: Int) {
         self.weightTextField.text = "\(weight)"
         self.repsTextField.text = "\(reps)"
+        weightRelay.accept(weightTextField.text ?? "")
+        repsRelay.accept(repsTextField.text ?? "")
     }
 }

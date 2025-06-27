@@ -1,5 +1,5 @@
 //
-//  EditExcerciseViewController.swift
+//  AddExcerciseViewController.swift
 //  HowManySet
 //
 //  Created by MJ Dev on 6/4/25.
@@ -19,9 +19,9 @@ import ReactorKit
 /// - 세트(중량/횟수) 편집
 /// - 운동 항목 추가 및 루틴 저장
 /// - 유효성 검증 실패 시 Alert 표시
-final class EditExcerciseViewController: UIViewController, View {
+final class AddExerciseViewController: UIViewController, View {
     
-    typealias Reactor = EditExcerciseViewReactor
+    typealias Reactor = AddExerciseViewReactor
     
     // MARK: - Properties
     
@@ -36,7 +36,7 @@ final class EditExcerciseViewController: UIViewController, View {
     private let scrollView = UIScrollView()
     
     /// 운동명을 입력하는 헤더 뷰입니다.
-    private let headerView = EditExcerciseHeaderView()
+    private let headerView = EditExerciseHeaderView()
     
     /// 헤더 하단 구분선입니다.
     private let headerBorderLineView = UIView().then {
@@ -44,7 +44,7 @@ final class EditExcerciseViewController: UIViewController, View {
     }
     
     /// 세트 정보를 입력받는 콘텐츠 뷰입니다.
-    private let contentView = EditExcerciseContentView()
+    private let contentView = EditExerciseContentView()
     
     /// 콘텐츠 하단 구분선입니다.
     private let contentBorderLineView = UIView().then {
@@ -52,16 +52,16 @@ final class EditExcerciseViewController: UIViewController, View {
     }
     
     /// 현재까지 저장된 운동 리스트를 보여주는 뷰입니다.
-    private let currentView = EditExcerciseCurrentStackView()
+    private let currentView = EditExerciseCurrentStackView()
     
     /// 운동 추가 및 저장 버튼을 포함하는 하단 푸터 뷰입니다.
-    private let footerView = EditExcerciseFooterView()
+    private let footerView = AddExerciseFooterView()
     
     // MARK: - Initializer
     
     /// 리액터를 주입받아 초기화합니다.
     /// - Parameter reactor: 운동 편집 기능을 제어하는 Reactor
-    init(reactor: EditExcerciseViewReactor) {
+    init(reactor: AddExerciseViewReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
@@ -90,7 +90,7 @@ final class EditExcerciseViewController: UIViewController, View {
     /// 리액터 바인딩을 통해 View와 Reactor를 연결합니다.
     ///
     /// 버튼 탭, 입력값 변경, 상태 변화에 따른 Alert 및 화면 dismiss 처리를 수행합니다.
-    func bind(reactor: EditExcerciseViewReactor) {
+    func bind(reactor: AddExerciseViewReactor) {
         
         // 운동 추가 버튼 탭
         footerView.addExcerciseButtonTapped
@@ -121,6 +121,7 @@ final class EditExcerciseViewController: UIViewController, View {
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
 
@@ -147,7 +148,7 @@ final class EditExcerciseViewController: UIViewController, View {
         // Alert 표시 (저장 성공/실패, 유효성 실패 등)
         reactor.alertRelay
             .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { (owner: EditExcerciseViewController, alert) in
+            .subscribe(with: self) { (owner: AddExerciseViewController, alert) in
                 switch alert {
                 case .success:
                     owner.showToast(x: owner.scrollView.contentOffset.x, y: owner.scrollView.contentOffset.y, message: "운동이 추가되었어요!")
@@ -197,7 +198,7 @@ final class EditExcerciseViewController: UIViewController, View {
 
 // MARK: - UI Layout Methods
 
-private extension EditExcerciseViewController {
+private extension AddExerciseViewController {
     
     /// 전체 UI 구성 흐름을 설정합니다.
     func setupUI() {
@@ -267,5 +268,11 @@ private extension EditExcerciseViewController {
             $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(92)
         }
+    }
+}
+
+extension AddExerciseViewController {
+    func setInitialUIState() {
+        contentView.setInitialState()
     }
 }

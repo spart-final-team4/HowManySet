@@ -1,5 +1,5 @@
 //
-//  EditExcerciseViewReactor.swift
+//  AddExerciseViewReactor.swift
 //  HowManySet
 //
 //  Created by MJ Dev on 6/4/25.
@@ -20,7 +20,7 @@ import ReactorKit
 /// - 루틴 저장 처리
 /// - 운동 이름, 단위, 세트 정보 변경 처리
 /// - 유효성 검사 및 알림 처리
-final class EditExcerciseViewReactor: Reactor {
+final class AddExerciseViewReactor: Reactor {
     
     // MARK: - Action
     

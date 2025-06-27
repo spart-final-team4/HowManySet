@@ -18,7 +18,7 @@ import RxSwift
 /// - `루틴 저장` 버튼 (`saveRoutineButton`)
 ///
 /// RxCocoa를 활용해 버튼 탭 이벤트를 외부로 전달합니다.
-final class EditExcerciseFooterView: UIStackView {
+final class AddExerciseFooterView: UIStackView {
     
     /// '운동 추가' 버튼이 탭되었을 때 이벤트를 방출하는 Relay입니다.
     private(set) var addExcerciseButtonTapped = PublishRelay<Void>()
@@ -79,7 +79,7 @@ final class EditExcerciseFooterView: UIStackView {
 }
 
 // MARK: - UI 구성 관련 메서드
-private extension EditExcerciseFooterView {
+private extension AddExerciseFooterView {
     
     /// UI 초기화 메서드 - 뷰 계층 및 외형 설정
     func setupUI() {
