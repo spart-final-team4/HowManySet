@@ -23,13 +23,13 @@ import RxCocoa
 /// - 초기 3개의 세트를 자동으로 생성합니다.
 /// - 버튼을 눌러 세트를 추가할 수 있습니다.
 /// - 각 세트는 삭제 버튼을 포함하며 삭제 시 순서가 재정렬됩니다.
-final class EditExcerciseContentView: UIView {
+final class EditExerciseContentView: UIView {
     
     /// Rx 자원 해제를 위한 DisposeBag입니다.
     private let disposeBag = DisposeBag()
     
     /// 상단 단위 선택 헤더 뷰입니다.
-    private let headerView = EditExcerciseContentHeaderView()
+    private let headerView = EditExerciseContentHeaderView()
     private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
     private(set) var excerciseInfoRelay = BehaviorRelay<[[String]]>(value: [[]])
     
@@ -82,8 +82,6 @@ final class EditExcerciseContentView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        setThreeCells()  // 기본 3개의 세트 생성
-        
     }
     
     /// XIB/Storyboard 초기화는 지원하지 않습니다.
@@ -96,7 +94,7 @@ final class EditExcerciseContentView: UIView {
     private func addContentView() {
         // 세트 순서를 결정
         let order = verticalContentStackView.subviews.count - 1
-        let contentView = EditExcerciseHorizontalContentStackView(order: order)
+        let contentView = EditExerciseHorizontalContentStackView(order: order)
         
         // 기존 추가 버튼 제거 후, 새로운 세트와 함께 다시 추가
         verticalContentStackView.removeArrangedSubview(addContentButton)
@@ -130,13 +128,13 @@ final class EditExcerciseContentView: UIView {
     /// 현재 세트 목록을 기준으로 순서를 재설정합니다.
     private func reorder() {
         for i in 0..<verticalContentStackView.subviews.count {
-            guard let view = verticalContentStackView.subviews[i] as? EditExcerciseHorizontalContentStackView else { continue }
+            guard let view = verticalContentStackView.subviews[i] as? EditExerciseHorizontalContentStackView else { continue }
             view.reOrderLabel(order: i)
         }
     }
     
     /// 초기 상태에서 3개의 세트를 자동 추가합니다.
-    private func setThreeCells() {
+    func setInitialState() {
         for _ in 1...3 {
             addContentView()
         }
@@ -149,13 +147,13 @@ final class EditExcerciseContentView: UIView {
             addContentButton
         )
         excerciseInfoRelay.accept([[]])
-        setThreeCells()
+        setInitialState()
     }
 }
 
 // MARK: - UI 구성 메서드
 
-private extension EditExcerciseContentView {
+private extension EditExerciseContentView {
     
     /// 전체 UI 구성 흐름을 정의합니다.
     func setupUI() {
@@ -208,7 +206,7 @@ private extension EditExcerciseContentView {
 }
 
 // MARK: - Internal Methods
-extension EditExcerciseContentView {
+extension EditExerciseContentView {
     
     func configureSets(with sets: [[String]]) {
         
@@ -218,7 +216,7 @@ extension EditExcerciseContentView {
         
         // 세트 개수만큼 세트 행 추가
         for (index, set) in sets.enumerated() {
-            let hContentStackView = EditExcerciseHorizontalContentStackView(order: index)
+            let hContentStackView = EditExerciseHorizontalContentStackView(order: index)
             
             // (무게, 개수)
             if set.count == 2 {
@@ -230,5 +228,56 @@ extension EditExcerciseContentView {
         verticalContentStackView.addArrangedSubview(addContentButton)
         
         excerciseInfoRelay.accept(sets)
+    }
+}
+
+extension EditExerciseContentView {
+    
+    func configureEditSets(with sets: [WorkoutSet]) {
+        
+        verticalContentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        verticalContentStackView.addArrangedSubview(horizontalContentTitleStackView)
+        
+        configureUnitSegment(unit: sets[0].unit)
+        
+        for i in 0..<sets.count {
+            // 세트 순서를 결정
+            let order = i + 1
+            let contentView = EditExerciseHorizontalContentStackView(order: order)
+            let weight = sets[i].weight
+            let reps = sets[i].reps
+            
+            // 기존 추가 버튼 제거 후, 새로운 세트와 함께 다시 추가
+            verticalContentStackView.removeArrangedSubview(addContentButton)
+            addContentButton.removeFromSuperview()
+            verticalContentStackView.addArrangedSubviews(contentView, addContentButton)
+            
+            contentView.removeButtonTap
+                .observe(on: MainScheduler.instance)
+                .subscribe(with: self) { owner, _ in
+                    owner.verticalContentStackView.removeArrangedSubview(contentView)
+                    contentView.removeFromSuperview()
+                    owner.reorder()
+                    var newValue = owner.excerciseInfoRelay.value
+                    newValue.remove(at: contentView.order)
+                    owner.excerciseInfoRelay.accept(newValue)
+                }.disposed(by: disposeBag)
+            
+            contentView.weightRepsRelay
+                .skip(1)
+                .subscribe(with: self) { owner, element in
+                    if owner.excerciseInfoRelay.value.count > contentView.order {
+                        var newValue = owner.excerciseInfoRelay.value
+                        newValue[contentView.order] = element
+                        owner.excerciseInfoRelay.accept(newValue)
+                    }
+                }.disposed(by: disposeBag)
+            contentView.configure(weight: weight, reps: reps)
+            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
+        }
+    }
+    
+    func configureUnitSegment(unit: String) {
+        headerView.configureUnitSegment(unit: unit)
     }
 }

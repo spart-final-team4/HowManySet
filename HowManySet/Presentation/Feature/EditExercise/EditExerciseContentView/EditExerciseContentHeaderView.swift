@@ -15,7 +15,7 @@ import RxCocoa
 ///
 /// 좌측에는 "운동정보 입력"이라는 제목이 표시되며,
 /// 우측에는 단위 선택을 위한 커스텀 세그먼트 컨트롤(`kg`, `lbs`)이 배치됩니다.
-final class EditExcerciseContentHeaderView: UIView {
+final class EditExerciseContentHeaderView: UIView {
     
     private let disposeBag = DisposeBag()
     private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
@@ -47,9 +47,8 @@ final class EditExcerciseContentHeaderView: UIView {
 
 // MARK: - UI 구성 관련 메서드
 
-private extension EditExcerciseContentHeaderView {
+private extension EditExerciseContentHeaderView {
     
-
     /// 전체 UI 구성 흐름을 정의합니다.
     func setupUI() {
         setViewHierarchy()
@@ -92,3 +91,13 @@ private extension EditExcerciseContentHeaderView {
     }
 }
 
+extension EditExerciseContentHeaderView {
+    func configureUnitSegment(unit: String) {
+        if unit == "kg" {
+            unitSegmentControl.selectedSegmentIndex = 0
+        } else if unit == "lbs" {
+            unitSegmentControl.selectedSegmentIndex = 1
+        }
+        unitSelectionRelay.accept(unit)
+    }
+}

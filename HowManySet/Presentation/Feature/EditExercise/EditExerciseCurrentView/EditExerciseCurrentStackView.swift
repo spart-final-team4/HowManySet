@@ -20,7 +20,7 @@ import Then
 /// 기능:
 /// - `addExcercise(name:setCount:)`를 통해 운동 항목을 동적으로 추가할 수 있으며,
 ///   첫 추가 시 `emptyTextLabel`은 제거됩니다.
-final class EditExcerciseCurrentStackView: UIStackView {
+final class EditExerciseCurrentStackView: UIStackView {
     
     /// 상단에 위치한 섹션 타이틀 라벨입니다.
     private let titleLabel = UILabel().then {
@@ -64,7 +64,7 @@ final class EditExcerciseCurrentStackView: UIStackView {
     ///   - name: 운동 이름
     ///   - setCount: 해당 운동의 세트 수
     func addExcercise(name: String, setCount: Int) {
-        let view = SavedExcerciseView(name: name, setCount: setCount)
+        let view = SavedExerciseView(name: name, setCount: setCount)
         
         // 빈 안내 라벨 제거 (최초 추가 시)
         self.removeArrangedSubview(emptyTextLabel)
@@ -78,7 +78,7 @@ final class EditExcerciseCurrentStackView: UIStackView {
     }
     
     func addExcercise(workout: Workout) {
-        let view = SavedExcerciseView(workout: workout)
+        let view = SavedExerciseView(workout: workout)
         self.removeArrangedSubview(emptyTextLabel)
         emptyTextLabel.removeFromSuperview()
         
@@ -88,7 +88,7 @@ final class EditExcerciseCurrentStackView: UIStackView {
 }
 
 // MARK: - UI 구성 관련 메서드
-private extension EditExcerciseCurrentStackView {
+private extension EditExerciseCurrentStackView {
     
     /// 전체 UI 구성 흐름을 정의합니다.
     func setupUI() {

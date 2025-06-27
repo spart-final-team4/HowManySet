@@ -16,11 +16,11 @@ final class WorkoutRepositoryImpl: WorkoutRepository {
     }
     
     func updateWorkout(uid: String, workout: Workout) {
-        if let workout = RealmService.shared.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
-            RealmService.shared.update(item: workout) { (savedWorkout: RMWorkout) in
+        if let newWorkout = RealmService.shared.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
+            RealmService.shared.update(item: newWorkout) { (savedWorkout: RMWorkout) in
                 savedWorkout.name = workout.name
                 savedWorkout.comment = workout.comment
-                savedWorkout.sets = workout.sets
+                savedWorkout.setArray = workout.sets.map{ RMWorkoutSet(dto: WorkoutSetDTO(entity: $0)) }
             }
         }
     }

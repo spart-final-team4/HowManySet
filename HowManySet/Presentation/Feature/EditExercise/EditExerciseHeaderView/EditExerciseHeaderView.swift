@@ -15,7 +15,7 @@ import RxSwift
 ///
 /// `UILabel`과 `UITextField`로 구성되어 있으며, 사용자가 운동명을 입력하면
 /// 내부적으로 `exerciseNameRelay`를 통해 Reactive하게 해당 값을 전달합니다.
-final class EditExcerciseHeaderView: UIView {
+final class EditExerciseHeaderView: UIView {
     
     // MARK: - Properties
     
@@ -73,7 +73,7 @@ final class EditExcerciseHeaderView: UIView {
 
 // MARK: - Private UI Methods
 
-private extension EditExcerciseHeaderView {
+private extension EditExerciseHeaderView {
     
     /// 전체 UI 구성 메서드입니다.
     func setupUI() {
@@ -120,9 +120,16 @@ private extension EditExcerciseHeaderView {
 }
 
 // MARK: Internal Methods
-extension EditExcerciseHeaderView {
+extension EditExerciseHeaderView {
     
     func configure(with text: String) {
         exerciseNameTextField.text = text
+    }
+    
+    func editConfigure(with text: String) {
+        if text == exerciseNameTextField.text { return }
+        exerciseNameTextField.text = text
+        titleLabel.text = "운동 이름"
+        exerciseNameRelay.accept(text)
     }
 }

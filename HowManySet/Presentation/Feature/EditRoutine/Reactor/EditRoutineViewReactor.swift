@@ -14,6 +14,9 @@ final class EditRoutineViewReactor: Reactor {
     private let saveRoutineUseCase: SaveRoutineUseCase
     private let deleteRoutineUseCase: DeleteRoutineUseCase
     private let updateRoutineUseCase: UpdateRoutineUseCase
+    private let fetchRoutineUseCase: FetchRoutineUseCase
+    
+    private let disposeBag = DisposeBag()
     // Action is an user interaction
     enum Action {
         case viewDidLoad
@@ -27,7 +30,7 @@ final class EditRoutineViewReactor: Reactor {
     
     // Mutate is a state mani
     enum Mutation {
-        case loadWorkout
+        case loadWorkout([WorkoutRoutine])
         case cellButtonTapped(IndexPath)
         case changeWorkoutInfo
         case removeSelectedWorkout
@@ -48,19 +51,23 @@ final class EditRoutineViewReactor: Reactor {
     init(with routine: WorkoutRoutine,
          saveRoutineUseCase: SaveRoutineUseCase,
          deleteRoutineUseCase: DeleteRoutineUseCase,
-         updateRoutineUseCase: UpdateRoutineUseCase
+         updateRoutineUseCase: UpdateRoutineUseCase,
+         fetchRoutineUseCase: FetchRoutineUseCase
     ) {
         self.initialState = State(routine: routine)
         self.saveRoutineUseCase = saveRoutineUseCase
         self.deleteRoutineUseCase = deleteRoutineUseCase
         self.updateRoutineUseCase = updateRoutineUseCase
+        self.fetchRoutineUseCase = fetchRoutineUseCase
     }
     
     // Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return .just(.loadWorkout)
+            return fetchRoutineUseCase.execute()
+                .map{ Mutation.loadWorkout($0) }
+                .asObservable()
         case .cellButtonTapped(let indexPath):
             return .just(.cellButtonTapped(indexPath))
         case .changeWorkoutInfo:
@@ -85,8 +92,12 @@ final class EditRoutineViewReactor: Reactor {
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case .loadWorkout:
-            break
+        case .loadWorkout(let routines):
+            routines.forEach { routine in
+                if routine.id == currentState.routine.id {
+                    newState.routine = routine
+                }
+            }
         case .cellButtonTapped(let indexPath):
             newState.currentSeclectedWorkout = newState.routine.workouts[indexPath.row]
             newState.currentSeclectedIndexPath = indexPath
