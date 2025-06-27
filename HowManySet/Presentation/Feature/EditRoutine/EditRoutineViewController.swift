@@ -152,8 +152,8 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentAddExerciseVC() {
-        let vc = AddExcerciseViewController(
-            reactor: AddExcerciseViewReactor(
+        let vc = AddExerciseViewController(
+            reactor: AddExerciseViewReactor(
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
                 saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
                 workoutStateForEdit: nil,
@@ -166,7 +166,7 @@ final class EditRoutineViewController: UIViewController, View {
         guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
         let repository = WorkoutRepositoryImpl()
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
-        let vc = EditExcerciseViewController(reactor: EditExcerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
+        let vc = EditExerciseViewController(reactor: EditExerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
         
         vc.saveResultRelay
             .observe(on: MainScheduler.instance)

@@ -23,13 +23,13 @@ import RxCocoa
 /// - 초기 3개의 세트를 자동으로 생성합니다.
 /// - 버튼을 눌러 세트를 추가할 수 있습니다.
 /// - 각 세트는 삭제 버튼을 포함하며 삭제 시 순서가 재정렬됩니다.
-final class EditExcerciseContentView: UIView {
+final class EditExerciseContentView: UIView {
     
     /// Rx 자원 해제를 위한 DisposeBag입니다.
     private let disposeBag = DisposeBag()
     
     /// 상단 단위 선택 헤더 뷰입니다.
-    private let headerView = EditExcerciseContentHeaderView()
+    private let headerView = EditExerciseContentHeaderView()
     private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
     private(set) var excerciseInfoRelay = BehaviorRelay<[[String]]>(value: [[]])
     
@@ -94,7 +94,7 @@ final class EditExcerciseContentView: UIView {
     private func addContentView() {
         // 세트 순서를 결정
         let order = verticalContentStackView.subviews.count - 1
-        let contentView = EditExcerciseHorizontalContentStackView(order: order)
+        let contentView = EditExerciseHorizontalContentStackView(order: order)
         
         // 기존 추가 버튼 제거 후, 새로운 세트와 함께 다시 추가
         verticalContentStackView.removeArrangedSubview(addContentButton)
@@ -128,7 +128,7 @@ final class EditExcerciseContentView: UIView {
     /// 현재 세트 목록을 기준으로 순서를 재설정합니다.
     private func reorder() {
         for i in 0..<verticalContentStackView.subviews.count {
-            guard let view = verticalContentStackView.subviews[i] as? EditExcerciseHorizontalContentStackView else { continue }
+            guard let view = verticalContentStackView.subviews[i] as? EditExerciseHorizontalContentStackView else { continue }
             view.reOrderLabel(order: i)
         }
     }
@@ -153,7 +153,7 @@ final class EditExcerciseContentView: UIView {
 
 // MARK: - UI 구성 메서드
 
-private extension EditExcerciseContentView {
+private extension EditExerciseContentView {
     
     /// 전체 UI 구성 흐름을 정의합니다.
     func setupUI() {
@@ -206,7 +206,7 @@ private extension EditExcerciseContentView {
 }
 
 // MARK: - Internal Methods
-extension EditExcerciseContentView {
+extension EditExerciseContentView {
     
     func configureSets(with sets: [[String]]) {
         
@@ -216,7 +216,7 @@ extension EditExcerciseContentView {
         
         // 세트 개수만큼 세트 행 추가
         for (index, set) in sets.enumerated() {
-            let hContentStackView = EditExcerciseHorizontalContentStackView(order: index)
+            let hContentStackView = EditExerciseHorizontalContentStackView(order: index)
             
             // (무게, 개수)
             if set.count == 2 {
@@ -231,7 +231,7 @@ extension EditExcerciseContentView {
     }
 }
 
-extension EditExcerciseContentView {
+extension EditExerciseContentView {
     
     func configureEditSets(with sets: [WorkoutSet]) {
         
@@ -243,7 +243,7 @@ extension EditExcerciseContentView {
         for i in 0..<sets.count {
             // 세트 순서를 결정
             let order = i + 1
-            let contentView = EditExcerciseHorizontalContentStackView(order: order)
+            let contentView = EditExerciseHorizontalContentStackView(order: order)
             let weight = sets[i].weight
             let reps = sets[i].reps
             

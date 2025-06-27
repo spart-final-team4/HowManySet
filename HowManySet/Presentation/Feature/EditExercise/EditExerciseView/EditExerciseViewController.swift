@@ -12,23 +12,23 @@ import RxSwift
 import RxCocoa
 import ReactorKit
 
-final class EditExcerciseViewController: UIViewController, View {
+final class EditExerciseViewController: UIViewController, View {
     
-    typealias Reactor = EditExcerciseViewReactor
+    typealias Reactor = EditExerciseViewReactor
     
     var disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView()
-    private let headerView = EditExcerciseHeaderView()
+    private let headerView = EditExerciseHeaderView()
     private let headerBorderLineView = UIView().then {
         $0.backgroundColor = .systemGray3
     }
-    private let contentView = EditExcerciseContentView()
-    private let footerView = EditExcerciseFooterView()
+    private let contentView = EditExerciseContentView()
+    private let footerView = EditExerciseFooterView()
     
     private(set) var saveResultRelay = PublishRelay<Bool>()
     
-    init(reactor: EditExcerciseViewReactor) {
+    init(reactor: EditExerciseViewReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         setupUI()
@@ -43,7 +43,7 @@ final class EditExcerciseViewController: UIViewController, View {
         super.viewDidLoad()
     }
     
-    func bind(reactor: EditExcerciseViewReactor) {
+    func bind(reactor: EditExerciseViewReactor) {
         
         contentView.unitSelectionRelay
             .map { Reactor.Action.changeUnit($0) }
@@ -69,7 +69,7 @@ final class EditExcerciseViewController: UIViewController, View {
         // Alert 표시 (저장 성공/실패, 유효성 실패 등)
         reactor.alertRelay
             .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { (owner: EditExcerciseViewController, alert) in
+            .subscribe(with: self) { (owner: EditExerciseViewController, alert) in
                 switch alert {
                 case .success:
                     owner.saveResultRelay.accept(true)
@@ -97,7 +97,7 @@ final class EditExcerciseViewController: UIViewController, View {
 
 // MARK: - UI Layout Methods
 
-private extension EditExcerciseViewController {
+private extension EditExerciseViewController {
     
     /// 전체 UI 구성 흐름을 설정합니다.
     func setupUI() {
@@ -156,7 +156,7 @@ private extension EditExcerciseViewController {
     }
 }
 
-private extension EditExcerciseViewController {
+private extension EditExerciseViewController {
     func getCurrentWorkoutSets() -> [[String]] {
         return contentView.excerciseInfoRelay.value
     }
