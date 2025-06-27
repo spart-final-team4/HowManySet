@@ -867,9 +867,11 @@ extension HomeViewController {
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
             .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
-                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
+                if !reactor.currentState.isResting {
+                    LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                        print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
+                    }
                 }
             }
             .disposed(by: disposeBag)
