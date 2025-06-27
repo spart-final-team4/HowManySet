@@ -23,11 +23,12 @@ public struct PlayAndPauseRestIntent: AppIntent, LiveActivityIntent {
     }
     
     public func perform() async throws -> some IntentResult {
-        
-        let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
-        sharedDefaults?.set(index, forKey: "PlayAndPauseRestIndex")
-        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "PlayAndPauseRestTimestamp")
+        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.suiteName)
+        sharedDefaults?.set(index, forKey: LiveActivityDefaultsName.shared.playAndPauseIndex)
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: LiveActivityDefaultsName.shared.playAndPauseTimeStamp)
         sharedDefaults?.synchronize()
+        NotificationCenter.default.post(name: .playAndPauseRestEvent, object: nil)
         return .result()
     }
 }
+
