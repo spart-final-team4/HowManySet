@@ -16,9 +16,8 @@ import KakaoSDKUser
 
 /// 인증 관련 데이터 처리를 담당하는 Repository 구현체
 ///
-/// Firebase Auth와 각종 소셜 로그인을 통합하여 처리하며,
-/// 출시 수준의 완전한 로그인 플로우를 구현합니다.
-/// 로그아웃 후 재로그인 문제를 해결하여 온보딩 상태를 올바르게 유지합니다.
+/// Firebase Auth와 각종 소셜 로그인을 통합하여 처리
+/// 로그아웃 후 재로그인 문제를 해결하여 온보딩 상태를 올바르게 유지
 public final class AuthRepositoryImpl: AuthRepositoryProtocol {
     
     private let firebaseAuthService: FirebaseAuthServiceProtocol

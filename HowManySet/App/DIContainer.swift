@@ -9,12 +9,14 @@ import UIKit
 import FirebaseFirestore
 
 /// 의존성 주입 컨테이너
-/// - 출시 수준의 완전한 DI 구현
 final class DIContainer {
     
     /// 온보딩 화면을 생성하여 반환 (닉네임 입력 + 온보딩 통합)
     func makeOnBoardingViewController(coordinator: OnBoardingCoordinatorProtocol) -> UIViewController {
-        let reactor = OnBoardingViewReactor()
+        let firebaseAuthService = FirebaseAuthService()
+        let repository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+        let authUseCase = AuthUseCase(repository: repository)
+        let reactor = OnBoardingViewReactor(authUseCase: authUseCase, coordinator: coordinator)
         return OnBoardingViewController(reactor: reactor, coordinator: coordinator)
     }
     

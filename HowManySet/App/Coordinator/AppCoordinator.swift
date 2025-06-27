@@ -11,7 +11,6 @@ import RxSwift
 
 /// 앱의 전체 흐름을 관리하는 Coordinator
 /// - 로그인 여부, 온보딩 여부를 체크하고 적절한 흐름으로 분기
-/// - 출시 수준의 완전한 플로우 구현
 final class AppCoordinator: Coordinator {
     
     /// 앱의 최상위 UIWindow
