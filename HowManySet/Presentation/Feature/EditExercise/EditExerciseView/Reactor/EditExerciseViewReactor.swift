@@ -11,7 +11,7 @@ import RxRelay
 import ReactorKit
 
 
-final class EditExcerciseViewReactor: Reactor {
+final class EditExerciseViewReactor: Reactor {
     
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
     
