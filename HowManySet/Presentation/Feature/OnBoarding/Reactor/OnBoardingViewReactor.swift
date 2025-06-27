@@ -97,7 +97,7 @@ final class OnBoardingViewReactor: Reactor {
             if nextPage < OnBoardingViewReactor.onboardingPages.count {
                 return Observable.just(.setPageIndex(nextPage))
             } else {
-                // AuthUseCase의 completeOnboarding() 메서드 활용 (uid 내부 처리)
+                // 마지막 페이지에서는 페이지 인덱스를 변경하지 않고 바로 완료 처리
                 return authUseCase.completeOnboarding()
                     .map { _ in .setOnboardingComplete }
                     .catch { error in Observable.just(.setError(error)) }
@@ -138,6 +138,7 @@ final class OnBoardingViewReactor: Reactor {
             newState.currentPageIndex = index
         case .setOnboardingComplete:
             newState.isOnboardingComplete = true
+            // 즉시 coordinator 호출하여 화면 전환 시작
             coordinator?.completeOnBoarding()
         case .setNicknameComplete:
             newState.isNicknameComplete = true
