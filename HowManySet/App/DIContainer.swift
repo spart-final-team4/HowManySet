@@ -121,16 +121,17 @@ final class DIContainer {
     func makeEditRoutineViewController(coordinator: EditRoutineCoordinator, with routine: WorkoutRoutine, caller: ViewCaller) -> UIViewController {
         
         let routineRepository = RoutineRepositoryImpl()
+        let workoutRepository = WorkoutRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
-        let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
+        let deleteWorkoutUseCase = DeleteWorkoutUseCase(repository: workoutRepository)
         let editRoutineViewReactor = EditRoutineViewReactor(
             with: routine,
             saveRoutineUseCase: saveRoutineUseCase,
             deleteRoutineUseCase: deleteRoutineUseCase,
             updateRoutineUseCase: updateRoutineUseCase,
-            fetchRoutineUseCase: fetchRoutineUseCase
+            deleteWorkoutUseCase: deleteWorkoutUseCase
         )
         
         return EditRoutineViewController(reactor: editRoutineViewReactor, coordinator: coordinator, caller: caller)
