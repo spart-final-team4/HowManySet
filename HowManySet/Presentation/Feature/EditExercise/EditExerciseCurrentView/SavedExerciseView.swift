@@ -1,5 +1,5 @@
 //
-//  SavedExcerciseView.swift
+//  SavedExerciseView.swift
 //  HowManySet
 //
 //  Created by MJ Dev on 6/16/25.
@@ -15,7 +15,7 @@ import Then
 /// 구성 요소:
 /// - 운동 이름 (`excerciseNameLabel`)
 /// - 세트 수 (`setCountLabel`)
-final class SavedExcerciseView: UIView {
+final class SavedExerciseView: UIView {
     
     /// 운동 이름을 표시하는 라벨입니다.
     private let excerciseNameLabel = UILabel().then {
@@ -63,7 +63,7 @@ final class SavedExcerciseView: UIView {
 }
 
 // MARK: - UI 관련 메서드 정의
-private extension SavedExcerciseView {
+private extension SavedExerciseView {
     
     /// UI 전체 구성을 담당하는 메서드입니다.
     func setupUI() {

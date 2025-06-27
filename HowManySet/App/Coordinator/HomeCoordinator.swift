@@ -120,13 +120,13 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     ) {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let reactor = AddExcerciseViewReactor(
+        let reactor = AddExerciseViewReactor(
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
             workoutStateForEdit: workoutStateForEdit,
             caller: ViewCaller.fromHome
         )
-        let editExerciseVC = AddExcerciseViewController(reactor: reactor)
+        let editExerciseVC = AddExerciseViewController(reactor: reactor)
         
         editExerciseVC.onDismiss = onDismiss
         
