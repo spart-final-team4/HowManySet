@@ -153,8 +153,8 @@ final class HomeViewReactor: Reactor {
     
     private let saveRecordUseCase: SaveRecordUseCase
     private let fsSaveRecordUseCase: FSSaveRecordUseCase
-//    private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
-//    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
+    //    private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
+    //    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
@@ -237,6 +237,7 @@ final class HomeViewReactor: Reactor {
                 return .empty()
             } else {
                 return .concat([
+                    .just(.pauseRest(false)),
                     .just(.stopRestTimer(false)),
                     .just(.setUpdatingIndex(cardIndex)),
                     handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
@@ -249,10 +250,14 @@ final class HomeViewReactor: Reactor {
             print("mutate - \(cardIndex)번 인덱스 뷰에서 스킵 버튼 클릭!")
             if currentState.isResting {
                 // 휴식 중일 때 휴식만 종료
-                return .just(.stopRestTimer(true))
+                return .concat([
+                    .just(.pauseRest(false)),
+                    .just(.stopRestTimer(true))
+                ])
             } else {
                 // 그 외엔 휴식 없이 바로 진행
                 return .concat([
+                    .just(.pauseRest(false)),
                     handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
                 ])
             }
@@ -521,8 +526,8 @@ final class HomeViewReactor: Reactor {
         case let .pauseRest(isPaused):
             newState.isRestPaused = isPaused
             
-        // MARK: - 운동 종료 시 운동 관련 데이터 핸들
-        // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
+            // MARK: - 운동 종료 시 운동 관련 데이터 핸들
+            // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
         case let .manageWorkoutData(isEnded):
             newState.didExerciseCount += 1
             print("🎬 [manageWorkoutData] 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
@@ -585,7 +590,7 @@ final class HomeViewReactor: Reactor {
             )
             
             updateWorkoutUseCase.execute(item: currentWorkout)
-                        
+            
         case let .stopRestTimer(isStopped):
             if isStopped {
                 newState.isResting = false
@@ -599,8 +604,8 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
             }
             
-        // MARK: - 현재 운동 데이터 저장
-        // 메모 창 dismiss시, 운동 완료 시 등등
+            // MARK: - 현재 운동 데이터 저장
+            // 메모 창 dismiss시, 운동 완료 시 등등
         case .saveWorkoutData:
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
@@ -701,7 +706,7 @@ private extension HomeViewReactor {
         // 다음 세트가 있는 경우 (휴식 시작)
         // 해당 상태에서 Forward 버튼을 누르면 휴식 스킵
         if nextSetIndex < currentCardState.totalSetCount {
-                        
+            
             let nextSet = currentWorkout.sets[nextSetIndex]
             
             currentCardState.setIndex = nextSetIndex
@@ -748,7 +753,7 @@ private extension HomeViewReactor {
             print("🗂️ 현재 index: \(currentState.currentExerciseIndex), 🗂️ 다음 index: \(nextExerciseIndex)")
             
             if nextExerciseIndex != cardIndex {
-            
+                
                 return .concat([
                     .just(.setResting(isResting)),
                     .just(.updateWorkoutCardState(
@@ -839,7 +844,7 @@ extension HomeViewReactor.State {
         let unit = exercise.currentUnitForSave
         let repsText = "회"
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
-
+        
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,
             isWorkingout: isWorkingout,
