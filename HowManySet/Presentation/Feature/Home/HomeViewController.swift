@@ -831,7 +831,9 @@ extension HomeViewController {
         
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
-            .observe(on: MainScheduler.instance)
+            .distinctUntilChanged()
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
