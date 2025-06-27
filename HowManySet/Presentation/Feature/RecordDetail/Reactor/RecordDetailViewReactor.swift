@@ -12,6 +12,7 @@ final class RecordDetailViewReactor: Reactor {
         case tapConfirm
         case tapSave
         case updateMemo(String?)
+        case resetDidUpdateMemo
     }
     
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -20,6 +21,7 @@ final class RecordDetailViewReactor: Reactor {
         case setMemo(String?)
         case setSaveButtonEnabled(Bool)
         case updateOriginalMemo(String?)
+        case setDidUpdateMemo(Bool)
     }
     
     // MARK: - State is a current view state
@@ -29,6 +31,7 @@ final class RecordDetailViewReactor: Reactor {
         var originalMemo: String?
         var shouldDismiss: Bool
         var isSaveButtonEnabled: Bool
+        var didUpdateMemo: Bool
     }
 
     // MARK: - Properties
@@ -44,7 +47,8 @@ final class RecordDetailViewReactor: Reactor {
             memo: record.comment,
             originalMemo: record.comment,
             shouldDismiss: false,
-            isSaveButtonEnabled: false
+            isSaveButtonEnabled: false,
+            didUpdateMemo: false
         )
     }
     
@@ -80,7 +84,8 @@ final class RecordDetailViewReactor: Reactor {
             print("변경된 메모 저장: \(memo)") // ✅ print
             return Observable.from([
                 .updateOriginalMemo(memo),
-                .setSaveButtonEnabled(false)
+                .setSaveButtonEnabled(false),
+                .setDidUpdateMemo(true)
             ])
 
         case let .updateMemo(text):
@@ -93,6 +98,9 @@ final class RecordDetailViewReactor: Reactor {
                 .setMemo(text),
                 .setSaveButtonEnabled(isChanged)
             ])
+
+        case .resetDidUpdateMemo:
+            return .just(.setDidUpdateMemo(false)) // 상태 초기화
         }
     }
 
@@ -108,6 +116,8 @@ final class RecordDetailViewReactor: Reactor {
             newState.isSaveButtonEnabled = isEnabled
         case let .updateOriginalMemo(newMemo):
             newState.originalMemo = newMemo
+        case let .setDidUpdateMemo(value):
+            newState.didUpdateMemo = value
         }
 
         return newState

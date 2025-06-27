@@ -152,12 +152,27 @@ extension RecordDetailViewController {
             }
             .disposed(by: disposeBag)
 
+        // 저장 버튼이 눌렸을 때 나타나는 토스트 뷰
+        reactor.state
+            .map(\.didUpdateMemo)
+            .distinctUntilChanged()
+            .filter { $0 }
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(with: self) { owner, _ in
+                owner.showToast(x: 0, y: -20, message: "메모가 수정되었습니다.")
+                // tapSave가 되었을 때만(한 번만) 반응하기 위해 false로 다시 설정
+                owner.reactor?.action.onNext(.resetDidUpdateMemo)
+            }
+            .disposed(by: disposeBag)
+
         // shouldDismiss 상태 변화 -> 모달 닫기
         reactor.state
             .map(\.shouldDismiss)
             .distinctUntilChanged()
             .filter { $0 }
             .bind(with: self) { owner, _ in
+                // Notification 전송
+                NotificationCenter.default.post(name: .didDismissRecordDetail, object: nil)
                 owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
