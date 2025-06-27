@@ -43,6 +43,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 struct HowManySetWidgetLiveActivity: Widget {
     
     private let buttonSize: CGFloat = 50
+    private let buttonSizeAtDynamic: CGFloat = 44
     private let restSecondsRemainigLabelSize: CGFloat = 46
     private let restText = "휴식"
     private let completeText = "모든 운동을 완료하셨습니다!"
@@ -84,7 +85,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     Text(context.state.exerciseInfo)
                                         .font(.system(size: 16))
                                         .fontWeight(.regular)
-                                        .foregroundStyle(Color("DBTypo"))
+                                        .foregroundStyle(.grey2)
                                 }
                                 
                                 Spacer()
@@ -98,12 +99,12 @@ struct HowManySetWidgetLiveActivity: Widget {
                                                 .font(.title3)
                                         }
                                         .frame(width: buttonSize, height: buttonSize)
-                                        .background(Circle().fill(Color("green10")))
+                                        .background(Circle().fill(.green10))
                                         .buttonStyle(.borderless)
                                     } else {
                                         // Fallback on earlier versions
                                     }
-                                    
+                                    // TODO: 운동 완료 버튼 현재 비활 (추후 활성화 할 수도 있음)
                                     //                                if #available(iOS 17.0, *) {
                                     //                                    Button(intent: StopWorkoutIntent(index: context.state.currentIndex)) {
                                     //                                        Image(systemName: "xmark")
@@ -198,29 +199,129 @@ struct HowManySetWidgetLiveActivity: Widget {
             .frame(height: 170)
             .background(Color("Background"))
         } dynamicIsland: { context in
-            // MARK: - DynamicIsland
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
+                // MARK: - DynamicIsland Expanded
                 DynamicIslandExpandedRegion(.leading) {
-                    EmptyView()
+                    VStack(alignment: .leading) {
+                        if !context.state.isResting {
+                            Image(systemName: "dumbbell")
+                                .foregroundStyle(.brand)
+                                .font(.system(size: buttonSizeAtDynamic))
+                        } else {
+                            Image(systemName: "timer")
+                                .foregroundStyle(.brand)
+                                .font(.system(size: buttonSizeAtDynamic))
+                        }
+                    }
+                    .padding(.leading, 12)
+                    .padding(.top, 24)
                 }
-            } compactLeading: {
-                if !context.state.isResting {
-                    Image(systemName: "brandDumbbell")
-                        .foregroundStyle(.brand)
-                } else {
-                    Image(systemName: "waterFill")
-                        .foregroundStyle(.brand)
+                DynamicIslandExpandedRegion(.center) {
+                    if !context.state.isResting {
+                        HStack(spacing: 10) {
+                            Text(context.state.exerciseName)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                            Text("\(context.state.currentSet)/\(context.state.totalSet)")
+                                .font(.title3)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.grey3)
+                        }
+                        .padding(.top, 10)
+                    } else {
+                        HStack(spacing: 10) {
+                            Text(restText)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                            Text("\(context.state.currentSet)/\(context.state.totalSet)")
+                                .font(.title3)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.grey3)
+                        }
+                        .padding(.top, 10)
+                    }
                 }
+                DynamicIslandExpandedRegion(.trailing) {
+                    Group {
+                        if !context.state.isResting {
+                            if #available(iOS 17.0, *) {
+                                Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.brand)
+                                        .fontWeight(.bold)
+                                        .font(.system(size: 20))
+                                }
+                                .frame(width: buttonSizeAtDynamic, height: buttonSizeAtDynamic)
+                                .background(Circle().fill(.green10))
+                                .buttonStyle(.borderless)
+                            } else {
+                                // Fallback on earlier versions
+                            }
+                        } else {
+                            HStack(spacing: 14) {
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: SkipIntent(index: context.state.currentIndex)) {
+                                        Image(systemName: "forward.end.fill")
+                                            .foregroundStyle(.brand)
+                                            .fontWeight(.semibold)
+                                            .font(.system(size: 20))
+                                    }
+                                    .frame(width: buttonSizeAtDynamic, height: buttonSizeAtDynamic)
+                                    .background(Circle().fill(Color("green10")))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
+                                }
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: PlayAndPauseRestIntent()) {
+                                        Image(systemName: context.state.isRestPaused ? "play.fill" : "pause.fill")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.semibold)
+                                            .font(.system(size: 20))
+                                    }
+                                    .frame(width: buttonSizeAtDynamic, height: buttonSizeAtDynamic)
+                                    .background(Circle().fill(Color("RoundButtonBG")))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
+                                }
+                            }
+                        }
+                    }//Group
+                    .padding(.trailing, 12)
+                    .padding(.top, 24)
+                }
+            }
+            // MARK: - compact
+            compactLeading: {
+                Group {
+                    if !context.state.isResting {
+                        Image(systemName: "dumbbell")
+                            .foregroundStyle(.brand)
+                    } else {
+                        Image(systemName: "timer")
+                            .foregroundStyle(.brand)
+                    }
+                }
+                .padding(.leading, 12)
+                .padding(.vertical, 7)
             } compactTrailing: {
-                
-            } minimal: {
+                Text("\(context.state.currentSet)/\(context.state.totalSet)")
+                    .font(.system(size: 14))
+                    .fontWeight(.regular)
+                    .foregroundStyle(.white)
+                    .padding(.trailing, 12)
+                    .padding(.vertical, 7)
+            }
+            // MARK: - minimal
+            minimal: {
                 if !context.state.isResting {
-                    Image(systemName: "brandDumbbell")
+                    Image(systemName: "dumbbell")
                         .foregroundStyle(.brand)
                 } else {
-                    Image(systemName: "waterFill")
+                    Image(systemName: "timer")
                         .foregroundStyle(.brand)
                 }
             }
