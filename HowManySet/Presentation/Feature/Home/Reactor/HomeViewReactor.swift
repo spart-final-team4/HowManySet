@@ -222,8 +222,8 @@ final class HomeViewReactor: Reactor {
                 .observe(on: MainScheduler.asyncInstance)
             
             return .concat([
-                .just(.setWorkoutStartDate(Date())),
                 .just(.setWorkingout(true)),
+                .just(.setWorkoutStartDate(Date())),
                 workoutTimer,
                 .just(.initializeWorkoutCardStates(updatedCardStates))
             ])

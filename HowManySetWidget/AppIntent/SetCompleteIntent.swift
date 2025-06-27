@@ -24,9 +24,9 @@ public struct SetCompleteIntent: AppIntent, LiveActivityIntent {
     
     public func perform() async throws -> some IntentResult {
         print("[Intent] perform 호출! index: \(String(describing: index))")
-        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.suiteName)
+        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.appGroupID)
         sharedDefaults?.set(index, forKey: LiveActivityDefaultsName.shared.setCompleteIndex)
-        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: LiveActivityDefaultsName.shared.SetCompleteTimeStamp)
+        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: LiveActivityDefaultsName.shared.setCompleteTimeStamp)
         sharedDefaults?.synchronize()
         NotificationCenter.default.post(name: .setCompleteEvent, object: nil)
         return .result()

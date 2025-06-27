@@ -13,7 +13,7 @@ final class LiveActivityDefaultsName {
     static let shared = LiveActivityDefaultsName()
     private init() {}
 
-    let suiteName = "group.com.eightroutes.HowManySet"
+    let appGroupID = "group.com.eightroutes.HowManySet"
     
     let playAndPauseIndex = "PlayAndPauseRestIndex"
     let playAndPauseTimeStamp = "PlayAndPauseRestTimestamp"
