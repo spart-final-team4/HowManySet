@@ -45,7 +45,7 @@ final class FSRoutineRepositoryImpl: RoutineRepository {
         Task {
             do {
                 // TODO: WorkoutRoutine에 documentId 필드 추가 필요
-                // try await firestoreService.delete(id: item.documentId, type: .workoutRoutine)
+//                 try await firestoreService.delete(id: item.documentId, type: .workoutRoutine)
                 print("Firestore 루틴 삭제 - 구현 필요")
             } catch {
                 print("Firestore 루틴 삭제 실패: \(error)")
