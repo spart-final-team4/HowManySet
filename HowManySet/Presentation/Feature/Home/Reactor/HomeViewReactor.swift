@@ -602,25 +602,25 @@ final class HomeViewReactor: Reactor {
                 cardStates: newState.workoutCardStates)
             
             newState.workoutRoutine = WorkoutRoutine(
-                id: newState.uid ?? "",
+                id: UUID().uuidString,
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
             newState.workoutRecord = WorkoutRecord(
-                id: newState.uid ?? "",
+                id: UUID().uuidString,
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
                 comment: newState.memoInRoutine,
                 date: Date()
             )
-//            
-//            saveRecordUseCase.execute(item: newState.workoutRecord)
-//            if let uid = newState.uid {
-//                fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
-//            } else {
-//                print("사용자 uid가 없습니다!")
-//            }
+            
+            if let uid = newState.uid {
+                fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
+            } else {
+                saveRecordUseCase.execute(item: newState.workoutRecord)
+                print("사용자 uid가 없습니다!")
+            }
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
