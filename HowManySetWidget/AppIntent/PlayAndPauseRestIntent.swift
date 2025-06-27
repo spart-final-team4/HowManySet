@@ -23,7 +23,7 @@ public struct PlayAndPauseRestIntent: AppIntent, LiveActivityIntent {
     }
     
     public func perform() async throws -> some IntentResult {
-        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.suiteName)
+        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.appGroupID)
         sharedDefaults?.set(index, forKey: LiveActivityDefaultsName.shared.playAndPauseIndex)
         sharedDefaults?.set(Date().timeIntervalSince1970, forKey: LiveActivityDefaultsName.shared.playAndPauseTimeStamp)
         sharedDefaults?.synchronize()

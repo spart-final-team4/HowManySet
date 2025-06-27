@@ -25,7 +25,7 @@
 //
 //    public func perform() async throws -> some IntentResult {
 //        
-//        let sharedDefaults = UserDefaults(suiteName: "group.com.eightroutes.HowManySet")
+//        let sharedDefaults = UserDefaults(appGroupID: "group.com.eightroutes.HowManySet")
 //        sharedDefaults?.set(index, forKey: "StopWorkoutIndex")
 //        sharedDefaults?.set(Date().timeIntervalSince1970, forKey: "StopWorkoutTimeStamp") 
 //        sharedDefaults?.synchronize()

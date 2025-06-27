@@ -23,7 +23,7 @@ public struct SkipIntent: AppIntent, LiveActivityIntent {
     }
 
     public func perform() async throws -> some IntentResult {
-        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.suiteName)
+        let sharedDefaults = UserDefaults(suiteName: LiveActivityDefaultsName.shared.appGroupID)
         sharedDefaults?.set(index, forKey: LiveActivityDefaultsName.shared.skipIndex)
         sharedDefaults?.set(Date().timeIntervalSince1970, forKey: LiveActivityDefaultsName.shared.skipTimeStamp)
         sharedDefaults?.synchronize()

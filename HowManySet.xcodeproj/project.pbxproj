@@ -140,7 +140,7 @@
 				AppIntent/SkipIntent.swift,
 				AppIntent/StopWorkoutIntent.swift,
 				HowManySetWidgetLiveActivity.swift,
-				LiveActivityDefaultsName.swift,
+				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
 				View/SetProgressBarForLiveActivity.swift,
 			);
@@ -168,6 +168,7 @@
 				AppIntent/SetCompleteIntent.swift,
 				AppIntent/SkipIntent.swift,
 				AppIntent/StopWorkoutIntent.swift,
+				Model/LiveActivityDefaultsName.swift,
 			);
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
@@ -186,6 +187,13 @@
 				Resources/Info.plist,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		66A0BC3F2E0E203300A44A79 /* Exceptions for "LiveActivity" folder in "HowManySetIntentExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LiveActivityAppGroupBridge.swift,
+			);
+			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
 		66B4EE402E03263200A5F4C6 /* Exceptions for "LiveActivity" folder in "HowManySetWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -241,6 +249,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				66B4EE402E03263200A5F4C6 /* Exceptions for "LiveActivity" folder in "HowManySetWidgetExtension" target */,
+				66A0BC3F2E0E203300A44A79 /* Exceptions for "LiveActivity" folder in "HowManySetIntentExtension" target */,
 			);
 			path = LiveActivity;
 			sourceTree = "<group>";
