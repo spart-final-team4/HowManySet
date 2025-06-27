@@ -30,7 +30,7 @@ final class RoutineListViewReactor: Reactor {
     
     let initialState: State
 
-    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    
 
     init(
         deleteRoutineUseCase: DeleteRoutineUseCase,
@@ -54,13 +54,18 @@ final class RoutineListViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return fetchRoutineUseCase.execute()
+            return fetchData()
                 .map{ Mutation.updatedRoutine($0) }
                 .asObservable()
+                
+//            return fetchRoutineUseCase.execute()
+//                .map{ Mutation.updatedRoutine($0) }
+//                .asObservable()
 
         case let .deleteRoutine(indexPath):
             let routine = currentState.routines[indexPath.section]
-            deleteRoutineUseCase.execute(item: routine)
+//            deleteRoutineUseCase.execute(item: routine)
+            deleteData(item: routine)
             return .just(.deleteRoutineAt(indexPath))
         }
     }
@@ -75,7 +80,8 @@ final class RoutineListViewReactor: Reactor {
                 if !routines[i].workouts.isEmpty {
                     newRoutines.append(routines[i])
                 } else {
-                    deleteRoutineUseCase.execute(item: routines[i])
+                    deleteData(item: routines[i])
+//                    deleteRoutineUseCase.execute(item: routines[i])
                 }
             }
             newState.routines = newRoutines
@@ -87,5 +93,23 @@ final class RoutineListViewReactor: Reactor {
         }
 
         return newState
+    }
+    
+    func fetchData() -> Single<[WorkoutRoutine]> {
+        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+        if let uid = uid {
+            return fsFetchRoutineUseCase.execute(uid: uid)
+        } else {
+            return fetchRoutineUseCase.execute()
+        }
+    }
+    
+    func deleteData(item: WorkoutRoutine) {
+        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+        if let uid = uid {
+            fsDeleteRoutineUseCase.execute(uid: uid, item: item)
+        } else {
+            deleteRoutineUseCase.execute(item: item)
+        }
     }
 }

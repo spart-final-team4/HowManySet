@@ -92,7 +92,8 @@ final class AddExerciseViewReactor: Reactor {
         
         self.initialState = State(
             currentRoutine: WorkoutRoutine(
-                id: UUID().uuidString,
+                rmID: UUID().uuidString,
+                documentID: UUID().uuidString,
                 name: routineName,
                 workouts: []
             ),

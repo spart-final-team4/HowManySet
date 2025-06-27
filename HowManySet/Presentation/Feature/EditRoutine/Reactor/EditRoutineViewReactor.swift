@@ -67,6 +67,9 @@ final class EditRoutineViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
+//            return fetchRoutines()
+//                .map{ Mutation.loadWorkout($0) }
+//                .asObservable()
             return fetchRoutineUseCase.execute()
                 .map{ Mutation.loadWorkout($0) }
                 .asObservable()
@@ -96,7 +99,7 @@ final class EditRoutineViewReactor: Reactor {
         switch mutation {
         case .loadWorkout(let routines):
             routines.forEach { routine in
-                if routine.id == currentState.routine.id {
+                if routine.rmID == currentState.routine.rmID {
                     newState.routine = routine
                 }
             }
@@ -129,6 +132,24 @@ final class EditRoutineViewReactor: Reactor {
 //            newState.routine = newRoutine
         }
         return newState
+    }
+    
+//    func fetchRoutines() -> Single<[WorkoutRoutine]> {
+//        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+//        if let uid = uid {
+//            return fsFetchRoutineUseCase.execute(uid: uid)
+//        } else {
+//            return fetchRoutineUseCase.execute()
+//        }
+//    }
+    
+    func deleteWorkout(item: Workout) {
+//        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+//        if let uid = uid {
+//            fsDeleteWorkoutUseCase.execute(uid: uid, item: item)
+//        } else {
+//            deleteRoutineUseCase.execute(item: item)
+//        }
     }
 }
 

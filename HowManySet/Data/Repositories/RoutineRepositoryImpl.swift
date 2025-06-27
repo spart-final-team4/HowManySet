@@ -55,7 +55,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
     ///   - item: 수정할 `WorkoutRoutine` 객체 덮어쓰기
     func updateRoutine(uid: String, item: WorkoutRoutine) {
         if let routine = RealmService.shared.read(type: .workoutRoutine,
-                                                  primaryKey: item.id)
+                                                  primaryKey: item.rmID)
             as? RMWorkoutRoutine {
             RealmService.shared.update(item: routine) { (savedRoutine: RMWorkoutRoutine) in
                 savedRoutine.name = item.name

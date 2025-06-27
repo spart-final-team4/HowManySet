@@ -12,7 +12,8 @@ import Foundation
 /// 하나의 운동 루틴 수행에 대한 총 소요 시간, 실제 운동 시간, 날짜, 코멘트 등의 정보를 포함합니다.
 struct WorkoutRecord: Hashable, Codable {
     
-    let id: String
+    let rmID: String
+    let documentID: String
     /// 수행한 운동 루틴입니다.
     ///
     /// `WorkoutRoutine` 타입으로, 어떤 루틴을 수행했는지에 대한 정보를 담고 있습니다.
@@ -43,7 +44,8 @@ struct WorkoutRecord: Hashable, Codable {
 extension WorkoutRecord {
     static let mockData: [WorkoutRecord] = [
         WorkoutRecord(
-            id: "",
+            rmID: "",
+            documentID: "",
             workoutRoutine: WorkoutRoutine.mockData[0], // 전신 루틴
             totalTime: 3600, // 1시간
             workoutTime: 3000, // 50분
@@ -51,7 +53,8 @@ extension WorkoutRecord {
             date: Date() // 오늘
         ),
         WorkoutRecord(
-            id: "",
+            rmID: "",
+            documentID: "",
             workoutRoutine: WorkoutRoutine.mockData[1], // 상체 루틴
             totalTime: 2700, // 45분
             workoutTime: 2400, // 40분
@@ -59,7 +62,8 @@ extension WorkoutRecord {
             date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date() // 어제
         ),
         WorkoutRecord(
-            id: "",
+            rmID: "",
+            documentID: "",
             workoutRoutine: WorkoutRoutine.mockData[2], // 하체 루틴
             totalTime: 1800, // 30분
             workoutTime: 1500, // 25분
