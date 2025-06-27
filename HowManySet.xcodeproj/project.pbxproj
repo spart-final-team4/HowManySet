@@ -137,9 +137,10 @@
 			membershipExceptions = (
 				AppIntent/PlayAndPauseRestIntent.swift,
 				AppIntent/SetCompleteIntent.swift,
-				AppIntent/SkipRestIntent.swift,
+				AppIntent/SkipIntent.swift,
 				AppIntent/StopWorkoutIntent.swift,
 				HowManySetWidgetLiveActivity.swift,
+				LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
 				View/SetProgressBarForLiveActivity.swift,
 			);
@@ -165,7 +166,7 @@
 			membershipExceptions = (
 				AppIntent/PlayAndPauseRestIntent.swift,
 				AppIntent/SetCompleteIntent.swift,
-				AppIntent/SkipRestIntent.swift,
+				AppIntent/SkipIntent.swift,
 				AppIntent/StopWorkoutIntent.swift,
 			);
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
