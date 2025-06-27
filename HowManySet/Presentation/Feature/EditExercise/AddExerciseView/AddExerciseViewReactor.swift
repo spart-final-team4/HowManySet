@@ -1,5 +1,5 @@
 //
-//  EditExerciseViewReactor.swift
+//  AddExerciseViewReactor.swift
 //  HowManySet
 //
 //  Created by MJ Dev on 6/4/25.
