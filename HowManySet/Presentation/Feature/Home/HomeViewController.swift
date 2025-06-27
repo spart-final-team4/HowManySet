@@ -902,7 +902,7 @@ private extension HomeViewController {
     ) {
         UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
             // 프로그레스바를 100%로
-//            cardView.setProgressBar.updateProgress(currentSet: progress)
+            cardView.setProgressBar.updateProgress(currentSet: progress)
         }, completion: { _ in
             completion()
         })
