@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 import RxRelay
 
-final class EditExcerciseFooterView: UIView {
+final class EditExerciseFooterView: UIView {
     
     private let disposeBag = DisposeBag()
     private(set) var saveExcerciseButtonRelay: PublishRelay<Void> = .init()
@@ -37,7 +37,7 @@ final class EditExcerciseFooterView: UIView {
 
 
 // MARK: - UI 구성 관련 메서드
-private extension EditExcerciseFooterView {
+private extension EditExerciseFooterView {
     
     /// UI 초기화 메서드 - 뷰 계층 및 외형 설정
     func setupUI() {
