@@ -233,11 +233,15 @@ final class HomeViewReactor: Reactor {
         case let .setCompleteButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             
-            return .concat([
-                .just(.stopRestTimer(false)),
-                .just(.setUpdatingIndex(cardIndex)),
-                handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
-            ])
+            if currentState.isResting {
+                return .empty()
+            } else {
+                return .concat([
+                    .just(.stopRestTimer(false)),
+                    .just(.setUpdatingIndex(cardIndex)),
+                    handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
+                ])
+            }
             
             // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
             /// 세트 스킵, 휴식 스킵은 유저한테 보여지는 카드 기준으로 변경
