@@ -203,12 +203,18 @@ struct HowManySetWidgetLiveActivity: Widget {
                 // MARK: - DynamicIsland Expanded
                 DynamicIslandExpandedRegion(.leading) {
                     VStack(alignment: .leading) {
-                        if !context.state.isResting {
-                            Image(systemName: "dumbbell")
-                                .foregroundStyle(.brand)
-                                .font(.largeTitle)
+                        if !context.state.currentRoutineCompleted {
+                            if !context.state.isResting {
+                                Image(systemName: "dumbbell")
+                                    .foregroundStyle(.brand)
+                                    .font(.largeTitle)
+                            } else {
+                                Image(systemName: "timer")
+                                    .foregroundStyle(.brand)
+                                    .font(.largeTitle)
+                            }
                         } else {
-                            Image(systemName: "timer")
+                            Image(systemName: "dumbbell.fill")
                                 .foregroundStyle(.brand)
                                 .font(.largeTitle)
                         }
@@ -217,53 +223,60 @@ struct HowManySetWidgetLiveActivity: Widget {
                     .padding(.top, 24)
                 }
                 DynamicIslandExpandedRegion(.center) {
-                    if !context.state.isResting {
-                        HStack(spacing: 12) {
-                            Text(context.state.exerciseName)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                            Text("\(context.state.currentSet)/\(context.state.totalSet)")
-                                .font(.title3)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.grey3)
+                    if !context.state.currentRoutineCompleted {
+                        if !context.state.isResting {
+                            HStack(spacing: 12) {
+                                Text(context.state.exerciseName)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                Text("\(context.state.currentSet)/\(context.state.totalSet)")
+                                    .font(.title3)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.grey3)
+                            }
+                            .padding(.top, 10)
+                            Spacer()
+                        } else {
+                            HStack(spacing: 12) {
+                                Text(restText)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                Text("\(context.state.currentSet)/\(context.state.totalSet)")
+                                    .font(.title3)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.grey3)
+                            }
+                            .padding(.top, 10)
+                            .padding(.trailing, 40)
+                            Spacer()
                         }
-                        .padding(.top, 10)
-                        Spacer()
                     } else {
-                        HStack(spacing: 12) {
-                            Text(restText)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                            Text("\(context.state.currentSet)/\(context.state.totalSet)")
-                                .font(.title3)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.grey3)
-                        }
-                        .padding(.top, 10)
-                        .padding(.trailing, 40)
-                        Spacer()
+                        Text(completeText)
+                            .font(.system(size: 18))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Group {
-                        if !context.state.isResting {
-                            if #available(iOS 17.0, *) {
-                                Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.brand)
-                                        .fontWeight(.bold)
-                                        .font(.system(size: 20))
+                        if !context.state.currentRoutineCompleted {
+                            if !context.state.isResting {
+                                if #available(iOS 17.0, *) {
+                                    Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(.brand)
+                                            .fontWeight(.bold)
+                                            .font(.system(size: 20))
+                                    }
+                                    .frame(width: buttonSizeAtDynamic, height: buttonSizeAtDynamic)
+                                    .background(Circle().fill(.green10))
+                                    .buttonStyle(.borderless)
+                                } else {
+                                    // Fallback on earlier versions
                                 }
-                                .frame(width: buttonSizeAtDynamic, height: buttonSizeAtDynamic)
-                                .background(Circle().fill(.green10))
-                                .buttonStyle(.borderless)
                             } else {
-                                // Fallback on earlier versions
-                            }
-                        } else {
-                            HStack(spacing: 14) {
                                 if #available(iOS 17.0, *) {
                                     Button(intent: SkipIntent(index: context.state.currentIndex)) {
                                         Image(systemName: "forward.end.fill")
@@ -277,20 +290,12 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 } else {
                                     // Fallback on earlier versions
                                 }
-                                if #available(iOS 17.0, *) {
-                                    Button(intent: PlayAndPauseRestIntent()) {
-                                        Image(systemName: context.state.isRestPaused ? "play.fill" : "pause.fill")
-                                            .foregroundStyle(.white)
-                                            .fontWeight(.semibold)
-                                            .font(.system(size: 20))
-                                    }
-                                    .frame(width: buttonSizeAtDynamic, height: buttonSizeAtDynamic)
-                                    .background(Circle().fill(Color("RoundButtonBG")))
-                                    .buttonStyle(.borderless)
-                                } else {
-                                    // Fallback on earlier versions
-                                }
                             }
+                        } else {
+                            Image(systemName: "chevron.right.2")
+                                .foregroundStyle(.brand)
+                                .fontWeight(.semibold)
+                                .font(.largeTitle)
                         }
                     }//Group
                     .padding(.trailing, 12)
@@ -299,7 +304,45 @@ struct HowManySetWidgetLiveActivity: Widget {
             }
             // MARK: - compact
             compactLeading: {
-                Group {
+                if !context.state.currentRoutineCompleted {
+                    Group {
+                        if !context.state.isResting {
+                            Image(systemName: "dumbbell")
+                                .foregroundStyle(.brand)
+                        } else {
+                            Image(systemName: "timer")
+                                .foregroundStyle(.brand)
+                        }
+                        
+                    }
+                    .padding(.leading, 12)
+                    .padding(.vertical, 7)
+                } else {
+                    Image(systemName: "dumbbell.fill")
+                        .foregroundStyle(.brand)
+                        .padding(.leading, 12)
+                        .padding(.vertical, 7)
+                }
+            } compactTrailing: {
+                if !context.state.currentRoutineCompleted {
+                    Text("\(context.state.currentSet)/\(context.state.totalSet)")
+                        .font(.system(size: 14))
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .padding(.trailing, 12)
+                        .padding(.vertical, 7)
+                } else {
+                    Text("✓")
+                        .font(.system(size: 14))
+                        .fontWeight(.medium)
+                        .foregroundStyle(.brand)
+                        .padding(.trailing, 12)
+                        .padding(.vertical, 7)
+                }
+            }
+            // MARK: - minimal
+            minimal: {
+                if !context.state.currentRoutineCompleted {
                     if !context.state.isResting {
                         Image(systemName: "dumbbell")
                             .foregroundStyle(.brand)
@@ -307,24 +350,8 @@ struct HowManySetWidgetLiveActivity: Widget {
                         Image(systemName: "timer")
                             .foregroundStyle(.brand)
                     }
-                }
-                .padding(.leading, 12)
-                .padding(.vertical, 7)
-            } compactTrailing: {
-                Text("\(context.state.currentSet)/\(context.state.totalSet)")
-                    .font(.system(size: 14))
-                    .fontWeight(.regular)
-                    .foregroundStyle(.white)
-                    .padding(.trailing, 12)
-                    .padding(.vertical, 7)
-            }
-            // MARK: - minimal
-            minimal: {
-                if !context.state.isResting {
-                    Image(systemName: "dumbbell")
-                        .foregroundStyle(.brand)
                 } else {
-                    Image(systemName: "timer")
+                    Image(systemName: "dumbbell.fill")
                         .foregroundStyle(.brand)
                 }
             }
