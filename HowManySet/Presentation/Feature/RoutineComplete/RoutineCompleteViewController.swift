@@ -386,7 +386,7 @@ extension RoutineCompleteViewController {
         
         confirmButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
-            .map { Reactor.Action.confirmButtonClickedForSaving }
+            .map { Reactor.Action.confirmButtonClickedForSavingMemo }
             .bind { [weak self] action in
                 guard let self else { return }
                 
