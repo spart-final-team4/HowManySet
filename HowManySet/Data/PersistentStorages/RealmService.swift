@@ -14,7 +14,10 @@ final class RealmService: RealmServiceProtocol {
     
     static let shared = RealmService()
     
-    private init() { }
+    private init() {
+        // Realm 주소
+        print("## realm file dir -> \(Realm.Configuration.defaultConfiguration.fileURL!)")
+    }
 
     /// Realm에 객체를 생성(저장)합니다.
     /// - Parameter item: 저장할 Realm 객체
