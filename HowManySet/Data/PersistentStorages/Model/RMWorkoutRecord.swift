@@ -41,6 +41,7 @@ extension RMWorkoutRecord {
     func toDTO() -> WorkoutRecordDTO {
         return WorkoutRecordDTO(
             rmID: self.id,
+            documentID: "",
             workoutRoutine: self.workoutRoutine?.toDTO()
             ?? WorkoutRoutineDTO.mockData(),
             totalTime: self.totalTime,
