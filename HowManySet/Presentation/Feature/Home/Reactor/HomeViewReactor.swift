@@ -190,27 +190,6 @@ final class HomeViewReactor: Reactor {
             /// 초기 루틴 선택 시
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
         case .routineSelected:
-            // 모든 카드 뷰의 상태를 초기화하고, 첫 운동의 첫 세트를 보여줌
-            let updatedCardStates = currentState.workoutRoutine.workouts.enumerated().map { (i, workout) in
-                let firstSet = workout.sets.first!
-                return WorkoutCardState(
-                    currentExerciseName: workout.name,
-                    currentWeight: firstSet.weight,
-                    currentUnit: firstSet.unit,
-                    currentReps: firstSet.reps,
-                    setInfo: workout.sets,
-                    setIndex: 0,
-                    exerciseIndex: i,
-                    totalExerciseCount: currentState.workoutRoutine.workouts.count,
-                    totalSetCount: workout.sets.count,
-                    currentExerciseNumber: i + 1,
-                    currentSetNumber: 1,
-                    setProgressAmount: 0,
-                    memoInExercise: workout.comment,
-                    allSetsCompleted: false
-                )
-            }
-            
             // 운동 타이머
             let workoutTimer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.asyncInstance)
                 .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
