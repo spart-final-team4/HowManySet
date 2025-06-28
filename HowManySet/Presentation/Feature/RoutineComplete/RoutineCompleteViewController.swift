@@ -184,8 +184,6 @@ final class RoutineCompleteViewController: UIViewController, View {
         bindUIEvents()
         
         if let workoutSummary {
-            print("configure 호출")
-            print("RCVC 🎬 [WorkoutSummary]: \(workoutSummary)")
             configure(with: workoutSummary)
         }
     }
