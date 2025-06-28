@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 struct WorkoutDTO {
-    var id: String
+    var rmID: String
     var name: String
     var comment: String?
     var sets: [WorkoutSetDTO]
@@ -18,7 +18,7 @@ struct WorkoutDTO {
 extension WorkoutDTO {
     func toEntity() -> Workout {
         return Workout(
-            id: self.id,
+            id: self.rmID,
             name: self.name,
             sets: self.sets.map { $0.toEntity() },
             comment: self.comment)
@@ -27,7 +27,7 @@ extension WorkoutDTO {
 
 extension WorkoutDTO {
     init(entity: Workout) {
-        self.id = entity.id
+        self.rmID = entity.id
         self.name = entity.name
         self.comment = entity.comment
         self.sets = entity.sets.map { WorkoutSetDTO(entity: $0) }
@@ -36,7 +36,7 @@ extension WorkoutDTO {
 
 extension WorkoutDTO {
     init(from model: RMWorkout) {
-        self.id = model.id
+        self.rmID = model.id
         self.name = model.name
         self.comment = model.comment
         self.sets = model.sets.map { WorkoutSetDTO(from: $0) }
@@ -45,7 +45,7 @@ extension WorkoutDTO {
 
 extension WorkoutDTO {
     init(from fsModel: FSWorkout) {
-        self.id = fsModel.id ?? ""
+        self.rmID = fsModel.id ?? ""
         self.name = fsModel.name
         self.comment = fsModel.comment
         self.sets = fsModel.sets.map { WorkoutSetDTO(from: $0) }
@@ -55,7 +55,7 @@ extension WorkoutDTO {
 extension WorkoutDTO {
     func toFSModel() -> FSWorkout {
         return FSWorkout(
-            rmID: self.id,
+            rmID: self.rmID,
             name: self.name,
             sets: self.sets.map { $0.toFSModel() },
             comment: self.comment
