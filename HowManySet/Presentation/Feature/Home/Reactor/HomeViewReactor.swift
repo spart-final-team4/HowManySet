@@ -501,7 +501,7 @@ final class HomeViewReactor: Reactor {
             let recordID = UUID().uuidString
             newState.recordID = recordID
  
-            print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
+//            print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
        
             // 운동 완료 화면에 보여질 데이터들
             newState.workoutSummary = WorkoutSummary(
@@ -536,7 +536,7 @@ final class HomeViewReactor: Reactor {
                 date: Date()
             )
             
-            print("🎬 [updatedWorkoutRecord]: \(updatedWorkoutRecord)")
+//            print("🎬 [updatedWorkoutRecord]: \(updatedWorkoutRecord)")
                         
             if let uid = newState.uid {
                 print("사용자 uid 있음 - Realm, Firestore에 저장.")
