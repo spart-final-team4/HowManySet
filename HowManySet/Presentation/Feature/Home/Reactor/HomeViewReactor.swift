@@ -35,9 +35,8 @@ final class HomeViewReactor: Reactor {
         case updateCurrentExerciseMemoWhenDismissed(with: String)
         /// 무게, 횟수 컨테이너 버튼 클릭 시
         case editExerciseViewPresented(at: Int, isPresented: Bool)
-        /// 운동 완료 화면에서 확인 시 다시 저장 (루틴 메모 작성했을시에만)
+        /// 운동 완료 화면에서 확인 클릭 시 - 루틴 메모만 Update
         case confirmButtonClickedForSavingMemo(newMemo: String?)
-        case updateCurrentRoutineMemo(with: String)
         /// 운동 완료 후 카드 삭제 완료
         case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
         /// background -> foreground로 올때 운동 시간 조정
@@ -144,6 +143,8 @@ final class HomeViewReactor: Reactor {
         var accumulatedWorkoutTime: TimeInterval
         /// 현재 루틴의 모든 운동 완료
         var currentRoutineCompleted: Bool
+        /// 현재  WorkoutRecordID
+        var recordID: String
     }
     
     // initialState 주입으로 변경
@@ -328,9 +329,6 @@ final class HomeViewReactor: Reactor {
                 return .empty()
             }
             
-        case let .updateCurrentRoutineMemo(with: newMemo):
-            return .just(.updateRoutineMemo(with: newMemo))
-            
             // 삭제될 시에만 활용
         case let .cardDeleteAnimationCompleted(oldIndex: oldIndex, nextIndex: nextIndex):
             var oldCardState = currentState.workoutCardStates[oldIndex]
@@ -502,6 +500,8 @@ final class HomeViewReactor: Reactor {
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
                 cardStates: newState.workoutCardStates)
             let currentExercise = newState.workoutCardStates[currentIndex]
+            let recordID = UUID().uuidString
+            newState.recordID = recordID
  
             print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
        
@@ -530,7 +530,7 @@ final class HomeViewReactor: Reactor {
             
             // 저장되는 WorkoutRecord
             let updatedWorkoutRecord = WorkoutRecord(
-                id: UUID().uuidString,
+                id: recordID,
                 workoutRoutine: newWorkoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -608,7 +608,8 @@ final class HomeViewReactor: Reactor {
                 currentUnit: currentExercise.currentUnitForSave,
                 currentWeightSet: currentSetsData
             )
-            
+        
+            // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
             let workout = convertWorkoutCardStatesToWorkouts(cardStates: newState.workoutCardStates)
             
@@ -619,18 +620,18 @@ final class HomeViewReactor: Reactor {
                 workouts: workout
             )
             
-            // 저장되는 WorkoutRecord
+            // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
             let updatedWorkoutRecord = WorkoutRecord(
-                id: UUID().uuidString,
+                id: newState.recordID,
                 workoutRoutine: newWorkoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
                 comment: newMemo, // 새로운 루틴 메모
                 date: Date()
             )
+            print("updatedWorkoutRecord: \(updatedWorkoutRecord)")
+            print("새로운 루틴 메모: \(String(describing: newMemo))")
             
-            newState.memoInRoutine = newMemo
-
             if let uid = newState.uid {
                 print("사용자 uid 있음 - Realm, Firestore에 저장.")
                 // TODO: 현재 구현 안되어 있음
@@ -640,6 +641,7 @@ final class HomeViewReactor: Reactor {
                 print("사용자 uid 없음 - Realm에 저장.")
                 updateRecordUseCase.execute(item: updatedWorkoutRecord)
             }
+            
         case let .setEditExerciseViewPresented(isPresented):
             print("isEditExerciseViewPresented: \(isPresented)")
             newState.isEditExerciseViewPresented = isPresented
@@ -973,7 +975,8 @@ extension HomeViewReactor {
             uid: uid,
             workoutStateForEdit: initialWorkoutStateForEdit,
             accumulatedWorkoutTime: 0,
-            currentRoutineCompleted: false
+            currentRoutineCompleted: false,
+            recordID: ""
         )
     }
 }

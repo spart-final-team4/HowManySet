@@ -393,6 +393,7 @@ extension RoutineCompleteViewController {
                 let updatedMemo = self.memoTextView.text
                 
                 reactor.action.onNext(action(updatedMemo))
+                print("RCVC MEMO: \(String(describing: updatedMemo))")
                 
                 // 클릭 애니메이션
                 UIView.animate(withDuration: 0.1, animations: {
