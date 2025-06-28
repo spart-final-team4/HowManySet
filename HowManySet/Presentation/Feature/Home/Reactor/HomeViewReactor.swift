@@ -577,7 +577,9 @@ final class HomeViewReactor: Reactor {
         case let .updateExerciseMemo(newMemo):
             let currentIndex = newState.currentExerciseIndex
             let currentExercise = newState.workoutCardStates[currentIndex]
-
+            // 뷰에 반영
+            newState.workoutCardStates[currentIndex].memoInExercise = newMemo
+            
             let updatedWorkout = Workout(
                 id: currentExercise.workoutID,
                 name: currentExercise.currentExerciseName,
