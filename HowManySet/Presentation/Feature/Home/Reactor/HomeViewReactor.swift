@@ -156,6 +156,9 @@ final class HomeViewReactor: Reactor {
     private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
     /// 메모 dismiss, 운동 종료/완료 시 WorkoutUpdate (+ 각 운동에 대한 메모)
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
+    
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid ?? ""
+    
     // TODO: 추후에 FSUpdateWorkoutUseCase 적용
     private let fsUpdateRoutineUseCase: FSUpdateRoutineUseCase
     /// 운동 종료/완료시 RecordUpdate (+ 루틴에 대한 메모)
@@ -503,6 +506,7 @@ final class HomeViewReactor: Reactor {
             newState.workoutRecord = WorkoutRecord(
                 // TODO: 검토 필요
                 rmID: UUID().uuidString,
+                documentID: uid,
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -618,12 +622,13 @@ final class HomeViewReactor: Reactor {
             
             newState.workoutRoutine = WorkoutRoutine(
                 rmID: newState.uid ?? "",
-                documentID: newState.workoutRoutine.documentID,
+                documentID: uid,
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
             newState.workoutRecord = WorkoutRecord(
                 rmID: newState.uid ?? "",
+                documentID: uid,
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -922,8 +927,8 @@ extension HomeViewReactor.State {
 // MARK: InitialState 관련
 extension HomeViewReactor {
     
-    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
-    /// 바로 시작 되도록 isWorkingout = true
+//    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
+//    /// 바로 시작 되도록 isWorkingout = true
     static func fetchedInitialState(routine: WorkoutRoutine) -> State {
         // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
@@ -957,6 +962,7 @@ extension HomeViewReactor {
         let initialWorkoutRecord = WorkoutRecord(
             // TODO: 검토 필요
             rmID:  UUID().uuidString,
+            documentID: routine.documentID,
             workoutRoutine: initialRoutine,
             totalTime: 0,
             workoutTime: 0,
