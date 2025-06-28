@@ -70,6 +70,7 @@ extension WorkoutRecordDTO {
             workouts: fsModel.workouts.map { WorkoutDTO(from: $0) }
         )
         self.rmID = routine.rmID
+        self.documentID = routine.documentID
         self.workoutRoutine = routine
         self.totalTime = fsModel.totalTime
         self.workoutTime = fsModel.workoutTime

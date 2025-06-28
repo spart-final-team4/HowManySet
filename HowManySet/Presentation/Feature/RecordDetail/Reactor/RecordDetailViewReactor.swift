@@ -71,6 +71,7 @@ final class RecordDetailViewReactor: Reactor {
             // 직접 WorkoutRecord를 복사하면서 comment만 변경
             let updatedRecord = WorkoutRecord(
                 rmID: record.rmID,
+                documentID: record.documentID,
                 workoutRoutine: record.workoutRoutine,
                 totalTime: record.totalTime,
                 workoutTime: record.workoutTime,
