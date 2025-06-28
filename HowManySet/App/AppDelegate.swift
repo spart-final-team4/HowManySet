@@ -19,24 +19,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        Thread.sleep(forTimeInterval: 2.0)
-        
-        // Firebase 초기화
-        FirebaseApp.configure()
-        
-        // Google Sign-In 설정
-        guard let clientID = FirebaseApp.app()?.options.clientID else {
-            fatalError("No client ID found in Firebase configuration")
-        }
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
+            Thread.sleep(forTimeInterval: 2.0)
+            
+            // Firebase 초기화
+            FirebaseApp.configure()
+            
+            // Google Sign-In 설정
+            guard let clientID = FirebaseApp.app()?.options.clientID else {
+                fatalError("No client ID found in Firebase configuration")
+            }
+            let config = GIDConfiguration(clientID: clientID)
+            GIDSignIn.sharedInstance.configuration = config
 
-        // 카카오 SDK 초기화
-        if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
-            KakaoSDK.initSDK(appKey: kakaoAppKey)
-        } else {
-            fatalError("Check Your AppKey")
-        }
+            // 카카오 SDK 초기화
+            if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
+                KakaoSDK.initSDK(appKey: kakaoAppKey)
+            } else {
+                fatalError("Check Your AppKey")
+            }
         
             // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
             LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
