@@ -41,6 +41,8 @@ final class HomeViewReactor: Reactor {
         case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
         /// background -> foreground로 올때 운동 시간 조정
         case adjustWorkoutTimeOnForeground
+        /// background -> foreground로 올때 휴식 시간 조정
+        case adjustRestTimeOnForeground
         case routineCompleted
     }
     
@@ -87,10 +89,10 @@ final class HomeViewReactor: Reactor {
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
         // 백그라운드 관련
-        /// 운동 시작 시각 설정
-        case setWorkoutStartDate(Date?)
-        /// 총 누적된 운동 시간 (+background) 설정
-        case setAccumulatedWorkoutTime(TimeInterval)
+        case setWorkoutStartDate(Date?) /// 운동 시작 시각 설정
+        case setAccumulatedWorkoutTime(TimeInterval) /// 총 누적된 운동 시간 (+background) 설정
+        case setRestStartDate(Date?) /// 휴식 시작 시각 설정
+        case setAccumulatedRestTime(TimeInterval) /// 총 누적된 휴식 시간 (+background) 설정
         /// 현재 루틴 완료 설정
         case setCurrentRoutineCompleted
     }
@@ -137,14 +139,15 @@ final class HomeViewReactor: Reactor {
         var uid: String?
         var workoutStateForEdit: WorkoutStateForEdit?
         // 백그라운드 용
-        /// 운동 시작 시각
-        var workoutStartDate: Date?
-        /// 총 누적된 운동 시간 (+background)
-        var accumulatedWorkoutTime: TimeInterval
+        var workoutStartDate: Date? /// 운동 시작 시각
+        var accumulatedWorkoutTime: TimeInterval /// 총 누적된 운동 시간 (+background)
+        var restStartDate: Date? /// 휴식 시작 시각
+        var accumulatedRestTime: TimeInterval /// 총 누적된 휴식 시간 (+background)
         /// 현재 루틴의 모든 운동 완료
         var currentRoutineCompleted: Bool
         /// 현재  WorkoutRecordID
         var recordID: String
+        
     }
     
     // initialState 주입으로 변경
@@ -372,6 +375,18 @@ final class HomeViewReactor: Reactor {
         case .routineCompleted:
             print("☑️ 루틴 완료: \(currentState.currentRoutineCompleted)")
             return .just(.setCurrentRoutineCompleted)
+            
+            // 백그라운드 시간도 포함한 휴식 시간 설정
+        case .adjustRestTimeOnForeground:
+            if let startDate = currentState.restStartDate {
+                let elapsedTime = Date().timeIntervalSince(startDate)
+                return .concat([
+                    .just(.setAccumulatedRestTime(currentState.accumulatedRestTime + elapsedTime)),
+                    .just(.setRestStartDate(Date())) // 다시 시작 시각 기록 (초기화)
+                ])
+            } else {
+                return .empty()
+            }
             
         }//action
     }//mutate
@@ -660,6 +675,13 @@ final class HomeViewReactor: Reactor {
             newState.currentRoutineCompleted = true
             print("☑️ 루틴 완료: \(newState.currentRoutineCompleted)")
             
+        case let .setRestStartDate(date):
+            newState.restStartDate = date
+            
+        case let .setAccumulatedRestTime(time):
+            newState.accumulatedRestTime = time
+            newState.restSecondsRemaining = Float(time)
+            
         }//switch mutation
         return newState
     }//reduce
@@ -726,7 +748,8 @@ private extension HomeViewReactor {
                     isCurrentExerciseCompleted: false
                 )),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
-                restTimer
+                restTimer,
+                .just(.setRestStartDate(Date()))
             ])
             .observe(on: MainScheduler.instance)
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
@@ -757,7 +780,8 @@ private extension HomeViewReactor {
                         oldCardIndex: nil)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
                     .just(.setRestTimeDataAtProgressBar(restTime)),
-                    restTimer
+                    restTimer,
+                    .just(.setRestStartDate(Date()))
                 ])
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
@@ -787,7 +811,8 @@ private extension HomeViewReactor {
                         .just(.setResting(isResting)),
                         .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
                         .just(.setRestTimeDataAtProgressBar(restTime)),
-                        restTimer
+                        restTimer,
+                        .just(.setRestStartDate(Date()))
                     ])
                     .observe(on: MainScheduler.instance)
                 }
@@ -976,8 +1001,9 @@ extension HomeViewReactor {
             uid: uid,
             workoutStateForEdit: initialWorkoutStateForEdit,
             accumulatedWorkoutTime: 0,
+            accumulatedRestTime: 0,
             currentRoutineCompleted: false,
-            recordID: ""
+            recordID: "",
         )
     }
 }

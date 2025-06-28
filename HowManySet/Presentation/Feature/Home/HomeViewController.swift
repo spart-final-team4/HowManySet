@@ -858,6 +858,12 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
+        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .bind { _ in
+                reactor.action.onNext(.adjustRestTimeOnForeground)
+            }
+            .disposed(by: disposeBag)
+        
         NotificationCenter.default.rx.notification(.playAndPauseRestEvent)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
