@@ -9,6 +9,8 @@ import Foundation
 
 /// 사용자에게 보여지는 운동 종목 카드 뷰의 정보를 담은 구조체
 struct WorkoutCardState: Codable {
+    /// 현재 운동종목의 ID
+    var workoutID: String
     // UI에 직접 표시될 값들 (Reactor에서 미리 계산하여 제공)
     var currentExerciseName: String
     var currentWeight: Double
