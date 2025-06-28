@@ -36,14 +36,14 @@ final class NicknameInputView: UIView {
     /// 닉네임 입력 안내 타이틀 라벨. 상단에 위치.
     private let titleLabel = UILabel().then {
         $0.text = "닉네임을 적어주세요"
-        $0.font = .boldSystemFont(ofSize: 24)
+        $0.font = .pretendard(size: 24, weight: .bold)
         $0.textColor = .white
         $0.textAlignment = .left
     }
     
     /// 닉네임 입력 텍스트필드. 좌측 패딩, placeholder, 스타일 적용.
     let nicknameTextField = UITextField().then {
-        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.font = UIFont.pretendard(size: 16, weight: .regular)
         $0.textColor = .white
         $0.backgroundColor = .darkGray
         $0.layer.cornerRadius = 12
@@ -65,7 +65,7 @@ final class NicknameInputView: UIView {
     /// 추후 접근제어자(private/public) 변경 예정.
     let nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        $0.titleLabel!.font = UIFont.pretendard(size: 16, weight: .medium)
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
         $0.isEnabled = false

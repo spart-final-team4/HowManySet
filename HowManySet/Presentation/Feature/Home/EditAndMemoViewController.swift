@@ -30,9 +30,9 @@ final class EditAndMemoViewController: UIViewController, View {
     // TODO: 추후에 배포 후 추가 예정
 //    private lazy var editLabel = UILabel().then {
 //        $0.text = editText
-//        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+//        $0.font = .pretendard(size: 20, weight: .semibold)
 //    }
-//    
+//
 //    private lazy var editRoutineButton = UIButton().then {
 //        $0.backgroundColor = .disabledButton
 //        $0.layer.cornerRadius = 12
@@ -44,14 +44,14 @@ final class EditAndMemoViewController: UIViewController, View {
     
     private lazy var memoLabel = UILabel().then {
         $0.text = memoText
-        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+        $0.font = .pretendard(size: 20, weight: .semibold)
     }
     
     lazy var memoTextView = UITextView().then {
         $0.backgroundColor = .bsInputFieldBG
         $0.text = memoPlaceHolderText
         $0.textColor = .grey3
-        $0.font = .systemFont(ofSize: 16)
+        $0.font = .pretendard(size: 16)
         $0.layer.cornerRadius = 12
         $0.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
 
@@ -123,7 +123,7 @@ private extension EditAndMemoViewController {
 //            $0.top.equalToSuperview()
 //            $0.leading.equalToSuperview()
 //        }
-//        
+//
 //        editRoutineButton.snp.makeConstraints {
 //            $0.top.equalTo(editLabel.snp.bottom).offset(12)
 //            $0.leading.trailing.equalToSuperview()

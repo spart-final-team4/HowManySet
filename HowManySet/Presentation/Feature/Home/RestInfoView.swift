@@ -43,7 +43,7 @@ final class RestInfoView: UIView, View {
     
     private lazy var restLabel = UILabel().then {
         $0.text = restText
-        $0.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.font = .pretendard(size: 16, weight: .medium)
         $0.adjustsFontForContentSizeCategory = true
     }
     
@@ -63,37 +63,37 @@ final class RestInfoView: UIView, View {
         $0.backgroundColor = .grey5
         $0.setTitle(restButtonText60, for: .normal)
         $0.layer.cornerRadius = buttonHeight/2
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.tag = 60
     }
-    
+
     lazy var restButton30 = UIButton().then {
         $0.backgroundColor = .grey5
         $0.setTitle(restButtonText30, for: .normal)
         $0.layer.cornerRadius = buttonHeight/2
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.tag = 30
     }
-    
+
     lazy var restButton10 = UIButton().then {
         $0.backgroundColor = .grey5
         $0.setTitle(restButtonText10, for: .normal)
         $0.layer.cornerRadius = buttonHeight/2
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.tag = 10
     }
-    
+
     lazy var restResetButton = UIButton().then {
         $0.backgroundColor = .background
         $0.setTitle(restResetButtonText, for: .normal)
         $0.layer.cornerRadius = buttonHeight/2
-        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.tag = 0
     }
     
     private lazy var waterLabel = UILabel().then {
         $0.text = waterText
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+        $0.font = .pretendard(size: 16, weight: .semibold)
     }
     
     private lazy var waterImageHStack = UIStackView().then {

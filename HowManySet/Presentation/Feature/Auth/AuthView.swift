@@ -34,7 +34,7 @@ final class AuthView: UIView {
         let button = UIButton(configuration: config)
         button.layer.cornerRadius = 12
         button.clipsToBounds = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        button.titleLabel?.font = UIFont.pretendard(size: 17, weight: .medium)
         return button
     }()
 
@@ -51,7 +51,7 @@ final class AuthView: UIView {
         let button = UIButton(configuration: config)
         button.layer.cornerRadius = 12
         button.clipsToBounds = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        button.titleLabel?.font = UIFont.pretendard(size: 17, weight: .medium)
         return button
     }()
 
@@ -67,7 +67,7 @@ final class AuthView: UIView {
         let attributed = NSAttributedString(
             string: title,
             attributes: [
-                .font: UIFont.systemFont(ofSize: 15, weight: .regular),
+                .font: UIFont.pretendard(size: 15, weight: .regular),
                 .foregroundColor: UIColor.systemGray,
                 .underlineStyle: NSUnderlineStyle.single.rawValue
             ]

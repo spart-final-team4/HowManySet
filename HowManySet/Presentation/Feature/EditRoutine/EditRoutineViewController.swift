@@ -34,7 +34,7 @@ final class EditRoutineViewController: UIViewController, View {
         $0.setTitle(startText, for: .normal)
         $0.setTitleColor(.background, for: .normal)
         $0.backgroundColor = .brand
-        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
         $0.layer.cornerRadius = 12
     }
 

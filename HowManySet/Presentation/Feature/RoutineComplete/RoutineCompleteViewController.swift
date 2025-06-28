@@ -42,13 +42,13 @@ final class RoutineCompleteViewController: UIViewController, View {
     
     private lazy var exerciseCompletedLabel = UILabel().then {
         $0.text = exerciseCompletedText
-        $0.font = .systemFont(ofSize: 24, weight: .medium)
+        $0.font = .pretendard(size: 24, weight: .medium)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
     private lazy var exerciseInfoLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12, weight: .regular)
+        $0.font = .pretendard(size: 12, weight: .regular)
         $0.textColor = .lightGray
         $0.textAlignment = .center
         $0.numberOfLines = 1
@@ -73,13 +73,13 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var percentageLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 36, weight: .semibold)
+        $0.font = .pretendard(size: 36, weight: .semibold)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
     private lazy var exerciseTimeLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: fontSize, weight: .regular)
+        $0.font = .pretendard(size: fontSize, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true
@@ -87,7 +87,7 @@ final class RoutineCompleteViewController: UIViewController, View {
     }
     
     private lazy var exerciseAndSetInfoLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: fontSize, weight: .regular)
+        $0.font = .pretendard(size: fontSize, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .left
         $0.adjustsFontSizeToFitWidth = true

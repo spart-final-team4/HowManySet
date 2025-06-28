@@ -19,7 +19,7 @@ final class SavedExerciseView: UIView {
     
     /// 운동 이름을 표시하는 라벨입니다.
     private let excerciseNameLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.textColor = .white
         $0.numberOfLines = 1
         $0.textAlignment = .left
@@ -27,7 +27,7 @@ final class SavedExerciseView: UIView {
     
     /// 세트 수를 표시하는 라벨입니다. (예: "3세트")
     private let setCountLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12, weight: .regular)
+        $0.font = .pretendard(size: 12, weight: .regular)
         $0.textColor = .dbTypo
         $0.textAlignment = .right
         $0.numberOfLines = 1

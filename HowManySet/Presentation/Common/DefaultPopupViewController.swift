@@ -32,13 +32,13 @@ final class DefaultPopupViewController: UIViewController {
     
     /// 팝업 상단에 표시될 제목 레이블
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 18, weight: .regular)
+        $0.font = .pretendard(size: 18, weight: .regular)
         $0.textColor = .error
     }
     
     /// 팝업 본문에 표시될 설명 레이블
     private let contentLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.numberOfLines = 0
         $0.textColor = .textTertiary
     }

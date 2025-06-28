@@ -21,7 +21,7 @@ final class MyPageCollectionHeaderView: UICollectionReusableView {
     /// 섹션 제목 라벨
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.textColor = .systemGray3
     }
     

@@ -19,7 +19,7 @@ final class DefaultMyPageCollectionViewCell: UICollectionViewCell {
     
     /// 항목 제목을 표시하는 라벨
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 18, weight: .regular)
+        $0.font = .pretendard(size: 18, weight: .regular)
         $0.textColor = .white
         $0.numberOfLines = 0
     }

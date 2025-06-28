@@ -19,7 +19,7 @@ final class EditExerciseFooterView: UIView {
     
     private let saveExcerciseButton = UIButton().then {
         $0.setTitle("저장하기", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
         $0.setTitleColor(.background, for: .normal)
     }
     
@@ -71,4 +71,3 @@ private extension EditExerciseFooterView {
         }
     }
 }
-
