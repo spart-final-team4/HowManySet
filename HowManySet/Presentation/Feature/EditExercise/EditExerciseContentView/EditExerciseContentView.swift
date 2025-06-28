@@ -51,19 +51,19 @@ final class EditExerciseContentView: UIView {
         
         let setLabel = UILabel(text: "세트",
                                textColor: .white,
-                               font: .systemFont(ofSize: 14, weight: .regular),
+                               font: .pretendard(size: 14, weight: .regular),
                                alignment: .center)
         let unitLabel = UILabel(text: "무게",
                                 textColor: .white,
-                                font: .systemFont(ofSize: 14, weight: .regular),
+                                font: .pretendard(size: 14, weight: .regular),
                                 alignment: .center)
         let countLabel = UILabel(text: "개수",
                                  textColor: .white,
-                                 font: .systemFont(ofSize: 14, weight: .regular),
+                                 font: .pretendard(size: 14, weight: .regular),
                                  alignment: .center)
         let emptyLabel = UILabel(text: " ",
                                  textColor: .white,
-                                 font: .systemFont(ofSize: 14, weight: .regular),
+                                 font: .pretendard(size: 14, weight: .regular),
                                  alignment: .center)
         
         $0.addArrangedSubviews(setLabel, unitLabel, countLabel, emptyLabel)
@@ -73,7 +73,7 @@ final class EditExerciseContentView: UIView {
     /// 세트를 추가하는 버튼입니다.
     private let addContentButton = UIButton().then {
         $0.setTitle("+ 세트 추가하기", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
         $0.setTitleColor(.textTertiary, for: .normal)
         $0.titleLabel?.textAlignment = .left
     }

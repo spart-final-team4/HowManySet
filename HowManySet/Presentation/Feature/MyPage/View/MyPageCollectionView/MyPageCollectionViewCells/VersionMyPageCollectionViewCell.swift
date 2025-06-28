@@ -20,14 +20,14 @@ final class VersionMyPageCollectionViewCell: UICollectionViewCell {
     
     /// 항목 제목 라벨
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 18, weight: .regular)
+        $0.font = .pretendard(size: 18, weight: .regular)
         $0.textColor = .white
         $0.numberOfLines = 0
     }
     
     /// 버전 정보 라벨
     private let versionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.textColor = .textSecondary
         $0.numberOfLines = 0
     }

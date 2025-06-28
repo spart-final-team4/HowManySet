@@ -39,7 +39,7 @@ private extension CalendarView {
     func setAppearance() {
         titleLabel.do {
             $0.text = "기록"
-            $0.font = .systemFont(ofSize: 36, weight: .regular)
+            $0.font = .pretendard(size: 36, weight: .regular)
             $0.textColor = .white
         }
 
@@ -58,17 +58,17 @@ private extension CalendarView {
             // 달력 헤더
             $0.appearance.headerDateFormat = "yyyy.MM" // 달력 헤더 날짜 형식
             $0.appearance.headerTitleColor = .textSecondary // 달력 헤더 텍스트 색상
-            $0.appearance.headerTitleFont = .systemFont(ofSize: 16, weight: .regular) // 달력 헤더 텍스트 폰트
+            $0.appearance.headerTitleFont = .pretendard(size: 16, weight: .regular) // 달력 헤더 텍스트 폰트
             $0.appearance.headerMinimumDissolvedAlpha = 0.0 // 달력 헤더 전 달 & 다음 달 글씨 투명도
             $0.appearance.headerTitleOffset = CGPoint(x: 0, y: -3) // 캘린더 헤더 위치 조정
 
             // 달력 요일
             $0.appearance.weekdayTextColor = .grey3 // 달력 요일 텍스트 색상
-            $0.appearance.weekdayFont = .systemFont(ofSize: 16, weight: .regular) // 달력 요일 텍스트 폰트
+            $0.appearance.weekdayFont = .pretendard(size: 16, weight: .regular) // 달력 요일 텍스트 폰트
 
             // 달력 일반 날짜
             $0.appearance.titleDefaultColor = .textSecondary // 달력 일반 날짜 텍스트 색상
-            $0.appearance.titleFont = .systemFont(ofSize: 16, weight: .regular) // 달력 일반 날짜 텍스트 폰트
+            $0.appearance.titleFont = .pretendard(size: 16, weight: .regular) // 달력 일반 날짜 텍스트 폰트
             $0.appearance.titleTodayColor = .brand // 오늘 날짜 텍스트의 색상
             $0.appearance.todayColor = .clear // 오늘 날짜의 배경 색상
             $0.appearance.selectionColor = .green6 // 선택된 날짜의 배경 색상

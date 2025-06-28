@@ -129,14 +129,14 @@ private extension SummaryInfoCell {
         let titleLabel = UILabel().then {
             $0.text = title
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .medium)
+            $0.font = .pretendard(size: 14, weight: .medium)
             $0.textAlignment = .center
         }
 
         let valueLabel = UILabel().then {
             $0.text = value
             $0.textColor = .green6
-            $0.font = .systemFont(ofSize: 14, weight: .medium)
+            $0.font = .pretendard(size: 14, weight: .medium)
             $0.textAlignment = .center
         }
 

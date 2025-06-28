@@ -33,7 +33,7 @@ private extension WorkoutDetailHeaderView {
 
     func setAppearance() {
         titleLabel.do {
-            $0.font = .systemFont(ofSize: 16, weight: .medium)
+            $0.font = .pretendard(size: 16, weight: .medium)
             $0.textColor = .grey1
         }
     }

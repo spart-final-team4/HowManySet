@@ -43,7 +43,7 @@ private extension RoutineListView {
     func setAppearance() {
         titleLabel.do {
             $0.text = "루틴 리스트"
-            $0.font = .systemFont(ofSize: 36, weight: .medium)
+            $0.font = .pretendard(size: 36, weight: .medium)
             $0.textColor = .white
         }
 
@@ -56,7 +56,7 @@ private extension RoutineListView {
         addNewRoutineButton.do {
             $0.backgroundColor = .green6
             $0.setTitle("새 루틴 구성", for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .regular)
+            $0.titleLabel?.font = .pretendard(size: 18, weight: .regular)
             $0.setTitleColor(.background, for: .normal)
             $0.layer.cornerRadius = 12
             clipsToBounds = true

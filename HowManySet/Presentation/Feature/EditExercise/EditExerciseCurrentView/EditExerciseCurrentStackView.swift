@@ -26,20 +26,20 @@ final class EditExerciseCurrentStackView: UIStackView {
     private let titleLabel = UILabel().then {
         $0.text = "현재 운동 목록"
         $0.textColor = .white
-        $0.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.font = .pretendard(size: 20, weight: .regular)
     }
     
     /// 현재 추가된 운동 수를 나타내는 라벨입니다.
     private let excerciseCountLabel = UILabel().then {
         $0.textColor = .lightGray
-        $0.font = .systemFont(ofSize: 12, weight: .regular)
+        $0.font = .pretendard(size: 12, weight: .regular)
     }
     
     /// 운동이 추가되지 않았을 때 표시되는 안내 라벨입니다.
     private let emptyTextLabel = UILabel().then {
         $0.text = "아직 추가된 운동이 없습니다."
         $0.textColor = .dbTypo
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .pretendard(size: 16, weight: .regular)
     }
     
     /// 초기화 메서드 - 스택뷰 설정 및 UI 구성 호출
@@ -116,4 +116,3 @@ private extension EditExerciseCurrentStackView {
         }
     }
 }
-

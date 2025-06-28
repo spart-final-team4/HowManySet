@@ -32,7 +32,7 @@ final class EditRoutineTableFooterView: UITableViewHeaderFooterView {
     /// "새 운동 추가" 텍스트 라벨
     private let plusExcerciseButton = UIButton().then {
         $0.setTitle("새 운동 추가", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.titleLabel?.font = .pretendard(size: 20, weight: .regular)
         $0.setTitleColor(.white, for: .normal)
         // TODO: 마이너패치 때 기능 구현예정
         $0.isHidden = true

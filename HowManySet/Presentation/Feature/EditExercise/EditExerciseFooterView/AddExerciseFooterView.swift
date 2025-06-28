@@ -31,7 +31,7 @@ final class AddExerciseFooterView: UIStackView {
     /// 운동 추가 버튼 - 브랜드색 스타일
     private let addExcerciseButton = UIButton().then {
         $0.setTitle("운동 추가", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
         $0.setTitleColor(.background, for: .normal)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
@@ -41,7 +41,7 @@ final class AddExerciseFooterView: UIStackView {
     /// 루틴 저장 버튼 - 흰색 스타일
     private let saveRoutineButton = UIButton().then {
         $0.setTitle("루틴 저장", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+        $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
         $0.setTitleColor(.background, for: .normal)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
@@ -97,4 +97,3 @@ private extension AddExerciseFooterView {
         self.addArrangedSubviews(saveRoutineButton, addExcerciseButton)
     }
 }
-

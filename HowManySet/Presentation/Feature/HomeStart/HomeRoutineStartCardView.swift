@@ -27,7 +27,7 @@ final class HomeRoutineStartCardView: UIView {
     }
     
     lazy var todayDateLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        $0.font = UIFont.pretendard(size: 20, weight: .bold)
     }
 
     private lazy var containerView = UIView().then {
@@ -48,7 +48,7 @@ final class HomeRoutineStartCardView: UIView {
     
     private lazy var initialTextLabel = UILabel().then {
         $0.text = initialText
-        $0.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+        $0.font = UIFont.pretendard(size: 24, weight: .medium)
         $0.numberOfLines = 1
         $0.adjustsFontSizeToFitWidth = true
         $0.textAlignment = .center
@@ -58,7 +58,7 @@ final class HomeRoutineStartCardView: UIView {
         $0.backgroundColor = .brand
         $0.setTitle(selectButtonText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20)
+        $0.titleLabel?.font = UIFont.pretendard(size: 20, weight: .regular)
         $0.titleLabel?.textColor = .black
         $0.layer.cornerRadius = 12
     }
