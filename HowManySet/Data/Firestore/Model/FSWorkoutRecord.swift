@@ -62,7 +62,8 @@ extension FSWorkoutRecord {
         )
         
         return WorkoutRecordDTO(
-            rmID: self.id ?? "",
+            rmID: "",
+            documentID: self.id ?? "",
             workoutRoutine: routine,
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
