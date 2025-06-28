@@ -59,8 +59,8 @@ final class HomeViewReactor: Reactor {
         case pauseRest(Bool)
         /// 운동 완료 시 usecase이용해서 데이터 저장
         case saveWorkoutData
-        /// 스킵(다음) 버튼 클릭 시 분기처리 및 완료항목 업데이트
-        case manageDataIfForwarded(
+        /// 스킵(다음) 버튼 클릭 시 세트/운동 카운팅
+        case manageWorkoutCount(
             isRoutineCompleted: Bool,
             isCurrentExerciseCompleted: Bool
         )
@@ -336,7 +336,7 @@ final class HomeViewReactor: Reactor {
             
             if oldIndex != nextIndex {
                 return .concat([
-                    .just(.manageDataIfForwarded(
+                    .just(.manageWorkoutCount(
                         isRoutineCompleted: false,
                         isCurrentExerciseCompleted: true
                     )),
@@ -352,13 +352,14 @@ final class HomeViewReactor: Reactor {
                 return .concat([
                     .just(.setCurrentRoutineCompleted),
                     .just(.saveWorkoutData),
-                    .just(.manageDataIfForwarded(
+                    .just(.manageWorkoutCount(
                         isRoutineCompleted: true,
                         isCurrentExerciseCompleted: true
                     )),
                     .just(.setResting(false)),
                     .just(.setRestTime(0)),
-                    .just(.stopRestTimer(true))
+                    .just(.stopRestTimer(true)),
+                    .just(.setWorkingout(false))
                 ])
                 
             }
@@ -427,20 +428,17 @@ final class HomeViewReactor: Reactor {
                 newState.isRestTimerStopped = true
             }
             
-        case let .manageDataIfForwarded(isRoutineCompleted, isCurrentExerciseCompleted):
-            
+        case let .manageWorkoutCount(isRoutineCompleted, isCurrentExerciseCompleted):
             if isRoutineCompleted,
                isCurrentExerciseCompleted { // 루틴 전체 완료
-                newState.isWorkingout = false
-                print("루틴 전체 완료 - \(!newState.isWorkingout)")
-                // MARK: - TODO: 운동 완료 후 기록 저장 등의 추가 작업
+                newState.didExerciseCount += 1
+                newState.didSetCount += 1
             } else if isCurrentExerciseCompleted { // 현재 운동만 완료
                 // 현재 세트 완료 false로 재설정
                 newState.didExerciseCount += 1
-                print("현재 운동 완료")
+                newState.didSetCount += 1
             } else { // 다음 세트로
                 newState.didSetCount += 1
-                print("다음 세트로 - \(newState.workoutCardStates[newState.currentExerciseIndex].setIndex)")
             }
             print("🚬 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
             
@@ -553,8 +551,6 @@ final class HomeViewReactor: Reactor {
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
                 newState.currentExerciseAllSetsCompleted = true
-                newState.didSetCount += 1
-                
                 newState.workoutCardStates.forEach {
                     print("\($0.currentExerciseName), \( $0.allSetsCompleted)")
                 }
@@ -722,7 +718,7 @@ private extension HomeViewReactor {
                 .just(.setResting(isResting)),
                 // 카드 정보 업데이트
                 .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
-                .just(.manageDataIfForwarded(
+                .just(.manageWorkoutCount(
                     isRoutineCompleted: false,
                     isCurrentExerciseCompleted: false
                 )),
@@ -772,7 +768,7 @@ private extension HomeViewReactor {
                     print("--- 모든 운동 루틴 완료! ---")
                     return .concat([
                         .just(.setCurrentRoutineCompleted),
-                        .just(.manageDataIfForwarded(
+                        .just(.manageWorkoutCount(
                             isRoutineCompleted: true,
                             isCurrentExerciseCompleted: true
                         )),

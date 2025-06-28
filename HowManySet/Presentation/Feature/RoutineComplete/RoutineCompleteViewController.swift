@@ -185,7 +185,7 @@ final class RoutineCompleteViewController: UIViewController, View {
         
         if let workoutSummary {
             print("configure 호출")
-            print("🎬 [WorkoutSummary]: \(workoutSummary)")
+            print("RCVC 🎬 [WorkoutSummary]: \(workoutSummary)")
             configure(with: workoutSummary)
         }
     }
