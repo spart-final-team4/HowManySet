@@ -44,7 +44,7 @@ final class EditExerciseViewReactor: Reactor {
     
     let alertRelay = PublishRelay<ValidWorkout>()
     var initialState: State
-    let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
     init(workout: Workout,
          updateWorkoutUseCase: UpdateWorkoutUseCase

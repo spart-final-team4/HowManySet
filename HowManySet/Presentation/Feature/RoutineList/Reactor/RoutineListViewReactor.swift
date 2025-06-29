@@ -26,7 +26,7 @@ final class RoutineListViewReactor: Reactor {
     }
     
     let initialState: State
-    let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
 
     init(

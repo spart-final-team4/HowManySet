@@ -47,7 +47,7 @@ final class EditRoutineViewReactor: Reactor {
     }
     
     let initialState: State
-    let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
     init(with routine: WorkoutRoutine,
          saveRoutineUseCase: SaveRoutineUseCase,
