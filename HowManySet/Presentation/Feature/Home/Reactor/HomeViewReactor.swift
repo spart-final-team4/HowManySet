@@ -600,13 +600,7 @@ final class HomeViewReactor: Reactor {
                 comment: newState.memoInRoutine,
                 date: Date()
             )
-//            
-//            saveRecordUseCase.execute(item: newState.workoutRecord)
-//            if let uid = newState.uid {
-//                fsSaveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
-//            } else {
-//                print("사용자 uid가 없습니다!")
-//            }
+            saveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
