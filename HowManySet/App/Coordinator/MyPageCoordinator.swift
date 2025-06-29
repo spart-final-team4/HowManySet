@@ -142,11 +142,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 개인정보처리방침 링크로 이동
     func presentPrivacyPolicyView() {
-        // TODO: 추후에 url 설정 필요
-        guard let url = URL(string: "개인정보처리방침 링크") else { return }
-        let safariVC = SFSafariViewController(url: url)
-        
-        navigationController.present(safariVC, animated: true)
+        let webVC = PrivacyWebViewController()
+        navigationController.present(webVC, animated: true)
     }
     
     /// 문제제보 링크로 이동
