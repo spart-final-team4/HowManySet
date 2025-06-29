@@ -8,11 +8,5 @@
 import Foundation
 
 protocol UpdateWorkoutUseCaseProtocol {
-    func execute(uid: String, item: Workout)
-}
-
-extension UpdateWorkoutUseCaseProtocol {
-    func execute(item: Workout) {
-        execute(uid: "", item: item)
-    }
+    func execute(uid: String?, item: Workout)
 }
