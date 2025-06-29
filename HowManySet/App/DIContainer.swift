@@ -49,23 +49,15 @@ final class DIContainer {
     
     /// 캘린더 화면을 생성하여 반환
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
-        let recordRepository = RecordRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService)
         
         let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
 
-        // Firestore 로직 추가
-        let firestoreService: FirestoreServiceProtocol = FirestoreService()
-        let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
-        let fsDeleteRecordUseCase = FSDeleteRecordUseCase(repository: fsRecordRepository)
-        let fsFetchRecordUseCase = FSFetchRecordUseCase(repository: fsRecordRepository)
-
         let reactor = CalendarViewReactor(
             deleteRecordUseCase: deleteRecordUseCase,
-            fetchRecordUseCase: fetchRecordUseCase,
-//            // Firestore UseCase들 추가
-            fsDeleteRecordUseCase: fsDeleteRecordUseCase,
-            fsFetchRecordUseCase: fsFetchRecordUseCase
+            fetchRecordUseCase: fetchRecordUseCase
         )
         
         return CalendarViewController(reactor: reactor, coordinator: coordinator)
@@ -136,7 +128,7 @@ final class DIContainer {
         routine: WorkoutRoutine)
     -> (UIViewController, HomeViewReactor) {
         let firestoreService = FirestoreService()
-        let recordRepository = RecordRepositoryImpl()
+        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService)
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
         let workoutRepository = WorkoutRepositoryImpl()
         
