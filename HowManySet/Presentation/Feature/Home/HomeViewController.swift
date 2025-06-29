@@ -596,7 +596,7 @@ extension HomeViewController {
             reactor.state.map { $0.isResting },
             reactor.state.map { $0.currentExerciseIndex },
             reactor.state.map { $0.restTime },
-            reactor.state.map { $0.restRemaining },
+            reactor.state.map { $0.restRemainingTime },
             reactor.state.map { $0.restStartTime },
             reactor.state.map { $0.isRestTimerStopped }
         )
@@ -671,7 +671,7 @@ extension HomeViewController {
                               let totalRest = state.restStartTime,
                               totalRest >= 0 else { return }
                         
-                        let elapsed = Float(totalRest) - Float(state.restRemaining)
+                        let elapsed = Float(totalRest) - Float(state.restRemainingTime)
                         let progress = max(min(elapsed / Float(totalRest), 1), 0)
                         $0.restProgressBar.setProgress(progress, animated: true)
                     }
@@ -861,6 +861,15 @@ extension HomeViewController {
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .bind { _ in
                 reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
+            }
+            .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+            .bind { _ in
+                print("🐈‍⬛ didEnterBackground!")
+                if reactor.currentState.isResting {
+                    reactor.action.onNext(.didEnterBackgroundWhileResting)
+                }
             }
             .disposed(by: disposeBag)
         
