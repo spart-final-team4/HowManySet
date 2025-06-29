@@ -104,7 +104,7 @@ final class DIContainer {
     func makeEditRoutineViewController(coordinator: EditRoutineCoordinator, with routine: WorkoutRoutine, caller: ViewCaller) -> UIViewController {
         let firestoreService = FirestoreService()
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let workoutRepository = WorkoutRepositoryImpl()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
@@ -130,7 +130,7 @@ final class DIContainer {
         let firestoreService = FirestoreService()
         let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService)
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let workoutRepository = WorkoutRepositoryImpl()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
