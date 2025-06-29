@@ -76,7 +76,7 @@ final class AddExerciseViewReactor: Reactor {
     let dismissRelay = PublishRelay<Void>()       // 화면 종료용 Relay
     
     private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
-        
+    private let fsSaveRoutineUseCase: FSSaveRoutineUseCase
     // MARK: - Initializer
     
     /// 초기화 메서드
@@ -85,11 +85,12 @@ final class AddExerciseViewReactor: Reactor {
     ///   - saveRoutineUseCase: 루틴 저장을 위한 UseCase 주입
     init(routineName: String,
          saveRoutineUseCase: SaveRoutineUseCaseProtocol,
+         fsSaveRoutineUseCase: FSSaveRoutineUseCase,
          workoutStateForEdit: WorkoutStateForEdit?,
          caller: ViewCaller
     ) {
         self.saveRoutineUseCase = saveRoutineUseCase
-        
+        self.fsSaveRoutineUseCase = fsSaveRoutineUseCase
         self.initialState = State(
             currentRoutine: WorkoutRoutine(
                 rmID: UUID().uuidString,
@@ -174,7 +175,8 @@ final class AddExerciseViewReactor: Reactor {
             
         case .saveRoutine:
             // TODO: 실제 저장 시 UID 입력 필요
-            saveRoutineUseCase.execute(item: newState.currentRoutine)
+//            saveRoutineUseCase.execute(item: newState.currentRoutine)
+            saveData(item: newState.currentRoutine)
             
         case .changeExcerciseName(let newName):
             newState.currentExcerciseName = newName
@@ -207,5 +209,17 @@ final class AddExerciseViewReactor: Reactor {
         }
         
         return ValidWorkout.success
+    }
+}
+
+
+extension AddExerciseViewReactor {
+    func saveData(item: WorkoutRoutine) {
+        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+        if let uid = uid {
+            fsSaveRoutineUseCase.execute(uid: uid, item: item)
+        } else {
+            saveRoutineUseCase.execute(item: item)
+        }
     }
 }

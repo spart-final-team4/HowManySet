@@ -117,9 +117,11 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     ) {
         let routineRepository = RoutineRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+        let fsSaveRoutineUseCase = FSSaveRoutineUseCase(repository: FSRoutineRepositoryImpl(firestoreService: FirestoreService()))
         let reactor = AddExerciseViewReactor(
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
+            fsSaveRoutineUseCase: fsSaveRoutineUseCase,
             workoutStateForEdit: workoutStateForEdit,
             caller: ViewCaller.fromHome
         )
