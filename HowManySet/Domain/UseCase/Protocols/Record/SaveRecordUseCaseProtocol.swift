@@ -17,11 +17,5 @@ protocol SaveRecordUseCaseProtocol {
     /// - Parameters:
     ///   - uid: 운동 기록을 저장할 사용자의 고유 식별자
     ///   - item: 저장할 `WorkoutRecord` 객체
-    func execute(uid: String, item: WorkoutRecord)
-}
-
-extension SaveRecordUseCaseProtocol {
-    func execute(item: WorkoutRecord) {
-        execute(uid: "", item: item)
-    }
+    func execute(uid: String?, item: WorkoutRecord)
 }
