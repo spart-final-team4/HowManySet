@@ -75,13 +75,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     /// 운동 편집 화면 전체 화면으로 push
     func pushEditExcerciseView(routineName: String) {
-        let routineRepository = RoutineRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let fsSaveRoutineUseCase = FSSaveRoutineUseCase(repository: FSRoutineRepositoryImpl(firestoreService: FirestoreService()))
         let reactor = AddExerciseViewReactor(
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
-            fsSaveRoutineUseCase: fsSaveRoutineUseCase,
             workoutStateForEdit: nil, // 탭바에서 push시에는 필요없음
             caller: ViewCaller.fromTabBar // 탭바에서 push
         )

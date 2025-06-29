@@ -152,11 +152,13 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentAddExerciseVC() {
-        let fsSaveRoutineUseCase = FSSaveRoutineUseCase(repository: FSRoutineRepositoryImpl(firestoreService: FirestoreService()))
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let vc = AddExerciseViewController(
             reactor: AddExerciseViewReactor(
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
-                saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()), fsSaveRoutineUseCase: fsSaveRoutineUseCase,
+                saveRoutineUseCase: saveRoutineUseCase,
                 workoutStateForEdit: nil,
                 caller: .fromHome)
         )

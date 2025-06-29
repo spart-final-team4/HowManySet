@@ -151,35 +151,25 @@ final class HomeViewReactor: Reactor {
     let initialState: State
     
     private let saveRecordUseCase: SaveRecordUseCase
-    private let fsSaveRecordUseCase: FSSaveRecordUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
-    private let fsFetchRoutineUseCase: FSFetchRoutineUseCase
     /// 메모 dismiss, 운동 종료/완료 시 WorkoutUpdate (+ 각 운동에 대한 메모)
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
     
     private let uid = FirebaseAuthService().fetchCurrentUser()?.uid ?? ""
-    
-    // TODO: 추후에 FSUpdateWorkoutUseCase 적용
-    private let fsUpdateRoutineUseCase: FSUpdateRoutineUseCase
+
     /// 운동 종료/완료시 RecordUpdate (+ 루틴에 대한 메모)
     private let updateRecordUseCase: UpdateRecordUseCase
     
     init(
         saveRecordUseCase: SaveRecordUseCase,
-        fsSaveRecordUseCase: FSSaveRecordUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
-        fsFetchRoutineUseCase: FSFetchRoutineUseCase,
         updateWorkoutUseCase: UpdateWorkoutUseCase,
-        fsUpdateRoutineUseCase: FSUpdateRoutineUseCase,
         updateRecordUseCase: UpdateRecordUseCase,
         initialState: State
     ) {
         self.saveRecordUseCase = saveRecordUseCase
-        self.fsSaveRecordUseCase = fsSaveRecordUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
-        self.fsFetchRoutineUseCase = fsFetchRoutineUseCase
         self.updateWorkoutUseCase = updateWorkoutUseCase
-        self.fsUpdateRoutineUseCase = fsUpdateRoutineUseCase
         self.updateRecordUseCase = updateRecordUseCase
         self.initialState = initialState
     }//init
@@ -541,11 +531,10 @@ final class HomeViewReactor: Reactor {
                 date: Date()
             )
             
-//            print("🎬 [updatedWorkoutRecord]: \(updatedWorkoutRecord)")
-                        
+            print("🎬 [updatedWorkoutRecord]: \(updatedWorkoutRecord)")
+            
             if let uid = newState.uid {
                 print("사용자 uid 있음 - Realm, Firestore에 저장.")
-                fsSaveRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
                 saveRecordUseCase.execute(item: updatedWorkoutRecord)
             } else {
                 print("사용자 uid 없음 - Realm에 저장.")
