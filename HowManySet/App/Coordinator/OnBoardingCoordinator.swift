@@ -30,6 +30,10 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
     /// RxSwift DisposeBag
     private let disposeBag = DisposeBag()
     
+    private let firebaseAuthService = FirebaseAuthService()
+    private lazy var authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+    private lazy var authUseCase = AuthUseCase(repository: authRepository)
+    
     /// 완료 처리 중 플래그 (중복 호출 방지)
     private var isCompleting = false
 
@@ -44,70 +48,53 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
         let onboardingVC = container.makeOnBoardingViewController(coordinator: self)
         navigationController.pushViewController(onboardingVC, animated: false)
     }
-
+    
     /// 닉네임 설정 완료 시 호출
     func completeNicknameSetting(nickname: String) {
-        let firebaseAuthService = FirebaseAuthService()
-        let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
-        let authUseCase = AuthUseCase(repository: authRepository)
-        
-        // Repository를 통해 현재 사용자 정보 가져오기
         authRepository.getCurrentUser()
-            .flatMap { user -> Observable<Void> in
-                guard let user = user else {
+            .flatMap { [weak self] user -> Observable<Void> in
+                guard let self, let user else {
                     return Observable.error(NSError(domain: "NoCurrentUser", code: -1))
                 }
-                return authUseCase.completeNicknameSetting(uid: user.uid, nickname: nickname)
-            }
+                return self.authUseCase.completeNicknameSetting(uid: user.uid, nickname: nickname)}
             .observe(on: MainScheduler.instance)
             .subscribe(
-                onNext: { (_: Void) in
-                    print("🟢 OnBoardingCoordinator: 닉네임 설정 완료")
+                onNext: { _ in
+                    print("🟢 닉네임 설정 완료")
                 },
-                onError: { (error: Error) in
-                    print("🔴 OnBoardingCoordinator: 닉네임 설정 실패 - \(error)")
+                onError: { error in
+                    print("🔴 닉네임 설정 실패: \(error)")
                 }
             )
             .disposed(by: disposeBag)
     }
-
+    
     /// 온보딩 완료 시 호출
     func completeOnBoarding() {
-        // 중복 호출 방지
         guard !isCompleting else { return }
         isCompleting = true
+        defer { isCompleting = false }
         
         print("🟢 OnBoardingCoordinator: 온보딩 완료 처리 시작")
         
-        let firebaseAuthService = FirebaseAuthService()
-        let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
-        let authUseCase = AuthUseCase(repository: authRepository)
-        
-        // Repository를 통해 현재 사용자 정보 가져오기
         authRepository.getCurrentUser()
             .flatMap { [weak self] user -> Observable<Void> in
-                guard let user = user else {
-                    // 사용자가 없으면 로컬 저장만 하고 완료
-                    print("🟡 OnBoardingCoordinator: 현재 사용자가 없음 - 로컬 저장만 진행")
+                guard let self else { return .empty() }
+                guard let user else {
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-                    DispatchQueue.main.async {
-                        self?.finishFlow?()
-                    }
-                    return Observable.empty()
+                    self.finishFlow?()
+                    return .empty()
                 }
-                return authUseCase.completeOnboarding(uid: user.uid)
+                return self.authUseCase.completeOnboarding(uid: user.uid)
             }
             .observe(on: MainScheduler.instance)
             .subscribe(
-                onNext: { [weak self] (_: Void) in
-                    print("🟢 OnBoardingCoordinator: 온보딩 완료")
-                    // 로컬 저장도 함께 진행 (백업용)
+                onNext: { [weak self] _ in
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                     self?.finishFlow?()
                 },
-                onError: { [weak self] (error: Error) in
-                    print("🔴 OnBoardingCoordinator: 온보딩 완료 처리 실패 - \(error)")
-                    // 에러가 발생해도 로컬 저장 후 다음 단계로 진행
+                onError: { [weak self] error in
+                    print("🔴 온보딩 완료 실패: \(error)")
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                     self?.finishFlow?()
                 }
