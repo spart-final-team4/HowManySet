@@ -496,24 +496,6 @@ final class HomeViewReactor: Reactor {
         // 운동 완료 시 호출, 추후에 운동 중 변경 기능 추가 시 여기서 처리 할 수도 있음.
         case .saveWorkoutData:
             let currentIndex = newState.currentExerciseIndex
-        // MARK: - 운동 종료 시 운동 관련 데이터 핸들
-        // 추후에 종료가 아닐 시에도 저장할 일이 있을 것 같아 isEnded 그대로 두었음
-        case let .manageWorkoutData(isEnded):
-            newState.didExerciseCount += 1
-            print("🎬 [manageWorkoutData] 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
-            
-            // 저장될 데이터들
-            newState.workoutRecord = WorkoutRecord(
-                // TODO: 검토 필요
-                rmID: UUID().uuidString,
-                documentID: uid,
-                workoutRoutine: newState.workoutRoutine,
-                totalTime: newState.workoutTime,
-                workoutTime: newState.workoutTime,
-                comment: newState.memoInRoutine,
-                date: newState.date
-            )
-            
             let routineDidProgress = Float(newState.didSetCount) / Float(newState.totalSetCountInRoutine)
             // 추후에 쓰일수도 있음.
             let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
@@ -537,19 +519,21 @@ final class HomeViewReactor: Reactor {
             
             let workout = convertWorkoutCardStatesToWorkouts(cardStates: newState.workoutCardStates)
             
-            print("현재 루틴 ID: \(newState.workoutRoutine.id)")
+            print("현재 루틴 ID: \(newState.workoutRoutine.rmID)")
             let newRoutineID = UUID().uuidString
             
             // WorkoutRecord안의 workoutRoutine을 새 id로 만들어 id 중복방지
             let newWorkoutRoutine = WorkoutRoutine(
-                id: newRoutineID,
+                rmID: newRoutineID,
+                documentID: uid,
                 name: newState.workoutRoutine.name,
                 workouts: workout
             )
             
             // 저장되는 WorkoutRecord
             let updatedWorkoutRecord = WorkoutRecord(
-                id: recordID,
+                rmID: recordID,
+                documentID: uid,
                 workoutRoutine: newWorkoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -661,14 +645,16 @@ final class HomeViewReactor: Reactor {
             
             // WorkoutRecord안의 workoutRoutine을 새 id로 만들어 id 중복방지
             let newWorkoutRoutine = WorkoutRoutine(
-                id: UUID().uuidString,
+                rmID: UUID().uuidString,
+                documentID: uid,
                 name: newState.workoutRoutine.name,
                 workouts: workout
             )
             
             // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
             let updatedWorkoutRecord = WorkoutRecord(
-                id: newState.recordID,
+                rmID: newState.recordID,
+                documentID: uid,
                 workoutRoutine: newWorkoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
