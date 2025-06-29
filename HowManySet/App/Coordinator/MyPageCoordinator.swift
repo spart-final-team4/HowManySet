@@ -30,6 +30,9 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 로그아웃/계정삭제 완료 시 호출할 클로저
     var finishFlow: (() -> Void)?
+    
+    /// 로그아웃, 계정탈퇴 중복 방지
+    var isMovingToAuth = false
 
     /// coordinator 생성자
     /// - Parameters:
