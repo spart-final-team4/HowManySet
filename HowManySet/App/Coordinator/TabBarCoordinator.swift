@@ -17,6 +17,9 @@ final class TabBarCoordinator: Coordinator {
     let tabBarController: UITabBarController
     private let container: DIContainer
     
+    /// MyPage → Auth 전환 중복 방지
+    private var didRequestAuth = false
+    
     // 각 탭에 대한 Coordinator
     private var homeCoordinator: HomeCoordinator?
     private var routineListCoordinator: RoutineListCoordinator?
@@ -47,9 +50,9 @@ final class TabBarCoordinator: Coordinator {
         homeCoordinator?.routineListCoordinator = routineListCoordinator
         routineListCoordinator?.homeCoordinator = homeCoordinator
         
-        // 🔥 MyPageCoordinator의 finishFlow 설정 (로그아웃/계정삭제 시 호출됨)
+        /// MyPageCoordinator의 finishFlow 설정 (로그아웃/계정삭제 시 호출됨)
         myPageCoordinator?.finishFlow = { [weak self] in
-            // 로그아웃/계정삭제 후 인증 화면으로 이동
+            /// 로그아웃/계정삭제 후 인증 화면으로 이동
             self?.navigateToAuth()
         }
         
@@ -81,7 +84,8 @@ final class TabBarCoordinator: Coordinator {
     
     /// 로그아웃/계정삭제 후 인증 화면으로 이동
     private func navigateToAuth() {
-        // AppCoordinator에게 인증 화면으로 전환 요청
+        guard !didRequestAuth else { return }
+        didRequestAuth = true
         finishFlow?()
     }
 }
