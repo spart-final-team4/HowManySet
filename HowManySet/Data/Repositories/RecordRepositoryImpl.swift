@@ -56,7 +56,7 @@ final class RecordRepositoryImpl: RecordRepository {
     /// WorkoutRecord의 메모값을 변경하는 메서드
     /// RecordDetail 페이지에서만 사용하기 때문에 comment만 변경함
     func updateRecord(uid: String, item: WorkoutRecord) {
-        if let record = RealmService.shared.read(type: .workoutRecord, primaryKey: item.id) as? RMWorkoutRecord {
+        if let record = RealmService.shared.read(type: .workoutRecord, primaryKey: item.rmID) as? RMWorkoutRecord {
             RealmService.shared.update(item: record) { (savedRecord: RMWorkoutRecord) in
                 savedRecord.comment = item.comment
             }
