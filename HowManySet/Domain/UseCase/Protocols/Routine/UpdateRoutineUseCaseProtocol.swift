@@ -14,11 +14,5 @@ protocol UpdateRoutineUseCaseProtocol {
     /// 특정 사용자의 운동 루틴을 업데이트합니다.
     /// - Parameters:
     ///   - item: 업데이트할 운동 루틴
-    func execute(uid: String, item: WorkoutRoutine)
-}
-
-extension UpdateRoutineUseCaseProtocol {
-    func execute(item: WorkoutRoutine) {
-        execute(uid: "", item: item)
-    }
+    func execute(uid: String?, item: WorkoutRoutine)
 }
