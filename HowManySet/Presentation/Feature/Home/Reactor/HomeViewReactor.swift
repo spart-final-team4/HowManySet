@@ -155,7 +155,7 @@ final class HomeViewReactor: Reactor {
     /// 메모 dismiss, 운동 종료/완료 시 WorkoutUpdate (+ 각 운동에 대한 메모)
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
     
-    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid ?? ""
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
 
     /// 운동 종료/완료시 RecordUpdate (+ 루틴에 대한 메모)
     private let updateRecordUseCase: UpdateRecordUseCase
@@ -515,7 +515,7 @@ final class HomeViewReactor: Reactor {
             // WorkoutRecord안의 workoutRoutine을 새 id로 만들어 id 중복방지
             let newWorkoutRoutine = WorkoutRoutine(
                 rmID: newRoutineID,
-                documentID: uid,
+                documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
                 workouts: workout
             )
@@ -523,7 +523,7 @@ final class HomeViewReactor: Reactor {
             // 저장되는 WorkoutRecord
             let updatedWorkoutRecord = WorkoutRecord(
                 rmID: recordID,
-                documentID: uid,
+                documentID: uid ?? "",
                 workoutRoutine: newWorkoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -532,15 +532,7 @@ final class HomeViewReactor: Reactor {
             )
             
             print("🎬 [updatedWorkoutRecord]: \(updatedWorkoutRecord)")
-            
-            if let uid = newState.uid {
-                print("사용자 uid 있음 - Realm, Firestore에 저장.")
-                saveRecordUseCase.execute(item: updatedWorkoutRecord)
-            } else {
-                print("사용자 uid 없음 - Realm에 저장.")
-                saveRecordUseCase.execute(item: updatedWorkoutRecord)
-            }
-            
+            saveRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
                         
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
@@ -595,13 +587,13 @@ final class HomeViewReactor: Reactor {
             
             newState.workoutRoutine = WorkoutRoutine(
                 rmID: newState.uid ?? "",
-                documentID: uid,
+                documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
                 workouts: updatedWorkouts
             )
             newState.workoutRecord = WorkoutRecord(
                 rmID: newState.uid ?? "",
-                documentID: uid,
+                documentID: uid ?? "",
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -635,7 +627,7 @@ final class HomeViewReactor: Reactor {
             // WorkoutRecord안의 workoutRoutine을 새 id로 만들어 id 중복방지
             let newWorkoutRoutine = WorkoutRoutine(
                 rmID: UUID().uuidString,
-                documentID: uid,
+                documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
                 workouts: workout
             )
@@ -643,7 +635,7 @@ final class HomeViewReactor: Reactor {
             // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
             let updatedWorkoutRecord = WorkoutRecord(
                 rmID: newState.recordID,
-                documentID: uid,
+                documentID: uid ?? "",
                 workoutRoutine: newWorkoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
@@ -653,15 +645,7 @@ final class HomeViewReactor: Reactor {
             print("updatedWorkoutRecord: \(updatedWorkoutRecord)")
             print("새로운 루틴 메모: \(String(describing: newMemo))")
             
-            if let uid = newState.uid {
-                print("사용자 uid 있음 - Realm, Firestore에 저장.")
-                // TODO: 현재 구현 안되어 있음
-//                fsUpdateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
-                updateRecordUseCase.execute(item: updatedWorkoutRecord)
-            } else {
-                print("사용자 uid 없음 - Realm에 저장.")
-                updateRecordUseCase.execute(item: updatedWorkoutRecord)
-            }
+            updateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
             
         case let .setEditExerciseViewPresented(isPresented):
             print("isEditExerciseViewPresented: \(isPresented)")

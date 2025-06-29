@@ -36,7 +36,7 @@ final class RecordDetailViewReactor: Reactor {
 
     // MARK: - Properties
     let initialState: State
-
+    let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     // MARK: - Init
     init(updateRecordUseCase: UpdateRecordUseCase,
          record: WorkoutRecord
@@ -80,7 +80,7 @@ final class RecordDetailViewReactor: Reactor {
             )
 
             // 업데이트 실행
-            updateRecordUseCase.execute(item: updatedRecord)
+            updateRecordUseCase.execute(uid: uid, item: updatedRecord)
 
             print("변경된 메모 저장: \(memo)") // ✅ print
             return Observable.from([

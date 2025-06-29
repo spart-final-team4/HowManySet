@@ -6,8 +6,6 @@ final class CalendarViewReactor: Reactor {
 
     private let deleteRecordUseCase: DeleteRecordUseCase
     private let fetchRecordUseCase: FetchRecordUseCase
-    private let fsDeleteRecordUseCase: FSDeleteRecordUseCase
-    private let fsFetchRecordUseCase: FSFetchRecordUseCase
 
     // MARK: - Action is an user interaction
     enum Action {
@@ -40,14 +38,10 @@ final class CalendarViewReactor: Reactor {
     // MARK: - Init
     init(
         deleteRecordUseCase: DeleteRecordUseCase,
-        fetchRecordUseCase: FetchRecordUseCase,
-        fsDeleteRecordUseCase: FSDeleteRecordUseCase,
-        fsFetchRecordUseCase: FSFetchRecordUseCase
+        fetchRecordUseCase: FetchRecordUseCase
     ) {
         self.deleteRecordUseCase = deleteRecordUseCase
         self.fetchRecordUseCase = fetchRecordUseCase
-        self.fsDeleteRecordUseCase = fsDeleteRecordUseCase
-        self.fsFetchRecordUseCase = fsFetchRecordUseCase
         self.initialState = State()
     }
 
@@ -55,22 +49,12 @@ final class CalendarViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return fetchRecordUseCase.execute()
+            return fetchRecordUseCase.execute(uid: uid)
                 .map { Mutation.setAllRecords($0) }
                 .asObservable()
 
-//            let realmRecords = fetchRecordUseCase.execute()
-//                .map { Mutation.setAllRecords($0) }
-//                .asObservable()
-//
-//            let fsRecords = fsFetchRecordUseCase.execute(uid: uid ?? "")
-//                .map { Mutation.setAllRecords($0) }
-//                .asObservable()
-//
-//            return Observable.merge([realmRecords, fsRecords])
-
         case let .selectDate(date):
-            let fetchRecords = fetchRecordUseCase.execute()
+            let fetchRecords = fetchRecordUseCase.execute(uid: uid)
                 .map { allRecords in
                     let filteredRecords = allRecords.filter {
                         Calendar.current.isDate($0.date, inSameDayAs: date)
@@ -104,11 +88,7 @@ final class CalendarViewReactor: Reactor {
 
         case let .deleteItem(indexPath):
             let recordToDelete = currentState.selectedRecords[indexPath.row]
-            deleteRecordUseCase.execute(item: recordToDelete)
-//
-//            if let uid = uid {
-//                fsDeleteRecordUseCase.execute(uid: uid, item: recordToDelete)
-//            }
+            deleteRecordUseCase.execute(uid: uid, item: recordToDelete)
 
             return .just(.deleteRecordAt(indexPath))
 
