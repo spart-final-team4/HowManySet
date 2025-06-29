@@ -41,8 +41,8 @@ final class HomeViewReactor: Reactor {
         case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
         /// background -> foreground로 올때 운동 시간 조정
         case adjustWorkoutTimeOnForeground
-        /// background -> foreground로 올때 휴식 시간 조정
-        case adjustRestTimeOnForeground
+        /// background -> foreground로 올때 남은 휴식 시간 조정
+        case adjustRestRemainingTimeOnForeground
         case routineCompleted
     }
     
@@ -56,7 +56,7 @@ final class HomeViewReactor: Reactor {
         /// 휴식 프로그레스 휴식 시간 설정
         case setRestTimeDataAtProgressBar(Float)
         case workoutTimeUpdating
-        case restRemainingSecondsUpdating
+        case restRemainingUpdating
         case pauseAndPlayWorkout(Bool)
         case pauseRest(Bool)
         /// 운동 완료 시 usecase이용해서 데이터 저장
@@ -91,8 +91,8 @@ final class HomeViewReactor: Reactor {
         // 백그라운드 관련
         case setWorkoutStartDate(Date?) /// 운동 시작 시각 설정
         case setAccumulatedWorkoutTime(TimeInterval) /// 총 누적된 운동 시간 (+background) 설정
-        case setRestStartDate(Date?) /// 휴식 시작 시각 설정
-        case setAccumulatedRestTime(TimeInterval) /// 총 누적된 휴식 시간 (+background) 설정
+        case setRestRemainingStartDate(Date?, Bool) /// 남은 휴식 시작 시각 설정
+        case setAccumulatedRestRemainingTime(TimeInterval) /// 총 누적된 남은 휴식 시간 (+background) 설정
         /// 현재 루틴 완료 설정
         case setCurrentRoutineCompleted
     }
@@ -115,7 +115,7 @@ final class HomeViewReactor: Reactor {
         var isResting: Bool
         var isRestPaused: Bool
         /// 현재 남은 휴식 시간
-        var restSecondsRemaining: Float
+        var restRemaining: Float
         /// 기본 휴식 시간
         var restTime: Float
         /// 휴식이 시작될 때의 값 (프로그레스바 용)
@@ -142,7 +142,7 @@ final class HomeViewReactor: Reactor {
         var workoutStartDate: Date? /// 운동 시작 시각
         var accumulatedWorkoutTime: TimeInterval /// 총 누적된 운동 시간 (+background)
         var restStartDate: Date? /// 휴식 시작 시각
-        var accumulatedRestTime: TimeInterval /// 총 누적된 휴식 시간 (+background)
+        var accumulatedRestRemainingTime: TimeInterval /// 총 누적된 휴식 시간 (+background)
         /// 현재 루틴의 모든 운동 완료
         var currentRoutineCompleted: Bool
         /// 현재  WorkoutRecordID
@@ -239,12 +239,12 @@ final class HomeViewReactor: Reactor {
                 // 현재 일시정지 상태 → 재생으로 전환
                 // interval을 restSecondsRemaining에서 재시작
                 let restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
-                    .take(Int(currentState.restSecondsRemaining * 10))
+                    .take(Int(currentState.restRemaining * 10))
                     .take(until: self.state.map {
                         $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
                         .filter { $0 }
                     )
-                    .map { _ in Mutation.restRemainingSecondsUpdating }
+                    .map { _ in Mutation.restRemainingUpdating }
                     .observe(on: MainScheduler.asyncInstance)
                 
                 return .concat([
@@ -262,9 +262,7 @@ final class HomeViewReactor: Reactor {
             // 하단 휴식 버튼 누를 시 동작
         case .setRestTime(let newRestTime):
             print("설정된 휴식시간: \(newRestTime)")
-            return .concat([
-                .just(.setRestTime(newRestTime))
-            ])
+            return .just(.setRestTime(newRestTime))
             
         case .pageChanged(let newPageIndex):
             // 해당 페이지로 운동 인덱스 변경
@@ -275,12 +273,12 @@ final class HomeViewReactor: Reactor {
                 // 현재 일시정지 상태 → 재생으로 전환
                 // interval을 restSecondsRemaining에서 재시작
                 let restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
-                    .take(Int(currentState.restSecondsRemaining * 10))
+                    .take(Int(currentState.restRemaining * 10))
                     .take(until: self.state.map {
                         $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
                         .filter { $0 }
                     )
-                    .map { _ in Mutation.restRemainingSecondsUpdating }
+                    .map { _ in Mutation.restRemainingUpdating }
                     .observe(on: MainScheduler.asyncInstance)
                 
                 return .concat([
@@ -377,13 +375,10 @@ final class HomeViewReactor: Reactor {
             return .just(.setCurrentRoutineCompleted)
             
             // 백그라운드 시간도 포함한 휴식 시간 설정
-        case .adjustRestTimeOnForeground:
+        case .adjustRestRemainingTimeOnForeground:
             if let startDate = currentState.restStartDate {
                 let elapsedTime = Date().timeIntervalSince(startDate)
-                return .concat([
-                    .just(.setAccumulatedRestTime(currentState.accumulatedRestTime + elapsedTime)),
-                    .just(.setRestStartDate(Date())) // 다시 시작 시각 기록 (초기화)
-                ])
+                return .just(.setAccumulatedRestRemainingTime(currentState.accumulatedRestRemainingTime - elapsedTime))
             } else {
                 return .empty()
             }
@@ -411,7 +406,7 @@ final class HomeViewReactor: Reactor {
         case let .setResting(isResting):
             newState.isResting = isResting
             if !newState.isResting {
-                newState.restSecondsRemaining = 0.0
+                newState.restRemaining = 0.0
                 newState.restStartTime = nil
             }
             print("휴식중? \(newState.isResting)")
@@ -428,11 +423,11 @@ final class HomeViewReactor: Reactor {
         case let .setRestTimeDataAtProgressBar(restTime):
             if restTime > 0 {
                 newState.restStartTime = restTime
-                newState.restSecondsRemaining = restTime
+                newState.restRemaining = restTime
                 newState.isRestTimerStopped = false
             } else {
                 newState.restStartTime = nil
-                newState.restSecondsRemaining = 0.0
+                newState.restRemaining = 0.0
                 newState.isRestTimerStopped = true
             }
             
@@ -476,15 +471,15 @@ final class HomeViewReactor: Reactor {
         case .workoutTimeUpdating:
             newState.workoutTime += 1
             
-        case .restRemainingSecondsUpdating:
+        case .restRemainingUpdating:
             if newState.isResting,
                !newState.isWorkoutPaused,
                !newState.isRestPaused,
                !newState.isRestTimerStopped {
                 // 0.1초씩 감소
-                newState.restSecondsRemaining = max(newState.restSecondsRemaining - 0.1, 0)
+                newState.restRemaining = max(newState.restRemaining - 0.1, 0)
                 //                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
-                if newState.restSecondsRemaining.rounded() == 0.0 {
+                if newState.restRemaining.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                     
@@ -585,12 +580,12 @@ final class HomeViewReactor: Reactor {
             if isStopped {
                 newState.isResting = false
                 newState.isRestTimerStopped = true
-                newState.restSecondsRemaining = 0.0
+                newState.restRemaining = 0.0
                 newState.restStartTime = nil
             } else {
                 newState.isResting = true
                 newState.isRestTimerStopped = false
-                newState.restSecondsRemaining = Float(newState.restTime)
+                newState.restRemaining = Float(newState.restTime)
                 newState.restStartTime = nil
             }
             
@@ -675,12 +670,14 @@ final class HomeViewReactor: Reactor {
             newState.currentRoutineCompleted = true
             print("☑️ 루틴 완료: \(newState.currentRoutineCompleted)")
             
-        case let .setRestStartDate(date):
-            newState.restStartDate = date
+        case let .setRestRemainingStartDate(date, isResting):
+            if isResting {
+                newState.restStartDate = date
+            }
             
-        case let .setAccumulatedRestTime(time):
-            newState.accumulatedRestTime = time
-            newState.restSecondsRemaining = Float(time)
+        case let .setAccumulatedRestRemainingTime(time):
+            newState.accumulatedRestRemainingTime = time
+            newState.restRemaining = Float(time)
             
         }//switch mutation
         return newState
@@ -716,7 +713,7 @@ private extension HomeViewReactor {
                     $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
                     .filter { $0 }
                 )
-                .map { _ in Mutation.restRemainingSecondsUpdating }
+                .map { _ in Mutation.restRemainingUpdating }
                 .observe(on: MainScheduler.asyncInstance)
         }
         
@@ -741,15 +738,15 @@ private extension HomeViewReactor {
             
             return .concat([
                 .just(.setResting(isResting)),
+                .just(.setRestTimeDataAtProgressBar(restTime)),
+                .just(.setRestRemainingStartDate(Date(), isResting)),
+                restTimer,
                 // 카드 정보 업데이트
                 .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.manageWorkoutCount(
                     isRoutineCompleted: false,
                     isCurrentExerciseCompleted: false
-                )),
-                .just(.setRestTimeDataAtProgressBar(restTime)),
-                restTimer,
-                .just(.setRestStartDate(Date()))
+                ))
             ])
             .observe(on: MainScheduler.instance)
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
@@ -774,14 +771,14 @@ private extension HomeViewReactor {
                 
                 return .concat([
                     .just(.setResting(isResting)),
+                    .just(.setRestTimeDataAtProgressBar(restTime)),
+                    .just(.setRestRemainingStartDate(Date(), isResting)),
+                    restTimer,
                     .just(.updateWorkoutCardState(
                         updatedCardState: currentCardState,
                         oldCardState: nil,
                         oldCardIndex: nil)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                    .just(.setRestTimeDataAtProgressBar(restTime)),
-                    restTimer,
-                    .just(.setRestStartDate(Date()))
                 ])
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
@@ -809,10 +806,10 @@ private extension HomeViewReactor {
                     print("다음 운동 없음")
                     return .concat([
                         .just(.setResting(isResting)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
+                        .just(.setRestRemainingStartDate(Date(), isResting)),
                         .just(.setRestTimeDataAtProgressBar(restTime)),
                         restTimer,
-                        .just(.setRestStartDate(Date()))
+                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
                     ])
                     .observe(on: MainScheduler.instance)
                 }
@@ -873,7 +870,7 @@ extension HomeViewReactor.State {
             exerciseInfo: exerciseInfo,
             currentRoutineCompleted: currentRoutineCompleted,
             isResting: isResting,
-            restSecondsRemaining: restSecondsRemaining,
+            restSecondsRemaining: restRemaining,
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
@@ -908,7 +905,6 @@ extension HomeViewReactor {
 //    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
 //    /// 바로 시작 되도록 isWorkingout = true
     static func fetchedInitialState(routine: WorkoutRoutine) -> State {
-        // MARK: - TODO: MOCKDATA -> 실제 데이터로 수정
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routine
         // 초기 운동 카드 뷰들 state 초기화
@@ -983,7 +979,7 @@ extension HomeViewReactor {
             workoutTime: 0,
             isResting: false,
             isRestPaused: false,
-            restSecondsRemaining: 60.0,
+            restRemaining: 60.0,
             restTime: 60.0, // 기본 60초로 설정
             restStartTime: nil,
             date: Date(),
@@ -1001,7 +997,7 @@ extension HomeViewReactor {
             uid: uid,
             workoutStateForEdit: initialWorkoutStateForEdit,
             accumulatedWorkoutTime: 0,
-            accumulatedRestTime: 0,
+            accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
             recordID: "",
         )
