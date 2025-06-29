@@ -167,7 +167,8 @@ final class EditRoutineViewController: UIViewController, View {
     
     func presentEditExcerciseVC() {
         guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
-        let repository = WorkoutRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let repository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
         let vc = EditExerciseViewController(reactor: EditExerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
         

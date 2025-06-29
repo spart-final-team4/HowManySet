@@ -564,7 +564,7 @@ final class HomeViewReactor: Reactor {
                 comment: newMemo
             )
             print("📋 업데이트된 메모: \(String(describing: newMemo))")
-            updateWorkoutUseCase.execute(item: updatedWorkout)
+            updateWorkoutUseCase.execute(uid: uid, item: updatedWorkout)
 
         case let .stopRestTimer(isStopped):
             if isStopped {
