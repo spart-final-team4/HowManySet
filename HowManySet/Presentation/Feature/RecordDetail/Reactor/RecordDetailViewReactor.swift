@@ -36,7 +36,8 @@ final class RecordDetailViewReactor: Reactor {
 
     // MARK: - Properties
     let initialState: State
-    let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    
     // MARK: - Init
     init(updateRecordUseCase: UpdateRecordUseCase,
          record: WorkoutRecord
