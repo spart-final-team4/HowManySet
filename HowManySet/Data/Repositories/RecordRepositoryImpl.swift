@@ -64,3 +64,41 @@ final class RecordRepositoryImpl: RecordRepository {
     }
     
 }
+
+private extension RecordRepositoryImpl {
+    // MARK: Record Create
+    func createRecordToFirebase() {
+        
+    }
+    
+    func createRecordToRealm() {
+        
+    }
+    
+    // MARK: Record Read
+    func readRecordFromFirebase() {
+        
+    }
+    
+    func readRecordFromRealm() {
+        
+    }
+    
+    // MARK: Record Update
+    func updateRecordToFirebase() {
+        
+    }
+    
+    func updateRecordToRealm() {
+        
+    }
+    
+    // MARK: Record Delete
+    func deleteRecordToFirebase() {
+        
+    }
+    
+    func deleteRecordToRealm() {
+        
+    }
+}
