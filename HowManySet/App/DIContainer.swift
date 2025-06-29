@@ -31,26 +31,17 @@ final class DIContainer {
     
     /// 루틴 리스트 화면을 생성하여 반환
     func makeRoutineListViewController(coordinator: RoutineListCoordinator, caller: ViewCaller) -> UIViewController {
-        let routineRepository = RoutineRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
         
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         
-        // Firestore 로직 추가
-        let firestoreService: FirestoreServiceProtocol = FirestoreService()
-        let fsRoutineRepository = FSRoutineRepositoryImpl(firestoreService: firestoreService)
-        let fsFetchRoutineUseCase = FSFetchRoutineUseCase(repository: fsRoutineRepository)
-        let fsSaveRoutineUseCase = FSSaveRoutineUseCase(repository: fsRoutineRepository)
-        let fsDeleteRoutineUseCase = FSDeleteRoutineUseCase(repository: fsRoutineRepository)
-        
         let reactor = RoutineListViewReactor(
             deleteRoutineUseCase: deleteRoutineUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
-            saveRoutineUseCase: saveRoutineUseCase,
-            fsDeleteRoutineUseCase: fsDeleteRoutineUseCase,
-            fsFetchRoutineUseCase: fsFetchRoutineUseCase,
-            fsSaveRoutineUseCase: fsSaveRoutineUseCase
+            saveRoutineUseCase: saveRoutineUseCase
         )
         
         return RoutineListViewController(reactor: reactor, coordinator: coordinator, caller: caller)
@@ -119,8 +110,8 @@ final class DIContainer {
     
     /// 운동 편집 뷰를 생성하여 반환
     func makeEditRoutineViewController(coordinator: EditRoutineCoordinator, with routine: WorkoutRoutine, caller: ViewCaller) -> UIViewController {
-        
-        let routineRepository = RoutineRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
         let workoutRepository = WorkoutRepositoryImpl()
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
@@ -144,9 +135,9 @@ final class DIContainer {
         coordinator: HomeCoordinator,
         routine: WorkoutRoutine)
     -> (UIViewController, HomeViewReactor) {
-        
+        let firestoreService = FirestoreService()
         let recordRepository = RecordRepositoryImpl()
-        let routineRepository = RoutineRepositoryImpl()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
         let workoutRepository = WorkoutRepositoryImpl()
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
@@ -154,24 +145,12 @@ final class DIContainer {
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
         let updateRecordUseCase = UpdateRecordUseCase(repository: recordRepository)
         
-        // Firestore 로직 추가
-        let firestoreService: FirestoreServiceProtocol = FirestoreService()
-        
-        let fsRecordRepository = FSRecordRepositoryImpl(firestoreService: firestoreService)
-        let fsSaveRecordUseCase = FSSaveRecordUseCase(repository: fsRecordRepository)
-        let fsRoutineRepository = FSRoutineRepositoryImpl(firestoreService: firestoreService)
-        let fsFetchRoutineUseCase = FSFetchRoutineUseCase(repository: fsRoutineRepository)
-        let fsUpdateRoutineUseCase = FSUpdateRoutineUseCase(repository: routineRepository)
-        
         let initialState = HomeViewReactor.fetchedInitialState(routine: routine)
         
         let reactor = HomeViewReactor(
             saveRecordUseCase: saveRecordUseCase,
-            fsSaveRecordUseCase: fsSaveRecordUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
-            fsFetchRoutineUseCase: fsFetchRoutineUseCase,
             updateWorkoutUseCase: updateWorkoutUseCase,
-            fsUpdateRoutineUseCase: fsUpdateRoutineUseCase,
             updateRecordUseCase: updateRecordUseCase,
             initialState: initialState
         )

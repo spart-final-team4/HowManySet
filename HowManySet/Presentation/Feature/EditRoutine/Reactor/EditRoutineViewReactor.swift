@@ -47,6 +47,7 @@ final class EditRoutineViewReactor: Reactor {
     }
     
     let initialState: State
+    let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
     init(with routine: WorkoutRoutine,
          saveRoutineUseCase: SaveRoutineUseCase,
@@ -67,10 +68,7 @@ final class EditRoutineViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-//            return fetchRoutines()
-//                .map{ Mutation.loadWorkout($0) }
-//                .asObservable()
-            return fetchRoutineUseCase.execute()
+            return fetchRoutineUseCase.execute(uid: uid)
                 .map{ Mutation.loadWorkout($0) }
                 .asObservable()
         case .cellButtonTapped(let indexPath):
@@ -133,15 +131,6 @@ final class EditRoutineViewReactor: Reactor {
         }
         return newState
     }
-    
-//    func fetchRoutines() -> Single<[WorkoutRoutine]> {
-//        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
-//        if let uid = uid {
-//            return fsFetchRoutineUseCase.execute(uid: uid)
-//        } else {
-//            return fetchRoutineUseCase.execute()
-//        }
-//    }
     
     func deleteWorkout(item: Workout) {
 //        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
