@@ -16,11 +16,5 @@ protocol SaveRoutineUseCaseProtocol {
     ///
     /// - Parameters:
     ///   - item: 저장할 `WorkoutRoutine` 객체
-    func execute(uid: String, item: WorkoutRoutine)
-}
-
-extension SaveRoutineUseCaseProtocol {
-    func execute(item: WorkoutRoutine) {
-        execute(uid: "", item: item)
-    }
+    func execute(uid: String?, item: WorkoutRoutine)
 }
