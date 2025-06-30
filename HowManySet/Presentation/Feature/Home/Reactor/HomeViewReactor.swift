@@ -438,6 +438,7 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
                 newState.restRemainingTime = 0.0
                 newState.isRestTimerStopped = true
+                newState.isResting = false
             }
             
         case let .manageWorkoutCount(isRoutineCompleted, isCurrentExerciseCompleted):
