@@ -7,57 +7,12 @@
 
 import Foundation
 import RxSwift
-
-/// 운동 기록(WorkoutRecord)에 대한 저장소 인터페이스입니다.
-/// 로컬 저장소 또는 원격 저장소 등 다양한 저장 방식에 유연하게 대응할 수 있도록 설계되었습니다.
+/// RecordRepository
+/// uid nil 여부에 따라 Realm, Firebase 저장위치가 상이
 protocol RecordRepository {
-    
-    /// 운동 기록을 저장합니다.
-    /// - Parameters:
-    ///   - uid: 사용자 식별자
-    ///   - item: 저장할 운동 기록 엔티티
-    func saveRecord(uid: String, item: WorkoutRecord)
-    
-    /// 운동 기록을 불러옵니다.
-    /// - Parameter uid: 사용자 식별자
-    /// - Returns: 운동 기록 목록을 RxSwift `Single` 형태로 반환합니다.
-    ///            성공 시 `[WorkoutRecord]`를, 실패 시 에러를 반환합니다.
-    func fetchRecord(uid: String) -> Single<[WorkoutRecord]>
-    
-    /// 특정 운동 기록을 삭제합니다.
-    /// - Parameters:
-    ///   - uid: 사용자 식별자
-    ///   - item: 삭제할 운동 기록
-    func deleteRecord(uid: String, item: WorkoutRecord)
-    
-    /// 사용자의 모든 운동 기록을 삭제합니다.
-    /// - Parameter uid: 사용자 식별자
-    func deleteAllRecord(uid: String)
-    
-    func updateRecord(uid: String, item: WorkoutRecord)
+    func saveRecord(uid: String?, item: WorkoutRecord)
+    func fetchRecord(uid: String?) -> Single<[WorkoutRecord]>
+    func updateRecord(uid: String?, item: WorkoutRecord)
+    func deleteRecord(uid: String?, item: WorkoutRecord)
+    func deleteAllRecord(uid: String?)
 }
-
-// MARK: Realm Repository
-extension RecordRepository {
-    
-    func saveRecord(item: WorkoutRecord) {
-        saveRecord(uid: "", item: item)
-    }
-    
-    func fetchRecord() -> Single<[WorkoutRecord]> {
-        return fetchRecord(uid: "")
-    }
-    
-    func deleteRecord(item: WorkoutRecord) {
-        deleteRecord(uid: "", item: item)
-    }
-    
-    func deleteAllRecord() {
-        deleteAllRecord(uid: "")
-    }
-    
-    func updateRecord(item: WorkoutRecord) {
-        updateRecord(uid: "", item: item)
-    }
-}
-

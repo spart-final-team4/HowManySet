@@ -9,7 +9,8 @@ import Foundation
 import RealmSwift
 
 struct WorkoutRecordDTO {
-    let id: String
+    let rmID: String
+    let documentID: String
     var workoutRoutine: WorkoutRoutineDTO?
     var totalTime: Int
     var workoutTime: Int
@@ -20,9 +21,13 @@ struct WorkoutRecordDTO {
 extension WorkoutRecordDTO {
     func toEntity() -> WorkoutRecord {
         return WorkoutRecord(
-            id: self.id,
+            rmID: self.rmID,
+            documentID: self.documentID,
             workoutRoutine: self.workoutRoutine?.toEntity()
-            ?? WorkoutRoutine(id: "", name: "MOCK", workouts: []),
+            ?? WorkoutRoutine(rmID: "",
+                              documentID: "",
+                              name: "MOCK",
+                              workouts: []),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
             comment: self.comment,
@@ -33,7 +38,8 @@ extension WorkoutRecordDTO {
 
 extension WorkoutRecordDTO {
     init(entity: WorkoutRecord) {
-        self.id = entity.id
+        self.rmID = entity.rmID
+        self.documentID = entity.documentID
         self.workoutRoutine = WorkoutRoutineDTO(entity: entity.workoutRoutine)
         self.totalTime = entity.totalTime
         self.workoutTime = entity.workoutTime
@@ -44,7 +50,8 @@ extension WorkoutRecordDTO {
 
 extension WorkoutRecordDTO {
     init(from model: RMWorkoutRecord) {
-        self.id = model.id
+        self.rmID = model.id
+        self.documentID = UUID().uuidString
         self.workoutRoutine = model.workoutRoutine?.toDTO()
         self.totalTime = model.totalTime
         self.workoutTime = model.workoutTime
@@ -57,11 +64,13 @@ extension WorkoutRecordDTO {
     init(from fsModel: FSWorkoutRecord) {
         let routine = WorkoutRoutineDTO(
             // TODO: 검토 필요
-            id: fsModel.id ?? "",
+            rmID: "",
+            documentID: fsModel.id ?? "",
             name: fsModel.workoutRoutineName ?? "Unknown",
             workouts: fsModel.workouts.map { WorkoutDTO(from: $0) }
         )
-        self.id = routine.id
+        self.rmID = routine.rmID
+        self.documentID = routine.documentID
         self.workoutRoutine = routine
         self.totalTime = fsModel.totalTime
         self.workoutTime = fsModel.workoutTime

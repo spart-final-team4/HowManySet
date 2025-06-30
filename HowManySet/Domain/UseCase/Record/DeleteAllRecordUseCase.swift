@@ -21,8 +21,8 @@ final class DeleteAllRecordUseCase: DeleteAllRecordUseCaseProtocol {
     }
 
     /// 사용자의 모든 운동 기록을 삭제합니다.
-    func execute(uid: String = "") {
-        repository.deleteAllRecord()
+    func execute(uid: String?) {
+        repository.deleteAllRecord(uid: uid)
     }
 }
 

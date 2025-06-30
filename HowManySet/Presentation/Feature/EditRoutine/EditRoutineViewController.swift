@@ -152,10 +152,13 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentAddExerciseVC() {
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let vc = AddExerciseViewController(
             reactor: AddExerciseViewReactor(
                 routineName: reactor?.currentState.routine.name ?? "알수없음",
-                saveRoutineUseCase: SaveRoutineUseCase(repository: RoutineRepositoryImpl()),
+                saveRoutineUseCase: saveRoutineUseCase,
                 workoutStateForEdit: nil,
                 caller: .fromHome)
         )
@@ -164,7 +167,8 @@ final class EditRoutineViewController: UIViewController, View {
     
     func presentEditExcerciseVC() {
         guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
-        let repository = WorkoutRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let repository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
         let vc = EditExerciseViewController(reactor: EditExerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
         

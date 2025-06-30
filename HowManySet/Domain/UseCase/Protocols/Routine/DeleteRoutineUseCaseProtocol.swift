@@ -16,11 +16,5 @@ protocol DeleteRoutineUseCaseProtocol {
     ///
     /// - Parameters:
     ///   - item: 삭제할 `WorkoutRoutine` 객체
-    func execute(uid: String, item: WorkoutRoutine)
-}
-
-extension DeleteRoutineUseCaseProtocol {
-    func execute(item: WorkoutRoutine) {
-        execute(uid: "", item: item)
-    }
+    func execute(uid: String?, item: WorkoutRoutine)
 }

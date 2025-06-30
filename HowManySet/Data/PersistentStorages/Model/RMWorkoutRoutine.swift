@@ -32,13 +32,14 @@ final class RMWorkoutRoutine: Object {
     }
     
     override static func primaryKey() -> String? {
-        return "id"
+        return "rmID"
     }
 }
 
 extension RMWorkoutRoutine {
     func toDTO() -> WorkoutRoutineDTO {
-        return WorkoutRoutineDTO(id: self.id,
+        return WorkoutRoutineDTO(rmID: self.id,
+                                 documentID: "",
                                  name: self.name,
                                  workouts: self.workouts.map { $0.toDTO() })
     }
@@ -47,7 +48,7 @@ extension RMWorkoutRoutine {
 extension RMWorkoutRoutine {
     convenience init(dto: WorkoutRoutineDTO) {
         self.init()
-        self.id = dto.id
+        self.id = dto.rmID
         self.name = dto.name
         self.workoutArray = dto.workouts.map { RMWorkout(dto: $0) }
     }
