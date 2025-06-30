@@ -91,10 +91,18 @@ private extension EditRoutineBottomSheetViewController {
     
     func bind() {
         excerciseChangeButton.rx.tap
-            .bind(to: excerciseChangeButtonSubject)
+            .subscribe(with: self) { owner, _ in
+                owner.excerciseChangeButton.animateTap {
+                    owner.excerciseChangeButtonSubject.accept(())
+                }
+            }
             .disposed(by: disposeBag)
         removeExcerciseButton.rx.tap
-            .bind(to: removeExcerciseButtonSubject)
+            .subscribe(with: self) { owner, _ in
+                owner.removeExcerciseButton.animateTap {
+                    owner.removeExcerciseButtonSubject.accept(())
+                }
+            }
             .disposed(by: disposeBag)
         // TODO: 순서변경 마이너패치때
 //        changeExcerciseListButton.rx.tap
