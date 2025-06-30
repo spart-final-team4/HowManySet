@@ -56,25 +56,19 @@ extension RoutineNameViewController {
         routineNameView.publicNextButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .withLatestFrom(routineNameView.publicRoutineNameTF.rx.text.orEmpty)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) } // 혹시나 만약을 대비하여 여기도 추가
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .bind(with: self) { owner, text in
                 guard !text.isEmpty else { return }
 
-                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                    owner.routineNameView.publicNextButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                        owner.routineNameView.publicNextButton.transform = .identity
-                    }, completion: { _ in
-                        reactor.action.onNext(.setRoutineName(text))
-                        owner.dismiss(animated: true) {
-                            owner.coordinator?.pushEditExcerciseView(routineName: text)
-                        }
-                    })
-                })
+                owner.routineNameView.publicNextButton.animateTap {
+                    reactor.action.onNext(.setRoutineName(text))
+                    owner.dismiss(animated: true) {
+                        owner.coordinator?.pushEditExcerciseView(routineName: text)
+                    }
+                }
             }
             .disposed(by: disposeBag)
-        
+
 //        // 화면 탭하면 키보드 내리기
 //        let tapGesture = UITapGestureRecognizer()
 //        tapGesture.cancelsTouchesInView = false

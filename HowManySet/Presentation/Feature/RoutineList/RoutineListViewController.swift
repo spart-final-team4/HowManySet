@@ -63,20 +63,12 @@ final class RoutineListViewController: UIViewController, View {
         routineListView.publicAddNewRoutineButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
-                let button = owner.routineListView.publicAddNewRoutineButton
-
-                UIView.animate(withDuration: 0.1, animations: {
-                    button.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 0.1, animations: {
-                        button.transform = .identity
-                    }, completion: { _ in
-                        owner.coordinator?.presentRoutineNameView()
-                    })
-                })
+                owner.routineListView.publicAddNewRoutineButton.animateTap {
+                    owner.coordinator?.presentRoutineNameView()
+                }
             }
             .disposed(by: disposeBag)
-        
+
         reactor.state
             .map { state in
                 state.routines.map { SectionModel(model: "", items: [$0]) }  // 루틴마다 하나의 섹션
@@ -115,22 +107,16 @@ extension RoutineListViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         // 셀 터치 애니메이션
-        UIView.animate(withDuration: 0.1, animations: {
-            cell.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.1, animations: {
-                cell.transform = .identity
-            }, completion: { [weak self] _ in
-                guard let self else { return }
-                let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
+        cell.animateTap { [weak self] in
+            guard let self else { return }
+            let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
 
-                if caller == .fromHome {
-                    coordinator?.presentEditRoutinView(with: routine)
-                } else {
-                    coordinator?.pushEditRoutineView(with: routine)
-                }
-            })
-        })
+            if caller == .fromHome {
+                coordinator?.presentEditRoutinView(with: routine)
+            } else {
+                coordinator?.pushEditRoutineView(with: routine)
+            }
+        }
     }
 
     /// trailing -> leading 방향으로 스와이프하는 메서드
