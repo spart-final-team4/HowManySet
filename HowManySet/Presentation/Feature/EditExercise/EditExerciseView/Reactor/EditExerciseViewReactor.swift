@@ -81,7 +81,7 @@ final class EditExerciseViewReactor: Reactor {
     
     // MARK: - 유효성 검사
     private func validationWorkout(workout: Workout) -> ValidWorkout {
-        if workout.name.isEmpty {
+        if workout.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return ValidWorkout.workoutNameEmpty
         }
         if workout.name.count > 25 {
