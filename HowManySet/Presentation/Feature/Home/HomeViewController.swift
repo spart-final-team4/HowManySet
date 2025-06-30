@@ -846,7 +846,9 @@ extension HomeViewController {
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
-                    currentIndex: data.currentIndex
+                    currentIndex: data.currentIndex,
+                    restStartDate: data.restStartDate,
+                    workoutStartDate: data.workoutStartDate
                 )
                 LiveActivityService.shared.update(state: contentState)
             }
