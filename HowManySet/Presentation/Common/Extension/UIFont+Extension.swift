@@ -17,7 +17,7 @@ extension UIFont {
             return UIFont(descriptor: newDescriptor, size: size)
         }
         
-        // 적용된 폰트 이름 확인 (Family: Academy Engraved LET -> 기본 폰트)
+        // 적용된 폰트 이름들 확인 (Family: Academy Engraved LET -> 기본 폰트)
         for family in UIFont.familyNames {
             print("Family: \(family)")
             for name in UIFont.fontNames(forFamilyName: family) {
