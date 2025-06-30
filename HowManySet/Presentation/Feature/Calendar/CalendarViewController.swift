@@ -178,9 +178,9 @@ extension CalendarViewController: UITableViewDelegate {
 
         cell.animateTap { [weak self] in
             // 해당 record 가져오기
-        guard let record = reactor?.currentState.selectedRecords[indexPath.section] else { return }
+            guard let record = self?.reactor?.currentState.selectedRecords[indexPath.section] else { return }
 
-            self.coordinator?.presentRecordDetailView(record: record)
+            self?.coordinator?.presentRecordDetailView(record: record)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
