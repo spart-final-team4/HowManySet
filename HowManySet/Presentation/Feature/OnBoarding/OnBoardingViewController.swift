@@ -41,6 +41,15 @@ final class OnBoardingViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // 🟢 익명 사용자는 닉네임 입력 스킵하고 바로 온보딩으로
+        let provider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
+        if provider == "anonymous" {
+            print("🟢 익명 사용자 - 닉네임 입력 스킵하고 온보딩 시작")
+            // 온보딩 화면으로 바로 이동하는 로직 추가
+            startWithOnboardingOnly()
+            return
+        }
+        
         setupUI()
         onboardingView.pageIndicator.numberOfPages = OnBoardingViewReactor.onboardingPages.count
         bind(reactor: reactor)
