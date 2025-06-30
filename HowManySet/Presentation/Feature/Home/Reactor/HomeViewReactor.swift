@@ -149,7 +149,6 @@ final class HomeViewReactor: Reactor {
         var currentRoutineCompleted: Bool
         /// 현재  WorkoutRecordID
         var recordID: String
-        
     }
     
     // initialState 주입으로 변경
@@ -852,7 +851,8 @@ extension HomeViewReactor.State {
                 isRestPaused: false,
                 currentSet: 0,
                 totalSet: 0,
-                currentIndex: 0
+                currentIndex: 0,
+                accumulatedWorkoutTime: 0
             )
         }
         
@@ -879,7 +879,8 @@ extension HomeViewReactor.State {
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
-            currentIndex: currentExerciseIndex
+            currentIndex: currentExerciseIndex,
+            accumulatedWorkoutTime: Int(accumulatedWorkoutTime)
         )
     }
 }

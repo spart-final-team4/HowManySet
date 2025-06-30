@@ -34,6 +34,10 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         
         // 현재 코드 인덱스
         var currentIndex: Int
+        
+        var accumulatedWorkoutTime: Int
+        var restStartDate: Date?
+        var workoutStartDate: Date?
     }
     
     // Fixed non-changing properties about your activity go here!
@@ -371,6 +375,7 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
         self.currentIndex = data.currentIndex
+        self.accumulatedWorkoutTime = data.accumulatedWorkoutTime
     }
 }
 
@@ -393,7 +398,8 @@ extension HowManySetWidgetAttributes.ContentState {
             isRestPaused: false,
             currentSet: 2,
             totalSet: 5,
-            currentIndex: 0
+            currentIndex: 0,
+            accumulatedWorkoutTime: 0
         )
     }
     
@@ -409,7 +415,8 @@ extension HowManySetWidgetAttributes.ContentState {
             isRestPaused: false,
             currentSet: 2,
             totalSet: 5,
-            currentIndex: 0
+            currentIndex: 0,
+            accumulatedWorkoutTime: 0
         )
     }
 }
