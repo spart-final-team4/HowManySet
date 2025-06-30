@@ -784,7 +784,7 @@ private extension HomeViewReactor {
                         updatedCardState: currentCardState,
                         oldCardState: nil,
                         oldCardIndex: nil)),
-                    .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
+                    .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
                 ])
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
