@@ -85,7 +85,7 @@ final class MyPageViewReactor: Reactor {
             ])
 
         case .loadUserName:
-            // 🟢 Firestore에서 사용자 정보 fetch
+            // Firestore에서 사용자 정보 fetch
             return fetchUserNameFromFirestore()
                 .map { .setUserName($0) }
                 .catch { error in
@@ -96,68 +96,49 @@ final class MyPageViewReactor: Reactor {
                 }
             
         case .confirmLogout:
-            print("🔥 로그아웃 액션 시작")
             return authUseCase.logout()
-                .map { .logoutSuccess }
-                .catch { error in
-                    print("🔥 로그아웃 실패: \(error)")
-                    return .just(.setError(error))
-                }
-            
+                .map { _ in .logoutSuccess }
+                .catch { error in .just(.setError(error)) }
+
         case .confirmDeleteAccount:
-            print("🔥 계정삭제 액션 시작")
             return authUseCase.deleteAccount()
-                .map { .deleteAccountSuccess }
-                .catch { error in
-                    print("🔥 계정삭제 실패: \(error)")
-                    return .just(.setError(error))
-                }
+                .map { _ in .deleteAccountSuccess }
+                .catch { error in .just(.setError(error)) }
         }
     }
     
-    /// Mutation을 받아 새로운 상태로 변환하는 메서드
+    /// Mutation을 State에 반영하는 메서드
     /// - Parameters:
     ///   - state: 현재 상태
-    ///   - mutation: 수행할 상태 변화
-    /// - Returns: 변경된 새 상태
+    ///   - mutation: 적용할 변화
+    /// - Returns: 새로운 상태
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case .presentTo(let myPageCellType):
-            newState.presentTarget = myPageCellType
+        case .presentTo(let cellType):
+            newState.presentTarget = cellType
         case .logoutSuccess, .deleteAccountSuccess:
             newState.shouldNavigateToAuth = true
         case .setError(let error):
             newState.error = error
-        case .setUserName(let userName):
-            newState.userName = userName
+        case .setUserName(let name):
+            newState.userName = name
         }
         return newState
     }
     
-    /// Firestore에서 사용자 이름 가져오기
-    /// - Returns: 사용자 이름 Observable
-    func fetchUserNameFromFirestore() -> Observable<String> {
+    /// Firestore에서 사용자 이름을 가져오는 메서드
+    /// - Returns: 사용자 이름을 방출하는 Observable
+    private func fetchUserNameFromFirestore() -> Observable<String> {
         return Observable.create { observer in
-            // 익명 사용자는 로컬에서만
-            let userProvider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
-            if userProvider == "anonymous" {
+            guard let currentUser = Auth.auth().currentUser else {
+                // Firebase Auth 사용자가 없으면 로컬 백업 사용
                 let localName = UserDefaults.standard.string(forKey: "userNickname") ?? "비회원"
-                print("🟡 익명 사용자 닉네임 로컬 로드: \(localName)")
                 observer.onNext(localName)
                 observer.onCompleted()
                 return Disposables.create()
             }
             
-            // 일반 사용자는 Firestore에서 fetch
-            guard let currentUser = Auth.auth().currentUser else {
-                print("🔴 현재 사용자 없음 - 기본값 사용")
-                observer.onNext("비회원")
-                observer.onCompleted()
-                return Disposables.create()
-            }
-            
-            print("🟢 Firestore에서 사용자 이름 fetch 시작: \(currentUser.uid)")
             let db = Firestore.firestore()
             db.collection("users").document(currentUser.uid).getDocument { snapshot, error in
                 if let error = error {
@@ -169,17 +150,14 @@ final class MyPageViewReactor: Reactor {
                 guard let document = snapshot, document.exists,
                       let data = document.data(),
                       let name = data["name"] as? String else {
-                    print("🔴 Firestore 사용자 문서 없음 - 기본값 사용")
-                    observer.onNext("사용자")
+                    print("🔴 Firestore 문서 없음 - 로컬 백업 사용")
+                    let localName = UserDefaults.standard.string(forKey: "userNickname") ?? "비회원"
+                    observer.onNext(localName)
                     observer.onCompleted()
                     return
                 }
                 
-                print("🟢 Firestore에서 닉네임 로드 성공: \(name)")
-                // 🟢 Firestore에서 가져온 닉네임을 로컬에도 백업 저장
-                UserDefaults.standard.set(name, forKey: "userNickname")
-                UserDefaults.standard.synchronize()
-                
+                print("🟢 Firestore에서 사용자 이름 로드 성공: \(name)")
                 observer.onNext(name)
                 observer.onCompleted()
             }
