@@ -16,15 +16,17 @@ extension UIFont {
             let newDescriptor = descriptor.addingAttributes([.traits: traits])
             return UIFont(descriptor: newDescriptor, size: size)
         }
-        
-        // 적용된 폰트 이름들 확인 (Family: Academy Engraved LET -> 기본 폰트)
+
+        return UIFont(name: "PretendardVariable", size: size) ?? .systemFont(ofSize: size, weight: weight)
+    }
+    
+    /// 적용된 폰트 이름들 확인 (Family: Academy Engraved LET -> 기본 폰트)
+    static func checkFonts() {
         for family in UIFont.familyNames {
             print("Family: \(family)")
             for name in UIFont.fontNames(forFamilyName: family) {
                 print("   Name: \(name)")
             }
         }
-        
-        return UIFont(name: "PretendardVariable", size: size) ?? .systemFont(ofSize: size, weight: weight)
     }
 }
