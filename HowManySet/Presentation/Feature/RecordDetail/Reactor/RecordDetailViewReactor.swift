@@ -36,7 +36,8 @@ final class RecordDetailViewReactor: Reactor {
 
     // MARK: - Properties
     let initialState: State
-
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+    
     // MARK: - Init
     init(updateRecordUseCase: UpdateRecordUseCase,
          record: WorkoutRecord
@@ -70,7 +71,8 @@ final class RecordDetailViewReactor: Reactor {
             let record = currentState.record
             // 직접 WorkoutRecord를 복사하면서 comment만 변경
             let updatedRecord = WorkoutRecord(
-                id: record.id,
+                rmID: record.rmID,
+                documentID: record.documentID,
                 workoutRoutine: record.workoutRoutine,
                 totalTime: record.totalTime,
                 workoutTime: record.workoutTime,
@@ -79,7 +81,7 @@ final class RecordDetailViewReactor: Reactor {
             )
 
             // 업데이트 실행
-            updateRecordUseCase.execute(item: updatedRecord)
+            updateRecordUseCase.execute(uid: uid, item: updatedRecord)
 
             print("변경된 메모 저장: \(memo)") // ✅ print
             return Observable.from([

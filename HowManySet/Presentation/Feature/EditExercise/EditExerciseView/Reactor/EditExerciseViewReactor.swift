@@ -44,6 +44,7 @@ final class EditExerciseViewReactor: Reactor {
     
     let alertRelay = PublishRelay<ValidWorkout>()
     var initialState: State
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
     init(workout: Workout,
          updateWorkoutUseCase: UpdateWorkoutUseCase
@@ -69,7 +70,7 @@ final class EditExerciseViewReactor: Reactor {
             newWorkout.name = newName
             newWorkout.sets = mappingSets(with: newWeightSet)
             if case .success = validationWorkout(workout: newWorkout) {
-                updateWorkoutUseCase.execute(item: newWorkout)
+                updateWorkoutUseCase.execute(uid: uid, item: newWorkout)
             }
             alertRelay.accept(validationWorkout(workout: newWorkout))
         case .changeUnit(let unit):

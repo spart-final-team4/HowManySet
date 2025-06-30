@@ -33,16 +33,17 @@ final class RMWorkoutRecord: Object {
     }
     
     override static func primaryKey() -> String? {
-        return "id"
+        return "rmID"
     }
 }
 
 extension RMWorkoutRecord {
     func toDTO() -> WorkoutRecordDTO {
         return WorkoutRecordDTO(
-            id: self.id,
+            rmID: self.id,
+            documentID: "",
             workoutRoutine: self.workoutRoutine?.toDTO()
-            ?? WorkoutRoutineDTO(id: "", name: "MOCK", workouts: []),
+            ?? WorkoutRoutineDTO.mockData(),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
             comment: self.comment,
@@ -54,8 +55,8 @@ extension RMWorkoutRecord {
 extension RMWorkoutRecord {
     convenience init(dto: WorkoutRecordDTO) {
         self.init()
-        self.id = dto.id
-        self.workoutRoutine = RMWorkoutRoutine(dto: dto.workoutRoutine ?? WorkoutRoutineDTO(id: "", name: "MOCK", workouts: []))
+        self.id = dto.rmID
+        self.workoutRoutine = RMWorkoutRoutine(dto: dto.workoutRoutine ?? WorkoutRoutineDTO.mockData())
         self.totalTime = dto.totalTime
         self.workoutTime = dto.workoutTime
         self.comment = dto.comment

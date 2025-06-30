@@ -76,7 +76,7 @@ final class AddExerciseViewReactor: Reactor {
     let dismissRelay = PublishRelay<Void>()       // 화면 종료용 Relay
     
     private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
-        
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     // MARK: - Initializer
     
     /// 초기화 메서드
@@ -89,10 +89,10 @@ final class AddExerciseViewReactor: Reactor {
          caller: ViewCaller
     ) {
         self.saveRoutineUseCase = saveRoutineUseCase
-        
         self.initialState = State(
             currentRoutine: WorkoutRoutine(
-                id: UUID().uuidString,
+                rmID: UUID().uuidString,
+                documentID: UUID().uuidString,
                 name: routineName,
                 workouts: []
             ),
@@ -172,8 +172,7 @@ final class AddExerciseViewReactor: Reactor {
             newState.currentRoutine.workouts.append(workout)
             
         case .saveRoutine:
-            // TODO: 실제 저장 시 UID 입력 필요
-            saveRoutineUseCase.execute(item: newState.currentRoutine)
+            saveRoutineUseCase.execute(uid: uid, item: newState.currentRoutine)
             
         case .changeExcerciseName(let newName):
             newState.currentExcerciseName = newName

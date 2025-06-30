@@ -37,14 +37,14 @@ final class RMWorkout: Object {
     }
     
     override static func primaryKey() -> String? {
-        return "id"
+        return "rmID"
     }
 }
 
 extension RMWorkout {
     func toDTO() -> WorkoutDTO {
         return WorkoutDTO(
-            id: self.id,
+            rmID: self.id,
             name: self.name,
             comment: self.comment,
             sets: self.sets.map { $0.toDTO() })
@@ -54,7 +54,7 @@ extension RMWorkout {
 extension RMWorkout {
     convenience init(dto: WorkoutDTO) {
         self.init()
-        self.id = dto.id
+        self.id = dto.rmID
         self.name = dto.name
         self.comment = dto.comment
         self.setArray = dto.sets.map{ RMWorkoutSet(dto: $0) }

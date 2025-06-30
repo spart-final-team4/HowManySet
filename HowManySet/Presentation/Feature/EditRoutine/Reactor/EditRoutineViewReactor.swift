@@ -47,6 +47,7 @@ final class EditRoutineViewReactor: Reactor {
     }
     
     let initialState: State
+    private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
     init(with routine: WorkoutRoutine,
          saveRoutineUseCase: SaveRoutineUseCase,
@@ -67,7 +68,7 @@ final class EditRoutineViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return fetchRoutineUseCase.execute()
+            return fetchRoutineUseCase.execute(uid: uid)
                 .map{ Mutation.loadWorkout($0) }
                 .asObservable()
         case .cellButtonTapped(let indexPath):
@@ -96,7 +97,7 @@ final class EditRoutineViewReactor: Reactor {
         switch mutation {
         case .loadWorkout(let routines):
             routines.forEach { routine in
-                if routine.id == currentState.routine.id {
+                if routine.rmID == currentState.routine.rmID {
                     newState.routine = routine
                 }
             }
@@ -108,7 +109,7 @@ final class EditRoutineViewReactor: Reactor {
         case .removeSelectedWorkout:
             var newRoutine = newState.routine
             guard let workout = currentState.currentSeclectedWorkout else { return newState }
-            deleteWorkoutUseCase.execute(item: workout)
+            deleteWorkoutUseCase.execute(uid: uid, item: workout)
             guard let indexPath = currentState.currentSeclectedIndexPath else { return newState }
             newRoutine.workouts.remove(at: indexPath.row)
             newState.routine = newRoutine
@@ -129,6 +130,15 @@ final class EditRoutineViewReactor: Reactor {
 //            newState.routine = newRoutine
         }
         return newState
+    }
+    
+    func deleteWorkout(item: Workout) {
+//        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
+//        if let uid = uid {
+//            fsDeleteWorkoutUseCase.execute(uid: uid, item: item)
+//        } else {
+//            deleteRoutineUseCase.execute(item: item)
+//        }
     }
 }
 

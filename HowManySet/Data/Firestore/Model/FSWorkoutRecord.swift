@@ -55,12 +55,15 @@ struct FSWorkoutRecord: Codable {
 extension FSWorkoutRecord {
     func toDTO() -> WorkoutRecordDTO {
         let routine = WorkoutRoutineDTO(
-            id: "", name: self.workoutRoutineName ?? "Unknown",
+            rmID: "",
+            documentID: self.id ?? "",
+            name: self.workoutRoutineName ?? "Unknown",
             workouts: self.workouts.map { $0.toDTO() }
         )
         
         return WorkoutRecordDTO(
-            id: self.id ?? "",
+            rmID: "",
+            documentID: self.id ?? "",
             workoutRoutine: routine,
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,

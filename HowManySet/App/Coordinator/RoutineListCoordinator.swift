@@ -75,9 +75,9 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     /// 운동 편집 화면 전체 화면으로 push
     func pushEditExcerciseView(routineName: String) {
-        let routineRepository = RoutineRepositoryImpl()
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        
         let reactor = AddExerciseViewReactor(
             routineName: routineName,
             saveRoutineUseCase: saveRoutineUseCase,
