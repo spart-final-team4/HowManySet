@@ -37,7 +37,7 @@ final class RMWorkout: Object {
     }
     
     override static func primaryKey() -> String? {
-        return "rmID"
+        return "id"
     }
 }
 

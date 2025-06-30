@@ -176,9 +176,9 @@ extension CalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 셀 클릭 시 배경색 남는 것을 방지하기 위한 선택 해지
         calendarView.publicRecordTableView.deselectRow(at: indexPath, animated: true)
-
+        
         // 해당 record 가져오기
-        guard let record = reactor?.currentState.selectedRecords[indexPath.row] else { return }
+        guard let record = reactor?.currentState.selectedRecords[indexPath.section] else { return }
 
         coordinator?.presentRecordDetailView(record: record)
     }
