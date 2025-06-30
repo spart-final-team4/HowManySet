@@ -832,9 +832,38 @@ extension HomeViewController {
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
-            .throttle(.milliseconds(100), scheduler: MainScheduler.instance)
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .debounce(.milliseconds(50), scheduler: MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .bind { data in
+                let contentState = HowManySetWidgetAttributes.ContentState.init(
+                    workoutTime: data.workoutTime,
+                    isWorkingout: data.isWorkingout,
+                    exerciseName: data.exerciseName,
+                    exerciseInfo: data.exerciseInfo,
+                    currentRoutineCompleted: data.currentRoutineCompleted,
+                    isResting: data.isResting,
+                    restSecondsRemaining: Int(data.restSecondsRemaining),
+                    isRestPaused: data.isRestPaused,
+                    currentSet: data.currentSet,
+                    totalSet: data.totalSet,
+                    currentIndex: data.currentIndex,
+                    workoutStartDate: data.workoutStartDate,
+                    restStartDate: data.restStartDate
+                )
+                // 백그라운드에서 LiveActivity 업데이트 수행
+               DispatchQueue.global(qos: .userInitiated).async {
+                   LiveActivityService.shared.update(state: contentState)
+               }
+            }
+            .disposed(by: disposeBag)
+        
+        // 휴식 상태 변화 시 즉시 LiveActivity 업데이트
+        reactor.state.map { $0.isResting }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { isResting in
+                print("🔄 휴식 상태 변화 감지: \(isResting)")
+                let data = reactor.currentState.forLiveActivity
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
                     isWorkingout: data.isWorkingout,
@@ -886,9 +915,11 @@ extension HomeViewController {
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
             .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
-                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
+                if !reactor.currentState.isResting {
+                    LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                        print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
+                    }
                 }
             }
             .disposed(by: disposeBag)

@@ -56,12 +56,15 @@ struct HowManySetWidgetLiveActivity: Widget {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             
-            let elapsedWorkoutTime = Date().timeIntervalSince(context.state.workoutStartDate ?? Date())
-            let updatedWorkoutTime = Int(elapsedWorkoutTime) + (context.state.workoutTime)
-            let elapsedRestRemaining = context.state.restStartDate != nil
-                ? Date().timeIntervalSince(context.state.restStartDate!)
-                : 0
-            let updatedRestRemaining = max(context.state.restSecondsRemaining - Int(elapsedRestRemaining), 0)
+//            let elapsedWorkoutTime = Date().timeIntervalSince(context.state.workoutStartDate ?? Date())
+//            let updatedWorkoutTime = Int(elapsedWorkoutTime) + (context.state.workoutTime)
+//            let elapsedRestRemaining = context.state.restStartDate != nil
+//                ? Date().timeIntervalSince(context.state.restStartDate!)
+//                : 0
+//            let updatedRestRemaining = max(context.state.restSecondsRemaining - Int(elapsedRestRemaining), 0)
+            
+            let workoutTime = context.state.workoutTime
+            let restRemaining = context.state.restSecondsRemaining
             
             VStack {
                 if !context.state.currentRoutineCompleted {
@@ -70,7 +73,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(String(updatedWorkoutTime.toWorkOutTimeLabel()))
+                                Text(workoutTime.toWorkOutTimeLabel())
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
                                     .fontWeight(.semibold)
@@ -137,7 +140,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     Text(restText)
                                         .font(.custom(pretendard, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
-                                    Text(updatedRestRemaining.toRestTimeLabel())
+                                    Text(restRemaining.toRestTimeLabel())
                                         .font(.system(size: restSecondsRemainigLabelSize))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.white)
