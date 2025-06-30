@@ -149,7 +149,6 @@ final class HomeViewReactor: Reactor {
         var currentRoutineCompleted: Bool
         /// 현재  WorkoutRecordID
         var recordID: String
-        
     }
     
     // initialState 주입으로 변경
@@ -207,6 +206,7 @@ final class HomeViewReactor: Reactor {
         case let .setCompleteButtonClicked(cardIndex):
             print("mutate - \(cardIndex)번 인덱스 뷰에서 세트 완료 버튼 클릭!")
             
+            print(currentState.isResting)
             if currentState.isResting {
                 return .empty()
             } else {
@@ -347,7 +347,6 @@ final class HomeViewReactor: Reactor {
                 print("--- 모든 운동 루틴 완료! ---")
                 return .concat([
                     .just(.setCurrentRoutineCompleted),
-                    .just(.saveWorkoutData),
                     .just(.manageWorkoutCount(
                         isRoutineCompleted: true,
                         isCurrentExerciseCompleted: true
@@ -499,7 +498,19 @@ final class HomeViewReactor: Reactor {
             }
             
         case let .pauseRest(isPaused):
-            newState.isRestPaused = isPaused
+            if isPaused {
+                // 일시정지 시점까지 경과 시간 계산
+                if let restStartDate = state.restStartDate {
+                    let elapsed = Date().timeIntervalSince(restStartDate)
+                    newState.restRemainingTime = max(state.restRemainingTime - Float(elapsed), 0)
+                }
+                newState.restStartDate = nil
+                newState.isRestPaused = true
+            } else {
+                // 현재 시각부터 타이머 재시작
+                newState.restStartDate = Date()
+                newState.isRestPaused = false
+            }
             
         // MARK: - 현재 운동 데이터 저장
         // 운동 완료 시 모든 정보(Record, Summary) 저장
@@ -592,11 +603,13 @@ final class HomeViewReactor: Reactor {
                 newState.isRestTimerStopped = true
                 newState.restRemainingTime = 0.0
                 newState.restStartTime = nil
+                newState.restStartDate = nil
             } else {
                 newState.isResting = true
                 newState.isRestTimerStopped = false
                 newState.restRemainingTime = Float(newState.restTime)
                 newState.restStartTime = nil
+                newState.restStartDate = Date()
             }
             
         // MARK: - 현재 운동 데이터 저장
@@ -746,10 +759,10 @@ private extension HomeViewReactor {
             
             return .concat([
                 .just(.setResting(isResting)),
+                .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer,
                 // 카드 정보 업데이트
-                .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.manageWorkoutCount(
                     isRoutineCompleted: false,
                     isCurrentExerciseCompleted: false
@@ -759,7 +772,7 @@ private extension HomeViewReactor {
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
             var currentCardState = currentState.workoutCardStates[cardIndex]
-            currentCardState.setProgressAmount += 1
+//            currentCardState.setProgressAmount += 1
             print("🗂️🗂️ 초기 nextExerciseIndex: \(nextExerciseIndex)")
             
             // 다음,이전 인덱스가 존재하고 다음,이전 카드 모든 세트 완료 시
@@ -778,13 +791,13 @@ private extension HomeViewReactor {
                 
                 return .concat([
                     .just(.setResting(isResting)),
-                    .just(.setRestTimeDataAtProgressBar(restTime)),
-                    restTimer,
+                    .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
                     .just(.updateWorkoutCardState(
                         updatedCardState: currentCardState,
                         oldCardState: nil,
                         oldCardIndex: nil)),
-                    .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
+                    .just(.setRestTimeDataAtProgressBar(restTime)),
+                    restTimer
                 ])
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
@@ -812,9 +825,9 @@ private extension HomeViewReactor {
                     print("다음 운동 없음")
                     return .concat([
                         .just(.setResting(isResting)),
+                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
                         .just(.setRestTimeDataAtProgressBar(restTime)),
-                        restTimer,
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
+                        restTimer
                     ])
                     .observe(on: MainScheduler.instance)
                 }
@@ -852,7 +865,9 @@ extension HomeViewReactor.State {
                 isRestPaused: false,
                 currentSet: 0,
                 totalSet: 0,
-                currentIndex: 0
+                currentIndex: 0,
+                accumulatedWorkoutTime: 0,
+                accumulatedRestRemaining: 0
             )
         }
         
@@ -879,7 +894,9 @@ extension HomeViewReactor.State {
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
-            currentIndex: currentExerciseIndex
+            currentIndex: currentExerciseIndex,
+            accumulatedWorkoutTime: Int(accumulatedWorkoutTime),
+            accumulatedRestRemaining: Int(accumulatedRestRemainingTime)
         )
     }
 }
