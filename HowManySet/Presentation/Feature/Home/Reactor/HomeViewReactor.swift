@@ -894,9 +894,7 @@ extension HomeViewReactor.State {
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
             currentIndex: currentExerciseIndex,
-            accumulatedWorkoutTime: Int(accumulatedWorkoutTime),
-            workoutStartDate: workoutStartDate,
-            restStartDate: restStartDate
+            accumulatedWorkoutTime: Int(accumulatedWorkoutTime)
         )
     }
 }

@@ -34,9 +34,6 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         
         // 현재 코드 인덱스
         var currentIndex: Int
-        
-        var workoutStartDate: Date?
-        var restStartDate: Date?
     }
     
     // Fixed non-changing properties about your activity go here!
@@ -55,13 +52,6 @@ struct HowManySetWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
-            
-//            let elapsedWorkoutTime = Date().timeIntervalSince(context.state.workoutStartDate ?? Date())
-//            let updatedWorkoutTime = Int(elapsedWorkoutTime) + (context.state.workoutTime)
-//            let elapsedRestRemaining = context.state.restStartDate != nil
-//                ? Date().timeIntervalSince(context.state.restStartDate!)
-//                : 0
-//            let updatedRestRemaining = max(context.state.restSecondsRemaining - Int(elapsedRestRemaining), 0)
             
             let workoutTime = context.state.workoutTime
             let restRemaining = context.state.restSecondsRemaining
@@ -385,8 +375,6 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
         self.currentIndex = data.currentIndex
-        self.workoutStartDate = data.workoutStartDate
-        self.restStartDate = data.restStartDate
     }
 }
 
