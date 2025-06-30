@@ -623,6 +623,16 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
     private func reconnectExistingKakaoUser(_ user: User, kakaoId: Int64, nickname: String, email: String?, completion: @escaping (Result<User, Error>) -> Void) {
         print("🔄 기존 카카오 사용자 Firebase Auth 재연결 시작")
         
+        guard let userUID = user.uid else {
+            print("🔴 사용자 UID가 없습니다")
+            completion(.failure(NSError(
+                domain: "UserError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "사용자 UID를 찾을 수 없습니다."]
+            )))
+            return
+        }
+        
         Auth.auth().signInAnonymously { authResult, error in
             if let error = error {
                 print("🔴 Firebase Auth 재연결 실패: \(error)")
@@ -648,7 +658,7 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
             )
             
             let db = Firestore.firestore()
-            db.collection("users").document(user.uid).delete { deleteError in
+            db.collection("users").document(userUID).delete { deleteError in
                 if let deleteError = deleteError {
                     print("🔴 기존 문서 삭제 실패: \(deleteError)")
                 }
