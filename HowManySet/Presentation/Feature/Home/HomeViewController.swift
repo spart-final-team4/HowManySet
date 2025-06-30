@@ -835,7 +835,6 @@ extension HomeViewController {
             .throttle(.milliseconds(100), scheduler: MainScheduler.instance)
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .bind { data in
-                print("!!!data.isRestPaused: ", data.isRestPaused)
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
                     isWorkingout: data.isWorkingout,
@@ -887,11 +886,9 @@ extension HomeViewController {
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
             .bind { notification in
-                if !reactor.currentState.isResting {
-                    LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                        print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
-                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                    }
+                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
                 }
             }
             .disposed(by: disposeBag)
