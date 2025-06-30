@@ -12,6 +12,7 @@ import Foundation
 /// 이 구조체는 특정 운동의 이름, 세트 목록, 세트 간 휴식 시간, 그리고 선택적인 코멘트를 포함합니다.
 struct Workout: Hashable, Codable {
     var id: String
+    var documentID: String?
     /// 운동 이름입니다.
     ///
     /// 예: `"벤치프레스"`, `"스쿼트"` 등

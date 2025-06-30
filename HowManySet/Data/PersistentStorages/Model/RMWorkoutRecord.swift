@@ -104,7 +104,7 @@ extension RMWorkoutRecord {
                 i += 3
             }
 
-            let workout = WorkoutDTO(rmID: workoutID, name: workoutName, comment: workoutComment, sets: sets)
+            let workout = WorkoutDTO(id: workoutID, name: workoutName, comment: workoutComment, sets: sets)
             workouts.append(workout)
         }
 

@@ -81,7 +81,7 @@ extension WorkoutRoutineDTO {
 
         routine.workouts.forEach { workout in
             let name = workout.name
-            let rmID = workout.rmID
+            let rmID = workout.id
             let comment = workout.comment
             output += "\(rmID)%\(name)%\(comment ?? "메모 없음")%"
             
