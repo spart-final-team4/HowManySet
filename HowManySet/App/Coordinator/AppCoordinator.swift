@@ -56,7 +56,15 @@ final class AppCoordinator: Coordinator {
     
     /// 앱 시작 시 호출
     func start() {
-        // 🟢 앱 시작 시 온보딩 완료 여부 먼저 체크
+        // 🟢 비회원 사용자 체크 - Firebase Auth 리스너 없이 바로 처리
+        let provider = UserDefaults.standard.string(forKey: "userProvider") ?? "none"
+        if provider == "anonymous" {
+            print("🟢 비회원 사용자 감지 - Firebase Auth 리스너 없이 로컬 상태만 확인")
+            checkLocalUserStatus()
+            return
+        }
+        
+        // 🟢 앱 시작 시 온보딩 완료 여부 먼저 체크 (일반 사용자)
         let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
         if hasCompletedOnboarding {
             print("🟢 온보딩 완료 상태 - 메인 화면으로 바로 이동")
@@ -122,21 +130,42 @@ final class AppCoordinator: Coordinator {
             print("🟢 Firebase 사용자 존재: \(user.uid)")
             checkUserStatusWithFirestore(uid: user.uid)
         } else {
-            print("🔴 Firebase 사용자 없음")
-            
-            // 🟢 수정: Firebase 사용자가 없으면 provider 확인
-            let provider = UserDefaults.standard.string(forKey: "userProvider") ?? "none"
-            if provider == "none" || provider.isEmpty {
-                print("🔴 Provider 없음 - 로그인 화면으로 이동")
-                showAuthFlow()
-            } else {
-                print("🔴 Provider 있음 - 로컬 상태 확인")
-                checkLocalUserStatus()
-            }
+            print("🔴 Firebase 사용자 없음 - 비회원 로그인 플로우 시작")
+            // 🟢 수정: uid가 nil이면 무조건 비회원 플로우
+            handleAnonymousUserFlow()
         }
     }
     
-    /// 로컬 사용자 상태 확인 (Firebase Auth 없을 때)
+    /// 비회원 사용자 플로우 처리
+    private func handleAnonymousUserFlow() {
+        let hasCompleted = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        let provider = UserDefaults.standard.string(forKey: "userProvider") ?? "none"
+        
+        print("🔍 비회원 사용자 플로우")
+        print("   - Provider: \(provider)")
+        print("   - hasCompleted: \(hasCompleted)")
+        
+        // provider가 없으면 아직 로그인하지 않은 상태
+        if provider == "none" || provider.isEmpty {
+            print("🔴 로그인 필요 - 로그인 화면으로 이동")
+            showAuthFlow()
+            return
+        }
+        
+        // 비회원 로그인 완료된 상태에서는 바로 메인 화면으로
+        if provider == "anonymous" {
+            print("🟡 비회원 로그인 완료 - 바로 메인 화면으로 이동")
+            // 온보딩 완료 상태로 설정하고 메인 화면으로
+            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            showTabBarFlow()
+        } else {
+            // 다른 provider인데 Firebase uid가 없는 경우 (세션 만료 등)
+            print("🔴 세션 만료 가능성 - 로그인 화면으로 이동")
+            showAuthFlow()
+        }
+    }
+    
+    /// 로컬 사용자 상태 확인 (Firebase Auth 없을 때) - 이제 사용하지 않음
     private func checkLocalUserStatus() {
         let hasCompleted = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
         let hasSetNickname = UserDefaults.standard.bool(forKey: "hasSetNickname")
@@ -147,14 +176,20 @@ final class AppCoordinator: Coordinator {
         print("   - hasSetNickname: \(hasSetNickname)")
         print("   - hasCompleted: \(hasCompleted)")
         
-        // 🟢 수정: provider가 "none"이면 로그인 화면으로
+        // 🟢 수정: provider가 "none"이면서 다른 상태도 없으면 로그인 화면으로
         if provider == "none" || provider.isEmpty {
-            print("🔴 Provider 없음 - 로그인 화면으로 이동")
-            showAuthFlow()
+            // 혹시 이미 온보딩이 완료된 상태라면 메인으로
+            if hasCompleted {
+                print("🟡 Provider 없지만 온보딩 완료 - 메인 화면")
+                showTabBarFlow()
+            } else {
+                print("🔴 Provider 없음 - 로그인 화면으로 이동")
+                showAuthFlow()
+            }
             return
         }
         
-        // 🟢 익명 사용자 전용 로직 추가
+        // 🟢 익명 사용자 전용 로직
         if provider == "anonymous" {
             if !hasCompleted {
                 print("🔴 익명 사용자 온보딩 미완료 - 온보딩 화면으로 직행")
@@ -206,6 +241,7 @@ final class AppCoordinator: Coordinator {
                 },
                 onError: { [weak self] error in
                     print("🔴 Firestore 사용자 상태 조회 실패: \(error)")
+                    // Firebase 사용자가 있는데 Firestore 조회 실패 시에만 로컬 상태 확인
                     self?.checkLocalUserStatus()
                 }
             )
@@ -225,10 +261,11 @@ final class AppCoordinator: Coordinator {
         coord.finishFlow = { [weak self, weak coord] in
             guard let self, let coord else { return }
             self.childDidFinish(coord)
-            if let current = Auth.auth().currentUser {
-                self.checkUserStatusWithFirestore(uid: current.uid)
+            // 🟢 수정: Auth 완료 후 다시 라우팅 (Firebase user 상태에 따라)
+            if let currentUser = Auth.auth().currentUser {
+                self.checkUserStatusWithFirestore(uid: currentUser.uid)
             } else {
-                self.showAuthFlow()
+                self.handleAnonymousUserFlow()
             }
         }
         
@@ -339,9 +376,11 @@ final class AppCoordinator: Coordinator {
         let hasOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
         let provider = UserDefaults.standard.string(forKey: "userProvider") ?? "none"
         let nickname = UserDefaults.standard.string(forKey: "userNickname") ?? "없음"
+        let uid = UserDefaults.standard.string(forKey: "userUID") ?? "없음"
         
         print("🔍 현재 사용자 상태:")
         print("   - Provider: \(provider)")
+        print("   - UID: \(uid)")
         print("   - 닉네임: \(nickname)")
         print("   - 닉네임 설정: \(hasNickname)")
         print("   - 온보딩 완료: \(hasOnboarding)")
