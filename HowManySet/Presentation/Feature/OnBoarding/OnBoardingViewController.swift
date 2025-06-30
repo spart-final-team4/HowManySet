@@ -19,13 +19,12 @@ final class OnBoardingViewController: UIViewController, View {
     private weak var coordinator: OnBoardingCoordinatorProtocol?
 
     private let onboardingView = OnboardingView()
+    private let nicknameInputView = NicknameInputView()
     
-    private let nicknameInputView  = NicknameInputView()
+    /// 닉네임만 입력하는 모드 설정
+    private var isNicknameOnlyMode = false
 
-    init(
-        reactor: OnBoardingViewReactor,
-        coordinator: OnBoardingCoordinatorProtocol
-    ) {
+    init(reactor: OnBoardingViewReactor, coordinator: OnBoardingCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -36,16 +35,8 @@ final class OnBoardingViewController: UIViewController, View {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewDidLoad() {
@@ -54,6 +45,23 @@ final class OnBoardingViewController: UIViewController, View {
         onboardingView.pageIndicator.numberOfPages = OnBoardingViewReactor.onboardingPages.count
         bind(reactor: reactor)
     }
+    
+    /// 닉네임만 입력하는 모드 설정 (새로 추가)
+    func setNicknameOnlyMode() {
+        isNicknameOnlyMode = true
+    }
+    
+    /// 온보딩만 시작하는 메서드 (닉네임 입력 건너뛰기)
+    func startWithOnboardingOnly() {
+        nicknameInputView.isHidden = true
+        onboardingView.isHidden = false
+        onboardingView.pageIndicator.currentPage = 0
+        updatePageContent(index: 0)
+        
+        // Reactor에 닉네임 완료 상태 설정
+        reactor?.action.onNext(.setNicknameCompleted)
+    }
+    
     private func setupUI() {
         view.backgroundColor = .background
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -62,7 +70,8 @@ final class OnBoardingViewController: UIViewController, View {
         onboardingView.snp.makeConstraints { $0.edges.equalToSuperview() }
         nicknameInputView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
-        onboardingView.isHidden    = true
+        // 기본적으로 닉네임 입력부터 시작
+        onboardingView.isHidden = true
         nicknameInputView.isHidden = false
 
         setupKeyboardObserver()
@@ -70,26 +79,31 @@ final class OnBoardingViewController: UIViewController, View {
     }
 
     func bind(reactor: OnBoardingViewReactor) {
+        // 닉네임 입력 바인딩
         nicknameInputView.nicknameTextField.rx.text.orEmpty
             .map(OnBoardingViewReactor.Action.inputNickname)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        // 닉네임 설정 완료 버튼
         nicknameInputView.nextButton.rx.tap
             .map { _ in OnBoardingViewReactor.Action.completeNicknameSetting }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        // 온보딩 건너뛰기 버튼
         onboardingView.closeButton.rx.tap
             .map { _ in OnBoardingViewReactor.Action.skipOnboarding }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        // 온보딩 다음 버튼
         onboardingView.nextButton.rx.tap
             .map { _ in OnBoardingViewReactor.Action.moveToNextPage }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        // 닉네임 유효성에 따른 버튼 상태 변경
         reactor.state.map { $0.isNicknameValid }
             .distinctUntilChanged()
             .bind(to: nicknameInputView.nextButton.rx.isEnabled)
@@ -98,37 +112,48 @@ final class OnBoardingViewController: UIViewController, View {
         reactor.state.map { $0.isNicknameValid }
             .distinctUntilChanged()
             .bind { [weak self] isValid in
-                self?.nicknameInputView.nextButton.backgroundColor = isValid ? .brand :.darkGray
-                self?.nicknameInputView.nextButton.setTitleColor(isValid ? .black :.lightGray, for: .normal)}
+                self?.nicknameInputView.nextButton.backgroundColor = isValid ? .brand : .darkGray
+                self?.nicknameInputView.nextButton.setTitleColor(isValid ? .black : .lightGray, for: .normal)
+            }
             .disposed(by: disposeBag)
 
+        // 닉네임 완료 시 처리 로직 (수정된 버전)
         reactor.state
             .filter { $0.isNicknameComplete && !$0.isOnboardingComplete }
             .take(1)
             .observe(on: MainScheduler.instance)
             .bind { [weak self] _ in
                 guard let self = self else { return }
-                self.nicknameInputView.isHidden  = true
-                self.onboardingView.isHidden     = false
-                self.onboardingView.pageIndicator.currentPage = 0
-                self.updatePageContent(index: 0)
-                self.dismissKeyboard()
+                
+                if self.isNicknameOnlyMode {
+                    // 닉네임만 모드: 바로 완료 처리
+                    self.reactor?.action.onNext(.skipOnboarding)
+                } else {
+                    // 일반 모드: 온보딩 화면으로 전환
+                    self.nicknameInputView.isHidden = true
+                    self.onboardingView.isHidden = false
+                    self.onboardingView.pageIndicator.currentPage = 0
+                    self.updatePageContent(index: 0)
+                    self.dismissKeyboard()
+                }
             }
             .disposed(by: disposeBag)
 
+        // 온보딩 완료 시 버튼 비활성화
         reactor.state.map { $0.isOnboardingComplete }
             .filter { $0 }
             .take(1)
             .observe(on: MainScheduler.instance)
             .bind { [weak self] _ in
-                self?.onboardingView.nextButton.isEnabled  = false
+                self?.onboardingView.nextButton.isEnabled = false
                 self?.onboardingView.closeButton.isEnabled = false
             }
             .disposed(by: disposeBag)
 
+        // 페이지 인덱스 변경 시 콘텐츠 업데이트
         reactor.state
-            .filter{ !$0.isOnboardingComplete }
-            .map{ $0.currentPageIndex }
+            .filter { !$0.isOnboardingComplete }
+            .map { $0.currentPageIndex }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind { [weak self] index in
@@ -172,7 +197,6 @@ final class OnBoardingViewController: UIViewController, View {
         let adjustHeight = height - safeBottom
 
         nicknameInputView.adjustButtonForKeyboard(keyboardHeight: adjustHeight)
-
         UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
     }
 
@@ -182,8 +206,7 @@ final class OnBoardingViewController: UIViewController, View {
     }
 
     private func bindUIEvents() {
-        let tap = UITapGestureRecognizer(target: self,
-                                         action: #selector(dismissKeyboard))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = true
         view.addGestureRecognizer(tap)
     }
