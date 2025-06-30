@@ -83,7 +83,9 @@ final class CalendarViewController: UIViewController, View {
             .distinctUntilChanged() // 동일한 날짜 배열이면 업데이트 방지
             .bind(with: self) { owner, dates in
                 owner.recordedDates = dates
-                owner.calendarView.publicCalendar.reloadData() // 점 갱신
+                DispatchQueue.main.async {
+                    owner.calendarView.publicCalendar.reloadData() // 점 갱신
+                }
             }
             .disposed(by: disposeBag)
 
