@@ -63,9 +63,19 @@ private extension WorkoutRepositoryImpl {
     
     // MARK: - Workout Delete
     func deleteWorkoutFirebase(uid: String, workout: Workout) {
-        // TODO: 구현 필요
-        print("deleteWorkoutFirebase 구현안되있음")
+        Task {
+            do {
+                try await firestoreService.delete(
+                    id: workout.id,
+                    type: FirestoreDataType<FSWorkout>.workout
+                )
+                print("Firestore 운동 삭제 성공")
+            } catch {
+                print("Firestore 운동 삭제 실패: \(error)")
+            }
+        }
     }
+    
     func deleteWorkoutRealm(workout: Workout) {
         if let workout = RealmService.shared.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
             RealmService.shared.delete(item: workout)
