@@ -77,56 +77,89 @@ public final class AuthUseCase: AuthUseCaseProtocol {
             })
     }
     
-    /// 익명 로그인을 수행합니다
-    ///
-    /// 익명 사용자의 경우 모든 데이터를 로컬(UserDefaults)에만 저장합니다.
-    /// - Returns: 익명 사용자 정보를 방출하는 Observable
+    /// 익명 로그인을 수행합니다 (단순 화면 전환으로 변경)
     public func loginAnonymously() -> Observable<User> {
-        return repository.signInAnonymously()
-            .do(onNext: { user in
-                UserDefaults.standard.set("비회원", forKey: "userNickname")
-                UserDefaults.standard.set("anonymous", forKey: "userProvider")
-                UserDefaults.standard.set(user.uid, forKey: "userUID")
-                UserDefaults.standard.synchronize()
-            })
+        return Observable.create { observer in
+            // Firebase Auth 없이 단순한 User 객체 생성
+            let anonymousUser = User(
+                uid: nil,  // Firebase Auth 없이 nil로 설정
+                name: "비회원",
+                provider: "anonymous",
+                email: nil,
+                hasSetNickname: true,  // 닉네임 입력 스킵을 위해 true로 설정
+                hasCompletedOnboarding: false
+            )
+            
+            // UserDefaults에 익명 사용자 정보 저장
+            UserDefaults.standard.set("비회원", forKey: "userNickname")
+            UserDefaults.standard.set("anonymous", forKey: "userProvider")
+            UserDefaults.standard.set(true, forKey: "hasSetNickname")  // 닉네임 스킵용
+            UserDefaults.standard.synchronize()
+            
+            observer.onNext(anonymousUser)
+            observer.onCompleted()
+            return Disposables.create()
+        }
     }
     
     /// 현재 사용자를 로그아웃시킵니다
-    ///
-    /// UserDefaults의 사용자 정보를 초기화합니다.
-    /// - Returns: 로그아웃 완료를 알리는 Observable
     public func logout() -> Observable<Void> {
         return repository.signOut()
             .do(onNext: { _ in
-                UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
-                UserDefaults.standard.removeObject(forKey: "hasSkippedOnboarding")
-                UserDefaults.standard.removeObject(forKey: "userNickname")
-                UserDefaults.standard.removeObject(forKey: "userProvider")
-                UserDefaults.standard.removeObject(forKey: "userUID")
-                UserDefaults.standard.removeObject(forKey: "hasSetNickname")
-                UserDefaults.standard.synchronize()
+                // 🟢 uid 체크로 분기하여 UserDefaults 삭제
+                let uid = UserDefaults.standard.string(forKey: "userUID")
+                
+                if uid == nil {
+                    // 비회원 사용자 - Bundle identifier로 완전 삭제
+                    if let bundleIdentifier = Bundle.main.bundleIdentifier {
+                        UserDefaults.standard.removePersistentDomain(forName: bundleIdentifier)
+                        UserDefaults.standard.synchronize()
+                        print("🟢 비회원 사용자 - Bundle 전체 UserDefaults 삭제 완료")
+                    }
+                } else {
+                    // 기존 일반 사용자 로직 유지
+                    UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+                    UserDefaults.standard.removeObject(forKey: "hasSkippedOnboarding")
+                    UserDefaults.standard.removeObject(forKey: "userNickname")
+                    UserDefaults.standard.removeObject(forKey: "userProvider")
+                    UserDefaults.standard.removeObject(forKey: "userUID")
+                    UserDefaults.standard.removeObject(forKey: "hasSetNickname")
+                    UserDefaults.standard.synchronize()
+                    print("🟢 일반 사용자 - 개별 키 UserDefaults 삭제 완료")
+                }
             })
     }
     
     /// 현재 사용자의 계정을 완전히 삭제합니다
-    ///
-    /// UserDefaults의 사용자 정보를 초기화합니다.
-    /// - Returns: 계정 삭제 완료를 알리는 Observable
     public func deleteAccount() -> Observable<Void> {
         return repository.deleteAccount()
             .do(onNext: { _ in
-                let keysToRemove = [
-                    "hasCompletedOnboarding",
-                    "hasSkippedOnboarding",
-                    "userNickname",
-                    "userProvider",
-                    "userUID",
-                    "hasSetNickname"
-                ]
-                for key in keysToRemove {
-                    UserDefaults.standard.removeObject(forKey: key)
+                // 🟢 uid 체크로 분기하여 UserDefaults 삭제
+                let uid = UserDefaults.standard.string(forKey: "userUID")
+                
+                if uid == nil {
+                    // 비회원 사용자 - Bundle identifier로 완전 삭제
+                    if let bundleIdentifier = Bundle.main.bundleIdentifier {
+                        UserDefaults.standard.removePersistentDomain(forName: bundleIdentifier)
+                        UserDefaults.standard.synchronize()
+                        print("🟢 비회원 사용자 계정 삭제 - Bundle 전체 UserDefaults 삭제 완료")
+                    }
+                } else {
+                    // 기존 일반 사용자 로직 유지
+                    let keysToRemove = [
+                        "hasCompletedOnboarding",
+                        "hasSkippedOnboarding",
+                        "userNickname",
+                        "userProvider",
+                        "userUID",
+                        "hasSetNickname"
+                    ]
+                    for key in keysToRemove {
+                        UserDefaults.standard.removeObject(forKey: key)
+                    }
+                    UserDefaults.standard.synchronize()
+                    print("🟢 일반 사용자 계정 삭제 - 개별 키 UserDefaults 삭제 완료")
                 }
-                UserDefaults.standard.synchronize()
             })
     }
     
