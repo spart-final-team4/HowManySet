@@ -116,7 +116,20 @@ private extension RecordRepositoryImpl {
     
     // MARK: - Record Update
     func updateRecordToFirebase(uid: String, item: WorkoutRecord) {
-        // TODO: 구현 필요
+        Task {
+            do {
+                let dto = WorkoutRecordDTO(entity: item)
+                let fsRecord = dto.toFSModel(userId: uid)
+                try await firestoreService.update(
+                    id: item.documentID,
+                    item: fsRecord,
+                    type: FirestoreDataType<FSWorkoutRecord>.workoutRecord
+                )
+                print("Firestore 기록 업데이트 성공")
+            } catch {
+                print("Firestore 기록 업데이트 실패: \(error)")
+            }
+        }
     }
     
     func updateRecordToRealm(item: WorkoutRecord) {
