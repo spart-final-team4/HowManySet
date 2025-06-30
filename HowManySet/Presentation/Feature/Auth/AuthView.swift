@@ -82,6 +82,10 @@ final class AuthView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
+        
+        /// 카카오 uid 관련 버그 발생 (마이너 업데이트에 수정 예정)
+        kakaoLoginButton.isHidden = true
+        kakaoLoginButton.isUserInteractionEnabled = false
     }
 
     required init?(coder: NSCoder) {
