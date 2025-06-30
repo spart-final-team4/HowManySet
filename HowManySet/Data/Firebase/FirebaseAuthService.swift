@@ -18,9 +18,9 @@ import GoogleSignIn
 public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
     /// Firestore 데이터베이스 인스턴스
     private let db = Firestore.firestore()
-
+    
     public init() {}
-
+    
     /// 커스텀 토큰으로 Firebase Auth 로그인을 수행합니다
     /// - Parameters:
     ///   - customToken: Firebase 커스텀 토큰
@@ -45,7 +45,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             completion(.success(userModel))
         }
     }
-
+    
     /// 익명 로그인을 수행하고 기본 Firestore 데이터를 설정합니다
     /// - Parameter completion: 로그인 결과를 반환하는 콜백
     public func signInAnonymously(completion: @escaping (Result<User, Error>) -> Void) {
@@ -68,7 +68,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             completion(.success(userModel))
         }
     }
-
+    
     /// 현재 로그인된 사용자 정보를 가져옵니다
     /// - Returns: 현재 사용자 정보 또는 nil (로그인되지 않은 경우)
     public func fetchCurrentUser() -> User? {
@@ -80,7 +80,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             email: user.email
         )
     }
-
+    
     /// Firebase Auth에서 로그아웃을 수행합니다
     /// - Returns: 로그아웃 성공 여부
     public func signOut() -> Result<Void, Error> {
@@ -91,20 +91,35 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             return .failure(error)
         }
     }
-
+    
     /// 계정을 완전히 삭제합니다
-    ///
-    /// 모든 소셜 로그인 연결을 끊고, UserDefaults를 초기화하며,
-    /// Firestore 데이터와 Firebase Auth 계정을 삭제합니다.
-    /// - Parameter completion: 삭제 결과를 반환하는 콜백
     public func deleteAccount(completion: @escaping (Result<Void, Error>) -> Void) {
+        // 🟢 uid 체크로 분기
+        let uid = UserDefaults.standard.string(forKey: "userUID")
+        
+        if uid == nil {
+            // 비회원 사용자 - Firebase Auth 없이 로컬 데이터만 삭제
+            print("🟡 비회원 사용자 계정 삭제 - Firebase 처리 스킵")
+            
+            // Bundle identifier로 완전 삭제
+            if let bundleIdentifier = Bundle.main.bundleIdentifier {
+                UserDefaults.standard.removePersistentDomain(forName: bundleIdentifier)
+                UserDefaults.standard.synchronize()
+                print("🟢 비회원 사용자 - Bundle 전체 UserDefaults 삭제 완료")
+            }
+            
+            completion(.success(()))
+            return
+        }
+        
+        // 기존 일반 사용자 로직 유지
         guard let user = Auth.auth().currentUser else {
             completion(.failure(NSError(domain: "NoUser", code: -1)))
             return
         }
-        let uid = user.uid
-
-        print("🔥 계정 삭제 시작: \(uid)")
+        
+        let userUID = user.uid
+        print("🔥 일반 사용자 계정 삭제 시작: \(userUID)")
         
         unlinkAllSocialConnections { [weak self] unlinkResult in
             switch unlinkResult {
@@ -114,11 +129,11 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
                 print("🔴 소셜 연결 끊기 실패: \(error)")
             }
             
-            self?.clearAllUserDefaults()
-            self?.deleteFirestoreData(uid: uid, completion: completion)
+            self?.clearAllUserDefaults() // 기존 메서드 유지
+            self?.deleteFirestoreData(uid: userUID, completion: completion)
         }
     }
-
+    
     /// 사용자의 로그인 제공자에 따라 적절한 소셜 로그인 연결을 끊습니다
     /// - Parameter completion: 연결 끊기 결과를 반환하는 콜백
     private func unlinkAllSocialConnections(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -139,7 +154,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             completion(.success(()))
         }
     }
-
+    
     /// 카카오 플랫폼과의 연결을 끊습니다
     /// - Parameter completion: 연결 끊기 결과를 반환하는 콜백
     private func unlinkKakaoConnection(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -155,7 +170,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             }
         }
     }
-
+    
     /// 구글 플랫폼과의 연결을 끊습니다
     /// - Parameter completion: 연결 끊기 결과를 반환하는 콜백
     private func unlinkGoogleConnection(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -177,7 +192,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             }
         }
     }
-
+    
     /// Apple 플랫폼과의 연결을 끊습니다
     /// - Parameter completion: 연결 끊기 결과를 반환하는 콜백
     private func unlinkAppleConnection(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -198,7 +213,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             }
         }
     }
-
+    
     /// 사용자 관련 모든 UserDefaults 데이터를 초기화합니다
     private func clearAllUserDefaults() {
         print("🟢 UserDefaults 완전 초기화 시작")
@@ -219,7 +234,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
         UserDefaults.standard.synchronize()
         print("🟢 UserDefaults 완전 초기화 완료")
     }
-
+    
     /// 사용자와 관련된 모든 Firestore 데이터를 삭제합니다
     /// - Parameters:
     ///   - uid: 삭제할 사용자 ID
@@ -276,7 +291,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             }
         }
     }
-
+    
     /// 모든 소셜 로그인 제공자별 연결 데이터를 Firestore에서 삭제합니다
     /// - Parameters:
     ///   - uid: 사용자 ID
@@ -328,7 +343,7 @@ public final class FirebaseAuthService: FirebaseAuthServiceProtocol {
             completion(deletionError)
         }
     }
-
+    
     /// 익명 사용자를 위한 기본 Firestore 데이터를 설정합니다
     /// - Parameter uid: 사용자 ID
     private func setupDefaultFirestoreData(uid: String) {
