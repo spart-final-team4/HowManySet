@@ -24,9 +24,27 @@ final class RealmService: RealmServiceProtocol {
     func create<T: Object>(item: T) {
         do {
             let realm = try Realm()
-            try realm.write {
-                realm.add(item)
+            
+            if let record = item as? RMWorkoutRecord {
+                let rmRoutine = record.workoutRoutine
+                
+                let routineInRealm = realm.object(ofType: RMWorkoutRoutine.self,
+                                                  forPrimaryKey: rmRoutine?.id)
+                try realm.write {
+                    
+                    if routineInRealm == nil {
+                        realm.add(rmRoutine ?? RMWorkoutRoutine.init(), update: .modified)
+                    }
+                    
+                    record.workoutRoutine = routineInRealm ?? rmRoutine
+                    realm.add(record, update: .modified)
+                }
+            } else {
+                try realm.write {
+                    realm.add(item)
+                }
             }
+            
         } catch {
             print("create Failed: \(error.localizedDescription)")
         }
