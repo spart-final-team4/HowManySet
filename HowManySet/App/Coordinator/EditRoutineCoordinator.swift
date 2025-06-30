@@ -10,6 +10,7 @@ import RxSwift
 
 protocol EditRoutineCoordinatorProtocol: Coordinator {
     func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine)
+    func presentAddExerciseView(routineName: String)
     func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void)
 }
 
@@ -42,6 +43,24 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         }
         
         navigationController.present(editRoutineVC, animated: true)
+    }
+
+    /// AddExercise를 present하는 메서드
+    func presentAddExerciseView(routineName: String) {
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+
+        let vc = AddExerciseViewController(
+            reactor: AddExerciseViewReactor(
+                routineName: routineName,
+                saveRoutineUseCase: saveRoutineUseCase,
+                workoutStateForEdit: nil,
+                caller: .fromHome
+            )
+        )
+
+        navigationController.present(vc, animated: true)
     }
 
     /// EditExercise를 present하는 메서드
