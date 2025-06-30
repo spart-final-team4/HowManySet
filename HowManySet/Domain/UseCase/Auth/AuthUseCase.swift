@@ -135,12 +135,16 @@ public final class AuthUseCase: AuthUseCaseProtocol {
     /// 익명 사용자는 로컬 상태를, 일반 사용자는 Firestore 상태를 확인합니다.
     /// - Parameter uid: 사용자 고유 식별자
     /// - Returns: 사용자 온보딩 상태를 방출하는 Observable
+    /// 사용자의 온보딩 상태를 조회
     public func getUserStatus(uid: String) -> Observable<UserStatus> {
         let userProvider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
         if userProvider == "anonymous" {
-            let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
             let hasSetNickname = UserDefaults.standard.bool(forKey: "hasSetNickname")
-            if !hasSetNickname || !hasCompletedOnboarding {
+            let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+            
+            if !hasSetNickname {
+                return Observable.just(.needsNickname)
+            } else if !hasCompletedOnboarding {
                 return Observable.just(.needsOnboarding)
             } else {
                 return Observable.just(.complete)
@@ -148,10 +152,14 @@ public final class AuthUseCase: AuthUseCaseProtocol {
         } else {
             return repository.fetchUserInfo(uid: uid)
                 .map { user in
-                    guard let user = user else { return .needsOnboarding }
-                    if !user.hasSetNickname || !user.hasCompletedOnboarding {
+                    guard let user = user else { return .needsNickname }
+                    
+                    if !user.hasSetNickname {
+                        return .needsNickname
+                    } else if !user.hasCompletedOnboarding {
                         return .needsOnboarding
                     } else {
+                        // 서버 데이터를 로컬에 동기화
                         UserDefaults.standard.set(user.name, forKey: "userNickname")
                         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                         UserDefaults.standard.set(true, forKey: "hasSetNickname")
