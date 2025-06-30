@@ -47,27 +47,31 @@ final class ExercisePopupViewController: UIViewController {
         $0.alignment = .center
     }
     
-    /// 오른쪽 버튼 - 계속하기
-//    private let rightButton = UIButton().then {
-//        $0.setTitleColor(.background, for: .normal)
-//        $0.titleLabel?.adjustsFontSizeToFitWidth = true
-//        $0.backgroundColor = .green6
-//        $0.layer.cornerRadius = 12
-//        $0.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
-//    }
-    
-    /// 왼쪽 버튼 - 운동 종료
+    // 왼쪽 버튼 - 취소
     private let leftButton = UIButton().then {
         $0.setTitleColor(.grey1, for: .normal)
+        $0.setTitle("취소", for: .normal)
         $0.titleLabel?.adjustsFontSizeToFitWidth = true
         $0.backgroundColor = .grey5
         $0.layer.cornerRadius = 12
         $0.addTarget(self, action: #selector(didTapLeftButton), for: .touchUpInside)
+        $0.isHidden = true
+    }
+    
+    /// 오른쪽 버튼 - 운동 종료
+    private let rightButton = UIButton().then {
+        $0.setTitleColor(.grey1, for: .normal)
+        $0.titleLabel?.adjustsFontSizeToFitWidth = true
+        $0.backgroundColor = .grey5
+        $0.layer.cornerRadius = 12
+        $0.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
     }
     
     /// 클릭 시 실행할 액션
     private var nextAction: (() -> Void)?
     private var cancelAction: (() -> Void?)?
+    
+    private var hasTwoButtons = false
     
     override func viewDidLoad() {
         setupUI()
@@ -83,34 +87,35 @@ final class ExercisePopupViewController: UIViewController {
     ///   - cancelAction: 계속 하기 버튼 클릭 시 실행할 클로저
     convenience init(title: String,
                      content: String = "",
-                     leftButtonText: String,
-                     leftButtonTitleColor: UIColor,
-                     leftButtonBackgroundColor: UIColor,
-//                     rightButtonText: String,
-                     nextAction: @escaping () -> Void
-//                     cancelAction: @escaping () -> Void?
+                     rightButtonText: String,
+                     rightButtonTitleColor: UIColor,
+                     rightButtonBackgroundColor: UIColor,
+                     nextAction: @escaping () -> Void,
+                     cancelAction: @escaping () -> Void?,
+                     hasTwoButtons: Bool
     ) {
         self.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overCurrentContext
         self.titleLabel.text = title
         self.contentLabel.text = content
-        self.leftButton.setTitle(leftButtonText, for: .normal)
-        self.leftButton.setTitleColor(leftButtonTitleColor, for: .normal)
-        self.leftButton.backgroundColor = leftButtonBackgroundColor
+        self.rightButton.setTitle(rightButtonText, for: .normal)
+        self.rightButton.setTitleColor(rightButtonTitleColor, for: .normal)
+        self.rightButton.backgroundColor = rightButtonBackgroundColor
 //        self.rightButton.setTitle(rightButtonText, for: .normal)
         self.nextAction = nextAction
-//        self.cancelAction = cancelAction
+        self.cancelAction = cancelAction
+        self.hasTwoButtons = hasTwoButtons
     }
     
     /// 계속 하기 클릭 시
-    @objc private func didTapRightButton() {
+    @objc private func didTapLeftButton() {
         cancelAction?()
         self.dismiss(animated: true)
     }
     
     /// 왼쪽 운동 종료 버튼 클릭 시
-    @objc private func didTapLeftButton() {
+    @objc private func didTapRightButton() {
         nextAction?()
         self.dismiss(animated: true)
     }
@@ -123,6 +128,10 @@ private extension ExercisePopupViewController {
         setAppearance()
         setViewHierarchy()
         setConstraints()
+        
+        if hasTwoButtons {
+            leftButton.isHidden = false
+        }
     }
 
     /// 뷰 배경 설정
@@ -139,7 +148,8 @@ private extension ExercisePopupViewController {
             buttonHStackView
         )
         buttonHStackView.addArrangedSubviews(
-            leftButton
+            leftButton,
+            rightButton
         )
     }
 
@@ -151,11 +161,14 @@ private extension ExercisePopupViewController {
             $0.height.greaterThanOrEqualToSuperview().multipliedBy(0.22)
         }
         
-        [leftButton/*, rightButton*/].forEach {
+        [leftButton, rightButton].forEach {
             $0.snp.makeConstraints {
-//                $0.width.equalTo(stackView).multipliedBy(0.4)
+                if hasTwoButtons {
+                    $0.width.equalTo(stackView).multipliedBy(0.4)
+                }
                 $0.height.equalTo(stackView).multipliedBy(0.28)
             }
         }
     }
 }
+
