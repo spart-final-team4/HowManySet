@@ -46,23 +46,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// 시작, 마이페이지 뷰 푸시
     func start() {
         let myPageVC = container.makeMyPageViewController(coordinator: self)
-        
         navigationController.pushViewController(myPageVC, animated: true)
     }
-    
-    /// 언어 변경
-    /// 알림 설정
-    /// 앱 평가
-    /// 버전 정보
-    /// 개인정보처리방침
-    /// 문제제보
-    /// 로그아웃
-    /// 계정탈퇴
-    /// -----------------
-    /// 팝업: 로그아웃, 계정탈퇴
-    /// 설정으로 이동: 언어 변경
-    /// View Push: 알림 설정
-    /// alert: 버전정보
     
     /// 언어 변경 처리 (설정 앱 이동 알림)
     func presentLanguageSettingAlert() {
@@ -81,7 +66,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         })
 
         alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-
         navigationController.present(alert, animated: true)
     }
     
@@ -102,7 +86,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         })
 
         alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-
         navigationController.present(alert, animated: true)
     }
     
@@ -181,7 +164,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         
         let deleteAccountVC = DefaultPopupViewController(title: "로그아웃 하시겠습니까?",
                                                          okButtonText: "로그아웃") {
-            // 🔥 Reactor의 confirmLogout 액션 호출
+            // Reactor의 confirmLogout 액션 호출
             myPageVC.reactor?.action.onNext(.confirmLogout)
         }
         navigationController.present(deleteAccountVC, animated: true)
@@ -194,7 +177,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         let deleteAccountVC = DefaultPopupViewController(title: "정말 탈퇴하시겠습니까?",
                                                          content: "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다.",
                                                          okButtonText: "계정 삭제") {
-            // 🔥 Reactor의 confirmDeleteAccount 액션 호출
+            // Reactor의 confirmDeleteAccount 액션 호출
             myPageVC.reactor?.action.onNext(.confirmDeleteAccount)
         }
         navigationController.present(deleteAccountVC, animated: true)
@@ -202,12 +185,28 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     /// 인증 화면으로 이동 (로그아웃/계정삭제 후)
     func navigateToAuth() {
-        print("로그아웃 / 계정삭제 후 화면 전환")
+        guard !isMovingToAuth else { return }
+        isMovingToAuth = true
+        
+        print("🟢 로그아웃/계정삭제 후 상태 완전 초기화")
+        
+        // 모든 상태 완전 초기화
+        let keysToRemove = [
+            "hasCompletedOnboarding",
+            "hasSkippedOnboarding",
+            "userNickname",
+            "userProvider",
+            "userUID",
+            "hasSetNickname"
+        ]
+        for key in keysToRemove {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+        UserDefaults.standard.synchronize()
+        
         finishFlow?()
     }
-    
 }
-
 
 private extension MyPageCoordinator {
     /// 앱스토러에 등록된 앱의 버전 불러오기
