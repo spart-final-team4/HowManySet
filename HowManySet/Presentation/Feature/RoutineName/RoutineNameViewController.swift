@@ -42,7 +42,7 @@ extension RoutineNameViewController {
     func bind(reactor: RoutineNameReactor) {
         // 텍스트 필드 입력에 따른 버튼 활성화
         routineNameView.publicRoutineNameTF.rx.text.orEmpty
-            .map { !$0.isEmpty }
+            .map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .distinctUntilChanged()
             .bind(with: self) { owner, isEnabled in
                 let button = owner.routineNameView.publicNextButton
@@ -55,6 +55,7 @@ extension RoutineNameViewController {
         // 버튼 탭 이벤트
         routineNameView.publicNextButton.rx.tap
             .withLatestFrom(routineNameView.publicRoutineNameTF.rx.text.orEmpty)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) } // 혹시나 만약을 대비하여 여기도 추가
             .bind(with: self) { owner, text in
                 reactor.action.onNext(.setRoutineName(text))
                 owner.dismiss(animated: true) {
