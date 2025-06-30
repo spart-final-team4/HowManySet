@@ -346,7 +346,6 @@ final class HomeViewReactor: Reactor {
                 print("--- 모든 운동 루틴 완료! ---")
                 return .concat([
                     .just(.setCurrentRoutineCompleted),
-                    .just(.saveWorkoutData),
                     .just(.manageWorkoutCount(
                         isRoutineCompleted: true,
                         isCurrentExerciseCompleted: true
