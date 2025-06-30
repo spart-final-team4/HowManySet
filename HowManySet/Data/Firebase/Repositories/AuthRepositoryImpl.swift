@@ -284,22 +284,24 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
         }
     }
 
-    /// 익명 로그인을 수행합니다
-    /// - Returns: 익명 사용자 정보를 방출하는 Observable
+    /// 익명 로그인을 수행합니다 (Firebase Auth 제거)
     public func signInAnonymously() -> Observable<User> {
         return Observable.create { observer in
-            print("익명 로그인 시작")
-            self.firebaseAuthService.signInAnonymously { result in
-                switch result {
-                case .success(let user):
-                    print("익명 로그인 성공: \(user.uid)")
-                    observer.onNext(user)
-                    observer.onCompleted()
-                case .failure(let error):
-                    print("익명 로그인 실패: \(error)")
-                    observer.onError(error)
-                }
-            }
+            print("익명 로그인 시작 - Firebase Auth 없이 진행")
+            
+            // Firebase Auth 없이 단순한 User 객체 생성
+            let anonymousUser = User(
+                uid: nil,
+                name: "비회원",
+                provider: "anonymous",
+                email: nil,
+                hasSetNickname: true,  // 닉네임 입력 스킵
+                hasCompletedOnboarding: false
+            )
+            
+            print("익명 로그인 성공 - 단순 객체 생성")
+            observer.onNext(anonymousUser)
+            observer.onCompleted()
             return Disposables.create()
         }
     }
@@ -623,6 +625,16 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
     private func reconnectExistingKakaoUser(_ user: User, kakaoId: Int64, nickname: String, email: String?, completion: @escaping (Result<User, Error>) -> Void) {
         print("🔄 기존 카카오 사용자 Firebase Auth 재연결 시작")
         
+        guard let userUID = user.uid else {
+            print("🔴 사용자 UID가 없습니다")
+            completion(.failure(NSError(
+                domain: "UserError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "사용자 UID를 찾을 수 없습니다."]
+            )))
+            return
+        }
+        
         Auth.auth().signInAnonymously { authResult, error in
             if let error = error {
                 print("🔴 Firebase Auth 재연결 실패: \(error)")
@@ -648,7 +660,7 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
             )
             
             let db = Firestore.firestore()
-            db.collection("users").document(user.uid).delete { deleteError in
+            db.collection("users").document(userUID).delete { deleteError in
                 if let deleteError = deleteError {
                     print("🔴 기존 문서 삭제 실패: \(deleteError)")
                 }
