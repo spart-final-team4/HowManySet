@@ -155,10 +155,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         let endWorkoutVC = ExercisePopupViewController(
             title: "운동을 종료할까요?",
             content: "지금까지의 기록만 저장됩니다.",
-            leftButtonText: "운동종료",
-            leftButtonTitleColor: .grey1,
-            leftButtonBackgroundColor: .grey5,
-//            rightButtonText: "계속하기",
+            rightButtonText: "운동종료",
+            rightButtonTitleColor: .white,
+            rightButtonBackgroundColor: .pauseButton,
             nextAction: { [weak self] in
                 guard let self else { return }
                 
@@ -171,7 +170,10 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 self.navigationController.setViewControllers([homeStartVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
-            }/*, cancelAction: onCancel*/)
+            },
+            cancelAction: onCancel,
+            hasTwoButtons: true
+        )
         
         navigationController.present(endWorkoutVC, animated: true)
     }
@@ -182,10 +184,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         let endWorkoutVC = ExercisePopupViewController(
             title: "오늘의 루틴 완료!",
             content: "수고하셨어요! 운동 기록을 저장할게요.",
-            leftButtonText: "결과보기",
-            leftButtonTitleColor: .background,
-            leftButtonBackgroundColor: .green6,
-//            rightButtonText: "계속하기",
+            rightButtonText: "결과보기",
+            rightButtonTitleColor: .background,
+            rightButtonBackgroundColor: .green6,
             nextAction: { [weak self] in
                 guard let self else { return }
                 
@@ -196,7 +197,10 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
                 self.navigationController.setViewControllers([homeStartVC], animated: false)
                 
                 self.pushRoutineCompleteView(with: workoutSummary)
-            }/*, cancelAction: onCancel*/)
+            },
+            cancelAction: onCancel,
+            hasTwoButtons: false
+        )
         
         navigationController.present(endWorkoutVC, animated: true)
     }
