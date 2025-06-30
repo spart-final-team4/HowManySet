@@ -96,11 +96,21 @@ final class EditRoutineViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .loadWorkout(let routines):
-            routines.forEach { routine in
-                if routine.rmID == currentState.routine.rmID {
-                    newState.routine = routine
+            print("routines: \(routines)\n\n")
+            if let uid {
+                routines.forEach { routine in
+                    if routine.documentID == currentState.routine.documentID {
+                        newState.routine = routine
+                    }
+                }
+            } else {
+                routines.forEach { routine in
+                    if routine.rmID == currentState.routine.rmID {
+                        newState.routine = routine
+                    }
                 }
             }
+            
         case .cellButtonTapped(let indexPath):
             newState.currentSeclectedWorkout = newState.routine.workouts[indexPath.row]
             newState.currentSeclectedIndexPath = indexPath
