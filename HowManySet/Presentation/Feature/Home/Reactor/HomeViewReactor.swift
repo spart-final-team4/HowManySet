@@ -347,7 +347,6 @@ final class HomeViewReactor: Reactor {
                 print("--- 모든 운동 루틴 완료! ---")
                 return .concat([
                     .just(.setCurrentRoutineCompleted),
-                    .just(.saveWorkoutData),
                     .just(.manageWorkoutCount(
                         isRoutineCompleted: true,
                         isCurrentExerciseCompleted: true
@@ -530,11 +529,9 @@ final class HomeViewReactor: Reactor {
             let workout = convertWorkoutCardStatesToWorkouts(cardStates: newState.workoutCardStates)
             
             print("현재 루틴 ID: \(newState.workoutRoutine.rmID)")
-            let newRoutineID = UUID().uuidString
             
-            // WorkoutRecord안의 workoutRoutine을 새 id로 만들어 id 중복방지
             let newWorkoutRoutine = WorkoutRoutine(
-                rmID: newRoutineID,
+                rmID: newState.workoutRoutine.rmID,
                 documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
                 workouts: workout
@@ -598,29 +595,6 @@ final class HomeViewReactor: Reactor {
                 newState.restRemainingTime = Float(newState.restTime)
                 newState.restStartTime = nil
             }
-            
-        // MARK: - 현재 운동 데이터 저장
-        // 메모 창 dismiss시, 운동 완료 시 등등
-        case .saveWorkoutData:
-            let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
-                cardStates: newState.workoutCardStates)
-            
-            newState.workoutRoutine = WorkoutRoutine(
-                rmID: newState.uid ?? "",
-                documentID: uid ?? "",
-                name: newState.workoutRoutine.name,
-                workouts: updatedWorkouts
-            )
-            newState.workoutRecord = WorkoutRecord(
-                rmID: newState.uid ?? "",
-                documentID: uid ?? "",
-                workoutRoutine: newState.workoutRoutine,
-                totalTime: newState.workoutTime,
-                workoutTime: newState.workoutTime,
-                comment: newState.memoInRoutine,
-                date: Date()
-            )
-            saveRecordUseCase.execute(uid: uid, item: newState.workoutRecord)
             
         case let .convertToEditData(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
