@@ -539,7 +539,17 @@ final class HomeViewReactor: Reactor {
                 routineMemo: newState.memoInRoutine
             )
             
-            let workout = convertWorkoutCardStatesToWorkouts(cardStates: newState.workoutCardStates)
+            var didWorkout: [Workout] = []
+            for (i, workout) in newState.workoutRoutine.workouts.enumerated() {
+                didWorkout.append(Workout(
+                    id: workout.id,
+                    name: workout.name,
+                    sets: Array(workout.sets.prefix(newState.workoutCardStates[i].setIndex)),
+                    comment: workout.comment
+                ))
+            }
+            
+            print(didWorkout)
             
             print("현재 루틴 ID: \(newState.workoutRoutine.rmID)")
             
@@ -547,7 +557,7 @@ final class HomeViewReactor: Reactor {
                 rmID: newState.workoutRoutine.rmID,
                 documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
-                workouts: workout
+                workouts: didWorkout
             )
             
             // 저장되는 WorkoutRecord
@@ -800,6 +810,7 @@ private extension HomeViewReactor {
                 } else { // 다음 운동 없을 때, 운동 끝나기 전 세트
                     print("다음 운동 없음")
                     currentCardState.setProgressAmount += 1
+                    currentCardState.setIndex += 1
                     let updatedCardState = currentCardState
                     return .concat([
                         .just(.setResting(isResting)),
