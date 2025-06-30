@@ -93,7 +93,9 @@ final class EditRoutineViewController: UIViewController, View {
                     UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         self.startButton.transform = .identity
                     }, completion: { _ in
-                        self.coordinator.navigateToHomeViewWithWorkoutStarted()
+                        if let updatedRoutine = self.reactor?.currentState.routine {
+                            self.coordinator.navigateToHomeViewWithWorkoutStarted(updateRoutine: updatedRoutine)
+                        }
                         self.dismiss(animated: true)
                     })
                 })

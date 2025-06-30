@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 
 protocol EditRoutineCoordinatorProtocol: Coordinator {
-    func navigateToHomeViewWithWorkoutStarted()
+    func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine)
     func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void)
 }
 
@@ -69,8 +69,8 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     }
 
     /// 메인 홈 화면 운동중 상태로 이동
-    func navigateToHomeViewWithWorkoutStarted() {
-        homeCoordinator.startWorkout(with: routine)
+    func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine) {
+        homeCoordinator.startWorkout(with: updateRoutine)
     }
     
     func moveToEditExcercise(with excercise: Workout) {
