@@ -832,8 +832,7 @@ extension HomeViewController {
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
-            .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .debounce(.milliseconds(50), scheduler: MainScheduler.instance)
             .bind { data in
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
@@ -846,7 +845,60 @@ extension HomeViewController {
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
-                    currentIndex: data.currentIndex
+                    currentIndex: data.currentIndex,
+                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+                    accumulatedRestRemaining: data.accumulatedRestRemaining
+                )
+                LiveActivityService.shared.update(state: contentState)
+            }
+            .disposed(by: disposeBag)
+        
+        // 휴식 상태 변화 시 즉시 업데이트
+        reactor.state.map { $0.isResting }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { isResting in
+                print("🔄 휴식 상태 변화 감지: \(isResting)")
+                let data = reactor.currentState.forLiveActivity
+                let contentState = HowManySetWidgetAttributes.ContentState.init(
+                    workoutTime: data.workoutTime,
+                    isWorkingout: data.isWorkingout,
+                    exerciseName: data.exerciseName,
+                    exerciseInfo: data.exerciseInfo,
+                    currentRoutineCompleted: data.currentRoutineCompleted,
+                    isResting: data.isResting,
+                    restSecondsRemaining: Int(data.restSecondsRemaining),
+                    isRestPaused: data.isRestPaused,
+                    currentSet: data.currentSet,
+                    totalSet: data.totalSet,
+                    currentIndex: data.currentIndex,
+                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+                    accumulatedRestRemaining: data.accumulatedRestRemaining
+                )
+                LiveActivityService.shared.update(state: contentState)
+            }
+            .disposed(by: disposeBag)
+        
+        // 휴식시간 즉시 업데이트
+        reactor.state.map { $0.restRemainingTime }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind { restRemaining in
+                let data = reactor.currentState.forLiveActivity
+                let contentState = HowManySetWidgetAttributes.ContentState.init(
+                    workoutTime: data.workoutTime,
+                    isWorkingout: data.isWorkingout,
+                    exerciseName: data.exerciseName,
+                    exerciseInfo: data.exerciseInfo,
+                    currentRoutineCompleted: data.currentRoutineCompleted,
+                    isResting: data.isResting,
+                    restSecondsRemaining: Int(restRemaining),
+                    isRestPaused: data.isRestPaused,
+                    currentSet: data.currentSet,
+                    totalSet: data.totalSet,
+                    currentIndex: data.currentIndex,
+                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+                    accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
                 LiveActivityService.shared.update(state: contentState)
             }
@@ -884,11 +936,9 @@ extension HomeViewController {
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
             .bind { notification in
-                if !reactor.currentState.isResting {
-                    LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                        print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
-                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                    }
+                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
                 }
             }
             .disposed(by: disposeBag)
