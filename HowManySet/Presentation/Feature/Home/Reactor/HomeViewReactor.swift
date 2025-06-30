@@ -745,10 +745,10 @@ private extension HomeViewReactor {
             
             return .concat([
                 .just(.setResting(isResting)),
+                .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer,
                 // 카드 정보 업데이트
-                .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.manageWorkoutCount(
                     isRoutineCompleted: false,
                     isCurrentExerciseCompleted: false
@@ -777,12 +777,12 @@ private extension HomeViewReactor {
                 
                 return .concat([
                     .just(.setResting(isResting)),
-                    .just(.setRestTimeDataAtProgressBar(restTime)),
-                    restTimer,
                     .just(.updateWorkoutCardState(
                         updatedCardState: currentCardState,
                         oldCardState: nil,
                         oldCardIndex: nil)),
+                    .just(.setRestTimeDataAtProgressBar(restTime)),
+                    restTimer,
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
                 ])
                 .observe(on: MainScheduler.instance)
