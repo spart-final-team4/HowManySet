@@ -19,29 +19,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-            Thread.sleep(forTimeInterval: 2.0)
-            
-            // Firebase 초기화
-            FirebaseApp.configure()
-            
-            // Google Sign-In 설정
-            guard let clientID = FirebaseApp.app()?.options.clientID else {
-                fatalError("No client ID found in Firebase configuration")
-            }
-            let config = GIDConfiguration(clientID: clientID)
-            GIDSignIn.sharedInstance.configuration = config
-
-            // 카카오 SDK 초기화
-            if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
-                KakaoSDK.initSDK(appKey: kakaoAppKey)
-            } else {
-                fatalError("Check Your AppKey")
-            }
+        Thread.sleep(forTimeInterval: 2.0)
         
-            // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
-            LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
+        // Firebase 초기화
+        FirebaseApp.configure()
+        
+        // 세션-로컬 상태 불일치 시 강제 로그아웃 처리
+        if let user = Auth.auth().currentUser {
+            let provider = UserDefaults.standard.string(forKey: "userProvider")
+            let hasSetNickname = UserDefaults.standard.bool(forKey: "hasSetNickname")
+            let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
             
-            NotificationService.shared.requestNotification()
+            // 유저는 로그인 상태인데 UserDefaults가 모두 초기값이면 비정상 세션으로 판단
+            if (provider == nil || provider == "none" || provider?.isEmpty == true)
+                && !hasSetNickname && !hasCompletedOnboarding {
+                print("⚠️ Firebase 유저는 존재하지만 로컬 상태 없음 - 강제 로그아웃 및 초기화")
+                
+                // Firebase 로그아웃
+                try? Auth.auth().signOut()
+                
+                // UserDefaults 전체 초기화
+                if let bundleId = Bundle.main.bundleIdentifier {
+                    UserDefaults.standard.removePersistentDomain(forName: bundleId)
+                    UserDefaults.standard.synchronize()
+                }
+            }
+        }
+
+        // Google Sign-In 설정
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            fatalError("No client ID found in Firebase configuration")
+        }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        // 카카오 SDK 초기화
+        if let kakaoAppKey = Bundle.main.object(forInfoDictionaryKey: "KakaoNativeAppKey") as? String {
+            KakaoSDK.initSDK(appKey: kakaoAppKey)
+        } else {
+            fatalError("Check Your AppKey")
+        }
+
+        // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
+        LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
+        
+        NotificationService.shared.requestNotification()
         
         return true
     }
