@@ -48,7 +48,7 @@ extension FSWorkout {
     func toDTO() -> WorkoutDTO {
         return WorkoutDTO(
             // TODO: 검토 필요
-            rmID: self.rmID ?? "",
+            rmID: self.id ?? "",
             name: self.name,
             comment: self.comment,
             sets: self.sets.map { $0.toDTO() }
@@ -59,6 +59,7 @@ extension FSWorkout {
 extension FSWorkout {
     init(dto: WorkoutDTO) {
         self.id = nil
+        self.rmID = dto.rmID
         self.name = dto.name
         self.comment = dto.comment
         self.sets = dto.sets.map { FSWorkoutSet(dto: $0) }
