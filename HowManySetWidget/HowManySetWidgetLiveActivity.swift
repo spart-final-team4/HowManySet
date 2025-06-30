@@ -53,7 +53,9 @@ struct HowManySetWidgetLiveActivity: Widget {
     private let restSecondsRemainigLabelSize: CGFloat = 46
     private let restText = "휴식"
     private let completeText = "모든 운동을 완료하셨습니다!"
-    private let pretendard = "Pretendard Variable"
+    private let pretendardBold = "Pretendard-Bold"
+    private let pretendardSemiBold = "Pretendard-SemiBold"
+    private let pretendardRegular = "Pretendard-Regular"
     
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
@@ -89,7 +91,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     .foregroundStyle(.brand)
                                 Text(String(context.state.exerciseName))
                                     .foregroundStyle(.white)
-                                    .font(.custom(pretendard, size: 14).weight(.semibold))
+                                    .font(.custom(pretendardSemiBold, size: 14))
                             }
                         }
                         // MARK: - 운동 중 contents
@@ -97,10 +99,10 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(context.state.exerciseName)
-                                        .font(.custom(pretendard, size: 20).weight(.bold))
+                                        .font(.custom(pretendardBold, size: 20))
                                         .foregroundStyle(.white)
                                     Text(context.state.exerciseInfo)
-                                        .font(.custom(pretendard, size: 16).weight(.regular))
+                                        .font(.custom(pretendardRegular, size: 16))
                                         .foregroundStyle(.grey2)
                                 }
                                 
@@ -142,7 +144,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 HStack(alignment: .lastTextBaseline, spacing: 5) {
                                     Text(restText)
-                                        .font(.custom(pretendard, size: 16).weight(.bold))
+                                        .font(.custom(pretendardBold, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
                                     Text(updatedRestRemaining.toRestTimeLabel())
                                         .font(.system(size: restSecondsRemainigLabelSize))
@@ -199,7 +201,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             .fontWeight(.semibold)
                             .font(.title)
                         Text(completeText)
-                            .font(.custom(pretendard, size: 18).weight(.semibold))
+                            .font(.custom(pretendardSemiBold, size: 18))
                             .foregroundStyle(.white)
                         Image(systemName: "chevron.right.2")
                             .foregroundStyle(.brand)
@@ -241,7 +243,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         if !context.state.isResting {
                             HStack(spacing: 12) {
                                 Text(context.state.exerciseName)
-                                    .font(.custom(pretendard, size: 22).weight(.semibold))
+                                    .font(.custom(pretendardSemiBold, size: 22))
                                     .foregroundStyle(.white)
                                 Text("\(context.state.currentSet)/\(context.state.totalSet)")
                                     .font(.title3)
@@ -254,7 +256,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         } else {
                             HStack(spacing: 12) {
                                 Text(restText)
-                                    .font(.custom(pretendard, size: 22).weight(.semibold))
+                                    .font(.custom(pretendardSemiBold, size: 22))
                                     .foregroundStyle(.white)
                                 Text("\(context.state.currentSet)/\(context.state.totalSet)")
                                     .font(.title3)
@@ -268,7 +270,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                         }
                     } else {
                         Text(completeText)
-                            .font(.custom(pretendard, size: 18).weight(.semibold))
+                            .font(.custom(pretendardSemiBold, size: 18))
                             .foregroundStyle(.white)
                     }
                 }
