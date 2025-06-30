@@ -9,11 +9,14 @@ import Foundation
 
 /// 사용자 온보딩 상태를 나타내는 열거형
 public enum UserStatus {
-    /// 온보딩이 필요한 상태 (닉네임 입력 + 온보딩 진행 필요)
+    /// 닉네임 설정이 필요한 상태
+    case needsNickname
+    /// 온보딩 진행이 필요한 상태 (닉네임은 설정 완료)
     case needsOnboarding
     /// 모든 설정이 완료된 상태
     case complete
 }
+
 
 /// 앱 전체에서 사용되는 통합된 사용자 도메인 모델
 ///
