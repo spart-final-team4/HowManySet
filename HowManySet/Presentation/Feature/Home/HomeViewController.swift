@@ -832,9 +832,10 @@ extension HomeViewController {
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
-            .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
+            .throttle(.milliseconds(100), scheduler: MainScheduler.instance)
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .bind { data in
+                print("!!!data.isRestPaused: ", data.isRestPaused)
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
                     isWorkingout: data.isWorkingout,
@@ -847,8 +848,8 @@ extension HomeViewController {
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
                     currentIndex: data.currentIndex,
-                    restStartDate: data.restStartDate,
-                    workoutStartDate: data.workoutStartDate
+                    workoutStartDate: data.workoutStartDate,
+                    restStartDate: data.restStartDate
                 )
                 LiveActivityService.shared.update(state: contentState)
             }
