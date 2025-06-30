@@ -93,7 +93,7 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
             .disposed(by: disposeBag)
     }
     
-    /// 온보딩 완료 시 호출
+    /// 온보딩 완료 시 호출 (익명 사용자 처리 추가)
     func completeOnBoarding() {
         guard !isCompleting else { return }
         isCompleting = true
@@ -101,11 +101,23 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
         
         print("🟢 OnBoardingCoordinator: 온보딩 완료 처리 시작")
         
+        let provider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
+        
+        // 🟢 익명 사용자는 로컬에만 저장
+        if provider == "anonymous" {
+            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            UserDefaults.standard.synchronize()
+            print("🟢 익명 사용자 온보딩 완료 - 로컬 저장")
+            finishFlow?()
+            return
+        }
+        
+        // 기존 소셜 로그인 사용자 Firebase 처리 로직 유지
         authRepository.getCurrentUser()
             .flatMap { [weak self] user -> Observable<Void> in
                 guard let self else { return .empty() }
                 guard let user,
-                      let uid = user.uid else {  // uid를 안전하게 언래핑
+                      let uid = user.uid else {
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                     self.finishFlow?()
                     return .empty()
