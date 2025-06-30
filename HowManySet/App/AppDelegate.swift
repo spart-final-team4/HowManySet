@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             NotificationService.shared.requestNotification()
             
-            // 적용된 폰트 확인
+            // 폰트 이름 체크
             UIFont.checkFonts()
         
         return true
