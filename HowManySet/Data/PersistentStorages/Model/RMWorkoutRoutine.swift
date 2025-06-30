@@ -32,7 +32,7 @@ final class RMWorkoutRoutine: Object {
     }
     
     override static func primaryKey() -> String? {
-        return "rmID"
+        return "id"
     }
 }
 
