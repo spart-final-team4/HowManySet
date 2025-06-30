@@ -49,14 +49,38 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
         navigationController.pushViewController(onboardingVC, animated: false)
     }
     
+    /// 닉네임만 입력하는 시작점
+    func startWithNicknameOnly() {
+        print("🔍 OnBoardingCoordinator: startWithNicknameOnly 호출")
+        let onboardingVC = container.makeOnBoardingViewController(coordinator: self)
+        
+        navigationController.pushViewController(onboardingVC, animated: false)
+        print("🔍 OnBoardingViewController 푸시 완료")
+    }
+
+
+    /// 온보딩만 하는 시작점
+    func startWithOnboardingOnly() {
+        let onboardingVC = container.makeOnBoardingViewController(coordinator: self)
+        // 온보딩만 시작하도록 설정
+        if let vc = onboardingVC as? OnBoardingViewController {
+            vc.startWithOnboardingOnly()
+        }
+        navigationController.pushViewController(onboardingVC, animated: false)
+    }
+
+    
     /// 닉네임 설정 완료 시 호출
     func completeNicknameSetting(nickname: String) {
         authRepository.getCurrentUser()
             .flatMap { [weak self] user -> Observable<Void> in
-                guard let self, let user else {
+                guard let self,
+                      let user,
+                      let uid = user.uid else {  // uid를 안전하게 언래핑
                     return Observable.error(NSError(domain: "NoCurrentUser", code: -1))
                 }
-                return self.authUseCase.completeNicknameSetting(uid: user.uid, nickname: nickname)}
+                return self.authUseCase.completeNicknameSetting(uid: uid, nickname: nickname)
+            }
             .observe(on: MainScheduler.instance)
             .subscribe(
                 onNext: { _ in
@@ -69,7 +93,7 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
             .disposed(by: disposeBag)
     }
     
-    /// 온보딩 완료 시 호출
+    /// 온보딩 완료 시 호출 (익명 사용자 처리 추가)
     func completeOnBoarding() {
         guard !isCompleting else { return }
         isCompleting = true
@@ -77,15 +101,28 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
         
         print("🟢 OnBoardingCoordinator: 온보딩 완료 처리 시작")
         
+        let provider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
+        
+        // 🟢 익명 사용자는 로컬에만 저장
+        if provider == "anonymous" {
+            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+            UserDefaults.standard.synchronize()
+            print("🟢 익명 사용자 온보딩 완료 - 로컬 저장")
+            finishFlow?()
+            return
+        }
+        
+        // 기존 소셜 로그인 사용자 Firebase 처리 로직 유지
         authRepository.getCurrentUser()
             .flatMap { [weak self] user -> Observable<Void> in
                 guard let self else { return .empty() }
-                guard let user else {
+                guard let user,
+                      let uid = user.uid else {
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                     self.finishFlow?()
                     return .empty()
                 }
-                return self.authUseCase.completeOnboarding(uid: user.uid)
+                return self.authUseCase.completeOnboarding(uid: uid)
             }
             .observe(on: MainScheduler.instance)
             .subscribe(

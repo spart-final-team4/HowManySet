@@ -77,56 +77,89 @@ public final class AuthUseCase: AuthUseCaseProtocol {
             })
     }
     
-    /// 익명 로그인을 수행합니다
-    ///
-    /// 익명 사용자의 경우 모든 데이터를 로컬(UserDefaults)에만 저장합니다.
-    /// - Returns: 익명 사용자 정보를 방출하는 Observable
+    /// 익명 로그인을 수행합니다 (단순 화면 전환으로 변경)
     public func loginAnonymously() -> Observable<User> {
-        return repository.signInAnonymously()
-            .do(onNext: { user in
-                UserDefaults.standard.set("비회원", forKey: "userNickname")
-                UserDefaults.standard.set("anonymous", forKey: "userProvider")
-                UserDefaults.standard.set(user.uid, forKey: "userUID")
-                UserDefaults.standard.synchronize()
-            })
+        return Observable.create { observer in
+            // Firebase Auth 없이 단순한 User 객체 생성
+            let anonymousUser = User(
+                uid: nil,  // Firebase Auth 없이 nil로 설정
+                name: "비회원",
+                provider: "anonymous",
+                email: nil,
+                hasSetNickname: true,  // 닉네임 입력 스킵을 위해 true로 설정
+                hasCompletedOnboarding: false
+            )
+            
+            // UserDefaults에 익명 사용자 정보 저장
+            UserDefaults.standard.set("비회원", forKey: "userNickname")
+            UserDefaults.standard.set("anonymous", forKey: "userProvider")
+            UserDefaults.standard.set(true, forKey: "hasSetNickname")  // 닉네임 스킵용
+            UserDefaults.standard.synchronize()
+            
+            observer.onNext(anonymousUser)
+            observer.onCompleted()
+            return Disposables.create()
+        }
     }
     
     /// 현재 사용자를 로그아웃시킵니다
-    ///
-    /// UserDefaults의 사용자 정보를 초기화합니다.
-    /// - Returns: 로그아웃 완료를 알리는 Observable
     public func logout() -> Observable<Void> {
         return repository.signOut()
             .do(onNext: { _ in
-                UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
-                UserDefaults.standard.removeObject(forKey: "hasSkippedOnboarding")
-                UserDefaults.standard.removeObject(forKey: "userNickname")
-                UserDefaults.standard.removeObject(forKey: "userProvider")
-                UserDefaults.standard.removeObject(forKey: "userUID")
-                UserDefaults.standard.removeObject(forKey: "hasSetNickname")
-                UserDefaults.standard.synchronize()
+                // 🟢 uid 체크로 분기하여 UserDefaults 삭제
+                let uid = UserDefaults.standard.string(forKey: "userUID")
+                
+                if uid == nil {
+                    // 비회원 사용자 - Bundle identifier로 완전 삭제
+                    if let bundleIdentifier = Bundle.main.bundleIdentifier {
+                        UserDefaults.standard.removePersistentDomain(forName: bundleIdentifier)
+                        UserDefaults.standard.synchronize()
+                        print("🟢 비회원 사용자 - Bundle 전체 UserDefaults 삭제 완료")
+                    }
+                } else {
+                    // 기존 일반 사용자 로직 유지
+                    UserDefaults.standard.removeObject(forKey: "hasCompletedOnboarding")
+                    UserDefaults.standard.removeObject(forKey: "hasSkippedOnboarding")
+                    UserDefaults.standard.removeObject(forKey: "userNickname")
+                    UserDefaults.standard.removeObject(forKey: "userProvider")
+                    UserDefaults.standard.removeObject(forKey: "userUID")
+                    UserDefaults.standard.removeObject(forKey: "hasSetNickname")
+                    UserDefaults.standard.synchronize()
+                    print("🟢 일반 사용자 - 개별 키 UserDefaults 삭제 완료")
+                }
             })
     }
     
     /// 현재 사용자의 계정을 완전히 삭제합니다
-    ///
-    /// UserDefaults의 사용자 정보를 초기화합니다.
-    /// - Returns: 계정 삭제 완료를 알리는 Observable
     public func deleteAccount() -> Observable<Void> {
         return repository.deleteAccount()
             .do(onNext: { _ in
-                let keysToRemove = [
-                    "hasCompletedOnboarding",
-                    "hasSkippedOnboarding",
-                    "userNickname",
-                    "userProvider",
-                    "userUID",
-                    "hasSetNickname"
-                ]
-                for key in keysToRemove {
-                    UserDefaults.standard.removeObject(forKey: key)
+                // 🟢 uid 체크로 분기하여 UserDefaults 삭제
+                let uid = UserDefaults.standard.string(forKey: "userUID")
+                
+                if uid == nil {
+                    // 비회원 사용자 - Bundle identifier로 완전 삭제
+                    if let bundleIdentifier = Bundle.main.bundleIdentifier {
+                        UserDefaults.standard.removePersistentDomain(forName: bundleIdentifier)
+                        UserDefaults.standard.synchronize()
+                        print("🟢 비회원 사용자 계정 삭제 - Bundle 전체 UserDefaults 삭제 완료")
+                    }
+                } else {
+                    // 기존 일반 사용자 로직 유지
+                    let keysToRemove = [
+                        "hasCompletedOnboarding",
+                        "hasSkippedOnboarding",
+                        "userNickname",
+                        "userProvider",
+                        "userUID",
+                        "hasSetNickname"
+                    ]
+                    for key in keysToRemove {
+                        UserDefaults.standard.removeObject(forKey: key)
+                    }
+                    UserDefaults.standard.synchronize()
+                    print("🟢 일반 사용자 계정 삭제 - 개별 키 UserDefaults 삭제 완료")
                 }
-                UserDefaults.standard.synchronize()
             })
     }
     
@@ -135,12 +168,16 @@ public final class AuthUseCase: AuthUseCaseProtocol {
     /// 익명 사용자는 로컬 상태를, 일반 사용자는 Firestore 상태를 확인합니다.
     /// - Parameter uid: 사용자 고유 식별자
     /// - Returns: 사용자 온보딩 상태를 방출하는 Observable
+    /// 사용자의 온보딩 상태를 조회
     public func getUserStatus(uid: String) -> Observable<UserStatus> {
         let userProvider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
         if userProvider == "anonymous" {
-            let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
             let hasSetNickname = UserDefaults.standard.bool(forKey: "hasSetNickname")
-            if !hasSetNickname || !hasCompletedOnboarding {
+            let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+            
+            if !hasSetNickname {
+                return Observable.just(.needsNickname)
+            } else if !hasCompletedOnboarding {
                 return Observable.just(.needsOnboarding)
             } else {
                 return Observable.just(.complete)
@@ -148,10 +185,14 @@ public final class AuthUseCase: AuthUseCaseProtocol {
         } else {
             return repository.fetchUserInfo(uid: uid)
                 .map { user in
-                    guard let user = user else { return .needsOnboarding }
-                    if !user.hasSetNickname || !user.hasCompletedOnboarding {
+                    guard let user = user else { return .needsNickname }
+                    
+                    if !user.hasSetNickname {
+                        return .needsNickname
+                    } else if !user.hasCompletedOnboarding {
                         return .needsOnboarding
                     } else {
+                        // 서버 데이터를 로컬에 동기화
                         UserDefaults.standard.set(user.name, forKey: "userNickname")
                         UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                         UserDefaults.standard.set(true, forKey: "hasSetNickname")

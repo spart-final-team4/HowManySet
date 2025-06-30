@@ -9,11 +9,14 @@ import Foundation
 
 /// 사용자 온보딩 상태를 나타내는 열거형
 public enum UserStatus {
-    /// 온보딩이 필요한 상태 (닉네임 입력 + 온보딩 진행 필요)
+    /// 닉네임 설정이 필요한 상태
+    case needsNickname
+    /// 온보딩 진행이 필요한 상태 (닉네임은 설정 완료)
     case needsOnboarding
     /// 모든 설정이 완료된 상태
     case complete
 }
+
 
 /// 앱 전체에서 사용되는 통합된 사용자 도메인 모델
 ///
@@ -21,7 +24,7 @@ public enum UserStatus {
 /// 다양한 로그인 제공자(카카오, 구글, Apple, 익명)를 지원합니다.
 public struct User {
     /// Firebase Auth에서 제공하는 고유 사용자 식별자
-    public let uid: String
+    public let uid: String?
     
     /// 사용자 닉네임
     public let name: String
@@ -51,7 +54,7 @@ public struct User {
     ///   - hasSetNickname: 닉네임 설정 완료 여부 (기본값: false)
     ///   - hasCompletedOnboarding: 온보딩 완료 여부 (기본값: false)
     public init(
-        uid: String,
+        uid: String? = nil,
         name: String,
         provider: String,
         email: String? = nil,
