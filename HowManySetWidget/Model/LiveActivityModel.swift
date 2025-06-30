@@ -21,7 +21,5 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var totalSet: Int
     var currentIndex: Int
     var accumulatedWorkoutTime: Int
-    var workoutStartDate: Date?
-    var restStartDate: Date?
 }
 
