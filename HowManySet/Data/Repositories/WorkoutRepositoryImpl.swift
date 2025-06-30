@@ -40,7 +40,7 @@ private extension WorkoutRepositoryImpl {
                 let dto = WorkoutDTO(entity: workout)
                 let fsWorkout = dto.toFSModel()
                 try await firestoreService.update(
-                    id: workout.id,
+                    id: workout.documentID ?? "",
                     item: fsWorkout,
                     type: FirestoreDataType<FSWorkout>.workout
                 )
