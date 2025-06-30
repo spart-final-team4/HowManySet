@@ -33,4 +33,17 @@ extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
+
+    /// tap했을 때 애니메이션 적용하는 메서드
+    func animateTap(completion: (() -> Void)? = nil) {
+        UIView.animate(withDuration: 0.1, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }) { _ in
+            UIView.animate(withDuration: 0.1, animations: {
+                self.transform = .identity
+            }, completion: { _ in
+                completion?()
+            })
+        }
+    }
 }
