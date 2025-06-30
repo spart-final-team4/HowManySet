@@ -80,6 +80,7 @@ final class EditExerciseViewController: UIViewController, View {
         
         // Alert 표시 (저장 성공/실패, 유효성 실패 등)
         reactor.alertRelay
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { (owner: EditExerciseViewController, alert) in
                 switch alert {
