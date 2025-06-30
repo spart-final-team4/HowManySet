@@ -17,16 +17,16 @@ import ReactorKit
  - 의존성: 닉네임 설정 및 온보딩 완료 처리를 위한 AuthUseCaseProtocol 주입.
  */
 final class OnBoardingViewReactor: Reactor {
-    // MARK: - Action
+    
     /// 사용자 상호작용을 정의한 액션 타입
     enum Action {
         case inputNickname(String)      // 닉네임 입력 액션
         case moveToNextPage             // 다음 페이지 이동 액션
         case skipOnboarding             // 온보딩 건너뛰기 액션
         case completeNicknameSetting    // 닉네임 설정 완료 액션
+        case setNicknameCompleted       // 닉네임 완료 상태 직접 설정
     }
     
-    // MARK: - Mutation
     /// 상태 변경을 위한 변이 타입
     enum Mutation {
         case setNickname(String)        // 닉네임 상태 업데이트
@@ -35,9 +35,9 @@ final class OnBoardingViewReactor: Reactor {
         case setNicknameComplete        // 닉네임 설정 완료 상태 업데이트
         case setError(Error?)           // 에러 상태 업데이트
         case setNicknameValid(Bool)     // 닉네임 유효성 결과 업데이트
+        case forceSetNicknameComplete   // 강제로 닉네임 완료 설정
     }
     
-    // MARK: - State
     /// 현재 뷰의 상태를 나타내는 타입
     struct State {
         var nickname: String?           // 현재 입력된 닉네임
@@ -48,12 +48,10 @@ final class OnBoardingViewReactor: Reactor {
         var isNicknameValid: Bool = false // 닉네임 유효성 결과
     }
     
-    // MARK: - Properties
     let initialState: State
     private let authUseCase: AuthUseCaseProtocol
     private weak var coordinator: OnBoardingCoordinatorProtocol?
     
-    // MARK: - Initialization
     /**
      Reactor 초기화
      
@@ -72,7 +70,6 @@ final class OnBoardingViewReactor: Reactor {
         self.initialState = initialState
     }
     
-    // MARK: - Mutation Handler
     /**
      액션을 변이로 변환하는 메서드
      
@@ -117,10 +114,12 @@ final class OnBoardingViewReactor: Reactor {
             return authUseCase.completeNicknameSetting(nickname: nickname)
                 .map { _ in .setNicknameComplete }
                 .catch { error in Observable.just(.setError(error)) }
+        
+        case .setNicknameCompleted:
+            return Observable.just(.forceSetNicknameComplete)
         }
     }
     
-    // MARK: - State Reducer
     /**
      변이를 현재 상태에 적용하는 메서드
      
@@ -138,19 +137,22 @@ final class OnBoardingViewReactor: Reactor {
             newState.currentPageIndex = index
         case .setOnboardingComplete:
             newState.isOnboardingComplete = true
-            // 즉시 coordinator 호출하여 화면 전환 시작
-            coordinator?.completeOnBoarding()
+            // 수정: coordinator 호출을 즉시 하지 않고 상태만 변경
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.coordinator?.completeOnBoarding()
+            }
         case .setNicknameComplete:
             newState.isNicknameComplete = true
         case .setError(let error):
             newState.error = error
         case .setNicknameValid(let isValid):
             newState.isNicknameValid = isValid
+        case .forceSetNicknameComplete:
+            newState.isNicknameComplete = true
         }
         return newState
     }
     
-    // MARK: - Onboarding Data
     /**
      온보딩 페이지 데이터 구조체
      */
