@@ -27,7 +27,7 @@ final class HomeRoutineStartCardView: UIView {
     }
     
     lazy var todayDateLabel = UILabel().then {
-        $0.font = UIFont.pretendard(size: 20, weight: .bold)
+        $0.font = UIFont.pretendard(size: 20, weight: .semibold)
     }
 
     private lazy var containerView = UIView().then {
