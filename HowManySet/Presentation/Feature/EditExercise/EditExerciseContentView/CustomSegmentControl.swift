@@ -25,13 +25,13 @@ final class CustomSegmentControl: UISegmentedControl {
         // 선택된 세그먼트의 텍스트 스타일
         setTitleTextAttributes([
             .foregroundColor: UIColor.cardBackground,
-            .font: UIFont.systemFont(ofSize: 16)
+            .font: UIFont.pretendard(size: 16, weight: .semibold)
         ], for: .selected)
 
         // 기본(선택되지 않은) 세그먼트의 텍스트 스타일
         setTitleTextAttributes([
             .foregroundColor: UIColor.systemGray,
-            .font: UIFont.systemFont(ofSize: 16)
+            .font: UIFont.pretendard(size: 16, weight: .regular)
         ], for: .normal)
     }
 

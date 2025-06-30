@@ -50,7 +50,7 @@ final class HomePagingCardView: UIView {
     }
     
     private lazy var exerciseNameLabel = UILabel().then {
-        $0.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        $0.font = UIFont.pretendard(size: 20, weight: .bold)
     }
     
     lazy var editButton = UIButton().then {
@@ -88,7 +88,7 @@ final class HomePagingCardView: UIView {
     }
     
     private lazy var weightLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+        $0.font = UIFont.pretendard(size: 20, weight: .semibold)
         $0.textColor = .white
     }
     
@@ -105,7 +105,7 @@ final class HomePagingCardView: UIView {
     }
     
     private lazy var repsLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .semibold)
+        $0.font = UIFont.pretendard(size: 20, weight: .semibold)
         $0.textColor = .white
     }
     
@@ -119,7 +119,7 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .brand
         $0.setTitle(setCompleteText, for: .normal)
         $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        $0.titleLabel?.font = UIFont.pretendard(size: 20, weight: .semibold)
         $0.titleLabel?.textColor = .black
         $0.layer.cornerRadius = 12
     }

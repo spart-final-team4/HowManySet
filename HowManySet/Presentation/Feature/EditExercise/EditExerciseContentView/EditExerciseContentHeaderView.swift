@@ -24,7 +24,7 @@ final class EditExerciseContentHeaderView: UIView {
     private let titleLabel = UILabel().then {
         $0.text = "운동정보 입력"
         $0.textColor = .white
-        $0.font = .boldSystemFont(ofSize: 20)
+        $0.font = .pretendard(size: 20, weight: .bold)
     }
     
     /// 무게 단위를 선택할 수 있는 커스텀 세그먼트 컨트롤입니다.

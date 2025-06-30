@@ -24,25 +24,25 @@ final class EditRoutineTableViewCell: UITableViewCell {
     
     /// 운동 이름을 표시하는 라벨
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 20, weight: .regular)
+        $0.font = .pretendard(size: 20, weight: .regular)
         $0.textColor = .white
     }
     
     /// 세트 수 텍스트 라벨
     private let setTextLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.font = .pretendard(size: 14, weight: .regular)
         $0.textColor = .systemGray2
     }
     
     /// 무게 텍스트 라벨
     private let weightTextLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.font = .pretendard(size: 14, weight: .regular)
         $0.textColor = .systemGray2
     }
     
     /// 반복 횟수 텍스트 라벨
     private let repsTextLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.font = .pretendard(size: 14, weight: .regular)
         $0.textColor = .systemGray2
     }
     

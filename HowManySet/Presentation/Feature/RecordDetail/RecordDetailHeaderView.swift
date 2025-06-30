@@ -50,19 +50,19 @@ private extension RecordDetailHeaderView {
     func setAppearance() {
         routineNameLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 18, weight: .semibold)
+            $0.font = .pretendard(size: 18, weight: .semibold)
             $0.textAlignment = .center
         }
 
         saveButton.do {
             $0.setTitle("저장", for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+            $0.titleLabel?.font = .pretendard(size: 16, weight: .medium)
             $0.setTitleColor(.textTertiary, for: .normal)
         }
 
         confirmButton.do {
             $0.setTitle("확인", for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+            $0.titleLabel?.font = .pretendard(size: 16, weight: .medium)
             $0.setTitleColor(.green6, for: .normal)
         }
     }

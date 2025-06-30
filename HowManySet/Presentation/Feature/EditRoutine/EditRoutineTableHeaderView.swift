@@ -20,7 +20,7 @@ final class EditRoutineTableHeaderView: UITableViewHeaderFooterView {
     
     /// 섹션 제목을 표시하는 라벨
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 36, weight: .regular)
+        $0.font = .pretendard(size: 36, weight: .regular)
         $0.textColor = .white
     }
     

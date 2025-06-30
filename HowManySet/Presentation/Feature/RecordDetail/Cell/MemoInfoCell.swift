@@ -42,7 +42,7 @@ private extension MemoInfoCell {
         memoTitleLabel.do {
             $0.text = "메모"
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 20, weight: .semibold)
+            $0.font = .pretendard(size: 20, weight: .semibold)
             $0.textAlignment = .left
         }
 
@@ -50,7 +50,7 @@ private extension MemoInfoCell {
             $0.backgroundColor = .bsInputFieldBG
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
-            $0.font = .systemFont(ofSize: 16, weight: .regular)
+            $0.font = .pretendard(size: 16, weight: .regular)
             $0.textContainerInset = UIEdgeInsets(top: 16, left: 12, bottom: 16, right: 12)
 
             // 키보드 관련
