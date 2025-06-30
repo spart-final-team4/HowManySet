@@ -74,10 +74,12 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
     func completeNicknameSetting(nickname: String) {
         authRepository.getCurrentUser()
             .flatMap { [weak self] user -> Observable<Void> in
-                guard let self, let user else {
+                guard let self,
+                      let user,
+                      let uid = user.uid else {  // uid를 안전하게 언래핑
                     return Observable.error(NSError(domain: "NoCurrentUser", code: -1))
                 }
-                return self.authUseCase.completeNicknameSetting(uid: user.uid, nickname: nickname)
+                return self.authUseCase.completeNicknameSetting(uid: uid, nickname: nickname)
             }
             .observe(on: MainScheduler.instance)
             .subscribe(
@@ -102,12 +104,13 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
         authRepository.getCurrentUser()
             .flatMap { [weak self] user -> Observable<Void> in
                 guard let self else { return .empty() }
-                guard let user else {
+                guard let user,
+                      let uid = user.uid else {  // uid를 안전하게 언래핑
                     UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                     self.finishFlow?()
                     return .empty()
                 }
-                return self.authUseCase.completeOnboarding(uid: user.uid)
+                return self.authUseCase.completeOnboarding(uid: uid)
             }
             .observe(on: MainScheduler.instance)
             .subscribe(
