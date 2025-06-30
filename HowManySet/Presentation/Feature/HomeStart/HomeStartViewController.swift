@@ -22,7 +22,7 @@ final class HomeStartViewController: UIViewController {
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
         $0.text = homeText
-        $0.font = .systemFont(ofSize: 36, weight: .medium)
+        $0.font = .pretendard(size: 36, weight: .medium)
     }
     
     private lazy var routineStartCardView = HomeRoutineStartCardView().then {

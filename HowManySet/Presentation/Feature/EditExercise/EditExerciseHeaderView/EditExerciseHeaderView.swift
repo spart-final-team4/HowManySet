@@ -29,7 +29,7 @@ final class EditExerciseHeaderView: UIView {
     /// 운동명 입력 안내 문구를 보여주는 라벨입니다.
     private let titleLabel = UILabel().then {
         $0.text = "운동명을 입력해주세요"
-        $0.font = .boldSystemFont(ofSize: 20)
+        $0.font = .pretendard(size: 20, weight: .bold)
         $0.textColor = .textSecondary
     }
     
@@ -41,6 +41,7 @@ final class EditExerciseHeaderView: UIView {
         $0.backgroundColor = .bottomSheetBG
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
+        $0.font = .pretendard(size: 16, weight: .regular)
         
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView

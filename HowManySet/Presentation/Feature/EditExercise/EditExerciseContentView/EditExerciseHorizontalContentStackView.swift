@@ -37,7 +37,7 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
     private let orderLabel = UILabel().then {
         $0.textColor = .white
         $0.backgroundColor = .disabledButton
-        $0.font = .systemFont(ofSize: 16)
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.textAlignment = .center
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
@@ -50,6 +50,7 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
         $0.textColor = .white
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.keyboardType = .decimalPad
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView
@@ -62,6 +63,7 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
         $0.backgroundColor = .bottomSheetBG
         $0.clipsToBounds = true
         $0.textColor = .white
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.layer.cornerRadius = 12
         $0.keyboardType = .numberPad
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))

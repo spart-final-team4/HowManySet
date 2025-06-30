@@ -48,14 +48,14 @@ final class OnboardingView: UIView {
  
     /// 온보딩 안내 타이틀 라벨. 중앙 상단에 위치.
     let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.font = .pretendard(size: 16, weight: .regular)
         $0.textColor = .white
         $0.textAlignment = .center
     }
     
     /// 온보딩 안내 서브타이틀 라벨. 타이틀 하단에 위치.
     let subTitleLabel = UILabel().then {
-        $0.font = .boldSystemFont(ofSize: 20)
+        $0.font = .pretendard(size: 20, weight: .bold)
         $0.textColor = .white
         $0.textAlignment = .center
     }
@@ -80,7 +80,7 @@ final class OnboardingView: UIView {
     /// 하단 "다음"/"시작하기" 버튼. 온보딩 단계 이동 또는 완료 시 사용.
     let nextButton = UIButton(type: .system).then {
         $0.setTitle("다음", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        $0.titleLabel?.font = .pretendard(size: 20, weight: .bold)
         $0.backgroundColor = UIColor(named: "brand")
         $0.setTitleColor(.black, for: .normal)
         $0.layer.cornerRadius = 12

@@ -69,17 +69,17 @@ private extension RecordCell {
 
         routineLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 20, weight: .semibold)
+            $0.font = .pretendard(size: 20, weight: .semibold)
         }
 
         setsLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .regular)
+            $0.font = .pretendard(size: 14, weight: .regular)
         }
 
         timeLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .regular)
+            $0.font = .pretendard(size: 14, weight: .regular)
         }
     }
 

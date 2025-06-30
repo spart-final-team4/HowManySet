@@ -60,17 +60,17 @@ private extension RoutineCell {
 
         nameLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 20, weight: .semibold)
+            $0.font = .pretendard(size: 20, weight: .semibold)
         }
 
         totalWorkoutsLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .regular)
+            $0.font = .pretendard(size: 14, weight: .regular)
         }
 
         totalSetsLabel.do {
             $0.textColor = .white
-            $0.font = .systemFont(ofSize: 14, weight: .regular)
+            $0.font = .pretendard(size: 14, weight: .regular)
         }
     }
 

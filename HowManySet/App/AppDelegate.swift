@@ -42,6 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
             
             NotificationService.shared.requestNotification()
+            
+            // 폰트 이름 체크
+            UIFont.checkFonts()
         
         return true
     }
