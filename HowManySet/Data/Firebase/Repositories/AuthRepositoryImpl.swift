@@ -284,22 +284,24 @@ public final class AuthRepositoryImpl: AuthRepositoryProtocol {
         }
     }
 
-    /// 익명 로그인을 수행합니다
-    /// - Returns: 익명 사용자 정보를 방출하는 Observable
+    /// 익명 로그인을 수행합니다 (Firebase Auth 제거)
     public func signInAnonymously() -> Observable<User> {
         return Observable.create { observer in
-            print("익명 로그인 시작")
-            self.firebaseAuthService.signInAnonymously { result in
-                switch result {
-                case .success(let user):
-                    print("익명 로그인 성공: \(user.uid)")
-                    observer.onNext(user)
-                    observer.onCompleted()
-                case .failure(let error):
-                    print("익명 로그인 실패: \(error)")
-                    observer.onError(error)
-                }
-            }
+            print("익명 로그인 시작 - Firebase Auth 없이 진행")
+            
+            // Firebase Auth 없이 단순한 User 객체 생성
+            let anonymousUser = User(
+                uid: nil,
+                name: "비회원",
+                provider: "anonymous",
+                email: nil,
+                hasSetNickname: true,  // 닉네임 입력 스킵
+                hasCompletedOnboarding: false
+            )
+            
+            print("익명 로그인 성공 - 단순 객체 생성")
+            observer.onNext(anonymousUser)
+            observer.onCompleted()
             return Disposables.create()
         }
     }
