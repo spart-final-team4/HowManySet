@@ -519,15 +519,9 @@ final class HomeViewReactor: Reactor {
         case .saveWorkoutData:
             let currentIndex = newState.currentExerciseIndex
             let routineDidProgress = Float(newState.didSetCount) / Float(newState.totalSetCountInRoutine)
-            // 추후에 쓰일수도 있음.
-            let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
-                cardStates: newState.workoutCardStates)
-            let currentExercise = newState.workoutCardStates[currentIndex]
             let recordID = UUID().uuidString
             newState.recordID = recordID
- 
-//            print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
-       
+        
             // 운동 완료 화면에 보여질 데이터들
             newState.workoutSummary = WorkoutSummary(
                 routineName: newState.workoutRoutine.name,
@@ -539,6 +533,7 @@ final class HomeViewReactor: Reactor {
                 routineMemo: newState.memoInRoutine
             )
             
+            /// 사용자가 수행한 운동 배열
             var didWorkout: [Workout] = []
             for (i, workout) in newState.workoutRoutine.workouts.enumerated() {
                 didWorkout.append(Workout(
@@ -557,7 +552,7 @@ final class HomeViewReactor: Reactor {
                 rmID: newState.workoutRoutine.rmID,
                 documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
-                workouts: didWorkout
+                workouts: didWorkout // 완료한 운동들
             )
             
             // 저장되는 WorkoutRecord
