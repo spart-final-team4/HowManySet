@@ -54,13 +54,24 @@ extension RoutineNameViewController {
 
         // 버튼 탭 이벤트
         routineNameView.publicNextButton.rx.tap
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .withLatestFrom(routineNameView.publicRoutineNameTF.rx.text.orEmpty)
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) } // 혹시나 만약을 대비하여 여기도 추가
             .bind(with: self) { owner, text in
-                reactor.action.onNext(.setRoutineName(text))
-                owner.dismiss(animated: true) {
-                    owner.coordinator?.pushEditExcerciseView(routineName: text)
-                }
+                guard !text.isEmpty else { return }
+
+                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
+                    owner.routineNameView.publicNextButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                }, completion: { _ in
+                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
+                        owner.routineNameView.publicNextButton.transform = .identity
+                    }, completion: { _ in
+                        reactor.action.onNext(.setRoutineName(text))
+                        owner.dismiss(animated: true) {
+                            owner.coordinator?.pushEditExcerciseView(routineName: text)
+                        }
+                    })
+                })
             }
             .disposed(by: disposeBag)
         
