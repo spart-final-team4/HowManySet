@@ -46,6 +46,12 @@ final class EditExerciseHeaderView: UIView {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
+
+        // 키보드 관련
+        $0.autocorrectionType = .no // 자동 수정 끔
+        $0.spellCheckingType = .no // 맞춤법 검사 끔
+        $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
+        $0.autocapitalizationType = .none // 영문으로 시작할 때 자동 대문자 끔
     }
     
     // MARK: - Initializers

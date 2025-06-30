@@ -61,11 +61,14 @@ final class RoutineListViewController: UIViewController, View {
     func bind(reactor: RoutineListViewReactor) {
         // "새 루틴 추가" 버튼이 눌렸을 때 화면이 전환되고 reactor에 바인딩
         routineListView.publicAddNewRoutineButton.rx.tap
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
-                owner.coordinator?.presentRoutineNameView()
+                owner.routineListView.publicAddNewRoutineButton.animateTap {
+                    owner.coordinator?.presentRoutineNameView()
+                }
             }
             .disposed(by: disposeBag)
-        
+
         reactor.state
             .map { state in
                 state.routines.map { SectionModel(model: "", items: [$0]) }  // 루틴마다 하나의 섹션
@@ -101,14 +104,18 @@ extension RoutineListViewController: UITableViewDelegate {
 
     /// TableView Cell이 선택되었을 때 실행하는 메서드
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
-        let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
+        // 셀 터치 애니메이션
+        cell.animateTap { [weak self] in
+            guard let self else { return }
+            let routine = dataSource.sectionModels[indexPath.section].items[indexPath.row]
 
-        if caller == .fromHome {
-            coordinator?.presentEditRoutinView(with: routine)
-        } else {
-            coordinator?.pushEditRoutineView(with: routine)
+            if caller == .fromHome {
+                coordinator?.presentEditRoutinView(with: routine)
+            } else {
+                coordinator?.pushEditRoutineView(with: routine)
+            }
         }
     }
 

@@ -148,7 +148,12 @@ private extension EditExerciseHorizontalContentStackView {
 
         // 삭제 버튼 탭 이벤트 바인딩
         removeButton.rx.tap
-            .bind(to: removeButtonTap)
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                self.removeButton.animateTap {
+                    self.removeButtonTap.accept(())
+                }
+            })
             .disposed(by: disposeBag)
     }
     

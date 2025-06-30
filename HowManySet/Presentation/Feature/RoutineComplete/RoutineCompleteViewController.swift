@@ -143,6 +143,7 @@ final class RoutineCompleteViewController: UIViewController, View {
         $0.autocorrectionType = .no // 자동 수정 끔
         $0.spellCheckingType = .no // 맞춤법 검사 끔
         $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
+        $0.autocapitalizationType = .none // 영문으로 시작할 때 자동 대문자 끔
     }
     
     private lazy var confirmButton = UIButton().then {

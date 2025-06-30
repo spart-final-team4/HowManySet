@@ -138,8 +138,11 @@ final class EditRoutineViewController: UIViewController, View {
             }.disposed(by: editRoutineBottomSheetViewController.disposeBag)
         
         editRoutineBottomSheetViewController.removeExcerciseButtonSubject
-            .map{ Reactor.Action.removeSelectedWorkout }
-            .bind(to: reactor!.action)
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { owner, _ in
+                owner.dismiss(animated: true) // 바텀시트 닫기
+                owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
+            }
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
         
         // TODO: 순서변경 마이너패치때
