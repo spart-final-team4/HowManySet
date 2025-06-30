@@ -845,12 +845,11 @@ extension HomeViewController {
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
-                    currentIndex: data.currentIndex
+                    currentIndex: data.currentIndex,
+                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+                    accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
-                // 백그라운드에서 LiveActivity 업데이트 수행
-                DispatchQueue.global(qos: .userInteractive).async {
-                    LiveActivityService.shared.update(state: contentState)
-                }
+                LiveActivityService.shared.update(state: contentState)
             }
             .disposed(by: disposeBag)
         
@@ -872,11 +871,11 @@ extension HomeViewController {
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
-                    currentIndex: data.currentIndex
+                    currentIndex: data.currentIndex,
+                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+                    accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
-                DispatchQueue.global(qos: .userInteractive).async {
-                    LiveActivityService.shared.update(state: contentState)
-                }
+                LiveActivityService.shared.update(state: contentState)
             }
             .disposed(by: disposeBag)
         
@@ -897,11 +896,11 @@ extension HomeViewController {
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
-                    currentIndex: data.currentIndex
+                    currentIndex: data.currentIndex,
+                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+                    accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
-                DispatchQueue.global(qos: .userInteractive).async {
-                    LiveActivityService.shared.update(state: contentState)
-                }
+                LiveActivityService.shared.update(state: contentState)
             }
             .disposed(by: disposeBag)
         
@@ -937,11 +936,9 @@ extension HomeViewController {
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
             .bind { notification in
-                if !reactor.currentState.isResting {
-                    LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                        print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
-                        reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                    }
+                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
                 }
             }
             .disposed(by: disposeBag)

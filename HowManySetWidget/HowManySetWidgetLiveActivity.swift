@@ -34,6 +34,12 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         
         // 현재 코드 인덱스
         var currentIndex: Int
+        
+        // 백그라운드 용
+        var accumulatedWorkoutTime: Int
+        var accumulatedRestRemaining: Int
+        var workoutStartDate: Date?
+        var restStartDate: Date?
     }
     
     // Fixed non-changing properties about your activity go here!
@@ -51,6 +57,14 @@ struct HowManySetWidgetLiveActivity: Widget {
     
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
+            
+            let elapsedWorkoutTime = Date().timeIntervalSince(context.state.workoutStartDate ?? Date())
+            let updatedWorkoutTime = Int(elapsedWorkoutTime) + (context.state.workoutTime)
+            let elapsedRestRemaining = context.state.restStartDate != nil
+                ? Date().timeIntervalSince(context.state.restStartDate!)
+                : 0
+            let updatedRestRemaining = max(context.state.restSecondsRemaining - Int(elapsedRestRemaining), 0)
+
             // Lock screen/banner UI goes here
             
             let workoutTime = context.state.workoutTime
@@ -63,7 +77,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(workoutTime.toWorkOutTimeLabel())
+                                Text(updatedWorkoutTime.toWorkOutTimeLabel())
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
                                     .fontWeight(.semibold)
@@ -130,7 +144,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     Text(restText)
                                         .font(.custom(pretendard, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
-                                    Text(restRemaining.toRestTimeLabel())
+                                    Text(updatedRestRemaining.toRestTimeLabel())
                                         .font(.system(size: restSecondsRemainigLabelSize))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.white)
@@ -375,6 +389,10 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
         self.currentIndex = data.currentIndex
+        self.accumulatedWorkoutTime = data.accumulatedWorkoutTime
+        self.accumulatedRestRemaining = data.accumulatedRestRemaining
+        self.workoutStartDate = data.workoutStartDate
+        self.restStartDate = data.restStartDate
     }
 }
 
@@ -398,6 +416,8 @@ extension HowManySetWidgetAttributes.ContentState {
             currentSet: 2,
             totalSet: 5,
             currentIndex: 0,
+            accumulatedWorkoutTime: 0,
+            accumulatedRestRemaining: 0
         )
     }
     
@@ -414,6 +434,8 @@ extension HowManySetWidgetAttributes.ContentState {
             currentSet: 2,
             totalSet: 5,
             currentIndex: 0,
+            accumulatedWorkoutTime: 0,
+            accumulatedRestRemaining: 0
         )
     }
 }

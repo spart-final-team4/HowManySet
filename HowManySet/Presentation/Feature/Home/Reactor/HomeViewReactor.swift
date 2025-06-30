@@ -866,7 +866,8 @@ extension HomeViewReactor.State {
                 currentSet: 0,
                 totalSet: 0,
                 currentIndex: 0,
-                accumulatedWorkoutTime: 0
+                accumulatedWorkoutTime: 0,
+                accumulatedRestRemaining: 0
             )
         }
         
@@ -894,7 +895,8 @@ extension HomeViewReactor.State {
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
             currentIndex: currentExerciseIndex,
-            accumulatedWorkoutTime: Int(accumulatedWorkoutTime)
+            accumulatedWorkoutTime: Int(accumulatedWorkoutTime),
+            accumulatedRestRemaining: Int(accumulatedRestRemainingTime)
         )
     }
 }
