@@ -74,3 +74,23 @@ extension WorkoutRoutineDTO {
     }
 }
 
+
+extension WorkoutRoutineDTO {
+    static func toRoutineText(_ routine: Self) -> String {
+        var output: String = "\(routine.rmID)&\(routine.documentID)&\(routine.name)&"
+
+        routine.workouts.forEach { workout in
+            let name = workout.name
+            let rmID = workout.rmID
+            let comment = workout.comment
+            output += "\(rmID)%\(name)%\(comment ?? "메모 없음")%"
+            
+            workout.sets.forEach { exercise in
+                output += "\(exercise.weight)%\(exercise.reps)%\(exercise.unit)%"
+            }
+            output += "$"
+        }
+        
+        return output
+    }
+}

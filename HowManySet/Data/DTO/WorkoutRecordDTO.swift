@@ -52,7 +52,7 @@ extension WorkoutRecordDTO {
     init(from model: RMWorkoutRecord) {
         self.rmID = model.id
         self.documentID = UUID().uuidString
-        self.workoutRoutine = model.workoutRoutine?.toDTO()
+        self.workoutRoutine = RMWorkoutRecord.fromRoutineText(model.routineRecordText)
         self.totalTime = model.totalTime
         self.workoutTime = model.workoutTime
         self.comment = model.comment
