@@ -170,23 +170,17 @@ final class EditRoutineViewController: UIViewController, View {
     
     func presentEditExcerciseVC() {
         guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
-        let firestoreService = FirestoreService()
-        let repository = WorkoutRepositoryImpl(firestoreService: firestoreService)
-        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
-        let vc = EditExerciseViewController(reactor: EditExerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
-        
-        vc.saveResultRelay
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, result in
-                if result {
-                    owner.showToast(x: 0, y: 0, message: "저장되었어요!")
-                    owner.reactor?.action.onNext(.viewDidLoad)
-                }
-            }.disposed(by: vc.disposeBag)
-        
-        present(vc, animated: true)
+
+        // VC는 사용자의 Action에 따라 상태를 업데이트하는 데에 집중
+        coordinator.presentEditExerciseView(workout: workout) { [weak self] result in
+            guard let self else { return }
+            if result {
+                self.showToast(x: 0, y: 0, message: "저장되었어요!")
+                self.reactor?.action.onNext(.viewDidLoad)
+            }
+        }
     }
-    
+
 }
 
 // MARK: - UI 구성 관련 private 메서드
