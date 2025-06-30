@@ -734,10 +734,10 @@ private extension HomeViewReactor {
             
             return .concat([
                 .just(.setResting(isResting)),
+                // 카드 정보 업데이트
                 .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer,
-                // 카드 정보 업데이트
                 .just(.manageWorkoutCount(
                     isRoutineCompleted: false,
                     isCurrentExerciseCompleted: false
@@ -798,11 +798,13 @@ private extension HomeViewReactor {
                     .observe(on: MainScheduler.instance)
                 } else { // 다음 운동 없을 때, 운동 끝나기 전 세트
                     print("다음 운동 없음")
+                    currentCardState.setProgressAmount += 1
+                    let updatedCardState = currentCardState
                     return .concat([
                         .just(.setResting(isResting)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
-                        .just(.setRestTimeDataAtProgressBar(restTime)),
-                        restTimer
+                        // 카드 정보 업데이트
+                        .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
+                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
                     ])
                     .observe(on: MainScheduler.instance)
                 }
