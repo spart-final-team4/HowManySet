@@ -83,7 +83,7 @@ final class HomeViewReactor: Reactor {
         case setEditAndMemoViewPresented(Bool)
         case updateExerciseMemo(with: String?)
         /// 휴식 타이머 중단
-        case stopRestTimer(Bool)
+        case stopRestTimer
         case setEditExerciseViewPresented(Bool)
         /// 운동 편집 시 Edit용 데이터로 변형
         case convertToEditData(at: Int)
@@ -211,7 +211,6 @@ final class HomeViewReactor: Reactor {
             } else {
                 return .concat([
                     .just(.pauseRest(false)),
-                    .just(.stopRestTimer(false)),
                     .just(.setUpdatingIndex(cardIndex)),
                     handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
                 ])
@@ -225,7 +224,7 @@ final class HomeViewReactor: Reactor {
                 // 휴식 중일 때 휴식만 종료
                 return .concat([
                     .just(.pauseRest(false)),
-                    .just(.stopRestTimer(true))
+                    .just(.stopRestTimer)
                 ])
             } else {
                 // 그 외엔 휴식 없이 바로 진행
@@ -294,7 +293,7 @@ final class HomeViewReactor: Reactor {
             
         case .stopButtonClicked(let isEnded):
             return .concat([
-                .just(.stopRestTimer(true)),
+                .just(.stopRestTimer),
                 .just(.setWorkingout(false)),
                 .just(.setResting(false)),
                 .just(.setRestTime(0)),
@@ -352,7 +351,7 @@ final class HomeViewReactor: Reactor {
                     )),
                     .just(.setResting(false)),
                     .just(.setRestTime(0)),
-                    .just(.stopRestTimer(true)),
+                    .just(.stopRestTimer),
                     .just(.setWorkingout(false))
                 ])
                 
@@ -596,18 +595,12 @@ final class HomeViewReactor: Reactor {
             print("📋 업데이트된 메모: \(String(describing: newMemo))")
             updateWorkoutUseCase.execute(uid: uid, item: updatedWorkout)
 
-        case let .stopRestTimer(isStopped):
-            if isStopped {
-                newState.isResting = false
-                newState.isRestTimerStopped = true
-                newState.restRemainingTime = 0.0
-                newState.restStartTime = nil
-            } else {
-                newState.isResting = true
-                newState.isRestTimerStopped = false
-                newState.restRemainingTime = Float(newState.restTime)
-                newState.restStartTime = nil
-            }
+        case .stopRestTimer:
+            newState.isResting = false
+            newState.isRestTimerStopped = true
+            newState.restRemainingTime = 0.0
+            newState.restStartTime = nil
+            newState.restStartDate = nil
             
         // MARK: - 현재 운동 데이터 저장
         // 메모 창 dismiss시, 운동 완료 시 등등
@@ -814,7 +807,7 @@ private extension HomeViewReactor {
                         )),
                         .just(.setResting(false)),
                         .just(.setRestTime(0)),
-                        .just(.stopRestTimer(true)),
+                        .just(.stopRestTimer),
                         .just(.saveWorkoutData)
                     ])
                     .observe(on: MainScheduler.instance)
