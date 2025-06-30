@@ -39,7 +39,6 @@ final class LiveActivityService {
         content = ActivityContent(state: state, staleDate: nil)
         for activity in Activity<HowManySetWidgetAttributes>.activities {
             Task {
-                
                 await activity.update(content)
             }
         }
