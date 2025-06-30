@@ -1004,7 +1004,7 @@ extension HomeViewReactor {
             accumulatedWorkoutTime: 0,
             accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
-            recordID: "",
+            recordID: ""
         )
     }
 }
