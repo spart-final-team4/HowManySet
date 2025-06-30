@@ -57,7 +57,19 @@ final class EditExerciseViewController: UIViewController, View {
             }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
+
+        // textField 밖에 누르면 키보드 내려가도록 구현
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.cancelsTouchesInView = false
+
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.rx.event
+            .bind { [weak self] _ in
+                guard let self else { return }
+                self.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+
         reactor.state
             .map{ $0.workout }
             .distinctUntilChanged()
