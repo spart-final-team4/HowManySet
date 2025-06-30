@@ -41,20 +41,20 @@ final class ExercisePopupViewController: UIViewController {
         $0.adjustsFontSizeToFitWidth = true
     }
     
-    private let buttonHStacView = UIStackView().then {
+    private let buttonHStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .equalSpacing
         $0.alignment = .center
     }
     
     /// 오른쪽 버튼 - 계속하기
-    private let rightButton = UIButton().then {
-        $0.setTitleColor(.background, for: .normal)
-        $0.titleLabel?.adjustsFontSizeToFitWidth = true
-        $0.backgroundColor = .green6
-        $0.layer.cornerRadius = 12
-        $0.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
-    }
+//    private let rightButton = UIButton().then {
+//        $0.setTitleColor(.background, for: .normal)
+//        $0.titleLabel?.adjustsFontSizeToFitWidth = true
+//        $0.backgroundColor = .green6
+//        $0.layer.cornerRadius = 12
+//        $0.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
+//    }
     
     /// 왼쪽 버튼 - 운동 종료
     private let leftButton = UIButton().then {
@@ -84,9 +84,11 @@ final class ExercisePopupViewController: UIViewController {
     convenience init(title: String,
                      content: String = "",
                      leftButtonText: String,
-                     rightButtonText: String,
-                     nextAction: @escaping () -> Void,
-                     cancelAction: @escaping () -> Void?
+                     leftButtonTitleColor: UIColor,
+                     leftButtonBackgroundColor: UIColor,
+//                     rightButtonText: String,
+                     nextAction: @escaping () -> Void
+//                     cancelAction: @escaping () -> Void?
     ) {
         self.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
@@ -94,9 +96,11 @@ final class ExercisePopupViewController: UIViewController {
         self.titleLabel.text = title
         self.contentLabel.text = content
         self.leftButton.setTitle(leftButtonText, for: .normal)
-        self.rightButton.setTitle(rightButtonText, for: .normal)
+        self.leftButton.setTitleColor(leftButtonTitleColor, for: .normal)
+        self.leftButton.backgroundColor = leftButtonBackgroundColor
+//        self.rightButton.setTitle(rightButtonText, for: .normal)
         self.nextAction = nextAction
-        self.cancelAction = cancelAction
+//        self.cancelAction = cancelAction
     }
     
     /// 계속 하기 클릭 시
@@ -132,11 +136,10 @@ private extension ExercisePopupViewController {
         stackView.addArrangedSubviews(
             titleLabel,
             contentLabel,
-            buttonHStacView
+            buttonHStackView
         )
-        buttonHStacView.addArrangedSubviews(
-            leftButton,
-            rightButton
+        buttonHStackView.addArrangedSubviews(
+            leftButton
         )
     }
 
@@ -148,9 +151,9 @@ private extension ExercisePopupViewController {
             $0.height.greaterThanOrEqualToSuperview().multipliedBy(0.22)
         }
         
-        [leftButton, rightButton].forEach {
+        [leftButton/*, rightButton*/].forEach {
             $0.snp.makeConstraints {
-                $0.width.equalTo(stackView).multipliedBy(0.4)
+//                $0.width.equalTo(stackView).multipliedBy(0.4)
                 $0.height.equalTo(stackView).multipliedBy(0.28)
             }
         }
