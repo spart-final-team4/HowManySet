@@ -734,10 +734,10 @@ private extension HomeViewReactor {
             
             return .concat([
                 .just(.setResting(isResting)),
+                // 카드 정보 업데이트
                 .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
                 restTimer,
-                // 카드 정보 업데이트
                 .just(.manageWorkoutCount(
                     isRoutineCompleted: false,
                     isCurrentExerciseCompleted: false
