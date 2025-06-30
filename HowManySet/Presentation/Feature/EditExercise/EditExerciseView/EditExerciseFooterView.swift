@@ -49,7 +49,12 @@ private extension EditExerciseFooterView {
     
     func bind() {
         saveExcerciseButton.rx.tap
-            .bind(to: saveExcerciseButtonRelay)
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                self.saveExcerciseButton.animateTap {
+                    self.saveExcerciseButtonRelay.accept(())
+                }
+            })
             .disposed(by: disposeBag)
     }
     

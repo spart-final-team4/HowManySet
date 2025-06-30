@@ -167,9 +167,12 @@ private extension EditExerciseContentView {
         addContentButton.rx.tap
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, _ in
-                owner.addContentView()
-            }.disposed(by: disposeBag)
-        
+                owner.addContentButton.animateTap {
+                    owner.addContentView()
+                }
+            }
+            .disposed(by: disposeBag)
+
         headerView.unitSelectionRelay
             .bind(to: unitSelectionRelay)
             .disposed(by: disposeBag)

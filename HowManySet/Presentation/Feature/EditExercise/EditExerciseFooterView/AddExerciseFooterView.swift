@@ -69,11 +69,21 @@ final class AddExerciseFooterView: UIStackView {
     /// 버튼에 대한 Rx 바인딩 설정
     private func bind() {
         addExcerciseButton.rx.tap
-            .bind(to: addExcerciseButtonTapped)
+            .bind { [weak self] in
+                guard let self else { return }
+                self.addExcerciseButton.animateTap {
+                    self.addExcerciseButtonTapped.accept(())
+                }
+            }
             .disposed(by: disposeBag)
-        
+
         saveRoutineButton.rx.tap
-            .bind(to: saveRoutineButtonTapped)
+            .bind { [weak self] in
+                guard let self else { return }
+                self.saveRoutineButton.animateTap {
+                    self.saveRoutineButtonTapped.accept(())
+                }
+            }
             .disposed(by: disposeBag)
     }
 }
