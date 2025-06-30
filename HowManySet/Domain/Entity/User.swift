@@ -24,7 +24,7 @@ public enum UserStatus {
 /// 다양한 로그인 제공자(카카오, 구글, Apple, 익명)를 지원합니다.
 public struct User {
     /// Firebase Auth에서 제공하는 고유 사용자 식별자
-    public let uid: String
+    public let uid: String?
     
     /// 사용자 닉네임
     public let name: String
@@ -54,7 +54,7 @@ public struct User {
     ///   - hasSetNickname: 닉네임 설정 완료 여부 (기본값: false)
     ///   - hasCompletedOnboarding: 온보딩 완료 여부 (기본값: false)
     public init(
-        uid: String,
+        uid: String? = nil,
         name: String,
         provider: String,
         email: String? = nil,
