@@ -8,16 +8,32 @@
 import UIKit
 
 extension UIFont {
-    /// PretendardVariable.ttf Font 적용
+    /// PretendardVariable weight별 적용
     static func pretendard(size: CGFloat, weight: UIFont.Weight = .regular) -> UIFont {
-        if let descriptor = UIFontDescriptor(name: "Pretendard Variable", size: size)
-            .withSymbolicTraits([]) {
-            let traits: [UIFontDescriptor.TraitKey: Any] = [.weight: weight]
-            let newDescriptor = descriptor.addingAttributes([.traits: traits])
-            return UIFont(descriptor: newDescriptor, size: size)
+        let fontName: String
+        switch weight {
+        case .black:
+            fontName = "Pretendard-Black"
+        case .heavy: // heavy - ExtraBold
+            fontName = "Pretendard-ExtraBold"
+        case .bold:
+            fontName = "Pretendard-Bold"
+        case .semibold:
+            fontName = "Pretendard-SemiBold"
+        case .medium:
+            fontName = "Pretendard-Medium"
+        case .regular:
+            fontName = "Pretendard-Regular"
+        case .light:
+            fontName = "Pretendard-Light"
+        case .thin:
+            fontName = "Pretendard-Thin"
+        case .ultraLight:
+            fontName = "Pretendard-ExtraLight"
+        default:
+            fontName = "Pretendard-Regular"
         }
-
-        return UIFont(name: "Pretendard Variable", size: size) ?? .systemFont(ofSize: size, weight: weight)
+        return UIFont(name: fontName, size: size) ?? .systemFont(ofSize: size, weight: weight)
     }
     
     /// 폰트 이름들 확인
