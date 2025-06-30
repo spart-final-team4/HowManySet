@@ -144,9 +144,11 @@ private extension RecordRepositoryImpl {
     func deleteRecordToFirebase(uid: String, item: WorkoutRecord) {
         Task {
             do {
-                // TODO: WorkoutRecord에 documentId 필드 추가 필요
-                // try await firestoreService.delete(id: item.documentId, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
-                print("Firestore 기록 삭제 - 구현 필요")
+                try await firestoreService.delete(
+                    id: item.documentID,
+                    type: FirestoreDataType<FSWorkoutRecord>.workoutRecord
+                )
+                print("Firestore 기록 삭제 성공")
             } catch {
                 print("Firestore 기록 삭제 실패: \(error)")
             }
