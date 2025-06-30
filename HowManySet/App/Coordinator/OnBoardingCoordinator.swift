@@ -49,6 +49,27 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
         navigationController.pushViewController(onboardingVC, animated: false)
     }
     
+    /// 닉네임만 입력하는 시작점
+    func startWithNicknameOnly() {
+        print("🔍 OnBoardingCoordinator: startWithNicknameOnly 호출")
+        let onboardingVC = container.makeOnBoardingViewController(coordinator: self)
+        
+        navigationController.pushViewController(onboardingVC, animated: false)
+        print("🔍 OnBoardingViewController 푸시 완료")
+    }
+
+
+    /// 온보딩만 하는 시작점
+    func startWithOnboardingOnly() {
+        let onboardingVC = container.makeOnBoardingViewController(coordinator: self)
+        // 온보딩만 시작하도록 설정
+        if let vc = onboardingVC as? OnBoardingViewController {
+            vc.startWithOnboardingOnly()
+        }
+        navigationController.pushViewController(onboardingVC, animated: false)
+    }
+
+    
     /// 닉네임 설정 완료 시 호출
     func completeNicknameSetting(nickname: String) {
         authRepository.getCurrentUser()
@@ -56,7 +77,8 @@ final class OnBoardingCoordinator: OnBoardingCoordinatorProtocol {
                 guard let self, let user else {
                     return Observable.error(NSError(domain: "NoCurrentUser", code: -1))
                 }
-                return self.authUseCase.completeNicknameSetting(uid: user.uid, nickname: nickname)}
+                return self.authUseCase.completeNicknameSetting(uid: user.uid, nickname: nickname)
+            }
             .observe(on: MainScheduler.instance)
             .subscribe(
                 onNext: { _ in
