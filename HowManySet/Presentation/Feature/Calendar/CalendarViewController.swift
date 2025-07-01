@@ -81,11 +81,10 @@ final class CalendarViewController: UIViewController, View {
                 records.map { $0.date } // [Date]
             }
             .distinctUntilChanged() // 동일한 날짜 배열이면 업데이트 방지
+            .observe(on: MainScheduler.instance) // 명시적 Thread 전환
             .bind(with: self) { owner, dates in
                 owner.recordedDates = dates
-                DispatchQueue.main.async {
-                    owner.calendarView.publicCalendar.reloadData() // 점 갱신
-                }
+                owner.calendarView.publicCalendar.reloadData() // 점 갱신
             }
             .disposed(by: disposeBag)
 
