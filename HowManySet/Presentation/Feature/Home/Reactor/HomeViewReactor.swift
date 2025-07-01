@@ -630,22 +630,13 @@ final class HomeViewReactor: Reactor {
         
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
-            let workout = convertWorkoutCardStatesToWorkouts(cardStates: newState.workoutCardStates)
-            
-            // WorkoutRecord안의 workoutRoutine을 새 id로 만들어 id 중복방지
-            let newWorkoutRoutine = WorkoutRoutine(
-                rmID: UUID().uuidString,
-                documentID: newState.workoutRoutine.documentID,
-                name: newState.workoutRoutine.name,
-                workouts: workout
-            )
-            
+
             // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
             let updatedWorkoutRecord = WorkoutRecord(
                 rmID: newState.recordID,
-                documentID: newWorkoutRoutine.documentID,
+                documentID: newState.workoutRecord.documentID,
                 uuid: newState.recordID,
-                workoutRoutine: newWorkoutRoutine,
+                workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
                 comment: newMemo, // 새로운 루틴 메모
