@@ -14,6 +14,7 @@ struct WorkoutRecord: Hashable, Codable {
     
     let rmID: String
     let documentID: String
+    let uuid: String
     /// 수행한 운동 루틴입니다.
     ///
     /// `WorkoutRoutine` 타입으로, 어떤 루틴을 수행했는지에 대한 정보를 담고 있습니다.
@@ -46,6 +47,7 @@ extension WorkoutRecord {
         WorkoutRecord(
             rmID: "",
             documentID: "",
+            uuid: "",
             workoutRoutine: WorkoutRoutine.mockData[0], // 전신 루틴
             totalTime: 3600, // 1시간
             workoutTime: 3000, // 50분
@@ -55,6 +57,7 @@ extension WorkoutRecord {
         WorkoutRecord(
             rmID: "",
             documentID: "",
+            uuid: "",
             workoutRoutine: WorkoutRoutine.mockData[1], // 상체 루틴
             totalTime: 2700, // 45분
             workoutTime: 2400, // 40분
@@ -64,6 +67,7 @@ extension WorkoutRecord {
         WorkoutRecord(
             rmID: "",
             documentID: "",
+            uuid: "",
             workoutRoutine: WorkoutRoutine.mockData[2], // 하체 루틴
             totalTime: 1800, // 30분
             workoutTime: 1500, // 25분
