@@ -85,23 +85,16 @@ final class EditRoutineViewController: UIViewController, View {
         
         startButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .bind(onNext: { [weak self] _ in
-                guard let self else { return }
-                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                    self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                        self.startButton.transform = .identity
-                    }, completion: { _ in
-                        if let updatedRoutine = self.reactor?.currentState.routine {
-                            self.coordinator.navigateToHomeViewWithWorkoutStarted(updateRoutine: updatedRoutine)
-                        }
-                        self.dismiss(animated: true)
-                    })
-                })
-            })
+            .subscribe(with: self) { owner, _ in
+                owner.startButton.animateTap {
+                    if let updatedRoutine = owner.reactor?.currentState.routine {
+                        owner.coordinator.navigateToHomeViewWithWorkoutStarted(updateRoutine: updatedRoutine)
+                    }
+                    owner.dismiss(animated: true)
+                }
+            }
             .disposed(by: disposeBag)
-        
+
         reactor.state
             .compactMap{ $0.routine }
             .distinctUntilChanged()
