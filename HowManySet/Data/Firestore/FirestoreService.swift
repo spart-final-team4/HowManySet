@@ -90,6 +90,7 @@ final class FirestoreService: FirestoreServiceProtocol {
     ///   - type: 업데이트할 Firestore 문서 타입
     func update<T: Codable>(id: String, item: T, type: FirestoreDataType<T>) async throws {
         do {
+            // Workout을 변경하는 경우
             if let workout = item as? FSWorkout {
                 let docRef = db.collection("workout_routines").document(id)
                 
@@ -107,6 +108,18 @@ final class FirestoreService: FirestoreServiceProtocol {
                 
                 // 업데이트 수행 (전체 교체)
                 try docRef.setData(from: routine, merge: true)
+            }
+            
+            if let record = item as? FSWorkoutRecord {
+                let querySnapshot = try await db.collection("workout_records").whereField("uuid", isEqualTo: record.uuid).getDocuments()
+                
+                guard let document = querySnapshot.documents.first else {
+                    return
+                }
+                
+                let docRef = document.reference
+                
+                try await docRef.updateData(["comment": record.comment ?? ""])
             }
             
         } catch {
