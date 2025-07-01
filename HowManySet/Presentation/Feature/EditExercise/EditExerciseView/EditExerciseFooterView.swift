@@ -60,9 +60,9 @@ private extension EditExerciseFooterView {
     
     /// 외형 스타일 설정 (배경색 등)
     func setAppearance() {
-        self.clipsToBounds = true
-        self.layer.cornerRadius = 12
-        self.backgroundColor = .brand
+        saveExcerciseButton.clipsToBounds = true
+        saveExcerciseButton.layer.cornerRadius = 12
+        saveExcerciseButton.backgroundColor = .brand
     }
     
     /// 스택뷰 내 하위 버튼 추가
@@ -72,7 +72,7 @@ private extension EditExerciseFooterView {
     
     func setConstraints() {
         saveExcerciseButton.snp.makeConstraints {
-            $0.center.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
     }
 }
