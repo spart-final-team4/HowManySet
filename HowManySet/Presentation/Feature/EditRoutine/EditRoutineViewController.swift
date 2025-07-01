@@ -135,7 +135,9 @@ final class EditRoutineViewController: UIViewController, View {
         editRoutineBottomSheetViewController.removeExcerciseButtonSubject
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, _ in
-                owner.dismiss(animated: true) // 바텀시트 닫기
+                owner.dismiss(animated: true) { // 바텀시트 닫기
+                    self.showToast(x: 0, y: 0, message: "선택한 운동이 삭제되었어요!")
+                }
                 owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
             }
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)

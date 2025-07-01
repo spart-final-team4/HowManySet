@@ -191,6 +191,7 @@ extension CalendarViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
             self?.reactor?.action.onNext(.deleteItem(indexPath)) // Reactor로 이벤트 전달
+            self?.showToast(x: 0, y: 50, message: "운동 기록이 삭제되었습니다!")
                     completion(true)
                 }
 
