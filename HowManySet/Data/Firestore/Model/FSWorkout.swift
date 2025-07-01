@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct FSWorkout: Codable {
     @DocumentID var id: String?
-    var rmID: String?
+    var uuid: String
     var name: String
     var comment: String?
     var sets: [FSWorkoutSet]
@@ -22,20 +22,18 @@ struct FSWorkout: Codable {
         case name
         case comment
         case sets
+        case uuid
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
     
     init(
-        // TODO: 검토 필요
-        rmID: String?,
+        uuid: String,
         name: String,
         sets: [FSWorkoutSet],
         comment: String? = nil
     ) {
-        self.id = nil
-        // TODO: 검토 필요
-        self.rmID = rmID
+        self.uuid = uuid
         self.name = name
         self.comment = comment
         self.sets = sets
@@ -47,8 +45,8 @@ struct FSWorkout: Codable {
 extension FSWorkout {
     func toDTO() -> WorkoutDTO {
         return WorkoutDTO(
-            // TODO: 검토 필요
-            rmID: self.rmID ?? "",
+            id: self.uuid,
+            documentID: self.id,
             name: self.name,
             comment: self.comment,
             sets: self.sets.map { $0.toDTO() }
@@ -58,7 +56,7 @@ extension FSWorkout {
 
 extension FSWorkout {
     init(dto: WorkoutDTO) {
-        self.id = nil
+        self.uuid = dto.id
         self.name = dto.name
         self.comment = dto.comment
         self.sets = dto.sets.map { FSWorkoutSet(dto: $0) }

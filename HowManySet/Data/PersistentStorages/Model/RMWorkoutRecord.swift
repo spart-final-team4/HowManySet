@@ -44,6 +44,7 @@ extension RMWorkoutRecord {
         return WorkoutRecordDTO(
             rmID: self.id,
             documentID: "",
+            uuid: "",
             workoutRoutine: RMWorkoutRecord.fromRoutineText(self.routineRecordText),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
@@ -104,7 +105,7 @@ extension RMWorkoutRecord {
                 i += 3
             }
 
-            let workout = WorkoutDTO(rmID: workoutID, name: workoutName, comment: workoutComment, sets: sets)
+            let workout = WorkoutDTO(id: workoutID, name: workoutName, comment: workoutComment, sets: sets)
             workouts.append(workout)
         }
 

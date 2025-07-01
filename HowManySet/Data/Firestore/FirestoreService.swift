@@ -90,7 +90,38 @@ final class FirestoreService: FirestoreServiceProtocol {
     ///   - type: 업데이트할 Firestore 문서 타입
     func update<T: Codable>(id: String, item: T, type: FirestoreDataType<T>) async throws {
         do {
-            try await db.collection(type.collectionName).document(id).setData(from: item)
+            // Workout을 변경하는 경우
+            if let workout = item as? FSWorkout {
+                let docRef = db.collection("workout_routines").document(id)
+                
+                // 문서 가져오기
+                let snapshot = try await docRef.getDocument()
+                var routine = try snapshot.data(as: FSWorkoutRoutine.self)
+                
+                // 기존 workouts에서 id 매칭해서 업데이트
+                if let index = routine.workouts.firstIndex(where: { $0.uuid == workout.uuid }) {
+                    routine.workouts[index] = workout
+                    routine.updatedAt = Date() // 선택적으로 업데이트 시간 갱신
+                } else {
+                    throw NSError(domain: "WorkoutUpdate", code: 404, userInfo: [NSLocalizedDescriptionKey: "Workout not found in record"])
+                }
+                
+                // 업데이트 수행 (전체 교체)
+                try docRef.setData(from: routine, merge: true)
+            }
+            
+            if let record = item as? FSWorkoutRecord {
+                let querySnapshot = try await db.collection("workout_records").whereField("uuid", isEqualTo: record.uuid).getDocuments()
+                
+                guard let document = querySnapshot.documents.first else {
+                    return
+                }
+                
+                let docRef = document.reference
+                
+                try await docRef.updateData(["comment": record.comment ?? ""])
+            }
+            
         } catch {
             print("update failed: \(error.localizedDescription)")
             throw FirestoreErrorType.networkError

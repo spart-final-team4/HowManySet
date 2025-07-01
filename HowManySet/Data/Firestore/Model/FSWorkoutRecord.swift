@@ -12,6 +12,7 @@ struct FSWorkoutRecord: Codable {
     @DocumentID var id: String?
     var workoutRoutineId: String?
     var workoutRoutineName: String?
+    var uuid: String
     var workouts: [FSWorkout]  // 개별 운동들이 아닌 전체 루틴
     var totalTime: Int
     var workoutTime: Int
@@ -23,6 +24,7 @@ struct FSWorkoutRecord: Codable {
         case id
         case workoutRoutineId = "workout_routine_id"
         case workoutRoutineName = "workout_routine_name"
+        case uuid
         case workouts
         case totalTime = "total_time"
         case workoutTime = "workout_time"
@@ -34,6 +36,7 @@ struct FSWorkoutRecord: Codable {
     init(
         workoutRoutineId: String?,
         workoutRoutineName: String?,
+        uuid: String,
         workouts: [FSWorkout],
         totalTime: Int,
         workoutTime: Int,
@@ -43,6 +46,7 @@ struct FSWorkoutRecord: Codable {
         self.id = nil
         self.workoutRoutineId = workoutRoutineId
         self.workoutRoutineName = workoutRoutineName
+        self.uuid = uuid
         self.workouts = workouts
         self.totalTime = totalTime
         self.workoutTime = workoutTime
@@ -64,6 +68,7 @@ extension FSWorkoutRecord {
         return WorkoutRecordDTO(
             rmID: "",
             documentID: self.id ?? "",
+            uuid: self.uuid,
             workoutRoutine: routine,
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
@@ -76,6 +81,7 @@ extension FSWorkoutRecord {
 extension FSWorkoutRecord {
     init(dto: WorkoutRecordDTO, userId: String) {
         self.id = nil
+        self.uuid = dto.uuid
         self.workoutRoutineId = nil // DTO에는 ID 정보가 없음
         self.workoutRoutineName = dto.workoutRoutine?.name
         self.workouts = dto.workoutRoutine?.workouts.map { $0.toFSModel() } ?? []
