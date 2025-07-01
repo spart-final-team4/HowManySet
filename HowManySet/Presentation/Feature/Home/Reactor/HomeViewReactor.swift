@@ -517,7 +517,6 @@ final class HomeViewReactor: Reactor {
         // 운동 완료 시 모든 정보(Record, Summary) 저장
         // 운동 완료 시 호출, 추후에 운동 중 변경 기능 추가 시 여기서 처리 할 수도 있음.
         case .saveWorkoutData:
-            let currentIndex = newState.currentExerciseIndex
             let routineDidProgress = Float(newState.didSetCount) / Float(newState.totalSetCountInRoutine)
             let recordID = UUID().uuidString
             newState.recordID = recordID
@@ -539,7 +538,7 @@ final class HomeViewReactor: Reactor {
                 didWorkout.append(Workout(
                     id: workout.id,
                     name: workout.name,
-                    sets: Array(workout.sets.prefix(newState.workoutCardStates[i].setIndex)),
+                    sets: Array(workout.sets.prefix(newState.workoutCardStates[i].setProgressAmount)),
                     comment: workout.comment
                 ))
             }
