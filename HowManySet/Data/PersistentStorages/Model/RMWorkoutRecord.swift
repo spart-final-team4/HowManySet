@@ -44,6 +44,7 @@ extension RMWorkoutRecord {
         return WorkoutRecordDTO(
             rmID: self.id,
             documentID: "",
+            uuid: "",
             workoutRoutine: RMWorkoutRecord.fromRoutineText(self.routineRecordText),
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,
