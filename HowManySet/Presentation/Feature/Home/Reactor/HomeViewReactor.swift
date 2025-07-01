@@ -594,7 +594,7 @@ final class HomeViewReactor: Reactor {
     
             let updatedWorkout = Workout(
                 id: currentExercise.workoutID,
-                documentID: "workout_routines",
+                documentID: newState.workoutRoutine.documentID,
                 name: currentExercise.currentExerciseName,
                 sets: currentExercise.setInfo,
                 comment: newMemo
