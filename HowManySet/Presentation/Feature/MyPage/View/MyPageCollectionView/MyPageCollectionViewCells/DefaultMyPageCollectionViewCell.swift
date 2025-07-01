@@ -23,7 +23,15 @@ final class DefaultMyPageCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white
         $0.numberOfLines = 0
     }
-    
+
+    /// 업데이트 예정임을 나타내는 label
+    private let statusLabel = UILabel().then {
+        $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .dbTypo
+        $0.text = "업데이트 예정"
+        $0.isHidden = true
+    }
+
     /// 셀 초기화 메서드
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,6 +48,12 @@ final class DefaultMyPageCollectionViewCell: UICollectionViewCell {
     /// - Parameter model: MyPageCellModel (제목 포함)
     func configure(model: MyPageCellModel) {
         self.titleLabel.text = model.title
+
+        if model.title == "언어 변경" {
+            titleLabel.textColor = .dbTypo
+            statusLabel.isHidden = false
+            isUserInteractionEnabled = false
+        }
     }
 }
 
@@ -59,7 +73,7 @@ private extension DefaultMyPageCollectionViewCell {
     
     /// 뷰 계층 구성
     func setViewHierarchy() {
-        self.addSubviews(titleLabel)
+        self.addSubviews(titleLabel, statusLabel)
     }
     
     /// 오토레이아웃 제약 조건 설정
@@ -67,6 +81,11 @@ private extension DefaultMyPageCollectionViewCell {
         titleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().offset(20)
+        }
+
+        statusLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(20)
         }
     }
 }
