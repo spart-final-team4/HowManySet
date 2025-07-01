@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import RxSwift
 
 protocol EditRoutineCoordinatorProtocol: Coordinator {
-    func navigateToHomeViewWithWorkoutStarted()
+    func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine)
+    func presentAddExerciseView(routineName: String)
+    func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void)
 }
 
 
@@ -41,10 +44,52 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         
         navigationController.present(editRoutineVC, animated: true)
     }
-    
+
+    /// AddExercise를 present하는 메서드
+    func presentAddExerciseView(routineName: String) {
+        let firestoreService = FirestoreService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+
+        let vc = AddExerciseViewController(
+            reactor: AddExerciseViewReactor(
+                routineName: routineName,
+                saveRoutineUseCase: saveRoutineUseCase,
+                workoutStateForEdit: nil,
+                caller: .fromHome
+            )
+        )
+
+        navigationController.present(vc, animated: true)
+    }
+
+    /// EditExercise를 present하는 메서드
+    func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void) {
+        let firestoreService = FirestoreService()
+        let repository = WorkoutRepositoryImpl(firestoreService: firestoreService)
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
+
+        let vc = EditExerciseViewController(
+            reactor: EditExerciseViewReactor(
+                workout: workout,
+                updateWorkoutUseCase: updateWorkoutUseCase
+            )
+        )
+
+        // 화면 전환 + 결과 전달은 coordinator에서 처리
+        vc.saveResultRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { result in
+                resultHandler(result)
+            })
+            .disposed(by: vc.disposeBag)
+
+        navigationController.present(vc, animated: true)
+    }
+
     /// 메인 홈 화면 운동중 상태로 이동
-    func navigateToHomeViewWithWorkoutStarted() {
-        homeCoordinator.startWorkout(with: routine)
+    func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine) {
+        homeCoordinator.startWorkout(with: updateRoutine)
     }
     
     func moveToEditExcercise(with excercise: Workout) {

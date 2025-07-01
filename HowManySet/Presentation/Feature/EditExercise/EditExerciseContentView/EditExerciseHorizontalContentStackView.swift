@@ -177,7 +177,7 @@ private extension EditExerciseHorizontalContentStackView {
 extension EditExerciseHorizontalContentStackView {
     
     func configure(weight: Double, reps: Int) {
-        self.weightTextField.text = "\(weight)"
+        self.weightTextField.text = "\(weight.clean)"
         self.repsTextField.text = "\(reps)"
         weightRelay.accept(weightTextField.text ?? "")
         repsRelay.accept(repsTextField.text ?? "")

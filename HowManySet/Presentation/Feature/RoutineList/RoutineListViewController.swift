@@ -124,6 +124,7 @@ extension RoutineListViewController: UITableViewDelegate {
     -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
             self?.reactor?.action.onNext(.deleteRoutine(indexPath))
+            self?.showToast(x: 0, y: 50, message: "루틴이 삭제되었어요!")
             completion(true)
         }
 
