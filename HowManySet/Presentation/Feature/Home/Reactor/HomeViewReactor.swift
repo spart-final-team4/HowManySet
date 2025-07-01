@@ -591,15 +591,17 @@ final class HomeViewReactor: Reactor {
             let currentExercise = newState.workoutCardStates[currentIndex]
             // 뷰에 반영
             newState.workoutCardStates[currentIndex].memoInExercise = newMemo
-            
+    
             let updatedWorkout = Workout(
                 id: currentExercise.workoutID,
+                documentID: "workout_routines",
                 name: currentExercise.currentExerciseName,
                 sets: currentExercise.setInfo,
                 comment: newMemo
             )
             print("📋 업데이트된 메모: \(String(describing: newMemo))")
-            updateWorkoutUseCase.execute(uid: uid, item: updatedWorkout)
+            
+            updateWorkoutUseCase.execute(uid: newState.uid, item: updatedWorkout)
 
         case let .stopRestTimer(isStopped):
             if isStopped {
