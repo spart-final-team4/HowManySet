@@ -85,21 +85,16 @@ final class EditRoutineViewController: UIViewController, View {
         
         startButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .bind(onNext: { [weak self] _ in
-                guard let self else { return }
-                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                    self.startButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                        self.startButton.transform = .identity
-                    }, completion: { _ in
-                        self.coordinator.navigateToHomeViewWithWorkoutStarted()
-                        self.dismiss(animated: true)
-                    })
-                })
-            })
+            .subscribe(with: self) { owner, _ in
+                owner.startButton.animateTap {
+                    if let updatedRoutine = owner.reactor?.currentState.routine {
+                        owner.coordinator.navigateToHomeViewWithWorkoutStarted(updateRoutine: updatedRoutine)
+                    }
+                    owner.dismiss(animated: true)
+                }
+            }
             .disposed(by: disposeBag)
-        
+
         reactor.state
             .compactMap{ $0.routine }
             .distinctUntilChanged()
@@ -140,7 +135,9 @@ final class EditRoutineViewController: UIViewController, View {
         editRoutineBottomSheetViewController.removeExcerciseButtonSubject
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, _ in
-                owner.dismiss(animated: true) // 바텀시트 닫기
+                owner.dismiss(animated: true) { // 바텀시트 닫기
+                    self.showToast(x: 0, y: 0, message: "선택한 운동이 삭제되었어요!")
+                }
                 owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
             }
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
@@ -155,38 +152,24 @@ final class EditRoutineViewController: UIViewController, View {
     }
     
     func presentAddExerciseVC() {
-        let firestoreService = FirestoreService()
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let vc = AddExerciseViewController(
-            reactor: AddExerciseViewReactor(
-                routineName: reactor?.currentState.routine.name ?? "알수없음",
-                saveRoutineUseCase: saveRoutineUseCase,
-                workoutStateForEdit: nil,
-                caller: .fromHome)
-        )
-        self.present(vc, animated: true)
+        guard let routineName = reactor?.currentState.routine.name else { return }
+        
+        coordinator.presentAddExerciseView(routineName: routineName)
     }
-    
+
     func presentEditExcerciseVC() {
         guard let workout = reactor?.currentState.currentSeclectedWorkout else { return }
-        let firestoreService = FirestoreService()
-        let repository = WorkoutRepositoryImpl(firestoreService: firestoreService)
-        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
-        let vc = EditExerciseViewController(reactor: EditExerciseViewReactor(workout: workout, updateWorkoutUseCase: updateWorkoutUseCase))
-        
-        vc.saveResultRelay
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self) { owner, result in
-                if result {
-                    owner.showToast(x: 0, y: 0, message: "저장되었어요!")
-                    owner.reactor?.action.onNext(.viewDidLoad)
-                }
-            }.disposed(by: vc.disposeBag)
-        
-        present(vc, animated: true)
+
+        // VC는 사용자의 Action에 따라 상태를 업데이트하는 데에 집중
+        coordinator.presentEditExerciseView(workout: workout) { [weak self] result in
+            guard let self else { return }
+            if result {
+                self.showToast(x: 0, y: 0, message: "저장되었어요!")
+                self.reactor?.action.onNext(.viewDidLoad)
+            }
+        }
     }
-    
+
 }
 
 // MARK: - UI 구성 관련 private 메서드
