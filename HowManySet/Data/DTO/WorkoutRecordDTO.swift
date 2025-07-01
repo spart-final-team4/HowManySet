@@ -11,6 +11,7 @@ import RealmSwift
 struct WorkoutRecordDTO {
     let rmID: String
     let documentID: String
+    let uuid: String
     var workoutRoutine: WorkoutRoutineDTO?
     var totalTime: Int
     var workoutTime: Int
@@ -23,6 +24,7 @@ extension WorkoutRecordDTO {
         return WorkoutRecord(
             rmID: self.rmID,
             documentID: self.documentID,
+            uuid: self.uuid,
             workoutRoutine: self.workoutRoutine?.toEntity()
             ?? WorkoutRoutine(rmID: "",
                               documentID: "",
@@ -40,6 +42,7 @@ extension WorkoutRecordDTO {
     init(entity: WorkoutRecord) {
         self.rmID = entity.rmID
         self.documentID = entity.documentID
+        self.uuid = entity.uuid
         self.workoutRoutine = WorkoutRoutineDTO(entity: entity.workoutRoutine)
         self.totalTime = entity.totalTime
         self.workoutTime = entity.workoutTime
@@ -51,7 +54,8 @@ extension WorkoutRecordDTO {
 extension WorkoutRecordDTO {
     init(from model: RMWorkoutRecord) {
         self.rmID = model.id
-        self.documentID = UUID().uuidString
+        self.documentID = ""
+        self.uuid = ""
         self.workoutRoutine = RMWorkoutRecord.fromRoutineText(model.routineRecordText)
         self.totalTime = model.totalTime
         self.workoutTime = model.workoutTime
@@ -71,6 +75,7 @@ extension WorkoutRecordDTO {
         )
         self.rmID = routine.rmID
         self.documentID = routine.documentID
+        self.uuid = fsModel.uuid
         self.workoutRoutine = routine
         self.totalTime = fsModel.totalTime
         self.workoutTime = fsModel.workoutTime
@@ -84,6 +89,7 @@ extension WorkoutRecordDTO {
         return FSWorkoutRecord(
             workoutRoutineId: nil,
             workoutRoutineName: self.workoutRoutine?.name,
+            uuid: self.uuid,
             workouts: self.workoutRoutine?.workouts.map { $0.toFSModel() } ?? [],
             totalTime: self.totalTime,
             workoutTime: self.workoutTime,

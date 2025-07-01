@@ -44,7 +44,7 @@ final class RMWorkout: Object {
 extension RMWorkout {
     func toDTO() -> WorkoutDTO {
         return WorkoutDTO(
-            rmID: self.id,
+            id: self.id,
             name: self.name,
             comment: self.comment,
             sets: self.sets.map { $0.toDTO() })
@@ -54,7 +54,7 @@ extension RMWorkout {
 extension RMWorkout {
     convenience init(dto: WorkoutDTO) {
         self.init()
-        self.id = dto.rmID
+        self.id = dto.id
         self.name = dto.name
         self.comment = dto.comment
         self.setArray = dto.sets.map{ RMWorkoutSet(dto: $0) }
