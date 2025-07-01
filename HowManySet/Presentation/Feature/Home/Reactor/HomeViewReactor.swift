@@ -517,17 +517,10 @@ final class HomeViewReactor: Reactor {
         // 운동 완료 시 모든 정보(Record, Summary) 저장
         // 운동 완료 시 호출, 추후에 운동 중 변경 기능 추가 시 여기서 처리 할 수도 있음.
         case .saveWorkoutData:
-            let currentIndex = newState.currentExerciseIndex
             let routineDidProgress = Float(newState.didSetCount) / Float(newState.totalSetCountInRoutine)
-            // 추후에 쓰일수도 있음.
-            let updatedWorkouts = convertWorkoutCardStatesToWorkouts(
-                cardStates: newState.workoutCardStates)
-            let currentExercise = newState.workoutCardStates[currentIndex]
             let recordID = UUID().uuidString
             newState.recordID = recordID
- 
-//            print("🎬 [WorkoutSummary]: \(newState.workoutSummary)")
-       
+        
             // 운동 완료 화면에 보여질 데이터들
             newState.workoutSummary = WorkoutSummary(
                 routineName: newState.workoutRoutine.name,
@@ -539,7 +532,18 @@ final class HomeViewReactor: Reactor {
                 routineMemo: newState.memoInRoutine
             )
             
-            let workout = convertWorkoutCardStatesToWorkouts(cardStates: newState.workoutCardStates)
+            /// 사용자가 수행한 운동 배열
+            var didWorkout: [Workout] = []
+            for (i, workout) in newState.workoutRoutine.workouts.enumerated() {
+                didWorkout.append(Workout(
+                    id: workout.id,
+                    name: workout.name,
+                    sets: Array(workout.sets.prefix(newState.workoutCardStates[i].setProgressAmount)),
+                    comment: workout.comment
+                ))
+            }
+            
+            print(didWorkout)
             
             print("현재 루틴 ID: \(newState.workoutRoutine.rmID)")
             
@@ -547,7 +551,7 @@ final class HomeViewReactor: Reactor {
                 rmID: newState.workoutRoutine.rmID,
                 documentID: uid ?? "",
                 name: newState.workoutRoutine.name,
-                workouts: workout
+                workouts: didWorkout // 완료한 운동들
             )
             
             // 저장되는 WorkoutRecord
