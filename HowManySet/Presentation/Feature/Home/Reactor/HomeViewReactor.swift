@@ -804,7 +804,6 @@ private extension HomeViewReactor {
                 } else { // 다음 운동 없을 때, 운동 끝나기 전 세트
                     print("다음 운동 없음")
                     currentCardState.setProgressAmount += 1
-                    currentCardState.setIndex += 1
                     let updatedCardState = currentCardState
                     return .concat([
                         .just(.setResting(isResting)),
