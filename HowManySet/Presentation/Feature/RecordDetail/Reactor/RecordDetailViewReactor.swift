@@ -73,6 +73,7 @@ final class RecordDetailViewReactor: Reactor {
             let updatedRecord = WorkoutRecord(
                 rmID: record.rmID,
                 documentID: record.documentID,
+                uuid: record.uuid,
                 workoutRoutine: record.workoutRoutine,
                 totalTime: record.totalTime,
                 workoutTime: record.workoutTime,
