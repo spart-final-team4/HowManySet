@@ -27,6 +27,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
+    /// 앱 ID
+    private let appID = "6746778243"
     
     /// 로그아웃/계정삭제 완료 시 호출할 클로저
     var finishFlow: (() -> Void)?
@@ -92,34 +94,38 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// Alert로 버전 정보 표시
     func showVersionInfo() {
         // 버전 정보 받아오기
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        let appstoreVersion = getAppStoreVersion()
-        if appstoreVersion != currentVersion {
-            let needToUpdatePopupVC = DefaultPopupViewController(title: "최신버전이 아닙니다.",
-                                                                 titleTextColor: .success,
-                                                                 content: "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)",
-                                                                 okButtonText: "업데이트",
-                                                                 okButtonBackgroundColor: .success
-            ) {
-                // TODO: 앱스토어 앱 페이지로 이동 URL 입력 필요
-                guard let url = URL(string: "itms-apps://itunes.apple.com/app/idYOUR_APP_ID?action=write-review"),
-                      UIApplication.shared.canOpenURL(url) else {
-                    return
+        getAppStoreVersion { appstoreVersion in
+            DispatchQueue.main.async {
+                let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+                if let appstoreVersion, appstoreVersion != currentVersion {
+                    let needToUpdatePopupVC = DefaultPopupViewController(title: "최신버전이 아닙니다.",
+                                                                         titleTextColor: .success,
+                                                                         content: "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)",
+                                                                         okButtonText: "업데이트",
+                                                                         okButtonBackgroundColor: .success
+                    ) {
+                        // TODO: 앱스토어 앱 페이지로 이동 URL 입력 필요
+                        guard let url = URL(string: "itms-apps://itunes.apple.com/app/id\(self.appID)"),
+                              UIApplication.shared.canOpenURL(url) else {
+                            return
+                        }
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                    self.navigationController.present(needToUpdatePopupVC, animated: true)
+                } else {
+                    let versionString = currentVersion ?? "알 수 없음"
+                    let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(versionString)", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    self.navigationController.present(alert, animated: true)
                 }
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-            navigationController.present(needToUpdatePopupVC, animated: true)
-        } else {
-            let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(currentVersion)", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default))
-            navigationController.present(alert, animated: true)
         }
     }
     
     /// 앱스토어 리뷰 작성 페이지로 이동
     func openAppStoreReviewPage() {
         // TODO: 추후에 url 설정 필요
-        guard let url = URL(string: "itms-apps://itunes.apple.com/app/idYOUR_APP_ID?action=write-review"),
+        guard let url = URL(string: "itms-apps://itunes.apple.com/app/id\(appID)?action=write-review"),
               UIApplication.shared.canOpenURL(url) else {
             return
         }
@@ -210,17 +216,28 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
 
 private extension MyPageCoordinator {
     /// 앱스토러에 등록된 앱의 버전 불러오기
-    func getAppStoreVersion() -> String? {
-        let appLink = ""
-        guard let url = URL(string: appLink) else { return nil }
-        let data = try? Data(contentsOf: url)
-        if data == nil { return nil }
-        let json = try? JSONSerialization.jsonObject(with: data!) as? [String: Any]
-        let results = json?["results"] as? [[String: Any]]
-        if (results?.count ?? -1) > 0 {
-            return results![0]["version"] as? String
+    func getAppStoreVersion(completion: @escaping (String?) -> Void) {
+        guard let url = URL(string: "itms-apps://itunes.apple.com/lookup?id\(appID)") else {
+            completion(nil)
+            return
         }
-        return nil
+
+        // 비동기 네트워크 요청
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard
+                let data = data,
+                error == nil,
+                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                let results = json["results"] as? [[String: Any]],
+                let firstResult = results.first,
+                let version = firstResult["version"] as? String
+            else {
+                completion(nil)
+                return
+            }
+            completion(version)
+        }
+        task.resume()
     }
     
     func getModelName() -> String {
