@@ -486,8 +486,8 @@ final class HomeViewReactor: Reactor {
                !newState.isWorkoutPaused,
                !newState.isRestPaused,
                !newState.isRestTimerStopped {
-                // 0.1초씩 감소
-                newState.restRemainingTime = max(newState.restRemainingTime - 0.1, 0)
+                // 0.01초씩 감소
+                newState.restRemainingTime = max(newState.restRemainingTime - 0.01, 0)
 //                print("REACTOR - 남은 휴식 시간: \(newState.restRemainingTime)")
                 if newState.restRemainingTime.rounded() == 0.0 {
                     newState.isResting = false
@@ -696,9 +696,9 @@ private extension HomeViewReactor {
         
         if isResting {
             let restTime = currentState.restTime
-            let tickCount = restTime * 10 // 0.1초 간격으로 진행
+            let tickCount = restTime * 100 // 0.01초 간격으로 진행
             // 휴식 타이머
-            restTimer = Observable<Int>.interval(.milliseconds(100), scheduler: MainScheduler.asyncInstance)
+            restTimer = Observable<Int>.interval(.milliseconds(10), scheduler: MainScheduler.asyncInstance)
                 .take(Int(tickCount))
                 .take(until: self.state.map {
                     $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
