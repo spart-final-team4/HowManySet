@@ -830,6 +830,104 @@
         "ko": { "stringUnit": { "state": "translated", "value": "저장되었어요!" } }
       }
     },
+    "회": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "回" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "회" } }
+      }
+    },
+    "편집": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Edit" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "編集" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "편집" } }
+      }
+    },
+    "운동 목록 변경": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Edit Exercise List" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動リストを変更" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 목록 변경" } }
+      }
+    },
+    "메모": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Memo" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모" } }
+      }
+    },
+    "메모를 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter a memo." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモを入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모를 입력해주세요." } }
+      }
+    },
+    "세트 완료": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set Complete" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット完了" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트 완료" } }
+      }
+    },
+    "세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트" } }
+      }
+    },
+    "회": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "回" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "회" } }
+      }
+    },
+    "+1분": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "+1 min" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "+1分" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "+1분" } }
+      }
+    },
+    "+30초": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "+30 sec" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "+30秒" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "+30초" } }
+      }
+    },
+    "+10초": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "+10 sec" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "+10秒" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "+10초" } }
+      }
+    },
+    "초기화": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reset" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "リセット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "초기화" } }
+      }
+    },
+    "현재 설정된 휴식 시간": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Current Rest Time" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在設定されている休憩時間" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 설정된 휴식 시간" } }
+      }
+    },
+    "물 한잔 챙겼다면, 클릭!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Click if you've had a glass of water!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "水を飲んだらクリック！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "물 한잔 챙겼다면, 클릭!" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {

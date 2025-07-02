@@ -17,10 +17,10 @@ final class EditAndMemoViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
     
-    private let editText = "편집"
-    private let editRoutineButtonText = "운동 목록 변경"
-    private let memoText = "메모"
-    private let memoPlaceHolderText = "메모를 입력해주세요."
+    private let editText = String(localized: "편집")
+    private let editRoutineButtonText = String(localized: "운동 목록 변경")
+    private let memoText = String(localized: "메모")
+    private let memoPlaceHolderText = String(localized: "메모를 입력해주세요.")
     
     private weak var coordinator: HomeCoordinatorProtocol?
     
