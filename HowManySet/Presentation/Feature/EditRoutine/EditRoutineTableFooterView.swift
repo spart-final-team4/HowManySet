@@ -25,7 +25,7 @@ final class EditRoutineTableFooterView: UITableViewHeaderFooterView {
     
     /// "새 운동 추가" 텍스트 라벨
     private let plusExcerciseButton = UIButton().then {
-        $0.setTitle("+ 새 운동 추가", for: .normal)
+        $0.setTitle(String(localized: "새 운동 추가"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 20, weight: .regular)
         $0.setTitleColor(.white, for: .normal)
     }

@@ -98,10 +98,12 @@ final class EditRoutineTableView: UITableView {
     }
     
     func mappingRoutineToCellModel(workout: Workout) -> EditRoutioneCellModel {
-        return EditRoutioneCellModel(name: workout.name,
-                                     setText: "총 \(workout.sets.count)세트",
-                                     weightText: "\(workout.sets.map { $0.weight }.max()!)\(workout.sets[0].unit)",
-                                     repsText: "\(workout.sets.map { $0.reps }.max()!)회")
+        return EditRoutioneCellModel(
+            name: workout.name,
+            setText: String(format: String(localized: "총 %d세트"), workout.sets.count),
+            weightText: "\(workout.sets.map { $0.weight }.max()!)\(workout.sets[0].unit)",
+            repsText: String(format: String(localized: "%d회"), workout.sets.map { $0.reps }.max()!)
+        )
     }
 }
 
