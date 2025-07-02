@@ -767,6 +767,69 @@
         "ko": { "stringUnit": { "state": "translated", "value": "빈 항목은 저장할 수 없어요." } }
       }
     },
+    "운동 정보 변경": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Edit Exercise Info" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動情報を変更" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 정보 변경" } }
+      }
+    },
+    "선택 운동 삭제": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete Selected Exercise" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "選択した運動を削除" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "선택 운동 삭제" } }
+      }
+    },
+    "목록 순서 변경": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Change List Order" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "リスト順序を変更" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "목록 순서 변경" } }
+      }
+    },
+    "새 운동 추가": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Add New Exercise" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "新しい運動を追加" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "새 운동 추가" } }
+      }
+    },
+    "총 %d세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Total %d sets" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "合計%dセット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "총 %d세트" } }
+      }
+    },
+    "%d회": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%d回" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d회" } }
+      }
+    },
+    "시작": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "開始" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "시작" } }
+      }
+    },
+    "선택한 운동이 삭제되었어요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The selected exercise has been deleted!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "選択した運動が削除されました！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "선택한 운동이 삭제되었어요!" } }
+      }
+    },
+    "저장되었어요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Saved!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "保存されました！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "저장되었어요!" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
