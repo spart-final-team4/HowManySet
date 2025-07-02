@@ -816,14 +816,13 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
+            .observe(on: MainScheduler.instance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
-                
                 let (isWorkingout, data) = state
-                let contentState = data
                 print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
                     LiveActivityService.shared.stop()
-                    LiveActivityService.shared.start(with: contentState)
+                    LiveActivityService.shared.start(with: data)
                 } else {
                     LiveActivityService.shared.stop()
                 }
