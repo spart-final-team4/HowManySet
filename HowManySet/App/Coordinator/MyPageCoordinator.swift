@@ -27,6 +27,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     private let navigationController: UINavigationController
     private let container: DIContainer
+    /// 앱 링크
+    private let appLink = "itms-apps://itunes.apple.com/app/id6746778243"
     
     /// 로그아웃/계정삭제 완료 시 호출할 클로저
     var finishFlow: (() -> Void)?
@@ -102,7 +104,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
                                                                  okButtonBackgroundColor: .success
             ) {
                 // TODO: 앱스토어 앱 페이지로 이동 URL 입력 필요
-                guard let url = URL(string: "itms-apps://itunes.apple.com/app/idYOUR_APP_ID?action=write-review"),
+                guard let url = URL(string: self.appLink),
                       UIApplication.shared.canOpenURL(url) else {
                     return
                 }
@@ -119,7 +121,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// 앱스토어 리뷰 작성 페이지로 이동
     func openAppStoreReviewPage() {
         // TODO: 추후에 url 설정 필요
-        guard let url = URL(string: "itms-apps://itunes.apple.com/app/idYOUR_APP_ID?action=write-review"),
+        guard let url = URL(string: appLink + "?action=write-review"),
               UIApplication.shared.canOpenURL(url) else {
             return
         }
@@ -211,7 +213,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
 private extension MyPageCoordinator {
     /// 앱스토러에 등록된 앱의 버전 불러오기
     func getAppStoreVersion() -> String? {
-        let appLink = ""
+        let appLink = self.appLink
         guard let url = URL(string: appLink) else { return nil }
         let data = try? Data(contentsOf: url)
         if data == nil { return nil }
