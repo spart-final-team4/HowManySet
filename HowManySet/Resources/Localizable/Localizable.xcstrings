@@ -949,6 +949,27 @@
         "ko": { "stringUnit": { "state": "translated", "value": "메인" } }
       }
     },
+    "업데이트 예정": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Coming Soon" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "近日公開予定" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "업데이트 예정" } }
+      }
+    },
+    "언어 변경": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Change Language" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "言語の変更" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "언어 변경" } }
+      }
+    },
+    "비회원": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Guest" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ゲスト" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "비회원" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {

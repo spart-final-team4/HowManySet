@@ -28,7 +28,7 @@ final class DefaultMyPageCollectionViewCell: UICollectionViewCell {
     private let statusLabel = UILabel().then {
         $0.font = .pretendard(size: 14, weight: .regular)
         $0.textColor = .dbTypo
-        $0.text = "업데이트 예정"
+        $0.text = String(localized: "업데이트 예정")
         $0.isHidden = true
     }
 
@@ -49,7 +49,7 @@ final class DefaultMyPageCollectionViewCell: UICollectionViewCell {
     func configure(model: MyPageCellModel) {
         self.titleLabel.text = model.title
 
-        if model.title == "언어 변경" {
+        if model.title == String(localized: "언어 변경") {
             titleLabel.textColor = .dbTypo
             statusLabel.isHidden = false
             isUserInteractionEnabled = false
