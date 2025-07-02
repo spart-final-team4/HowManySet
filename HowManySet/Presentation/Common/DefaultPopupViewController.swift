@@ -56,7 +56,7 @@ final class DefaultPopupViewController: UIViewController {
     private let cancelButton = UIButton().then {
         $0.setTitleColor(.textTertiary, for: .normal)
         $0.backgroundColor = .clear
-        $0.setTitle("취소", for: .normal)
+        $0.setTitle(String(localized: "취소"), for: .normal)
         $0.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
     }
     
