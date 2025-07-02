@@ -22,10 +22,10 @@ final class RoutineCompleteViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
-    private let exerciseCompletedText = "운동 완료! 수고했어요"
-    private let exerciseRecordSavedText = "운동 기록 저장됨"
-    private let memoPlaceHolderText = "메모를 입력해 주세요."
-    private let confirmText = "확인"
+    private let exerciseCompletedText = String(localized: "운동 완료! 수고했어요")
+    private let exerciseRecordSavedText = String(localized: "운동 기록 저장됨")
+    private let memoPlaceHolderText = String(localized: "메모를 입력해 주세요.")
+    private let confirmText = String(localized: "확인")
         
     private let cardInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 24 : 28
     private let statInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 20 : 24

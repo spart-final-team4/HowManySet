@@ -1215,6 +1215,34 @@
         "ko": { "stringUnit": { "state": "translated", "value": "메모를 입력해주세요." } }
       }
     },
+    "운동 완료! 수고했어요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Workout complete! Great job!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動完了！お疲れさまでした" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 완료! 수고했어요" } }
+      }
+    },
+    "운동 기록 저장됨": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Workout record saved" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動記録が保存されました" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 기록 저장됨" } }
+      }
+    },
+    "메모를 입력해 주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter a memo." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモを入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모를 입력해 주세요." } }
+      }
+    },
+    "확인": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "確認" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "확인" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
