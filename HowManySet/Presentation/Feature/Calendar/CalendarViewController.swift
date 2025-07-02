@@ -45,6 +45,8 @@ final class CalendarViewController: UIViewController, View {
 
         // 선택된 날짜 기준 fetch
         reactor?.action.onNext(.viewWillAppear)
+        
+        calendarView.publicCalendar.locale = Locale.current // 사용자 언어 설정에 따라서 캘린더 언어 설정 동일하게 설정
     }
 
     override func viewDidLoad() {
