@@ -12,8 +12,8 @@ import Then
 final class HomeRoutineStartCardView: UIView {
     
     // MARK: - Properties
-    private let initialText = "오늘도 득근해요"
-    private let selectButtonText = "운동 시작하기"
+    private let initialText = String(localized: "오늘도 득근해요")
+    private let selectButtonText = String(localized: "운동 시작하기")
     
     // MARK: - UI Components
     private lazy var mainContentVStack = UIStackView().then {
