@@ -1320,6 +1320,83 @@
         "ko": { "stringUnit": { "state": "translated", "value": "이제 다음 세트를 시작하세요!" } }
       }
     },
+    "휴식 중지 재개": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pause/Resume Rest" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩の一時停止・再開" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식 중지 재개" } }
+      }
+    },
+    "휴식 중지 및 재개 버튼": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pause and resume rest button" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩の一時停止・再開ボタン" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식 중지 및 재개 버튼" } }
+      }
+    },
+    "현재 운동 인덱스": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Current Exercise Index" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在の運動インデックス" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 운동 인덱스" } }
+      }
+    },
+    "세트 완료": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set Complete" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット完了" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트 완료" } }
+      }
+    },
+    "세트 완료 버튼": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set Complete Button" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット完了ボタン" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트 완료 버튼" } }
+      }
+    },
+    "현재 운동 인덱스": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Current Exercise Index" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在の運動インデックス" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 운동 인덱스" } }
+      }
+    },
+    "스킵": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Skip" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "スキップ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "스킵" } }
+      }
+    },
+    "휴식 시간 있을 시 휴식 스킵 / 휴식 시간 0일시 세트 스킵": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Skip rest if there is rest time / Skip set if rest time is 0" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩時間があれば休憩をスキップ／休憩時間が0ならセットをスキップ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식 시간 있을 시 휴식 스킵 / 휴식 시간 0일시 세트 스킵" } }
+      }
+    },
+    "현재 운동 인덱스": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Current Exercise Index" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在の運動インデックス" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 운동 인덱스" } }
+      }
+    },
+    "휴식": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Rest" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식" } }
+      }
+    },
+    "모든 운동을 완료하셨습니다!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "All exercises completed!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "すべての運動が完了しました！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "모든 운동을 완료하셨습니다!" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
