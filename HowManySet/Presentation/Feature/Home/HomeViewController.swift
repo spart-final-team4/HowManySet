@@ -616,7 +616,7 @@ extension HomeViewController {
                     let elapsed = totalRestTime - restSecondsRemaining
                     let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
                     let timeText = Int(restSecondsRemaining).toRestTimeLabel()
-//                    print("VC - 남은 휴식시간: \(timeText), \(restSecondsRemaining)")
+                    //                    print("VC - 남은 휴식시간: \(timeText), \(restSecondsRemaining)")
                     return (cardView.index, progress, timeText, true, false)
                 } else {
                     let timeText = Int(restStartTime ?? 0).toRestTimeLabel()
@@ -718,7 +718,7 @@ extension HomeViewController {
                     
                     self.animateCardDeletion(cardToHide) { [weak self] in
                         guard let self else { return }
-                                                
+                        
                         // 현재 보이는 카드 중에서의 인덱스 찾기
                         guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
                             print("⚠️ 현재 visible 카드 인덱스를 찾을 수 없습니다.")
@@ -833,9 +833,8 @@ extension HomeViewController {
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged()
-            .debounce(.milliseconds(50), scheduler: MainScheduler.instance)
-            .bind { data in
-                let contentState = HowManySetWidgetAttributes.ContentState.init(
+            .map { data in
+                HowManySetWidgetAttributes.ContentState(
                     workoutTime: data.workoutTime,
                     isWorkingout: data.isWorkingout,
                     exerciseName: data.exerciseName,
@@ -850,24 +849,26 @@ extension HomeViewController {
                     accumulatedWorkoutTime: data.accumulatedWorkoutTime,
                     accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
-                LiveActivityService.shared.update(state: contentState)
             }
+            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+            .bind(onNext: { contentState in
+                LiveActivityService.shared.update(state: contentState)
+            })
             .disposed(by: disposeBag)
         
         // 휴식 상태 변화 시 즉시 업데이트
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .bind { isResting in
-                print("🔄 휴식 상태 변화 감지: \(isResting)")
+            .map { isResting in
+                print("isResting: \(isResting)")
                 let data = reactor.currentState.forLiveActivity
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
-                    isWorkingout: data.isWorkingout,
+                    isWorkingout: !isResting, // isResting 값만 즉각적으로 사용
                     exerciseName: data.exerciseName,
                     exerciseInfo: data.exerciseInfo,
                     currentRoutineCompleted: data.currentRoutineCompleted,
-                    isResting: data.isResting,
+                    isResting: isResting, // isResting 값만 즉각적으로 사용
                     restSecondsRemaining: Int(data.restSecondsRemaining),
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
@@ -876,15 +877,18 @@ extension HomeViewController {
                     accumulatedWorkoutTime: data.accumulatedWorkoutTime,
                     accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
-                LiveActivityService.shared.update(state: contentState)
+                return contentState
             }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { contentState in
+                LiveActivityService.shared.update(state: contentState)
+            })
             .disposed(by: disposeBag)
         
         // 휴식시간 즉시 업데이트
         reactor.state.map { $0.restRemainingTime }
             .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .bind { restRemaining in
+            .map { restRemaining in
                 let data = reactor.currentState.forLiveActivity
                 let contentState = HowManySetWidgetAttributes.ContentState.init(
                     workoutTime: data.workoutTime,
@@ -893,7 +897,7 @@ extension HomeViewController {
                     exerciseInfo: data.exerciseInfo,
                     currentRoutineCompleted: data.currentRoutineCompleted,
                     isResting: data.isResting,
-                    restSecondsRemaining: Int(restRemaining),
+                    restSecondsRemaining: Int(restRemaining), // restRemainingTime만 즉각적으로 사용
                     isRestPaused: data.isRestPaused,
                     currentSet: data.currentSet,
                     totalSet: data.totalSet,
@@ -901,23 +905,30 @@ extension HomeViewController {
                     accumulatedWorkoutTime: data.accumulatedWorkoutTime,
                     accumulatedRestRemaining: data.accumulatedRestRemaining
                 )
-                LiveActivityService.shared.update(state: contentState)
+                return contentState
             }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { contentState in
+                LiveActivityService.shared.update(state: contentState)
+            })
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+            .observe(on: MainScheduler.instance)
             .bind { _ in
                 print("🐈‍⬛ didEnterBackground!")
                 if reactor.currentState.isResting {
@@ -927,6 +938,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.playAndPauseRestEvent)
+            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
                     print("🎬 휴식 재생/일시정지 이벤트 감지! 인덱스: \(String(describing: index))")
@@ -936,6 +948,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
+            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
                     print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
@@ -945,6 +958,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.skipEvent)
+            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
                     print("🎬 스킵 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
