@@ -812,44 +812,36 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // MARK: - LiveActivity 관련
+        // contentState 캐싱
+        var cachedContentState: HowManySetWidgetAttributes.ContentState?
+        
         // LiveActivity start/stop
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
-            .observe(on: MainScheduler.instance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 let (isWorkingout, data) = state
                 print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
                     LiveActivityService.shared.stop()
-                    LiveActivityService.shared.start(with: data)
+                    LiveActivityService.shared.startQuicklyThenUpdate(with: data)
+                    cachedContentState = .init(from: data)
                 } else {
                     LiveActivityService.shared.stop()
+                    cachedContentState = nil
                 }
             }
             .disposed(by: disposeBag)
         
         // LiveActivity 요소 업데이트
         reactor.state.map { $0.forLiveActivity }
-            .distinctUntilChanged()
+            .distinctUntilChanged { $0 == $1 }
             .map { data in
-                HowManySetWidgetAttributes.ContentState(
-                    workoutTime: data.workoutTime,
-                    isWorkingout: data.isWorkingout,
-                    exerciseName: data.exerciseName,
-                    exerciseInfo: data.exerciseInfo,
-                    currentRoutineCompleted: data.currentRoutineCompleted,
-                    isResting: data.isResting,
-                    restSecondsRemaining: Int(data.restSecondsRemaining),
-                    isRestPaused: data.isRestPaused,
-                    currentSet: data.currentSet,
-                    totalSet: data.totalSet,
-                    currentIndex: data.currentIndex,
-                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
-                    accumulatedRestRemaining: data.accumulatedRestRemaining
-                )
+                let newState = HowManySetWidgetAttributes.ContentState(from: data)
+                cachedContentState = newState
+                return newState
             }
-            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(50), scheduler: MainScheduler.instance)
             .bind(onNext: { contentState in
                 LiveActivityService.shared.update(state: contentState)
             })
@@ -858,25 +850,16 @@ extension HomeViewController {
         // 휴식 상태 변화 시 즉시 업데이트
         reactor.state.map { $0.isResting }
             .distinctUntilChanged()
-            .map { isResting in
-                print("isResting: \(isResting)")
-                let data = reactor.currentState.forLiveActivity
-                let contentState = HowManySetWidgetAttributes.ContentState.init(
-                    workoutTime: data.workoutTime,
-                    isWorkingout: !isResting, // isResting 값만 즉각적으로 사용
-                    exerciseName: data.exerciseName,
-                    exerciseInfo: data.exerciseInfo,
-                    currentRoutineCompleted: data.currentRoutineCompleted,
-                    isResting: isResting, // isResting 값만 즉각적으로 사용
-                    restSecondsRemaining: Int(data.restSecondsRemaining),
-                    isRestPaused: data.isRestPaused,
-                    currentSet: data.currentSet,
-                    totalSet: data.totalSet,
-                    currentIndex: data.currentIndex,
-                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
-                    accumulatedRestRemaining: data.accumulatedRestRemaining
-                )
-                return contentState
+            .map { isResting -> HowManySetWidgetAttributes.ContentState in
+                guard let cached = cachedContentState else {
+                    let data = reactor.currentState.forLiveActivity
+                    let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
+                    cachedContentState = newState
+                    return newState
+                }
+                let updated = cached.updateRestState(isResting)
+                cachedContentState = updated
+                return updated
             }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { contentState in
@@ -887,24 +870,16 @@ extension HomeViewController {
         // 휴식시간 즉시 업데이트
         reactor.state.map { $0.restRemainingTime }
             .distinctUntilChanged()
-            .map { restRemaining in
-                let data = reactor.currentState.forLiveActivity
-                let contentState = HowManySetWidgetAttributes.ContentState.init(
-                    workoutTime: data.workoutTime,
-                    isWorkingout: data.isWorkingout,
-                    exerciseName: data.exerciseName,
-                    exerciseInfo: data.exerciseInfo,
-                    currentRoutineCompleted: data.currentRoutineCompleted,
-                    isResting: data.isResting,
-                    restSecondsRemaining: Int(restRemaining), // restRemainingTime만 즉각적으로 사용
-                    isRestPaused: data.isRestPaused,
-                    currentSet: data.currentSet,
-                    totalSet: data.totalSet,
-                    currentIndex: data.currentIndex,
-                    accumulatedWorkoutTime: data.accumulatedWorkoutTime,
-                    accumulatedRestRemaining: data.accumulatedRestRemaining
-                )
-                return contentState
+            .map { restRemaining -> HowManySetWidgetAttributes.ContentState in
+                guard let cached = cachedContentState else {
+                    let data = reactor.currentState.forLiveActivity
+                    let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
+                    cachedContentState = newState
+                    return newState
+                }
+                let updated = cached.updateRestRemaining(restRemaining)
+                cachedContentState = updated
+                return updated
             }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { contentState in
@@ -913,21 +888,18 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
-            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
-            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
-            .observe(on: MainScheduler.instance)
             .bind { _ in
                 print("🐈‍⬛ didEnterBackground!")
                 if reactor.currentState.isResting {
@@ -937,7 +909,6 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.playAndPauseRestEvent)
-            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
                     print("🎬 휴식 재생/일시정지 이벤트 감지! 인덱스: \(String(describing: index))")
@@ -947,7 +918,6 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
-            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
                     print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
@@ -957,7 +927,6 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.skipEvent)
-            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
                     print("🎬 스킵 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
