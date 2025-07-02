@@ -29,7 +29,7 @@ final class RecordCell: UITableViewCell {
 
         // 총 세트 수
         let totalSets = record.workoutRoutine.workouts.map { $0.sets.count }.reduce(0, +)
-        setsLabel.text = "총 \(totalSets)세트"
+        setsLabel.text = String(format: String(localized: "총 %d세트"), totalSets)
 
         // 시작시간 ~ 종료시간
         let startTime = record.date.startTime(fromTotalTime: record.totalTime)
@@ -39,8 +39,12 @@ final class RecordCell: UITableViewCell {
         // 총 시간, 총 운동시간
         let totalTimeLabel = record.totalTime.toMinutesLabel()
         let workoutTimeLabel = record.workoutTime.toMinutesLabel()
-
-        timeLabel.text = "\(startStr) ~ \(endStr), 총 시간 \(totalTimeLabel), 총 운동시간 \(workoutTimeLabel)"
+        
+        let timeInfo = String(
+            format: String(localized: "%@ ~ %@, 총 시간 %@, 총 운동시간 %@"),
+            startStr, endStr, totalTimeLabel, workoutTimeLabel
+        )
+        timeLabel.text = timeInfo
     }
 }
 
