@@ -56,6 +56,28 @@
         }
       }
     },
+    "네트워크 연결을 확인해 주세요." : {
+        "localizations" : {
+          "en" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "Please check your network connection."
+            }
+          },
+          "ja" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "ネットワーク接続を確認してください。"
+            }
+          },
+          "ko" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "네트워크 연결을 확인해 주세요."
+            }
+          }
+        }
+    },
     "로그아웃" : {
       "localizations" : {
         "en" : {
@@ -99,6 +121,50 @@
           }
         }
       }
+    },
+    "로그인 실패" : {
+        "localizations" : {
+          "en" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "Login failed"
+            }
+          },
+          "ja" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "ログインに失敗しました"
+            }
+          },
+          "ko" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "로그인 실패"
+            }
+          }
+        }
+    },
+    "로그인 정보를 확인해 주세요." : {
+        "localizations" : {
+          "en" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "Please check your login information."
+            }
+          },
+          "ja" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "ログイン情報をご確認ください。"
+            }
+          },
+          "ko" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "로그인 정보를 확인해 주세요."
+            }
+          }
+        }
     },
     "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요." : {
       "localizations" : {
@@ -389,6 +455,28 @@
           }
         }
       }
+    },
+    "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
+        "localizations" : {
+          "en" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "A temporary error occurred.\nPlease try again later."
+            }
+          },
+          "ja" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "一時的なエラーが発生しました。\nしばらくしてから再度お試しください。"
+            }
+          },
+          "ko" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요."
+            }
+          }
+        }
     },
     "정말 탈퇴하시겠습니까?" : {
       "localizations" : {
