@@ -24,7 +24,7 @@ final class EditExerciseCurrentStackView: UIStackView {
     
     /// 상단에 위치한 섹션 타이틀 라벨입니다.
     private let titleLabel = UILabel().then {
-        $0.text = "현재 운동 목록"
+        $0.text = String(localized: "현재 운동 목록")
         $0.textColor = .white
         $0.font = .pretendard(size: 20, weight: .regular)
     }
@@ -37,7 +37,7 @@ final class EditExerciseCurrentStackView: UIStackView {
     
     /// 운동이 추가되지 않았을 때 표시되는 안내 라벨입니다.
     private let emptyTextLabel = UILabel().then {
-        $0.text = "아직 추가된 운동이 없습니다."
+        $0.text = String(localized: "아직 추가된 운동이 없습니다.")
         $0.textColor = .dbTypo
         $0.font = .pretendard(size: 16, weight: .regular)
     }
@@ -74,7 +74,8 @@ final class EditExerciseCurrentStackView: UIStackView {
         self.addArrangedSubviews(view)
         
         // 개수 라벨 갱신
-        self.excerciseCountLabel.text = "\(self.arrangedSubviews.count - 1)개의 운동"
+        let count = self.arrangedSubviews.count - 1
+        self.excerciseCountLabel.text = String(format: String(localized: "%d개의 운동"), count)
     }
     
     func addExcercise(workout: Workout) {
@@ -83,7 +84,8 @@ final class EditExerciseCurrentStackView: UIStackView {
         emptyTextLabel.removeFromSuperview()
         
         self.addArrangedSubviews(view)
-        self.excerciseCountLabel.text = "\(self.arrangedSubviews.count - 1)개의 운동"
+        let count = self.arrangedSubviews.count - 1
+        self.excerciseCountLabel.text = String(format: String(localized: "%d개의 운동"), count)
     }
 }
 

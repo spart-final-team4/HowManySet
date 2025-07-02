@@ -22,7 +22,7 @@ final class EditExerciseContentHeaderView: UIView {
     
     /// 운동 정보 입력 안내 문구를 표시하는 라벨입니다.
     private let titleLabel = UILabel().then {
-        $0.text = "운동정보 입력"
+        $0.text = String(localized: "운동정보 입력")
         $0.textColor = .white
         $0.font = .pretendard(size: 20, weight: .bold)
     }

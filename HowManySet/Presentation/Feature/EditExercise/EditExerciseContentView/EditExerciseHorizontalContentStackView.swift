@@ -45,7 +45,7 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
     
     /// 무게를 입력받는 텍스트 필드입니다.
     private let weightTextField = UITextField().then {
-        $0.placeholder = "입력"
+        $0.placeholder = String(localized: "입력")
         $0.backgroundColor = .bottomSheetBG
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
@@ -59,7 +59,7 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
     
     /// 반복 횟수를 입력받는 텍스트 필드입니다.
     private let repsTextField = UITextField().then {
-        $0.placeholder = "입력"
+        $0.placeholder = String(localized: "입력")
         $0.backgroundColor = .bottomSheetBG
         $0.clipsToBounds = true
         $0.textColor = .white

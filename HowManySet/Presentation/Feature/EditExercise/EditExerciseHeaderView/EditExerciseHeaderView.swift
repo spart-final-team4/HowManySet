@@ -28,7 +28,7 @@ final class EditExerciseHeaderView: UIView {
     
     /// 운동명 입력 안내 문구를 보여주는 라벨입니다.
     private let titleLabel = UILabel().then {
-        $0.text = "운동명을 입력해주세요"
+        $0.text = String(localized: "운동명을 입력해주세요")
         $0.font = .pretendard(size: 20, weight: .bold)
         $0.textColor = .textSecondary
     }
@@ -37,7 +37,7 @@ final class EditExerciseHeaderView: UIView {
     ///
     /// 왼쪽에 패딩이 있으며, 둥근 테두리 및 배경색이 적용되어 있습니다.
     private let exerciseNameTextField = UITextField().then {
-        $0.placeholder = "예) 벤치프레스, 체스트 프레스"
+        $0.placeholder = String(localized: "예) 벤치프레스, 체스트 프레스")
         $0.backgroundColor = .bottomSheetBG
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
@@ -136,7 +136,7 @@ extension EditExerciseHeaderView {
     func editConfigure(with text: String) {
         if text == exerciseNameTextField.text { return }
         exerciseNameTextField.text = text
-        titleLabel.text = "운동 이름"
+        titleLabel.text = String(localized: "운동 이름")
         exerciseNameRelay.accept(text)
     }
 }
