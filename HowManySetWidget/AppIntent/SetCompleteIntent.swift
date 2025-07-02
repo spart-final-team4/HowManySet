@@ -11,10 +11,11 @@ import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
 public struct SetCompleteIntent: AppIntent, LiveActivityIntent {
-    public static var title: LocalizedStringResource = "세트 완료"
-    public static var description = IntentDescription("세트 완료 버튼")
-    @Parameter(title: "현재 운동 인덱스")
+    public static var title: LocalizedStringResource = LocalizedStringResource("세트 완료")
+    public static var description = IntentDescription(LocalizedStringResource("세트 완료 버튼"))
+    @Parameter(title: LocalizedStringResource("현재 운동 인덱스"))
     public var index: Int?
+
     
     public init() {}
 
