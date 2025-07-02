@@ -5,7 +5,7 @@ import Then
 final class MemoInfoCell: UICollectionViewCell {
     // MARK: - Properties
     static let identifier = "MemoInfoCell"
-    private let placeholderText = "메모를 입력해주세요."
+    private let placeholderText = String(localized: "메모를 입력해주세요.")
 
     private let memoTitleLabel = UILabel()
     private let memoTextView = UITextView()
@@ -40,7 +40,7 @@ private extension MemoInfoCell {
 
     func setAppearance() {
         memoTitleLabel.do {
-            $0.text = "메모"
+            $0.text = String(localized: "메모")
             $0.textColor = .white
             $0.font = .pretendard(size: 20, weight: .semibold)
             $0.textAlignment = .left
