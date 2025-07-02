@@ -104,6 +104,8 @@ final class MyPageViewController: UIViewController, View {
             coordinator?.presentLanguageSettingAlert()
         case .showVersion:
             coordinator?.showVersionInfo()
+        case .showLicense:
+            coordinator?.presentLicenseView()
         case .appReview:
             coordinator?.openAppStoreReviewPage()
         case .reportProblem:
