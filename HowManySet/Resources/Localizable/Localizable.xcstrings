@@ -1306,6 +1306,20 @@
         "ko": { "stringUnit": { "state": "translated", "value": "다음" } }
       }
     },
+    "휴식 종료!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Rest Finished!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩終了！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식 종료!" } }
+      }
+    },
+    "이제 다음 세트를 시작하세요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start your next set now!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "次のセットを始めましょう！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "이제 다음 세트를 시작하세요!" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
