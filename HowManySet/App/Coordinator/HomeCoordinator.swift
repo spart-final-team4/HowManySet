@@ -182,9 +182,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     func popUpCompletedWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?) {
         
         let endWorkoutVC = ExercisePopupViewController(
-            title: "오늘의 루틴 완료!",
-            content: "수고하셨어요! 운동 기록을 저장할게요.",
-            rightButtonText: "결과보기",
+            title: String(localized: "오늘의 루틴 완료!"),
+            content: String(localized: "수고하셨어요! 운동 기록을 저장할게요."),
+            rightButtonText: String(localized: "결과보기"),
             rightButtonTitleColor: .background,
             rightButtonBackgroundColor: .green6,
             nextAction: { [weak self] in

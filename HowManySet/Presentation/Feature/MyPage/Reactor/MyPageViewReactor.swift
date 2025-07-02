@@ -91,7 +91,7 @@ final class MyPageViewReactor: Reactor {
                 .catch { error in
                     print("🔴 사용자 이름 로드 실패: \(error)")
                     // 실패 시 로컬 백업 사용
-                    let localName = UserDefaults.standard.string(forKey: "userNickname") ?? "비회원"
+                    let localName = UserDefaults.standard.string(forKey: "userNickname") ?? String(localized: "비회원")
                     return .just(.setUserName(localName))
                 }
             
@@ -133,7 +133,7 @@ final class MyPageViewReactor: Reactor {
         return Observable.create { observer in
             guard let currentUser = Auth.auth().currentUser else {
                 // Firebase Auth 사용자가 없으면 로컬 백업 사용
-                let localName = UserDefaults.standard.string(forKey: "userNickname") ?? "비회원"
+                let localName = UserDefaults.standard.string(forKey: "userNickname") ?? String(localized: "비회원")
                 observer.onNext(localName)
                 observer.onCompleted()
                 return Disposables.create()
@@ -151,7 +151,7 @@ final class MyPageViewReactor: Reactor {
                       let data = document.data(),
                       let name = data["name"] as? String else {
                     print("🔴 Firestore 문서 없음 - 로컬 백업 사용")
-                    let localName = UserDefaults.standard.string(forKey: "userNickname") ?? "비회원"
+                    let localName = UserDefaults.standard.string(forKey: "userNickname") ?? String(localized: "비회원")
                     observer.onNext(localName)
                     observer.onCompleted()
                     return
