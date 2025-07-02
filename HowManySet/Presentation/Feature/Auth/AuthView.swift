@@ -23,7 +23,7 @@ final class AuthView: UIView {
     /// 카카오 로그인 버튼 - Configuration 사용
     let kakaoLoginButton: UIButton = {
         var config = UIButton.Configuration.filled()
-        config.title = "카카오로 시작하기"
+        config.title = String(localized: "카카오로 시작하기")
         config.baseBackgroundColor = UIColor(red: 1.0, green: 0.9, blue: 0.0, alpha: 1.0)
         config.baseForegroundColor = .black
         config.image = UIImage(named: "Kakao")
@@ -42,7 +42,7 @@ final class AuthView: UIView {
         var config = UIButton.Configuration.filled()
         config.baseBackgroundColor = .white
         config.baseForegroundColor = .black
-        config.title = "Google로 로그인"
+        config.title = String(localized: "Google로 로그인")
         config.image = UIImage(named: "Google")
         config.imagePadding = 8
         config.imagePlacement = .leading
@@ -63,7 +63,7 @@ final class AuthView: UIView {
     /// 비회원 시작 버튼 - 텍스트 링크 스타일
     let anonymousLoginButton: UIButton = {
         let button = UIButton(type: .system)
-        let title = "비회원으로 시작하기"
+        let title = String(localized: "비회원으로 시작하기")
         let attributed = NSAttributedString(
             string: title,
             attributes: [
