@@ -37,8 +37,8 @@ final class LiveActivityService {
     func update(state: HowManySetWidgetAttributes.ContentState) {
         let content: ActivityContent<HowManySetWidgetAttributes.ContentState>
         content = ActivityContent(state: state, staleDate: nil)
-        for activity in Activity<HowManySetWidgetAttributes>.activities {
-            Task {
+        Task {
+            for activity in Activity<HowManySetWidgetAttributes>.activities {
                 await activity.update(content)
             }
         }
