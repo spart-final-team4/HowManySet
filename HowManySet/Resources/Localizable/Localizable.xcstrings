@@ -1285,6 +1285,27 @@
         "ko": { "stringUnit": { "state": "translated", "value": "루틴이 삭제되었어요!" } }
       }
     },
+    "루틴명을 입력해주세요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter the routine name" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ルーティン名を入力してください" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "루틴명을 입력해주세요" } }
+      }
+    },
+    "예) 상체 루틴, 2분할 (하체/어깨)": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "e.g. Upper Body Routine, 2-Split (Legs/Shoulders)" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "例）上半身ルーティン、2分割（下半身/肩）" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "예) 상체 루틴, 2분할 (하체/어깨)" } }
+      }
+    },
+    "다음": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Next" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "次へ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "다음" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
