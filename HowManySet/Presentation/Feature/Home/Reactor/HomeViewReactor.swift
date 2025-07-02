@@ -852,7 +852,7 @@ extension HomeViewReactor.State {
             weight = String(exercise.currentWeightForSave)
         }
         let unit = exercise.currentUnitForSave
-        let repsText = "회"
+        let repsText = String(localized: "회")
         let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
         
         return WorkoutDataForLiveActivity(
