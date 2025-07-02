@@ -34,6 +34,8 @@ final class DefaultPopupViewController: UIViewController {
     private let titleLabel = UILabel().then {
         $0.font = .pretendard(size: 18, weight: .regular)
         $0.textColor = .error
+        $0.numberOfLines = 0
+        $0.textAlignment = .center
     }
     
     /// 팝업 본문에 표시될 설명 레이블
@@ -41,6 +43,7 @@ final class DefaultPopupViewController: UIViewController {
         $0.font = .pretendard(size: 16, weight: .regular)
         $0.numberOfLines = 0
         $0.textColor = .textTertiary
+        $0.textAlignment = .center
     }
     
     /// 확인(OK) 버튼 - 텍스트 설정 가능하며, 클릭 시 전달된 클로저 실행
