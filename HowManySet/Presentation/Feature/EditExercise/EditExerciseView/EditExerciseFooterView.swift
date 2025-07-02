@@ -18,7 +18,7 @@ final class EditExerciseFooterView: UIView {
     private(set) var saveExcerciseButtonRelay: PublishRelay<Void> = .init()
     
     private let saveExcerciseButton = UIButton().then {
-        $0.setTitle("저장하기", for: .normal)
+        $0.setTitle(String(localized: "저장하기"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
         $0.setTitleColor(.background, for: .normal)
     }

@@ -46,13 +46,19 @@ final class SavedExerciseView: UIView {
     convenience init(name: String, setCount: Int) {
         self.init(frame: .zero)
         self.excerciseNameLabel.text = name
-        self.setCountLabel.text = "\(setCount)세트"
+        self.setCountLabel.text = String(format: String(localized: "%d세트"), setCount)
     }
     
     convenience init(workout: Workout) {
         self.init(frame: .zero)
         self.excerciseNameLabel.text = workout.name
-        self.setCountLabel.text = "\(workout.sets.count)세트 * \(workout.sets.map{ $0.weight }.max()!)\(workout.sets[0].unit) * 총 \(workout.sets.map{ $0.reps }.reduce(0, +))회"
+        self.setCountLabel.text = String(
+            format: String(localized: "%d세트 * %@%@ * 총 %d회"),
+            workout.sets.count,
+            "\(workout.sets.map{ $0.weight }.max()!)",
+            workout.sets[0].unit,
+            workout.sets.map{ $0.reps }.reduce(0, +)
+        )
     }
     
     /// 스토리보드 사용 불가

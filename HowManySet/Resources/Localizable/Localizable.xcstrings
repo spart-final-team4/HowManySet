@@ -536,6 +536,237 @@
         "ko": { "stringUnit": { "state": "translated", "value": "%@ ~ %@, 총 시간 %@, 총 운동시간 %@" } }
       }
     },
+    "운동이 추가되었어요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Workout added!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動が追加されました！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동이 추가되었어요!" } }
+      }
+    },
+    "오류": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Error" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "エラー" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "오류" } }
+      }
+    },
+    "운동 이름을 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter the workout name." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名を入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름을 입력해주세요." } }
+      }
+    },
+    "현재 저장된 운동 항목이 없습니다.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No saved workout items." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在保存されている運動項目はありません。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 저장된 운동 항목이 없습니다." } }
+      }
+    },
+    "운동 세트와 개수를 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter the workout sets and reps." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動セットと回数を入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 세트와 개수를 입력해주세요." } }
+      }
+    },
+    "운동 이름이 너무 길어요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The workout name is too long." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名が長すぎます。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름이 너무 길어요." } }
+      }
+    },
+    "운동 이름이 너무 짧아요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The workout name is too short." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名が短すぎます。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름이 너무 짧아요." } }
+      }
+    },
+    "0은 입력할 수 없습니다.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "0 cannot be entered." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "0は入力できません。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "0은 입력할 수 없습니다." } }
+      }
+    },
+    "운동정보 입력": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Enter Workout Info" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動情報入力" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동정보 입력" } }
+      }
+    },
+    "세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트" } }
+      }
+    },
+    "무게": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Weight" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "重さ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "무게" } }
+      }
+    },
+    "개수": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "回数" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "개수" } }
+      }
+    },
+    "+ 세트 추가하기": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "+ Add Set" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "+ セットを追加" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "+ 세트 추가하기" } }
+      }
+    },
+    "입력": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Input" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "入力" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "입력" } }
+      }
+    },
+    "현재 운동 목록": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Current Exercises" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在の運動リスト" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 운동 목록" } }
+      }
+    },
+    "아직 추가된 운동이 없습니다.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No exercises added yet." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "まだ追加された運動がありません。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "아직 추가된 운동이 없습니다." } }
+      }
+    },
+    "%d개의 운동": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d exercises" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%d個の運動" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d개의 운동" } }
+      }
+    },
+    "%d세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d sets" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%dセット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d세트" } }
+      }
+    },
+    "%d세트 * %@%@ * 총 %d회": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d sets * %@%@ * total %d reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%dセット * %@%@ * 合計%d回" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d세트 * %@%@ * 총 %d회" } }
+      }
+    },
+    "운동 추가": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Add Exercise" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動を追加" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 추가" } }
+      }
+    },
+    "루틴 저장": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Save Routine" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ルーティンを保存" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "루틴 저장" } }
+      }
+    },
+    "운동명을 입력해주세요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter the exercise name" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名を入力してください" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동명을 입력해주세요" } }
+      }
+    },
+    "예) 벤치프레스, 체스트 프레스": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "e.g. Bench Press, Chest Press" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "例）ベンチプレス、チェストプレス" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "예) 벤치프레스, 체스트 프레스" } }
+      }
+    },
+    "운동 이름": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Exercise Name" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름" } }
+      }
+    },
+    "저장하기": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Save" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "保存" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "저장하기" } }
+      }
+    },
+    "오류": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Error" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "エラー" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "오류" } }
+      }
+    },
+    "운동 이름을 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter the workout name." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名を入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름을 입력해주세요." } }
+      }
+    },
+    "현재 저장된 운동 항목이 없어요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No saved workout items." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "現在保存されている運動項目はありません。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "현재 저장된 운동 항목이 없어요." } }
+      }
+    },
+    "운동 세트와 개수를 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter the workout sets and reps." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動セットと回数を入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 세트와 개수를 입력해주세요." } }
+      }
+    },
+    "운동 이름이 너무 길어요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The workout name is too long." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名が長すぎます。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름이 너무 길어요." } }
+      }
+    },
+    "운동 이름이 너무 짧아요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The workout name is too short." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名が短すぎます。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름이 너무 짧아요." } }
+      }
+    },
+    "0은 입력할 수 없어요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "0 cannot be entered." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "0は入力できません。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "0은 입력할 수 없어요." } }
+      }
+    },
+    "빈 항목은 저장할 수 없어요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Empty items cannot be saved." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "空の項目は保存できません。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "빈 항목은 저장할 수 없어요." } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
