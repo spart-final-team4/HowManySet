@@ -179,9 +179,9 @@ final class OnBoardingViewController: UIViewController, View {
         onboardingView.subTitleLabel.text = page.subtitle
         onboardingView.centerImageView.image = UIImage(named: page.imageName)
         onboardingView.pageIndicator.currentPage = index
-
+        
         let isLast = index == OnBoardingViewReactor.onboardingPages.count - 1
-        onboardingView.nextButton.setTitle(isLast ? "시작하기" : "다음", for: .normal)
+        onboardingView.nextButton.setTitle(isLast ? String(localized: "시작하기") : String(localized: "다음"), for: .normal)
     }
 
     private func setupKeyboardObserver() {

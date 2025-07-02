@@ -970,6 +970,125 @@
         "ko": { "stringUnit": { "state": "translated", "value": "비회원" } }
       }
     },
+    "운동 이름부터 세트 수까지": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "From exercise name to set count" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動名からセット数まで" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 이름부터 세트 수까지" } }
+      }
+    },
+    "내 루틴에 맞게 직접 설정해보세요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set it up to fit your own routine" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "自分のルーティンに合わせて設定しましょう" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "내 루틴에 맞게 직접 설정해보세요" } }
+      }
+    },
+    "오늘은 어떤 운동할까?": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "What workout today?" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "今日はどんな運動をしよう？" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "오늘은 어떤 운동할까?" } }
+      }
+    },
+    "원하는 루틴만 골라 시작하세요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pick only the routines you want and start" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "好きなルーティンだけを選んで始めましょう" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "원하는 루틴만 골라 시작하세요" } }
+      }
+    },
+    "운동을 완료하면 세트 완료를 클릭하고,": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "When you finish, tap Set Complete," } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動が終わったら「セット完了」をクリックして" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동을 완료하면 세트 완료를 클릭하고," } }
+      }
+    },
+    "휴식 시간을 미리 설정해보세요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set your rest time in advance" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩時間を事前に設定しましょう" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식 시간을 미리 설정해보세요" } }
+      }
+    },
+    "운동 중 화면에서 무게, 횟수 클릭 시": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap weight or reps during your workout" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動中の画面で重さや回数をタップすると" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 중 화면에서 무게, 횟수 클릭 시" } }
+      }
+    },
+    "세트 수, 무게를 변경할 수 있어요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You can change set count and weight" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット数や重さを変更できます" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트 수, 무게를 변경할 수 있어요" } }
+      }
+    },
+    "휴식 타이머를 확인하고,": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Check your rest timer," } },
+        "ja": { "stringUnit": { "state": "translated", "value": "休憩タイマーを確認して" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "휴식 타이머를 확인하고," } }
+      }
+    },
+    "물 한 잔으로 리프레시해보세요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Refresh with a glass of water!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "水を飲んでリフレッシュしましょう！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "물 한 잔으로 리프레시해보세요!" } }
+      }
+    },
+    "운동 중엔 앱을 꺼도 OK!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You can turn off the app during a workout!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動中にアプリを閉じてもOK！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 중엔 앱을 꺼도 OK!" } }
+      }
+    },
+    "잠금화면에서 운동 완료, 휴식까지 한 번에": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Complete your workout and rest from the lock screen" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ロック画面で運動完了も休憩も一度に" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "잠금화면에서 운동 완료, 휴식까지 한 번에" } }
+      }
+    },
+    "닉네임을 적어주세요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter your nickname" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ニックネームを入力してください" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "닉네임을 적어주세요" } }
+      }
+    },
+    "한글, 영문 2~8자": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "2–8 Korean or English characters" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "韓国語・英語2～8文字" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "한글, 영문 2~8자" } }
+      }
+    },
+    "다음": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Next" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "次へ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "다음" } }
+      }
+    },
+    "시작하기": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "開始" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "시작하기" } }
+      }
+    },
+    "다음": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Next" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "次へ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "다음" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {

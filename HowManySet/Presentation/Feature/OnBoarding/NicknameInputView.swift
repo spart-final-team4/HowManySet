@@ -35,7 +35,7 @@ final class NicknameInputView: UIView {
     
     /// 닉네임 입력 안내 타이틀 라벨. 상단에 위치.
     private let titleLabel = UILabel().then {
-        $0.text = "닉네임을 적어주세요"
+        $0.text = String(localized: "닉네임을 적어주세요")
         $0.font = .pretendard(size: 24, weight: .bold)
         $0.textColor = .white
         $0.textAlignment = .left
@@ -49,7 +49,7 @@ final class NicknameInputView: UIView {
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
         $0.attributedPlaceholder = NSAttributedString(
-            string: "한글, 영문 2~8자",
+            string: String(localized: "한글, 영문 2~8자"),
             attributes: [.foregroundColor: UIColor.lightGray]
         )
         $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
@@ -64,7 +64,7 @@ final class NicknameInputView: UIView {
     /// 하단 "다음" 버튼. 기본 비활성화 상태, 유효성 통과 시 활성화.
     /// 추후 접근제어자(private/public) 변경 예정.
     let nextButton = UIButton().then {
-        $0.setTitle("다음", for: .normal)
+        $0.setTitle(String(localized: "다음"), for: .normal)
         $0.titleLabel!.font = UIFont.pretendard(size: 16, weight: .medium)
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
