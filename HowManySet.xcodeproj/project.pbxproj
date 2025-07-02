@@ -28,6 +28,8 @@
 		A53AD85A2DEF154D003E1FE8 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD8592DEF154D003E1FE8 /* KakaoSDKCommon */; };
 		A53AD85C2DEF154D003E1FE8 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD85B2DEF154D003E1FE8 /* KakaoSDKUser */; };
 		AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */; };
+		AA3106882E15EAF900FDF8BD /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = AA3106872E15EAF900FDF8BD /* AcknowList */; };
+		AA31068A2E15EDE800FDF8BD /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = AA3106892E15EDE800FDF8BD /* Package.resolved */; };
 		AAD440382DF690BB00B57C81 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; };
 		AAD4403A2DF690BB00B57C81 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -129,6 +131,7 @@
 		669358D12DE9AA8E00956214 /* HowManySetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		AA3106892E15EDE800FDF8BD /* Package.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Package.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -284,6 +287,7 @@
 				66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */,
 				668CB1902DE9C52E00924340 /* RxDataSources in Frameworks */,
 				A53AD8522DEF0CFD003E1FE8 /* GoogleSignIn in Frameworks */,
+				AA3106882E15EAF900FDF8BD /* AcknowList in Frameworks */,
 				668CB1792DE9C2F300924340 /* SnapKit in Frameworks */,
 				A53AD85C2DEF154D003E1FE8 /* KakaoSDKUser in Frameworks */,
 				A53AD85A2DEF154D003E1FE8 /* KakaoSDKCommon in Frameworks */,
@@ -334,6 +338,7 @@
 				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
 				66329E042E014905003405F2 /* HowManySetUITests */,
 				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
+				AA3106892E15EDE800FDF8BD /* Package.resolved */,
 			);
 			sourceTree = "<group>";
 		};
@@ -438,6 +443,7 @@
 				A53AD8572DEF154D003E1FE8 /* KakaoSDKAuth */,
 				A53AD8592DEF154D003E1FE8 /* KakaoSDKCommon */,
 				A53AD85B2DEF154D003E1FE8 /* KakaoSDKUser */,
+				AA3106872E15EAF900FDF8BD /* AcknowList */,
 			);
 			productName = HowManySet;
 			productReference = 669358BB2DE9AA8C00956214 /* HowManySet.app */;
@@ -541,6 +547,7 @@
 				6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */,
 				A53AD8502DEF0CFD003E1FE8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				A53AD8562DEF154D003E1FE8 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				AA3106862E15EAF900FDF8BD /* XCRemoteSwiftPackageReference "AcknowList" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 669358BC2DE9AA8C00956214 /* Products */;
@@ -576,6 +583,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */,
+				AA31068A2E15EDE800FDF8BD /* Package.resolved in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1194,6 +1202,14 @@
 				minimumVersion = 2.24.3;
 			};
 		};
+		AA3106862E15EAF900FDF8BD /* XCRemoteSwiftPackageReference "AcknowList" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vtourraine/AcknowList.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1281,6 +1297,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A53AD8562DEF154D003E1FE8 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		AA3106872E15EAF900FDF8BD /* AcknowList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA3106862E15EAF900FDF8BD /* XCRemoteSwiftPackageReference "AcknowList" */;
+			productName = AcknowList;
 		};
 		AAD440372DF690BB00B57C81 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
