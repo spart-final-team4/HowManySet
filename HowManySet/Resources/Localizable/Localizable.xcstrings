@@ -45,6 +45,28 @@
         }
       }
     },
+    "%d개 운동, %d세트" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d exercises, %d sets"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d個の運動、%dセット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d개 운동, %d세트"
+          }
+        }
+      }
+    },
     "%d개의 운동" : {
       "localizations" : {
         "en" : {
@@ -151,6 +173,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%d회"
+          }
+        }
+      }
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/%lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/%lld"
           }
         }
       }
@@ -332,6 +376,29 @@
         }
       }
     },
+    "Kakao로 시작하기" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login with Kakao"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kakaoで始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kakao로 시작하기"
+          }
+        }
+      }
+    },
     "개수" : {
       "localizations" : {
         "en" : {
@@ -350,6 +417,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "개수"
+          }
+        }
+      }
+    },
+    "개인정보 처리 방침" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシーポリシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보처리방침"
+          }
+        }
+      }
+    },
+    "결과보기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Results"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果を見る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결과보기"
+          }
+        }
+      }
+    },
+    "계정" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウント"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정"
           }
         }
       }
@@ -482,6 +615,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "다음"
+          }
+        }
+      }
+    },
+    "도움말 및 정보" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help & Information"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヘルプと情報"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도움말 및 정보"
           }
         }
       }
@@ -882,6 +1037,28 @@
         }
       }
     },
+    "문제 제보하기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report a Problem"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題を報告する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 제보하기"
+          }
+        }
+      }
+    },
     "물 한 잔으로 리프레시해보세요!" : {
       "localizations" : {
         "en" : {
@@ -995,6 +1172,12 @@
     "비회원으로 시작하기" : {
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start as Guest"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1251,6 +1434,28 @@
         }
       }
     },
+    "수고하셨어요! 운동 기록을 저장할게요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Great job! Your workout record will be saved."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "お疲れさまでした！運動記録を保存します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수고하셨어요! 운동 기록을 저장할게요."
+          }
+        }
+      }
+    },
     "순 운동" : {
       "localizations" : {
         "en" : {
@@ -1449,6 +1654,50 @@
         }
       }
     },
+    "앱 설정" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリ設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 설정"
+          }
+        }
+      }
+    },
+    "앱 평가" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Review"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリ評価"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 평가"
+          }
+        }
+      }
+    },
     "언어 변경" : {
       "localizations" : {
         "en" : {
@@ -1516,6 +1765,7 @@
       }
     },
     "업데이트 예정" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1625,6 +1875,28 @@
         }
       }
     },
+    "오늘의 루틴 완료!" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's Routine Complete!"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本日のルーティン完了！"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘의 루틴 완료!"
+          }
+        }
+      }
+    },
     "오류" : {
       "localizations" : {
         "en" : {
@@ -1670,6 +1942,7 @@
       }
     },
     "운동 기록이 삭제되었습니다!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2198,7 +2471,30 @@
         }
       }
     },
+    "일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A temporary error has occurred. Please try again later."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時的なエラーが発生しました。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요."
+          }
+        }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
