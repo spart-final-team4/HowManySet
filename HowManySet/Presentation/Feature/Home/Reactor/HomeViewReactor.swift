@@ -488,7 +488,7 @@ final class HomeViewReactor: Reactor {
                !newState.isRestTimerStopped {
                 // 0.1초씩 감소
                 newState.restRemainingTime = max(newState.restRemainingTime - 0.1, 0)
-                //                print("REACTOR - 남은 휴식 시간: \(newState.restSecondsRemaining)")
+//                print("REACTOR - 남은 휴식 시간: \(newState.restRemainingTime)")
                 if newState.restRemainingTime.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
@@ -500,11 +500,6 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseRest(isPaused):
             if isPaused {
-                // 일시정지 시점까지 경과 시간 계산
-                if let restStartDate = state.restStartDate {
-                    let elapsed = Date().timeIntervalSince(restStartDate)
-                    newState.restRemainingTime = max(state.restRemainingTime - Float(elapsed), 0)
-                }
                 newState.restStartDate = nil
                 newState.isRestPaused = true
             } else {
