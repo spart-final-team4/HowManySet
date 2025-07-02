@@ -616,6 +616,7 @@ extension HomeViewController {
                     let elapsed = totalRestTime - restSecondsRemaining
                     let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
                     let timeText = Int(restSecondsRemaining).toRestTimeLabel()
+//                    print("VC - 남은 휴식시간: \(timeText), \(restSecondsRemaining)")
                     return (cardView.index, progress, timeText, true, false)
                 } else {
                     let timeText = Int(restStartTime ?? 0).toRestTimeLabel()
