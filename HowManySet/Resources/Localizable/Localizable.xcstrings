@@ -928,6 +928,27 @@
         "ko": { "stringUnit": { "state": "translated", "value": "물 한잔 챙겼다면, 클릭!" } }
       }
     },
+    "오늘도 득근해요": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Let's get stronger today!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "今日も筋トレ頑張ろう！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "오늘도 득근해요" } }
+      }
+    },
+    "운동 시작하기": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start Workout" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動を始める" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 시작하기" } }
+      }
+    },
+    "메인": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Home" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メイン" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메인" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
