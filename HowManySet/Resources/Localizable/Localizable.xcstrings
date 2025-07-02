@@ -456,6 +456,86 @@
         }
       }
     },
+    "기록" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "運動記録"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록"
+          }
+        }
+      }
+    },
+    "삭제" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제"
+          }
+        }
+      }
+    },
+    "운동 기록이 삭제되었습니다!" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout record deleted!"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "運動記録が削除されました！"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "운동 기록이 삭제되었습니다!"
+          }
+        }
+      }
+    },
+    "총 %d세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Total %d sets" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "合計%dセット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "총 %d세트" } }
+      }
+    },
+    "%@ ~ %@, 총 시간 %@, 총 운동시간 %@": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%@ ~ %@, Total %@, Workout %@ " } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%@ ~ %@、合計%@、運動%@ " } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%@ ~ %@, 총 시간 %@, 총 운동시간 %@" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {

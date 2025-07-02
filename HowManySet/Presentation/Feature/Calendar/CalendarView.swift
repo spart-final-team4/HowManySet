@@ -38,7 +38,7 @@ private extension CalendarView {
 
     func setAppearance() {
         titleLabel.do {
-            $0.text = "기록"
+            $0.text = String(localized: "기록")
             $0.font = .pretendard(size: 36, weight: .regular)
             $0.textColor = .white
         }
