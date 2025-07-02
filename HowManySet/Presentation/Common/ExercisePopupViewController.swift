@@ -50,7 +50,7 @@ final class ExercisePopupViewController: UIViewController {
     // 왼쪽 버튼 - 취소
     private let leftButton = UIButton().then {
         $0.setTitleColor(.grey1, for: .normal)
-        $0.setTitle("취소", for: .normal)
+        $0.setTitle(String(localized: "취소"), for: .normal)
         $0.titleLabel?.adjustsFontSizeToFitWidth = true
         $0.backgroundColor = .grey5
         $0.layer.cornerRadius = 12
