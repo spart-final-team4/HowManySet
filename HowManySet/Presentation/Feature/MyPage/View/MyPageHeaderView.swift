@@ -17,7 +17,7 @@ final class MyPageHeaderView: UIView {
     let usernameLabel = UILabel().then {
         $0.font = .pretendard(size: 36, weight: .regular)
         $0.numberOfLines = 0
-        $0.text = "비회원" // 기본값
+        $0.text = String(localized: "비회원") // 기본값
         $0.textColor = .white
     }
     
