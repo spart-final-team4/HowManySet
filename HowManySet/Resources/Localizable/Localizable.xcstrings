@@ -1243,6 +1243,48 @@
         "ko": { "stringUnit": { "state": "translated", "value": "확인" } }
       }
     },
+    "종목 수: %d": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Exercises: %d" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "種目数: %d" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "종목 수: %d" } }
+      }
+    },
+    "총 세트 수: %d": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Total sets: %d" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "合計セット数: %d" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "총 세트 수: %d" } }
+      }
+    },
+    "루틴 리스트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Routine List" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ルーティンリスト" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "루틴 리스트" } }
+      }
+    },
+    "새 루틴 구성": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Create New Routine" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "新しいルーティン作成" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "새 루틴 구성" } }
+      }
+    },
+    "삭제": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Delete" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "削除" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "삭제" } }
+      }
+    },
+    "루틴이 삭제되었어요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Routine deleted!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ルーティンが削除されました！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "루틴이 삭제되었어요!" } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
