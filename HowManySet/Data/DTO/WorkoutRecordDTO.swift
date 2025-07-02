@@ -67,7 +67,6 @@ extension WorkoutRecordDTO {
 extension WorkoutRecordDTO {
     init(from fsModel: FSWorkoutRecord) {
         let routine = WorkoutRoutineDTO(
-            // TODO: 검토 필요
             rmID: "",
             documentID: fsModel.id ?? "",
             name: fsModel.workoutRoutineName ?? "Unknown",

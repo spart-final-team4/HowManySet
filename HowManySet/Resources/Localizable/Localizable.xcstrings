@@ -1,144 +1,467 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "언어 변경" : {
+    "계정 삭제" : {
       "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "언어 변경", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Language Setting", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "言語の変更", "state" : "translated" } }
-      }
-    },
-    "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "You can change the language in the Settings app.\nGo to app settings?", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "言語は設定アプリで変更できます。\nアプリ設定に移動しますか？", "state" : "translated" } }
-      }
-    },
-    "알림 설정" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "알림 설정", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Notification Settings", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "通知設定", "state" : "translated" } }
-      }
-    },
-    "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "You can change notifications in the Settings app.\nGo to app settings?", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "通知は設定アプリで変更できます。\nアプリ設定に移動しますか？", "state" : "translated" } }
-      }
-    },
-    "버전 정보" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "버전 정보", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Version Info", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "バージョン情報", "state" : "translated" } }
-      }
-    },
-    "앱 버전: %@" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "앱 버전: %@", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "App Version: %@", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "アプリのバージョン: %@", "state" : "translated" } }
-      }
-    },
-    "최신버전이 아닙니다." : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "최신버전이 아닙니다.", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "This is not the latest version.", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "最新版ではありません。", "state" : "translated" } }
-      }
-    },
-    "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Would you like to update to the latest version?\n(Tap update to go to the App Store.)", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "最新版にアップデートしますか？\n（アップデートをタップするとApp Storeに移動します）", "state" : "translated" } }
-      }
-    },
-    "업데이트" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "업데이트", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Update", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "アップデート", "state" : "translated" } }
-      }
-    },
-    "로그아웃 하시겠습니까?" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "로그아웃 하시겠습니까?", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Do you want to log out?", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "ログアウトしますか？", "state" : "translated" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Account"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウント削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정 삭제"
+          }
+        }
       }
     },
     "로그아웃" : {
       "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "로그아웃", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Log Out", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "ログアウト", "state" : "translated" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log Out"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログアウト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그아웃"
+          }
+        }
       }
     },
-    "정말 탈퇴하시겠습니까?" : {
+    "로그아웃 하시겠습니까?" : {
       "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "정말 탈퇴하시겠습니까?", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Are you sure you want to delete your account?", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "本当に退会しますか？", "state" : "translated" } }
-      }
-    },
-    "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다." : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다.", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "All workout records and data will be deleted and cannot be recovered.", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "退会するとすべての運動記録とデータが削除され、復元できません。", "state" : "translated" } }
-      }
-    },
-    "계정 삭제" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "계정 삭제", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Delete Account", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "アカウント削除", "state" : "translated" } }
-      }
-    },
-    "오류" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "오류", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Error", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "エラー", "state" : "translated" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you want to log out?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログアウトしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그아웃 하시겠습니까?"
+          }
+        }
       }
     },
     "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요." : {
       "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요.", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Mail app is not installed.\nPlease install it and try again.", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "メールアプリがインストールされていません。\nインストール後に再試行してください。", "state" : "translated" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mail app is not installed.\nPlease install it and try again."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアプリがインストールされていません。\nインストール後に再試行してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요."
+          }
+        }
       }
     },
-    "확인" : {
+    "버전 정보" : {
       "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "확인", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "OK", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "確認", "state" : "translated" } }
-      }
-    },
-    "이동" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "이동", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Go", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "移動", "state" : "translated" } }
-      }
-    },
-    "취소" : {
-      "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "취소", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Cancel", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "キャンセル", "state" : "translated" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version Info"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バージョン情報"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "버전 정보"
+          }
+        }
       }
     },
     "알 수 없음" : {
       "localizations" : {
-        "ko" : { "stringUnit" : { "value" : "알 수 없음", "state" : "translated" } },
-        "en" : { "stringUnit" : { "value" : "Unknown", "state" : "translated" } },
-        "ja" : { "stringUnit" : { "value" : "不明", "state" : "translated" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不明"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알 수 없음"
+          }
+        }
+      }
+    },
+    "알림 설정" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notification Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림 설정"
+          }
+        }
+      }
+    },
+    "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can change notifications in the Settings app.\nGo to app settings?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知は設定アプリで変更できます。\nアプリ設定に移動しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?"
+          }
+        }
+      }
+    },
+    "앱 버전: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Version: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリのバージョン: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 버전: %@"
+          }
+        }
+      }
+    },
+    "언어 변경" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language Setting"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語の変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "언어 변경"
+          }
+        }
+      }
+    },
+    "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can change the language in the Settings app.\nGo to app settings?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語は設定アプリで変更できます。\nアプリ設定に移動しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?"
+          }
+        }
+      }
+    },
+    "업데이트" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデート"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트"
+          }
+        }
+      }
+    },
+    "오류" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エラー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류"
+          }
+        }
+      }
+    },
+    "유효하지 않은 닉네임입니다. (한글/영문/숫자 2~8자)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid nickname. Use 2–8 characters: English letters, or numbers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効なニックネームです。2〜8文字の日本語・英字・数字を使用してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유효하지 않은 닉네임입니다. (한글/영문/숫자 2~8자)"
+          }
+        }
+      }
+    },
+    "이동" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이동"
+          }
+        }
+      }
+    },
+    "정말 탈퇴하시겠습니까?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete your account?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本当に退会しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정말 탈퇴하시겠습니까?"
+          }
+        }
+      }
+    },
+    "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Would you like to update to the latest version?\n(Tap update to go to the App Store.)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新版にアップデートしますか？\n（アップデートをタップするとApp Storeに移動します）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)"
+          }
+        }
+      }
+    },
+    "최신버전이 아닙니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is not the latest version."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新版ではありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최신버전이 아닙니다."
+          }
+        }
+      }
+    },
+    "취소" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
+          }
+        }
+      }
+    },
+    "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All workout records and data will be deleted and cannot be recovered."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退会するとすべての運動記録とデータが削除され、復元できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다."
+          }
+        }
+      }
+    },
+    "확인" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
+          }
+        }
       }
     }
   },
