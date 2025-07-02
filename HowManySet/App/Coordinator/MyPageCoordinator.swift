@@ -8,6 +8,7 @@
 import UIKit
 import SafariServices
 import MessageUI
+import AcknowList
 
 protocol MyPageCoordinatorProtocol: Coordinator {
     func presentLanguageSettingAlert()
@@ -19,6 +20,7 @@ protocol MyPageCoordinatorProtocol: Coordinator {
     func alertLogout()
     func pushAccountWithdrawalView()
     func navigateToAuth()
+    func presentLicenseView()
 }
 
 /// 마이페이지 흐름 담당 coordinator
@@ -211,6 +213,12 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         UserDefaults.standard.synchronize()
         
         finishFlow?()
+    }
+    
+    func presentLicenseView() {
+        let licenseView = AcknowListViewController()
+        licenseView.title = "라이센스 정보"
+        navigationController.pushViewController(licenseView, animated: true)
     }
 }
 

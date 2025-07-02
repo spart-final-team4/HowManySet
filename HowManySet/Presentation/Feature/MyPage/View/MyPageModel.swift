@@ -38,6 +38,7 @@ enum MyPageCollectionViewModel {
         MyPageSectionModel(title: "도움말 및 정보",
                            cellModel: [
                             MyPageCellModel(title: "버전 정보", version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String),
+                            MyPageCellModel(title: "라이센스 정보"),
                             MyPageCellModel(title: "앱 평가"),
                             MyPageCellModel(title: "문제 제보하기")
                            ]),
@@ -56,6 +57,7 @@ enum MyPageCellType {
     case setNotification        // 알림 설정
     case setLanguage            // 언어 변경
     case showVersion            // 버전 정보 표시
+    case showLicense            // 오픈소스 라이센스 표시
     case appReview              // 앱 평가
     case reportProblem          // 문제 제보
     case privacyPolicy          // 개인정보 처리방침
@@ -78,8 +80,10 @@ extension MyPageCellType {
         case [1,0]:
             self = .showVersion
         case [1,1]:
-            self = .appReview
+            self = .showLicense
         case [1,2]:
+            self = .appReview
+        case [1,3]:
             self = .reportProblem
         case [2,0]:
             self = .privacyPolicy
