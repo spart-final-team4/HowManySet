@@ -396,6 +396,59 @@ extension HowManySetWidgetAttributes.ContentState {
         self.workoutStartDate = data.workoutStartDate
         self.restStartDate = data.restStartDate
     }
+    
+    func updateOthers(_ data: WorkoutDataForLiveActivity) -> Self {
+        return HowManySetWidgetAttributes.ContentState(
+            workoutTime: data.workoutTime,
+            isWorkingout: data.isWorkingout,
+            exerciseName: data.exerciseName,
+            exerciseInfo: data.exerciseInfo,
+            currentRoutineCompleted: data.currentRoutineCompleted,
+            isResting: self.isResting,
+            restSecondsRemaining: self.restSecondsRemaining,
+            isRestPaused: data.isRestPaused,
+            currentSet: data.currentSet,
+            totalSet: data.totalSet,
+            currentIndex: self.currentIndex,
+            accumulatedWorkoutTime: self.accumulatedWorkoutTime,
+            accumulatedRestRemaining: self.accumulatedRestRemaining
+        )
+    }
+    
+    func updateRestState(_ isResting: Bool) -> Self {
+        return HowManySetWidgetAttributes.ContentState(
+            workoutTime: self.workoutTime,
+            isWorkingout: self.isWorkingout,
+            exerciseName: self.exerciseName,
+            exerciseInfo: self.exerciseInfo,
+            currentRoutineCompleted: self.currentRoutineCompleted,
+            isResting: isResting,
+            restSecondsRemaining: self.restSecondsRemaining,
+            isRestPaused: self.isRestPaused,
+            currentSet: self.currentSet,
+            totalSet: self.totalSet,
+            currentIndex: self.currentIndex,
+            accumulatedWorkoutTime: self.accumulatedWorkoutTime,
+            accumulatedRestRemaining: self.accumulatedRestRemaining
+        )
+    }
+    func updateRestRemaining(_ restRemaining: Float) -> Self {
+        return HowManySetWidgetAttributes.ContentState(
+            workoutTime: self.workoutTime,
+            isWorkingout: self.isWorkingout,
+            exerciseName: self.exerciseName,
+            exerciseInfo: self.exerciseInfo,
+            currentRoutineCompleted: self.currentRoutineCompleted,
+            isResting: self.isResting,
+            restSecondsRemaining: Int(restRemaining),
+            isRestPaused: self.isRestPaused,
+            currentSet: self.currentSet,
+            totalSet: self.totalSet,
+            currentIndex: self.currentIndex,
+            accumulatedWorkoutTime: self.accumulatedWorkoutTime,
+            accumulatedRestRemaining: self.accumulatedRestRemaining
+        )
+    }
 }
 
 extension HowManySetWidgetAttributes {
