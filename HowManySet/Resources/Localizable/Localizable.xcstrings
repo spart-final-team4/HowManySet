@@ -1089,6 +1089,132 @@
         "ko": { "stringUnit": { "state": "translated", "value": "다음" } }
       }
     },
+    "메모를 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter a memo." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモを入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모를 입력해주세요." } }
+      }
+    },
+    "메모": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Memo" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモ" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모" } }
+      }
+    },
+    "총 시간": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Total Time" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "総時間" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "총 시간" } }
+      }
+    },
+    "순 운동": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Active Time" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動時間" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "순 운동" } }
+      }
+    },
+    "운동 종목": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Exercises" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "種目数" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 종목" } }
+      }
+    },
+    "%d종목": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d exercises" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%d種目" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d종목" } }
+      }
+    },
+    "세트 수": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sets" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "セット数" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "세트 수" } }
+      }
+    },
+    "%d세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d sets" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%dセット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d세트" } }
+      }
+    },
+    "반복 수": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "回数" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "반복 수" } }
+      }
+    },
+    "%d회": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%d回" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d회" } }
+      }
+    },
+    "운동 상세": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Workout Details" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "運動詳細" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "운동 상세" } }
+      }
+    },
+    "%d세트": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d set" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%dセット" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%d세트" } }
+      }
+    },
+    "%@%@ * %d회": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%@%@ * %d reps" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%@%@ × %d回" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "%@%@ * %d회" } }
+      }
+    },
+    "메모를 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter a memo." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモを入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모를 입력해주세요." } }
+      }
+    },
+    "저장": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Save" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "保存" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "저장" } }
+      }
+    },
+    "확인": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "確認" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "확인" } }
+      }
+    },
+    "메모가 수정되었어요!": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Memo updated!" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモが修正されました！" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모가 수정되었어요!" } }
+      }
+    },
+    "메모를 입력해주세요.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Please enter a memo." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "メモを入力してください。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "메모를 입력해주세요." } }
+      }
+    },
     "일시적인 오류가 발생했습니다.\\n잠시 후 다시 시도해 주세요." : {
         "localizations" : {
           "en" : {
