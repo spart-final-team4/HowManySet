@@ -14,6 +14,7 @@ import ReactorKit
 final class EditExerciseViewReactor: Reactor {
     
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
+    private let updateRoutineUseCase: UpdateRoutineUseCase
     
     enum Action {
         case saveExcerciseButtonTapped((name: String, weightSet: [[String]]))
@@ -25,9 +26,16 @@ final class EditExerciseViewReactor: Reactor {
         case changeUnit(String)
     }
     
+    enum ViewMode {
+        case forEdit
+        case forAdd
+    }
+    
     struct State {
         var workout: Workout
+        var routine: WorkoutRoutine
         var currentUnit: String = "kg"
+        var mode: ViewMode = .forEdit
     }
     
     /// 운동 저장 결과 상태
@@ -46,13 +54,40 @@ final class EditExerciseViewReactor: Reactor {
     var initialState: State
     private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
-    init(workout: Workout,
-         updateWorkoutUseCase: UpdateWorkoutUseCase
-    ) {
-        self.initialState = State(workout: workout,
-                                  currentUnit: workout.sets[0].unit)
+    init(updateWorkoutUseCase: UpdateWorkoutUseCase,
+         updateRoutineUseCase: UpdateRoutineUseCase) {
         self.updateWorkoutUseCase = updateWorkoutUseCase
+        self.updateRoutineUseCase = updateRoutineUseCase
+        self.initialState = State(workout: Workout(id: "", name: "", sets: [], comment: nil),
+                                  routine: WorkoutRoutine(rmID: "", documentID: "", name: "", workouts: []))
     }
+    
+    convenience init(workout: Workout,
+                     updateWorkoutUseCase: UpdateWorkoutUseCase,
+                     updateRoutineUseCase: UpdateRoutineUseCase
+    ) {
+        self.init(updateWorkoutUseCase: updateWorkoutUseCase,
+                  updateRoutineUseCase: updateRoutineUseCase)
+        self.initialState = State(workout: workout,
+                                  routine: WorkoutRoutine(rmID: "", documentID: "", name: "", workouts: []),
+                                  currentUnit: workout.sets[0].unit,
+                                  mode: .forEdit
+        )
+    }
+    
+    convenience init(routine: WorkoutRoutine,
+                     updateWorkoutUseCase: UpdateWorkoutUseCase,
+                     updateRoutineUseCase: UpdateRoutineUseCase) {
+        self.init(updateWorkoutUseCase: updateWorkoutUseCase,
+                  updateRoutineUseCase: updateRoutineUseCase)
+        self.initialState = State(workout: Workout(id: UUID().uuidString, name: "", sets: [], comment: nil),
+                                  routine: routine,
+                                  currentUnit: "kg",
+                                  mode: .forAdd
+        )
+    }
+    
+    
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .saveExcerciseButtonTapped((let newName, let newWeightSet)):
@@ -70,7 +105,13 @@ final class EditExerciseViewReactor: Reactor {
             newWorkout.name = newName
             newWorkout.sets = mappingSets(with: newWeightSet)
             if case .success = validationWorkout(workout: newWorkout) {
-                updateWorkoutUseCase.execute(uid: uid, item: newWorkout)
+                if case .forEdit = newState.mode {
+                    updateWorkoutUseCase.execute(uid: uid, item: newWorkout)
+                } else if case .forAdd = newState.mode {
+                    var newRoutine = newState.routine
+                    newRoutine.workouts.append(newWorkout)
+                    updateRoutineUseCase.execute(uid: uid, item: newRoutine)
+                }
             }
             alertRelay.accept(validationWorkout(workout: newWorkout))
         case .changeUnit(let unit):
