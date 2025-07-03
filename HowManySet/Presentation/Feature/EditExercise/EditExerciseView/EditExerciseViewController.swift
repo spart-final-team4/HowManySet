@@ -18,6 +18,8 @@ final class EditExerciseViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
+    var onDismiss: (() -> Void)?
+    
     private let scrollView = UIScrollView()
     private let headerView = EditExerciseHeaderView()
     private let headerBorderLineView = UIView().then {
