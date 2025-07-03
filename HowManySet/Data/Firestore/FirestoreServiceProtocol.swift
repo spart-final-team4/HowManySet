@@ -48,7 +48,7 @@ protocol FirestoreServiceProtocol {
     ///   - id: 삭제할 문서의 ID
     ///   - type: 삭제할 Firestore 문서 타입
     func delete<T: Codable>(id: String, type: FirestoreDataType<T>) async throws
-    
+    func deleteWorkout(id: String, item: FSWorkout) async throws
     /// 특정 타입의 모든 문서를 Firestore에서 삭제합니다.
     /// - Parameter type: 삭제할 Firestore 문서의 타입
     func deleteAll<T: Codable>(type: FirestoreDataType<T>) async throws
