@@ -33,8 +33,8 @@ final class HomeViewReactor: Reactor {
         case editAndMemoViewPresented(at: Int)
         /// MemoTextView의 메모로 업데이트
         case updateCurrentExerciseMemoWhenDismissed(with: String)
-        /// 무게, 횟수 컨테이너 버튼 클릭 시
-        case editExerciseViewPresented(at: Int, isPresented: Bool)
+        /// 운동 편집 뷰 닫힐 시
+        case editExerciseViewDismissed(at: Int)
         /// 운동 완료 화면에서 확인 클릭 시 - 루틴 메모만 Update
         case confirmButtonClickedForSavingMemo(newMemo: String?)
         /// 운동 완료 후 카드 삭제 완료
@@ -85,8 +85,8 @@ final class HomeViewReactor: Reactor {
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
         case setEditExerciseViewPresented(Bool)
-        /// 운동 편집 시 Workout 변경
-        case updateCurrentWorkout(at: Int)
+        /// 운동 편집 시 Workout으로 변형
+        case convertToWorkoutForEdit(at: Int)
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
@@ -313,10 +313,10 @@ final class HomeViewReactor: Reactor {
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
             
-        case let .editExerciseViewPresented(cardIndex, isPresented):
+        case let .editExerciseViewDismissed(cardIndex):
             return .concat([
-                .just(.updateCurrentWorkout(at: cardIndex)),
-                .just(.setEditExerciseViewPresented(isPresented))
+                .just(.setEditExerciseViewPresented(false)),
+                .just(.convertToWorkoutForEdit(at: cardIndex))
             ])
             
         case let .confirmButtonClickedForSavingMemo(newMemo):
@@ -577,6 +577,8 @@ final class HomeViewReactor: Reactor {
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             newState.currentExerciseIndex = newIndex
             newState.updatingIndex = newIndex
+            newState.currentWorkoutData = newState.workoutRoutine.workouts[newIndex]
+            print(newState.workoutRoutine.workouts[newIndex])
             
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
@@ -615,7 +617,7 @@ final class HomeViewReactor: Reactor {
             }
             
             // MARK: - 운동 중 운동 편집 시 수행
-        case let .updateCurrentWorkout(cardIndex):
+        case let .convertToWorkoutForEdit(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
             //            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
             //                [String(set.weight), String(set.reps)]
@@ -667,7 +669,6 @@ final class HomeViewReactor: Reactor {
             updateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
             
         case let .setEditExerciseViewPresented(isPresented):
-            print("isEditExerciseViewPresented: \(isPresented)")
             newState.isEditExerciseViewPresented = isPresented
             
         case let .setUpdatingIndex(cardIndex):
