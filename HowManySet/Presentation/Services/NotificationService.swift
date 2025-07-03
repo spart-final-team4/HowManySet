@@ -20,8 +20,8 @@ final class NotificationService {
     
     func sendRestFinishedNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "휴식 종료!"
-        content.body = "이제 다음 세트를 시작하세요!"
+        content.title = String(localized: "휴식 종료!")
+        content.body = String(localized: "이제 다음 세트를 시작하세요!")
         content.sound = .default
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)

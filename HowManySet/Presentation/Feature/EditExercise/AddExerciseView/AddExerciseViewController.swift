@@ -151,21 +151,61 @@ final class AddExerciseViewController: UIViewController, View {
             .subscribe(with: self) { (owner: AddExerciseViewController, alert) in
                 switch alert {
                 case .success:
-                    owner.showToast(x: owner.scrollView.contentOffset.x, y: owner.scrollView.contentOffset.y, message: "운동이 추가되었어요!")
+                    owner.showToast(
+                        x: owner.scrollView.contentOffset.x,
+                        y: owner.scrollView.contentOffset.y,
+                        message: String(localized: "운동이 추가되었어요!")
+                    )
                     owner.headerView.returnInitialState()
                     owner.contentView.returnInitialState()
                 case .workoutNameEmpty:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름을 입력해주세요."), animated: true)
+                    owner.present(
+                        owner.defaultAlert(
+                            title: String(localized: "오류"),
+                            message: String(localized: "운동 이름을 입력해주세요.")
+                        ),
+                        animated: true
+                    )
                 case .workoutEmpty:
-                    owner.present(owner.defaultAlert(title: "오류", message: "현재 저장된 운동 항목이 없습니다."), animated: true)
+                    owner.present(
+                        owner.defaultAlert(
+                            title: String(localized: "오류"),
+                            message: String(localized: "현재 저장된 운동 항목이 없습니다.")
+                        ),
+                        animated: true
+                    )
                 case .workoutInvalidCharacters:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 세트와 개수를 입력해주세요."), animated: true)
+                    owner.present(
+                        owner.defaultAlert(
+                            title: String(localized: "오류"),
+                            message: String(localized: "운동 세트와 개수를 입력해주세요.")
+                        ),
+                        animated: true
+                    )
                 case .workoutNameTooLong:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 길어요."), animated: true)
+                    owner.present(
+                        owner.defaultAlert(
+                            title: String(localized: "오류"),
+                            message: String(localized: "운동 이름이 너무 길어요.")
+                        ),
+                        animated: true
+                    )
                 case .workoutNameTooShort:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 짧아요."), animated: true)
+                    owner.present(
+                        owner.defaultAlert(
+                            title: String(localized: "오류"),
+                            message: String(localized: "운동 이름이 너무 짧아요.")
+                        ),
+                        animated: true
+                    )
                 case .workoutContainsZero:
-                    owner.present(owner.defaultAlert(title: "오류", message: "0은 입력할 수 없습니다."), animated: true)
+                    owner.present(
+                        owner.defaultAlert(
+                            title: String(localized: "오류"),
+                            message: String(localized: "0은 입력할 수 없습니다.")
+                        ),
+                        animated: true
+                    )
                 }
             }
             .disposed(by: disposeBag)

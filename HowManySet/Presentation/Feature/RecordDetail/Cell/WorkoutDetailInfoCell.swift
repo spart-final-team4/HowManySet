@@ -26,14 +26,14 @@ final class WorkoutDetailInfoCell: UICollectionViewCell {
         setInfoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         let setCountLabel = UILabel().then {
-            $0.text = "\(index + 1)세트"
+            $0.text = String(format: String(localized: "%d세트"), index + 1)
             $0.font = .pretendard(size: 12, weight: .regular)
             $0.textColor = .grey2
             $0.textAlignment = .center
         }
 
         let setDetailLabel = UILabel().then {
-            $0.text = "\(set.weight.clean)\(set.unit) * \(set.reps)회"
+            $0.text = String(format: String(localized: "%@%@ * %d회"), set.weight.clean, set.unit, set.reps)
             $0.font = .pretendard(size: 14, weight: .regular)
             $0.textColor = .grey4
             $0.textAlignment = .center

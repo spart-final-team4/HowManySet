@@ -58,6 +58,7 @@ final class OnboardingView: UIView {
         $0.font = .pretendard(size: 20, weight: .bold)
         $0.textColor = .white
         $0.textAlignment = .center
+        $0.numberOfLines = 0
     }
     
     /// 온보딩 안내 이미지를 표시하는 이미지 뷰. 중앙에 배치.
@@ -79,7 +80,7 @@ final class OnboardingView: UIView {
 
     /// 하단 "다음"/"시작하기" 버튼. 온보딩 단계 이동 또는 완료 시 사용.
     let nextButton = UIButton(type: .system).then {
-        $0.setTitle("다음", for: .normal)
+        $0.setTitle(String(localized: "다음"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 20, weight: .bold)
         $0.backgroundColor = UIColor(named: "brand")
         $0.setTitleColor(.black, for: .normal)

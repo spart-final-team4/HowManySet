@@ -40,11 +40,11 @@ final class SummaryInfoCell: UICollectionViewCell {
         let totalReps = record.workoutRoutine.workouts.flatMap { $0.sets.map { $0.reps } }.reduce(0, +)
 
         let summaries: [(String, String)] = [
-            ("총 시간", record.totalTime.toMinutesLabel()),
-            ("순 운동", record.workoutTime.toMinutesLabel()),
-            ("운동 종목", "\(record.workoutRoutine.workouts.count)종목"),
-            ("세트 수", "\(totalSets)세트"),
-            ("반복 수", "\(totalReps)회")
+            (String(localized: "총 시간"), record.totalTime.toMinutesLabel()),
+            (String(localized: "순 운동"), record.workoutTime.toMinutesLabel()),
+            (String(localized: "운동 종목"), String(format: String(localized: "%d종목"), record.workoutRoutine.workouts.count)),
+            (String(localized: "세트 수"), String(format: String(localized: "%d세트"), totalSets)),
+            (String(localized: "반복 수"), String(format: String(localized: "%d회"), totalReps))
         ]
 
         for (title, value) in summaries {
@@ -83,7 +83,7 @@ private extension SummaryInfoCell {
 
         // 네번째
         workoutDetailTitleLabel.do {
-            $0.text = "운동 상세"
+            $0.text = String(localized: "운동 상세")
             $0.textColor = .white
             $0.font = .systemFont(ofSize: 20, weight: .semibold)
         }

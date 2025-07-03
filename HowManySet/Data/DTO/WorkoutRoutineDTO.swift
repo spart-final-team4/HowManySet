@@ -45,7 +45,6 @@ extension WorkoutRoutineDTO {
 
 extension WorkoutRoutineDTO {
     init(from fsModel: FSWorkoutRoutine) {
-        // TODO: 검토 필요
         self.rmID = ""
         self.documentID = fsModel.id ?? ""
         self.name = fsModel.name

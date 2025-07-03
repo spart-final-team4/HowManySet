@@ -51,8 +51,8 @@ struct HowManySetWidgetLiveActivity: Widget {
     private let buttonSize: CGFloat = 50
     private let buttonSizeAtDynamic: CGFloat = 44
     private let restSecondsRemainigLabelSize: CGFloat = 46
-    private let restText = "휴식"
-    private let completeText = "모든 운동을 완료하셨습니다!"
+    private let restText = String(localized: "휴식")
+    private let completeText = String(localized: "모든 운동을 완료하셨습니다!")
     private let pretendardBold = "Pretendard-Bold"
     private let pretendardSemiBold = "Pretendard-SemiBold"
     private let pretendardRegular = "Pretendard-Regular"

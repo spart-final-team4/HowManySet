@@ -122,9 +122,9 @@ extension RoutineListViewController: UITableViewDelegate {
     /// trailing -> leading 방향으로 스와이프하는 메서드
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
     -> UISwipeActionsConfiguration? {
-        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+        let deleteAction = UIContextualAction(style: .destructive, title: String(localized: "삭제")) { [weak self] _, _, completion in
             self?.reactor?.action.onNext(.deleteRoutine(indexPath))
-            self?.showToast(x: 0, y: 50, message: "루틴이 삭제되었어요!")
+            self?.showToast(x: 0, y: 50, message: String(localized: "루틴이 삭제되었어요!"))
             completion(true)
         }
 

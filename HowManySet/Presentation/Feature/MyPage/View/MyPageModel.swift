@@ -30,23 +30,22 @@ struct MyPageSectionModel {
 enum MyPageCollectionViewModel {
     /// 마이페이지에 표시할 섹션과 셀 구성 데이터
     static var model: [MyPageSectionModel] = [
-        MyPageSectionModel(title: "앱 설정",
+        MyPageSectionModel(title: String(localized: "앱 설정"),
                            cellModel: [
-                            MyPageCellModel(title: "알림 설정"),
-                            MyPageCellModel(title: "언어 변경")
+                            MyPageCellModel(title: String(localized: "알림 설정")),
+                            MyPageCellModel(title: String(localized: "언어 변경"))
                            ]),
-        MyPageSectionModel(title: "도움말 및 정보",
+        MyPageSectionModel(title: String(localized: "도움말 및 정보"),
                            cellModel: [
-                            MyPageCellModel(title: "버전 정보", version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String),
-                            MyPageCellModel(title: "라이센스 정보"),
-                            MyPageCellModel(title: "앱 평가"),
-                            MyPageCellModel(title: "문제 제보하기")
+                            MyPageCellModel(title: String(localized: "버전 정보"), version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String),
+                            MyPageCellModel(title: String(localized: "앱 평가")),
+                            MyPageCellModel(title: String(localized: "문제 제보하기"))
                            ]),
-        MyPageSectionModel(title: "계정",
+        MyPageSectionModel(title: String(localized: "계정"),
                            cellModel: [
-                            MyPageCellModel(title: "개인정보 처리 방침"),
-                            MyPageCellModel(title: "로그아웃"),
-                            MyPageCellModel(title: "계정 삭제")
+                            MyPageCellModel(title: String(localized: "개인정보 처리 방침")),
+                            MyPageCellModel(title: String(localized: "로그아웃")),
+                            MyPageCellModel(title: String(localized: "계정 삭제"))
                            ])
     ]
 }

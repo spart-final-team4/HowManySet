@@ -61,7 +61,7 @@ final class RecordDetailViewReactor: Reactor {
 
         case .tapSave:
             guard let memo = currentState.memo?.trimmingCharacters(in: .whitespacesAndNewlines),
-                  memo != "메모를 입력해주세요.",
+                  memo != String(localized: "메모를 입력해주세요."),
                   memo != currentState.originalMemo?.trimmingCharacters(in: .whitespacesAndNewlines)
             else {
                 print("변경된 값 없음") // ✅ print
@@ -93,7 +93,7 @@ final class RecordDetailViewReactor: Reactor {
 
         case let .updateMemo(text):
             let trimmed = text?.trimmingCharacters(in: .whitespacesAndNewlines)
-            let current = (trimmed == "메모를 입력해주세요.") ? nil : trimmed
+            let current = (trimmed == String(localized: "메모를 입력해주세요.")) ? nil : trimmed
             let original = currentState.originalMemo?.trimmingCharacters(in: .whitespacesAndNewlines)
             let isChanged = (current != original) && !(current?.isEmpty ?? true)
 

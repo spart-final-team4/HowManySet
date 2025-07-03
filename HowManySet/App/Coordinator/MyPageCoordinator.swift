@@ -56,12 +56,12 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     /// 언어 변경 처리 (설정 앱 이동 알림)
     func presentLanguageSettingAlert() {
         let alert = UIAlertController(
-            title: "언어 변경",
-            message: "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?",
+            title: String(localized: "언어 변경"),
+            message: String(localized: "언어는 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?"),
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "이동", style: .default) { _ in
+        alert.addAction(UIAlertAction(title: String(localized: "이동"), style: .default) { _ in
             // 앱 설정 화면으로 이동
             if let url = URL(string: UIApplication.openSettingsURLString),
                UIApplication.shared.canOpenURL(url) {
@@ -69,19 +69,19 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             }
         })
 
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: String(localized: "취소"), style: .cancel, handler: nil))
         navigationController.present(alert, animated: true)
     }
     
     /// 알림 설정 창 or 커스텀 알림 설정 포함한 새로운 뷰로 이동
     func pushAlarmSettingView() {
         let alert = UIAlertController(
-            title: "알림 설정",
-            message: "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?",
+            title: String(localized: "알림 설정"),
+            message: String(localized: "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?"),
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "이동", style: .default) { _ in
+        alert.addAction(UIAlertAction(title: String(localized: "이동"), style: .default) { _ in
             // 앱 설정 화면으로 이동
             if let url = URL(string: UIApplication.openSettingsURLString),
                UIApplication.shared.canOpenURL(url) {
@@ -89,7 +89,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             }
         })
 
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: String(localized: "취소"), style: .cancel, handler: nil))
         navigationController.present(alert, animated: true)
     }
     
@@ -100,10 +100,10 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             DispatchQueue.main.async {
                 let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
                 if let appstoreVersion, appstoreVersion != currentVersion {
-                    let needToUpdatePopupVC = DefaultPopupViewController(title: "최신버전이 아닙니다.",
+                    let needToUpdatePopupVC = DefaultPopupViewController(title: String(localized: "최신버전이 아닙니다."),
                                                                          titleTextColor: .success,
-                                                                         content: "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)",
-                                                                         okButtonText: "업데이트",
+                                                                         content: String(localized: "최신버전으로 업데이트 하시겠습니까?\n(업데이트 클릭 시 앱스토어로 연결됩니다.)"),
+                                                                         okButtonText: String(localized: "업데이트"),
                                                                          okButtonBackgroundColor: .success
                     ) {
                         // TODO: 앱스토어 앱 페이지로 이동 URL 입력 필요
@@ -116,8 +116,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
                     self.navigationController.present(needToUpdatePopupVC, animated: true)
                 } else {
                     let versionString = currentVersion ?? "알 수 없음"
-                    let alert = UIAlertController(title: "버전 정보", message: "앱 버전: \(versionString)", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "확인", style: .default))
+                    let alert = UIAlertController(title: String(localized: "버전 정보"), message: String(localized: "앱 버전: \(versionString)"), preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: String(localized: "확인"), style: .default))
                     self.navigationController.present(alert, animated: true)
                 }
             }
@@ -144,23 +144,25 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     func presentReportProblemView() {
         if MFMailComposeViewController.canSendMail() {
             let vc = MFMailComposeViewController()
+            
             let mailBodyString = """
-                                문제 또는 건의사항을 여기에 작성해주세요.
+                                \(String(localized: "문제 또는 건의사항을 여기에 작성해주세요."))
                                 
                                 Device Model : \(self.getModelName())
                                 Device OS : \(UIDevice.current.systemVersion)
-                                App Version : \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "알 수 없음")
+                                App Version : \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? String(localized: "알 수 없음"))
                                 """
+            
             vc.setToRecipients(["HowManySet@gmail.com"])
-            vc.setSubject("HowManySet문제 제보하기")
+            vc.setSubject(String(localized: "HowManySet문제 제보하기"))
             
             navigationController.present(vc, animated: true)
         } else {
             print("MFMailComposeViewController.canSendMail() is false")
-            let alert = UIAlertController(title: "오류",
-                                          message: "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요.",
+            let alert = UIAlertController(title: String(localized: "오류"),
+                                          message: String(localized: "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요."),
                                           preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            alert.addAction(UIAlertAction(title: String(localized: "확인"), style: .default))
             navigationController.present(alert, animated: true)
         }
     }
@@ -170,8 +172,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         // MyPageViewController에서 Reactor를 통해 로그아웃 처리하도록 수정
         guard let myPageVC = navigationController.viewControllers.last as? MyPageViewController else { return }
         
-        let deleteAccountVC = DefaultPopupViewController(title: "로그아웃 하시겠습니까?",
-                                                         okButtonText: "로그아웃") {
+        let deleteAccountVC = DefaultPopupViewController(title: String(localized: "로그아웃 하시겠습니까?"),
+                                                         okButtonText: String(localized: "로그아웃")) {
             // Reactor의 confirmLogout 액션 호출
             myPageVC.reactor?.action.onNext(.confirmLogout)
         }
@@ -182,9 +184,9 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     func pushAccountWithdrawalView() {
         guard let myPageVC = navigationController.viewControllers.last as? MyPageViewController else { return }
         
-        let deleteAccountVC = DefaultPopupViewController(title: "정말 탈퇴하시겠습니까?",
-                                                         content: "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다.",
-                                                         okButtonText: "계정 삭제") {
+        let deleteAccountVC = DefaultPopupViewController(title: String(localized: "정말 탈퇴하시겠습니까?"),
+                                                         content: String(localized: "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다."),
+                                                         okButtonText: String(localized: "계정 삭제")) {
             // Reactor의 confirmDeleteAccount 액션 호출
             myPageVC.reactor?.action.onNext(.confirmDeleteAccount)
         }
