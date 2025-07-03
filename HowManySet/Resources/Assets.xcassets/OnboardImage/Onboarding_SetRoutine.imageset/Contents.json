@@ -1,0 +1,30 @@
+{
+  "images" : [
+    {
+      "filename" : "Onboarding_SetRoutine_KR 1.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "Onboarding_SetRoutine_KR.pdf",
+      "idiom" : "universal",
+      "locale" : "ko"
+    },
+    {
+      "filename" : "Onboarding_SetRoutine_JP.pdf",
+      "idiom" : "universal",
+      "locale" : "ja"
+    },
+    {
+      "filename" : "Onboarding_SetRoutine.pdf",
+      "idiom" : "universal",
+      "locale" : "en"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "localizable" : true
+  }
+}

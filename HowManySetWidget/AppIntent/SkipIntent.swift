@@ -11,9 +11,9 @@ import WidgetKit
 
 @available(iOSApplicationExtension 17.0, *)
 public struct SkipIntent: AppIntent, LiveActivityIntent {
-    public static var title: LocalizedStringResource = "스킵"
-    public static var description = IntentDescription("휴식 시간 있을 시 휴식 스킵 / 휴식 시간 0일시 세트 스킵")
-    @Parameter(title: "현재 운동 인덱스")
+    public static var title: LocalizedStringResource = LocalizedStringResource("스킵")
+    public static var description = IntentDescription(LocalizedStringResource("휴식 시간 있을 시 휴식 스킵 / 휴식 시간 0일시 세트 스킵"))
+    @Parameter(title: LocalizedStringResource("현재 운동 인덱스"))
     public var index: Int?
     
     public init() {}

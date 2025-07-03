@@ -27,11 +27,11 @@ final class RoutineCell: UITableViewCell {
         nameLabel.text = routine.name
 
         // 종목 수
-        totalWorkoutsLabel.text = "종목 수: \(routine.workouts.count)"
+        totalWorkoutsLabel.text = String(format: String(localized: "종목 수: %d"), routine.workouts.count)
 
         // 총 세트 수 계산
         let totalSets = routine.workouts.flatMap { $0.sets }.count
-        totalSetsLabel.text = "총 세트 수: \(totalSets)"
+        totalSetsLabel.text = String(format: String(localized: "총 세트 수: %d"), totalSets)
     }
 }
 

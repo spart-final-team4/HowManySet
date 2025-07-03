@@ -34,14 +34,14 @@ private extension RoutineNameView {
 
     func setAppearance() {
         titleLabel.do {
-            $0.text = "루틴명을 입력해주세요"
+            $0.text = String(localized: "루틴명을 입력해주세요")
             $0.font = .pretendard(size: 20, weight: .regular)
             $0.textColor = .white
         }
 
         routineNameTF.do {
             $0.backgroundColor = .bsInputFieldBG
-            $0.placeholder = "예) 상체 루틴, 2분할 (하체/어깨)"
+            $0.placeholder = String(localized: "예) 상체 루틴, 2분할 (하체/어깨)")
             $0.minimumFontSize = 16
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
@@ -59,7 +59,7 @@ private extension RoutineNameView {
         }
 
         nextButton.do {
-            $0.setTitle("다음", for: .normal)
+            $0.setTitle(String(localized: "다음"), for: .normal)
             $0.titleLabel?.font = .pretendard(size: 18, weight: .regular)
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true

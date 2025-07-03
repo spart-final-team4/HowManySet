@@ -21,7 +21,7 @@ final class EditRoutineViewController: UIViewController, View {
     
     var disposeBag = DisposeBag()
     
-    private let startText = "시작"
+    private let startText = String(localized: "시작")
     
     private let coordinator: EditRoutineCoordinatorProtocol
     
@@ -139,7 +139,7 @@ final class EditRoutineViewController: UIViewController, View {
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, _ in
                 owner.dismiss(animated: true) { // 바텀시트 닫기
-                    self.showToast(x: 0, y: 0, message: "선택한 운동이 삭제되었어요!")
+                    self.showToast(x: 0, y: 0, message: String(localized: "선택한 운동이 삭제되었어요!"))
                 }
                 owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
             }
@@ -171,7 +171,7 @@ final class EditRoutineViewController: UIViewController, View {
         coordinator.presentEditExerciseView(workout: workout) { [weak self] result in
             guard let self else { return }
             if result {
-                self.showToast(x: 0, y: 0, message: "저장되었어요!")
+                self.showToast(x: 0, y: 0, message: String(localized: "저장되었어요!"))
                 self.reactor?.action.onNext(.viewDidLoad)
             }
         }

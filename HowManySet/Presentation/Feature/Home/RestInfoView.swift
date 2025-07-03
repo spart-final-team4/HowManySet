@@ -15,12 +15,12 @@ import ReactorKit
 final class RestInfoView: UIView, View {
     
     // MARK: - Properties
-    private let restButtonText60 = "+1분"
-    private let restButtonText30 = "+30초"
-    private let restButtonText10 = "+10초"
-    private let restResetButtonText = "초기화"
-    private let restText = "현재 설정된 휴식 시간"
-    private let waterText = "물 한잔 챙겼다면, 클릭!"
+    private let restButtonText60 = String(localized: "+1분")
+    private let restButtonText30 = String(localized: "+30초")
+    private let restButtonText10 = String(localized: "+10초")
+    private let restResetButtonText = String(localized: "초기화")
+    private let restText = String(localized: "현재 설정된 휴식 시간")
+    private let waterText = String(localized: "물 한잔 챙겼다면, 클릭!")
     
     // SE3 - 375 x 667 pt
     private let customInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 16 : 20

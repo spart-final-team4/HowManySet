@@ -91,7 +91,15 @@ final class MyPageViewController: UIViewController, View {
             .map { $0.userName }
             .compactMap { $0 }
             .distinctUntilChanged()
-            .bind(to: mypageView.headerView.usernameLabel.rx.text)
+            .bind { [weak self] userName in
+                guard let self else { return }
+                // "비회원" 문자열이 들어올 때만 다시 localized 처리
+                if userName == "비회원" {
+                    self.mypageView.headerView.usernameLabel.text = String(localized: "비회원")
+                } else {
+                    self.mypageView.headerView.usernameLabel.text = userName
+                }
+            }
             .disposed(by: disposeBag)
     }
 

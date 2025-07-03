@@ -159,7 +159,7 @@ extension RecordDetailViewController {
             .filter { $0 }
             .observe(on: MainScheduler.asyncInstance)
             .bind(with: self) { owner, _ in
-                owner.showToast(x: 0, y: -20, message: "메모가 수정되었어요!")
+                owner.showToast(x: 0, y: -20, message: String(localized: "메모가 수정되었어요!"))
                 // tapSave가 되었을 때만(한 번만) 반응하기 위해 false로 다시 설정
                 owner.reactor?.action.onNext(.resetDidUpdateMemo)
             }
@@ -187,7 +187,7 @@ extension RecordDetailViewController {
                 // placeholder 로직
                 textView.rx.didBeginEditing
                     .bind(with: owner) { _, _ in
-                        if textView.text == "메모를 입력해주세요." {
+                        if textView.text == String(localized: "메모를 입력해주세요.") {
                             textView.text = nil
                             textView.textColor = .white
                         }
@@ -199,7 +199,7 @@ extension RecordDetailViewController {
                 textView.rx.didEndEditing
                     .bind(with: owner) { _, _ in
                         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            textView.text = "메모를 입력해주세요."
+                            textView.text = String(localized: "메모를 입력해주세요.")
                             textView.textColor = .grey3
                         }
                         textView.layer.borderWidth = 0

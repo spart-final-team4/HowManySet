@@ -213,7 +213,9 @@ public final class AuthUseCase: AuthUseCaseProtocol {
     /// - Returns: 닉네임 설정 완료를 알리는 Observable
     public func completeNicknameSetting(uid: String, nickname: String) -> Observable<Void> {
         guard isValidNickname(nickname) else {
-            return Observable.error(NSError(domain: "InvalidNickname", code: -1, userInfo: [NSLocalizedDescriptionKey: "유효하지 않은 닉네임입니다. (한글/영문/숫자 2~8자)"]))
+            return Observable.error(NSError(domain: "InvalidNickname",
+                                            code: -1,
+                                            userInfo: [NSLocalizedDescriptionKey: String(localized: "유효하지 않은 닉네임입니다. (한글/영문/숫자 2~8자)")]))
         }
         let userProvider = UserDefaults.standard.string(forKey: "userProvider") ?? ""
         if userProvider == "anonymous" {

@@ -29,7 +29,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
     
     /// 운동 정보 변경 버튼
     private lazy var excerciseChangeButton = UIButton().then {
-        $0.setTitle("운동 정보 변경", for: .normal)
+        $0.setTitle(String(localized: "운동 정보 변경"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.titleLabel?.textColor = .textTertiary
         $0.contentHorizontalAlignment = .leading
@@ -41,7 +41,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
     
     /// 선택된 운동 삭제 버튼
     private lazy var removeExcerciseButton = UIButton().then {
-        $0.setTitle("선택 운동 삭제", for: .normal)
+        $0.setTitle(String(localized: "선택 운동 삭제"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.titleLabel?.textColor = .textTertiary
         $0.contentHorizontalAlignment = .leading
@@ -53,7 +53,7 @@ final class EditRoutineBottomSheetViewController: UIViewController {
     
     /// 운동 목록 순서 변경 버튼
     private lazy var changeExcerciseListButton = UIButton().then {
-        $0.setTitle("목록 순서 변경", for: .normal)
+        $0.setTitle(String(localized: "목록 순서 변경"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.titleLabel?.textColor = .textTertiary
         $0.contentHorizontalAlignment = .leading

@@ -14,9 +14,9 @@ import RxCocoa
 final class HomePagingCardView: UIView {
     
     // MARK: - Properties
-    private let setCompleteText = "세트 완료"
-    private let setText = "세트"
-    private let repsText = "회"
+    private let setCompleteText = String(localized: "세트 완료")
+    private let setText = String(localized: "세트")
+    private let repsText = String(localized: "회")
     
     var disposeBag = DisposeBag()
     

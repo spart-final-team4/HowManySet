@@ -57,11 +57,11 @@ final class EditExerciseViewController: UIViewController, View {
             }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-
+        
         // textField 밖에 누르면 키보드 내려가도록 구현
         let tapGesture = UITapGestureRecognizer()
         tapGesture.cancelsTouchesInView = false
-
+        
         view.addGestureRecognizer(tapGesture)
         tapGesture.rx.event
             .bind { [weak self] _ in
@@ -69,7 +69,7 @@ final class EditExerciseViewController: UIViewController, View {
                 self.view.endEditing(true)
             }
             .disposed(by: disposeBag)
-
+        
         reactor.state
             .map{ $0.workout }
             .distinctUntilChanged()
@@ -90,22 +90,44 @@ final class EditExerciseViewController: UIViewController, View {
                     owner.saveResultRelay.accept(true)
                     owner.dismiss(animated: true)
                 case .workoutNameEmpty:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름을 입력해주세요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "운동 이름을 입력해주세요.")
+                    ), animated: true)
                 case .workoutEmpty:
-                    owner.present(owner.defaultAlert(title: "오류", message: "현재 저장된 운동 항목이 없어요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "현재 저장된 운동 항목이 없어요.")
+                    ), animated: true)
                 case .workoutInvalidCharacters:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 세트와 개수를 입력해주세요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "운동 세트와 개수를 입력해주세요.")
+                    ), animated: true)
                 case .workoutNameTooLong:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 길어요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "운동 이름이 너무 길어요.")
+                    ), animated: true)
                 case .workoutNameTooShort:
-                    owner.present(owner.defaultAlert(title: "오류", message: "운동 이름이 너무 짧아요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "운동 이름이 너무 짧아요.")
+                    ), animated: true)
                 case .workoutContainsZero:
-                    owner.present(owner.defaultAlert(title: "오류", message: "0은 입력할 수 없어요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "0은 입력할 수 없어요.")
+                    ), animated: true)
                 case .workoutSetsEmpty:
-                    owner.present(owner.defaultAlert(title: "오류", message: "빈 항목은 저장할 수 없어요."), animated: true)
+                    owner.present(owner.defaultAlert(
+                        title: String(localized: "오류"),
+                        message: String(localized: "빈 항목은 저장할 수 없어요.")
+                    ), animated: true)
                 }
             }
             .disposed(by: disposeBag)
+        
     }
     
 }

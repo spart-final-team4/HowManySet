@@ -17,7 +17,7 @@ final class HomeStartViewController: UIViewController {
     
     private var disposeBag = DisposeBag()
 
-    private let homeText = "메인"
+    private let homeText = String(localized: "메인")
     
     // MARK: - UI Components
     private lazy var titleLabel = UILabel().then {
