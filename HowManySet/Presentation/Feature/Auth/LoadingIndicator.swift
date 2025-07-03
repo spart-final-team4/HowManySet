@@ -45,4 +45,29 @@ final class LoadingIndicator {
                 .forEach { $0.removeFromSuperview() }
         }
     }
+    
+    static func showBottomSheetLoadingIndicator(on viewController: UIViewController) {
+        DispatchQueue.main.async {
+            // 이미 있으면 중복 방지
+            if viewController.view.subviews.contains(where: { $0 is UIActivityIndicatorView }) {
+                return
+            }
+            let indicator = UIActivityIndicatorView(style: .large)
+            indicator.color = .white
+            indicator.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+            indicator.frame = viewController.view.bounds
+            indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            indicator.startAnimating()
+            viewController.view.addSubview(indicator)
+        }
+    }
+    
+    
+    static func hideBottomSheetLoadingIndicator(on viewController: UIViewController) {
+        DispatchQueue.main.async {
+            viewController.view.subviews
+                .compactMap { $0 as? UIActivityIndicatorView }
+                .forEach { $0.removeFromSuperview() }
+        }
+    }
 }
