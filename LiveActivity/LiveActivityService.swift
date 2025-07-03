@@ -17,20 +17,22 @@ final class LiveActivityService {
     init() {}
     
     func start(with data: WorkoutDataForLiveActivity) {
-        let attributes = HowManySetWidgetAttributes()
-        let contentState = HowManySetWidgetAttributes.ContentState(from: data)
-        
-        do {
-            print("🎮 LiveActivity DO")
-            let activityContent = ActivityContent(state: contentState, staleDate: nil)
-            let activity = try Activity<HowManySetWidgetAttributes>.request(
-                attributes: attributes,
-                content: activityContent
-            )
-            self.activity = activity
-            print("🎮 LiveActivity STARTED!: ", activity)
-        } catch {
-            print(error)
+        Task {
+            let attributes = HowManySetWidgetAttributes()
+            let contentState = HowManySetWidgetAttributes.ContentState(from: data)
+            
+            do {
+                print("🎮 LiveActivity DO")
+                let activityContent = ActivityContent(state: contentState, staleDate: nil)
+                let activity = try Activity<HowManySetWidgetAttributes>.request(
+                    attributes: attributes,
+                    content: activityContent
+                )
+                self.activity = activity
+                print("🎮 LiveActivity STARTED!: ", activity)
+            } catch {
+                print(error)
+            }
         }
     }
     
@@ -55,10 +57,8 @@ final class LiveActivityService {
         )
         start(with: initialContentState)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            let fullContentState = HowManySetWidgetAttributes.ContentState(from: data)
-            self.update(state: fullContentState)
-        }
+        let fullContentState = HowManySetWidgetAttributes.ContentState(from: data)
+        self.update(state: fullContentState)
     }
     
     func update(state: HowManySetWidgetAttributes.ContentState) {
