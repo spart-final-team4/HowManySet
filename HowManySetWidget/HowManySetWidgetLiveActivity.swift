@@ -397,24 +397,6 @@ extension HowManySetWidgetAttributes.ContentState {
         self.restStartDate = data.restStartDate
     }
     
-    func updateOthers(_ data: WorkoutDataForLiveActivity) -> Self {
-        return HowManySetWidgetAttributes.ContentState(
-            workoutTime: data.workoutTime,
-            isWorkingout: data.isWorkingout,
-            exerciseName: data.exerciseName,
-            exerciseInfo: data.exerciseInfo,
-            currentRoutineCompleted: data.currentRoutineCompleted,
-            isResting: self.isResting,
-            restSecondsRemaining: self.restSecondsRemaining,
-            isRestPaused: data.isRestPaused,
-            currentSet: data.currentSet,
-            totalSet: data.totalSet,
-            currentIndex: self.currentIndex,
-            accumulatedWorkoutTime: self.accumulatedWorkoutTime,
-            accumulatedRestRemaining: self.accumulatedRestRemaining
-        )
-    }
-    
     func updateRestState(_ isResting: Bool) -> Self {
         return HowManySetWidgetAttributes.ContentState(
             workoutTime: self.workoutTime,
