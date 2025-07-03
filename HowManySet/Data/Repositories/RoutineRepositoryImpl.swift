@@ -147,9 +147,10 @@ private extension RoutineRepositoryImpl {
         if let routine = RealmService.shared.read(type: .workoutRoutine,
                                                   primaryKey: item.rmID)
             as? RMWorkoutRoutine {
-            RealmService.shared.update(item: routine) { (savedRoutine: RMWorkoutRoutine) in
-                savedRoutine.name = item.name
-                savedRoutine.workoutArray = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0)) }
+            let newRMWorkout = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0))}
+            RealmService.shared.updateRoutine(item: routine, workouts: newRMWorkout) { routine in
+                routine.name = item.name
+                routine.workoutArray = newRMWorkout
             }
         }
     }

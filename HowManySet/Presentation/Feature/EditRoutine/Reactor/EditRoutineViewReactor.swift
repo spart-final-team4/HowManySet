@@ -24,7 +24,6 @@ final class EditRoutineViewReactor: Reactor {
         case changeWorkoutInfo
         case removeSelectedWorkout
         case changeListOrder
-        case plusExcerciseButtonTapped
         case reorderWorkout(source: IndexPath, destination: IndexPath)
     }
     
@@ -35,7 +34,6 @@ final class EditRoutineViewReactor: Reactor {
         case changeWorkoutInfo
         case removeSelectedWorkout
         case changeListOrder
-        case plusExcerciseButtonTapped
         case reorderRoutine(source: IndexPath, destination: IndexPath)
     }
     
@@ -79,8 +77,6 @@ final class EditRoutineViewReactor: Reactor {
             return .just(.removeSelectedWorkout)
         case .changeListOrder:
             return .just(.changeListOrder)
-        case .plusExcerciseButtonTapped:
-            return .just(.plusExcerciseButtonTapped)
         case .reorderWorkout(source: let source, destination: let destination):
             guard source != destination,
                   source.row < currentState.routine.workouts.count,
@@ -124,8 +120,6 @@ final class EditRoutineViewReactor: Reactor {
             newRoutine.workouts.remove(at: indexPath.row)
             newState.routine = newRoutine
         case .changeListOrder:
-            break
-        case .plusExcerciseButtonTapped:
             break
         case .reorderRoutine(let source, let destination):
             break

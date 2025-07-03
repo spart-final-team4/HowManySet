@@ -23,19 +23,11 @@ final class EditRoutineTableFooterView: UITableViewHeaderFooterView {
     var disposeBag = DisposeBag()
     private(set) var plusExcerciseButtonTapped = PublishRelay<Void>()
     
-    /// 플러스 아이콘 이미지
-    private let plusImageView = UIImageView(image: .plus).then {
-        // TODO: 마이너패치 때 기능 구현예정
-        $0.isHidden = true
-    }
-    
     /// "새 운동 추가" 텍스트 라벨
     private let plusExcerciseButton = UIButton().then {
-        $0.setTitle("새 운동 추가", for: .normal)
+        $0.setTitle("+ 새 운동 추가", for: .normal)
         $0.titleLabel?.font = .pretendard(size: 20, weight: .regular)
         $0.setTitleColor(.white, for: .normal)
-        // TODO: 마이너패치 때 기능 구현예정
-        $0.isHidden = true
     }
     
     // MARK: - Initializer
@@ -47,6 +39,11 @@ final class EditRoutineTableFooterView: UITableViewHeaderFooterView {
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    func configure(viewCaller: ViewCaller) {
+        if case .fromHome = viewCaller {
+            plusExcerciseButton.isHidden = true
+        }
     }
 }
 
@@ -76,17 +73,13 @@ private extension EditRoutineTableFooterView {
     
     /// 서브뷰 계층 구조 설정
     func setViewHierarchy() {
-        self.addSubviews(plusImageView, plusExcerciseButton)
+        self.addSubviews(plusExcerciseButton)
     }
     
     /// 오토레이아웃 제약 조건 설정
     func setConstraints() {
-        plusImageView.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().offset(20)
-            $0.width.height.equalTo(24)
-        }
         plusExcerciseButton.snp.makeConstraints {
-            $0.leading.equalTo(plusImageView.snp.trailing).offset(4)
+            $0.top.leading.equalToSuperview().offset(20)
             $0.top.equalToSuperview().offset(20)
         }
     }

@@ -127,7 +127,7 @@ extension EditRoutineTableView: UITableViewDelegate {
         ) as? EditRoutineTableFooterView else {
             return nil
         }
-        
+        footerView.configure(viewCaller: self.caller)
         footerView.plusExcerciseButtonTapped
             .bind(to: footerViewTapped)
             .disposed(by: footerView.disposeBag)
