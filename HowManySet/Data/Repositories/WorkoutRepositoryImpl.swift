@@ -65,10 +65,9 @@ private extension WorkoutRepositoryImpl {
     func deleteWorkoutFirebase(uid: String, workout: Workout) {
         Task {
             do {
-                try await firestoreService.delete(
-                    id: workout.id,
-                    type: FirestoreDataType<FSWorkout>.workout
-                )
+                let fsWorkout = FSWorkout(dto: WorkoutDTO(entity: workout))
+                try await firestoreService.deleteWorkout(id: workout.documentID ?? "",
+                                                         item: fsWorkout)
                 print("Firestore 운동 삭제 성공")
             } catch {
                 print("Firestore 운동 삭제 실패: \(error)")
