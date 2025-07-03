@@ -94,12 +94,20 @@ final class AddExerciseViewController: UIViewController, View {
         
         // 운동 추가 버튼 탭
         footerView.addExcerciseButtonTapped
+            .do(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
+            })
             .map { Reactor.Action.addExcerciseButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         // 루틴 저장 버튼 탭
         footerView.saveRoutineButtonTapped
+            .do(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
+            })
             .map { Reactor.Action.saveRoutineButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -149,6 +157,7 @@ final class AddExerciseViewController: UIViewController, View {
         reactor.alertRelay
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { (owner: AddExerciseViewController, alert) in
+                LoadingIndicator.hideBottomSheetLoadingIndicator(on: owner)
                 switch alert {
                 case .success:
                     owner.showToast(
