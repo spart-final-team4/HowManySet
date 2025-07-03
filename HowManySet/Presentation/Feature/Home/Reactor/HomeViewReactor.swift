@@ -85,8 +85,8 @@ final class HomeViewReactor: Reactor {
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
         case setEditExerciseViewPresented(Bool)
-        /// 운동 편집 시 Edit용 데이터로 변형
-        case convertToEditData(at: Int)
+        /// 운동 편집 시 Workout으로 변형
+        case convertToWorkoutForEdit(at: Int)
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
@@ -139,7 +139,7 @@ final class HomeViewReactor: Reactor {
         var didSetCount: Int
         /// 현재 사용자 uid
         var uid: String?
-        var workoutStateForEdit: WorkoutStateForEdit?
+        var currentWorkout: Workout
         // 백그라운드 용
         var workoutStartDate: Date? /// 운동 시작 시각
         var accumulatedWorkoutTime: TimeInterval /// 총 누적된 운동 시간 (+background)
@@ -313,7 +313,7 @@ final class HomeViewReactor: Reactor {
             
         case let .editExerciseViewPresented(cardIndex, isPresented):
             return .concat([
-                .just(.convertToEditData(at: cardIndex)),
+                .just(.convertToWorkoutForEdit(at: cardIndex)),
                 .just(.setEditExerciseViewPresented(isPresented))
             ])
             
@@ -613,17 +613,16 @@ final class HomeViewReactor: Reactor {
                 newState.restStartDate = Date()
             }
             
-        case let .convertToEditData(cardIndex):
+        case let .convertToWorkoutForEdit(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
-            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
-                [String(set.weight), String(set.reps)]
-            }
-            newState.workoutStateForEdit = WorkoutStateForEdit(
-                currentRoutine: newState.workoutRoutine,
-                currentExcerciseName: currentExercise.currentExerciseName,
-                currentUnit: currentExercise.currentUnitForSave,
-                currentWeightSet: currentSetsData,
-                currentMemo: currentExercise.memoInExercise
+//            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
+//                [String(set.weight), String(set.reps)]
+//            }
+            newState.currentWorkout = Workout(
+                id: currentExercise.workoutID,
+                name: currentExercise.currentExerciseName,
+                sets: currentExercise.setInfo,
+                comment: currentExercise.memoInExercise
             )
         
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
@@ -991,7 +990,7 @@ extension HomeViewReactor {
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
             uid: uid,
-            workoutStateForEdit: initialWorkoutStateForEdit,
+            currentWorkout: initialRoutine.workouts[0],
             accumulatedWorkoutTime: 0,
             accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
