@@ -619,6 +619,28 @@
         }
       }
     },
+    "다음 휴식 시간을 미리 설정해보세요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set your next break in advance"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の休憩時間をあらかじめ設定してみてください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 휴식 시간을 미리 설정해보세요"
+          }
+        }
+      }
+    },
     "도움말 및 정보" : {
       "localizations" : {
         "en" : {
@@ -2543,7 +2565,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Complete your workout and rest from the lock screen"
+            "value" : "Finish workout & rest from lock screen"
           }
         },
         "ja" : {
@@ -3107,28 +3129,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "휴식 시간 있을 시 휴식 스킵 / 휴식 시간 0일시 세트 스킵"
-          }
-        }
-      }
-    },
-    "휴식 시간을 미리 설정해보세요" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set your rest time in advance"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "休憩時間を事前に設定しましょう"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "휴식 시간을 미리 설정해보세요"
           }
         }
       }
