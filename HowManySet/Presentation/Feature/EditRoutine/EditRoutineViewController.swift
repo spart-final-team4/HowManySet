@@ -73,8 +73,11 @@ final class EditRoutineViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         tableView.footerViewTapped
-            .map { Reactor.Action.plusExcerciseButtonTapped }
-            .bind(to: reactor.action)
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self,
+                       onNext: { owner, _ in
+                owner.presentAddExerciseVC(routine: reactor.currentState.routine)
+            })
             .disposed(by: disposeBag)
         
         tableView.dragDropRelay
@@ -151,10 +154,14 @@ final class EditRoutineViewController: UIViewController, View {
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
     }
     
-    func presentAddExerciseVC() {
-        guard let routineName = reactor?.currentState.routine.name else { return }
-        
-        coordinator.presentAddExerciseView(routineName: routineName)
+    func presentAddExerciseVC(routine: WorkoutRoutine) {
+        coordinator.presentAddExerciseView(routine: routine) { [weak self] result in
+            guard let self else { return }
+            if result {
+                self.showToast(x: 0, y: 0, message: "저장되었어요!")
+                self.reactor?.action.onNext(.viewDidLoad)
+            }
+        }
     }
 
     func presentEditExcerciseVC() {

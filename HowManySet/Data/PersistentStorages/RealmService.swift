@@ -72,7 +72,26 @@ final class RealmService: RealmServiceProtocol {
             let realm = try Realm()
             try realm.write {
                 completion(item)
+                realm.add(item, update: .modified)
             }
+        } catch {
+            print("update failed: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateRoutine(item: RMWorkoutRoutine, workouts: [RMWorkout], completion: @escaping (RMWorkoutRoutine) -> Void) {
+        do {
+            let realm = try Realm()
+            
+            try realm.write {
+                workouts.forEach { workout in
+                    realm.add(workout, update: .modified)
+                }
+                
+                completion(item)
+                realm.add(item, update: .modified)
+            }
+            
         } catch {
             print("update failed: \(error.localizedDescription)")
         }

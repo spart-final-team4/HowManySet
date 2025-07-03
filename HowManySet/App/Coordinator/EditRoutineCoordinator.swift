@@ -10,7 +10,7 @@ import RxSwift
 
 protocol EditRoutineCoordinatorProtocol: Coordinator {
     func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine)
-    func presentAddExerciseView(routineName: String)
+    func presentAddExerciseView(routine: WorkoutRoutine, resultHandler: @escaping (Bool) -> Void)
     func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void)
 }
 
@@ -46,33 +46,45 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     }
 
     /// AddExercise를 present하는 메서드
-    func presentAddExerciseView(routineName: String) {
+    func presentAddExerciseView(routine: WorkoutRoutine,
+                                resultHandler: @escaping (Bool) -> Void
+    ) {
         let firestoreService = FirestoreService()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
+        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
 
-        let vc = AddExerciseViewController(
-            reactor: AddExerciseViewReactor(
-                routineName: routineName,
-                saveRoutineUseCase: saveRoutineUseCase,
-                workoutStateForEdit: nil,
-                caller: .fromHome
+        let vc = EditExerciseViewController(
+            reactor: EditExerciseViewReactor(
+                routine: routine,
+                updateWorkoutUseCase: updateWorkoutUseCase,
+                updateRoutineUseCase: updateRoutineUseCase
             )
         )
-
+        vc.saveResultRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { result in
+                resultHandler(result)
+            })
+            .disposed(by: vc.disposeBag)
+        
         navigationController.present(vc, animated: true)
     }
 
     /// EditExercise를 present하는 메서드
     func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void) {
         let firestoreService = FirestoreService()
-        let repository = WorkoutRepositoryImpl(firestoreService: firestoreService)
-        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: repository)
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
+        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
 
         let vc = EditExerciseViewController(
             reactor: EditExerciseViewReactor(
                 workout: workout,
-                updateWorkoutUseCase: updateWorkoutUseCase
+                updateWorkoutUseCase: updateWorkoutUseCase,
+                updateRoutineUseCase: updateRoutineUseCase
             )
         )
 

@@ -74,8 +74,10 @@ final class EditExerciseViewController: UIViewController, View {
             .map{ $0.workout }
             .distinctUntilChanged()
             .subscribe(with: self) { owner, workout in
-                owner.contentView.configureEditSets(with: workout.sets)
-                owner.headerView.editConfigure(with: workout.name)
+                if case .forEdit = reactor.currentState.mode {
+                    owner.contentView.configureEditSets(with: workout.sets)
+                    owner.headerView.editConfigure(with: workout.name)
+                }
             }.disposed(by: disposeBag)
         
         // Alert 표시 (저장 성공/실패, 유효성 실패 등)
