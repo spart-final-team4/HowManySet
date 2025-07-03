@@ -63,8 +63,7 @@ final class HomePagingCardView: UIView {
         $0.backgroundColor = .cardBackground
     }
 
-    // TODO: 추후에 배포 후 UIButton()으로 변경
-    lazy var weightRepsButton = UIView().then {
+    lazy var weightRepsButton = UIButton().then {
         $0.backgroundColor = .cardContentBG
         $0.layer.cornerRadius = 12
     }
