@@ -29,7 +29,6 @@
 		A53AD85C2DEF154D003E1FE8 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD85B2DEF154D003E1FE8 /* KakaoSDKUser */; };
 		AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */; };
 		AA3106882E15EAF900FDF8BD /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = AA3106872E15EAF900FDF8BD /* AcknowList */; };
-		AA31068A2E15EDE800FDF8BD /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = AA3106892E15EDE800FDF8BD /* Package.resolved */; };
 		AAD440382DF690BB00B57C81 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; };
 		AAD4403A2DF690BB00B57C81 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -131,7 +130,6 @@
 		669358D12DE9AA8E00956214 /* HowManySetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
-		AA3106892E15EDE800FDF8BD /* Package.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Package.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -338,7 +336,6 @@
 				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
 				66329E042E014905003405F2 /* HowManySetUITests */,
 				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
-				AA3106892E15EDE800FDF8BD /* Package.resolved */,
 			);
 			sourceTree = "<group>";
 		};
@@ -583,7 +580,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */,
-				AA31068A2E15EDE800FDF8BD /* Package.resolved in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
