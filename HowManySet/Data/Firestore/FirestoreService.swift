@@ -140,6 +140,25 @@ final class FirestoreService: FirestoreServiceProtocol {
             throw FirestoreErrorType.networkError
         }
     }
+    
+    func deleteWorkout(id: String, item: FSWorkout) async throws {
+        do {
+            let docRef = db.collection("workout_routines").document(id)
+            let snapshot = try await docRef.getDocument()
+            guard let data = snapshot.data(),
+                  var workouts = data["workouts"] as? [[String: Any]] else {
+                throw FirestoreErrorType.dataNotFound
+            }
+            
+            let encoder = Firestore.Encoder()
+            let deletedWorkout = try encoder.encode(item) as [String: Any]
+            workouts.removeAll { $0["uuid"] as? String == deletedWorkout["uuid"] as? String }
+            
+            try await docRef.updateData(["workouts": workouts])
+        } catch {
+            throw FirestoreErrorType.networkError
+        }
+    }
 
     /// Firestore에서 특정 타입의 모든 문서를 삭제합니다.
     /// - Parameter type: 삭제할 Firestore 문서 타입
