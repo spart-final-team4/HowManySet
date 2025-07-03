@@ -410,24 +410,23 @@ private extension HomeViewController {
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
-            // MARK: - TODO: 배포 후 수정
-//            // 해당 페이지 운동 종목 버튼
-//            cardView.weightRepsButton.rx.tap
-//                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-//                .do(onNext: {
-//                    // 클릭 애니메이션
-//                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-//                        cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-//                    }, completion: { _ in
-//                        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-//                            cardView.weightRepsButton.transform = .identity
-//                        })
-//                    })
-//                    print("isEditExerciseViewPresentedVC:", reactor.currentState.isEditExerciseViewPresented)
-//                })
-//                .map { Reactor.Action.editExerciseViewPresented(at: cardView.index, isPresented: true) }
-//                .bind(to: reactor.action)
-//                .disposed(by: disposeBag)
+            // 해당 페이지 운동 종목 버튼
+            cardView.weightRepsButton.rx.tap
+                .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+                .do(onNext: {
+                    // 클릭 애니메이션
+                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
+                        cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                    }, completion: { _ in
+                        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
+                            cardView.weightRepsButton.transform = .identity
+                        })
+                    })
+                    print("isEditExerciseViewPresentedVC:", reactor.currentState.isEditExerciseViewPresented)
+                })
+                .map { Reactor.Action.editExerciseViewPresented(at: cardView.index, isPresented: true) }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
             
             // 휴식 재생/일시정지 버튼
             cardView.restPlayPauseButton.rx.tap
