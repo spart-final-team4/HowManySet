@@ -622,7 +622,8 @@ final class HomeViewReactor: Reactor {
                 currentRoutine: newState.workoutRoutine,
                 currentExcerciseName: currentExercise.currentExerciseName,
                 currentUnit: currentExercise.currentUnitForSave,
-                currentWeightSet: currentSetsData
+                currentWeightSet: currentSetsData,
+                currentMemo: currentExercise.memoInExercise
             )
         
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
