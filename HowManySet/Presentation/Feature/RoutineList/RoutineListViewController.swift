@@ -79,6 +79,19 @@ final class RoutineListViewController: UIViewController, View {
         // tableView.delegate 바인딩
         routineListView.publicRoutineTableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isLoading }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, isLoading in
+                if isLoading {
+                    LoadingIndicator.showLoadingIndicator()
+                } else {
+                    LoadingIndicator.hideLoadingIndicator()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
