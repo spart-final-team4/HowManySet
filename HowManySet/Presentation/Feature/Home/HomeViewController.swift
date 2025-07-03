@@ -889,15 +889,8 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
-            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
-            }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
-            .observe(on: MainScheduler.instance)
-            .bind { _ in
                 reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
             .disposed(by: disposeBag)
