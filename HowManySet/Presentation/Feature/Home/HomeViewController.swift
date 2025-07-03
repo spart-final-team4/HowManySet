@@ -819,6 +819,7 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
+            .observe(on: MainScheduler.instance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 let (isWorkingout, data) = state
                 print("ISWORKINGOUT: \(isWorkingout)")
@@ -888,18 +889,21 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .observe(on: MainScheduler.instance)
             .bind { _ in
                 reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+            .observe(on: MainScheduler.instance)
             .bind { _ in
                 print("🐈‍⬛ didEnterBackground!")
                 if reactor.currentState.isResting {
@@ -909,6 +913,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.playAndPauseRestEvent)
+            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
                     print("🎬 휴식 재생/일시정지 이벤트 감지! 인덱스: \(String(describing: index))")
@@ -918,6 +923,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.setCompleteEvent)
+            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
                     print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
@@ -927,6 +933,7 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(.skipEvent)
+            .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
                     print("🎬 스킵 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
