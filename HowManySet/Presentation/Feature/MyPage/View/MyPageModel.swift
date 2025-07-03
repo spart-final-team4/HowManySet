@@ -38,6 +38,7 @@ enum MyPageCollectionViewModel {
         MyPageSectionModel(title: String(localized: "도움말 및 정보"),
                            cellModel: [
                             MyPageCellModel(title: String(localized: "버전 정보"), version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String),
+                            MyPageCellModel(title: String(localized: "라이센스 정보")),
                             MyPageCellModel(title: String(localized: "앱 평가")),
                             MyPageCellModel(title: String(localized: "문제 제보하기"))
                            ]),
