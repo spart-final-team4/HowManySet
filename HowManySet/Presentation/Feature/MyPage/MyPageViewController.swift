@@ -46,6 +46,7 @@ final class MyPageViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        mypageView.headerView.usernameLabel.isHidden = true
     }
     
     /// 뷰가 나타날 때마다 사용자 이름 로드
@@ -89,15 +90,22 @@ final class MyPageViewController: UIViewController, View {
         /// 사용자 이름 바인딩 (Firestore에서 fetch한 데이터)
         reactor.state
             .map { $0.userName }
-            .compactMap { $0 }
             .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind { [weak self] userName in
                 guard let self else { return }
-                // "비회원" 문자열이 들어올 때만 다시 localized 처리
-                if userName == "비회원" {
-                    self.mypageView.headerView.usernameLabel.text = String(localized: "비회원")
+                if let userName = userName {
+                    // fetch 완료 시 라벨 보이기
+                    self.mypageView.headerView.usernameLabel.isHidden = false
+                    if userName == "비회원" {
+                        // "비회원" 문자열이 들어올 때만 다시 localized 처리
+                        self.mypageView.headerView.usernameLabel.text = String(localized: "비회원")
+                    } else {
+                        self.mypageView.headerView.usernameLabel.text = userName
+                    }
                 } else {
-                    self.mypageView.headerView.usernameLabel.text = userName
+                    // fetch 전에는 라벨 숨김
+                    self.mypageView.headerView.usernameLabel.isHidden = true
                 }
             }
             .disposed(by: disposeBag)
