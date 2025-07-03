@@ -53,7 +53,8 @@ final class EditExerciseViewController: UIViewController, View {
         
         footerView.saveExcerciseButtonRelay
             .map { [unowned self] in
-                Reactor.Action.saveExcerciseButtonTapped((self.getCurrentName(), self.getCurrentWorkoutSets()))
+                LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
+                return Reactor.Action.saveExcerciseButtonTapped((self.getCurrentName(), self.getCurrentWorkoutSets()))
             }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -85,6 +86,7 @@ final class EditExerciseViewController: UIViewController, View {
             .delay(.seconds(1), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { (owner: EditExerciseViewController, alert) in
+                LoadingIndicator.hideBottomSheetLoadingIndicator(on: owner)
                 switch alert {
                 case .success:
                     owner.saveResultRelay.accept(true)
