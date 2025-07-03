@@ -663,6 +663,29 @@
         }
       }
     },
+    "라이센스 정보" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License information"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライセンス情報"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "라이센스 정보"
+          }
+        }
+      }
+    },
     "로그아웃" : {
       "localizations" : {
         "en" : {
