@@ -219,7 +219,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     
     func presentLicenseView() {
         let licenseView = AcknowListViewController()
-        licenseView.title = "라이센스 정보"
+        licenseView.title = String(localized: "라이센스 정보")
         navigationController.pushViewController(licenseView, animated: true)
     }
 }
