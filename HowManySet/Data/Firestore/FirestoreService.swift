@@ -108,9 +108,7 @@ final class FirestoreService: FirestoreServiceProtocol {
                 
                 // 업데이트 수행 (전체 교체)
                 try docRef.setData(from: routine, merge: true)
-            }
-            
-            if let record = item as? FSWorkoutRecord {
+            } else if let record = item as? FSWorkoutRecord {
                 let querySnapshot = try await db.collection("workout_records").whereField("uuid", isEqualTo: record.uuid).getDocuments()
                 
                 guard let document = querySnapshot.documents.first else {
@@ -120,6 +118,8 @@ final class FirestoreService: FirestoreServiceProtocol {
                 let docRef = document.reference
                 
                 try await docRef.updateData(["comment": record.comment ?? ""])
+            } else {
+                try db.collection(type.collectionName).document(id).setData(from: item)
             }
             
         } catch {
