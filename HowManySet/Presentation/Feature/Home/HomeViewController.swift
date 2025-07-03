@@ -786,20 +786,15 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
         
         // weightRepsButtonClick -> forEdit 데이터 변형 시 실행됨
-        reactor.state
-            .map { ($0.isEditExerciseViewPresented, $0.workoutStateForEdit) }
+        reactor.state.map { ($0.isEditExerciseViewPresented, $0.currentWorkout) }
             .distinctUntilChanged { $0 == $1 }
-            .compactMap { (isPresented, workout) -> WorkoutStateForEdit? in
-                (isPresented ? workout : nil)
-            }
+            .filter { $0.0 }
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] workout in
+            .bind { [weak self] _, workout in
                 guard let self else { return }
                 if reactor.currentState.isWorkingout {
-                    let currentRoutineName = reactor.currentState.workoutRoutine.name
                     self.coordinator?.presentEditExerciseView(
-                        routineName: currentRoutineName,
-                        workoutStateForEdit: workout,
+                        workout: workout,
                         onDismiss: {
                             reactor.action.onNext(.editExerciseViewPresented(
                                 at: self.getCurrentVisibleExerciseIndex(),
