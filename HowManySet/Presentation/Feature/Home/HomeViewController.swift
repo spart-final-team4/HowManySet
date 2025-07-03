@@ -410,6 +410,7 @@ private extension HomeViewController {
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
             
+            // MARK: - 운동 중 운동 편집
             // 해당 페이지 운동 종목 버튼
             cardView.weightRepsButton.rx.tap
                 .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
@@ -422,10 +423,17 @@ private extension HomeViewController {
                             cardView.weightRepsButton.transform = .identity
                         })
                     })
-                    print("isEditExerciseViewPresentedVC:", reactor.currentState.isEditExerciseViewPresented)
                 })
-                .map { Reactor.Action.editExerciseViewPresented(at: cardView.index, isPresented: true) }
-                .bind(to: reactor.action)
+                .bind(onNext: {
+                    self.coordinator?.presentEditExerciseView(
+                        workout: reactor.currentState.currentWorkoutData,
+                        onDismiss: {
+                            reactor.action.onNext(.editExerciseViewDismissed(
+                                at: self.getCurrentVisibleExerciseIndex())
+                            )
+                        }
+                    )
+                })
                 .disposed(by: disposeBag)
             
             // 휴식 재생/일시정지 버튼
@@ -784,26 +792,6 @@ extension HomeViewController {
                     }
                 }
             }).disposed(by: disposeBag)
-        
-        // weightRepsButtonClick -> forEdit 데이터 변형 시 실행됨
-        reactor.state.map { ($0.isEditExerciseViewPresented, $0.currentWorkoutData) }
-            .distinctUntilChanged { $0 == $1 }
-            .filter { $0.0 }
-            .observe(on: MainScheduler.instance)
-            .bind { [weak self] _, workout in
-                guard let self else { return }
-                if reactor.currentState.isWorkingout {
-                    self.coordinator?.presentEditExerciseView(
-                        workout: workout,
-                        onDismiss: {
-                            reactor.action.onNext(.editExerciseViewPresented(
-                                at: self.getCurrentVisibleExerciseIndex(),
-                                isPresented: false)
-                            ) // getCurrentVisibleExerciseIndex로 현재 index를 가져온 후 수행
-                        }
-                    )
-                }
-            }.disposed(by: disposeBag)
         
         // MARK: - LiveActivity 관련
         // contentState 캐싱
