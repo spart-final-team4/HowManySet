@@ -819,7 +819,7 @@ extension HomeViewController {
         reactor.state.map { ($0.isWorkingout, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
-            .observe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.asyncInstance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 let (isWorkingout, data) = state
                 print("ISWORKINGOUT: \(isWorkingout)")
