@@ -40,6 +40,11 @@ final class EditRoutineTableFooterView: UITableViewHeaderFooterView {
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    func configure(viewCaller: ViewCaller) {
+        if case .fromHome = viewCaller {
+            plusExcerciseButton.isHidden = true
+        }
+    }
 }
 
 // MARK: - Private UI Setup
