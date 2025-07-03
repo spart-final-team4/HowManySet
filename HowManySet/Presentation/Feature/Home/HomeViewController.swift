@@ -786,7 +786,7 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
         
         // weightRepsButtonClick -> forEdit 데이터 변형 시 실행됨
-        reactor.state.map { ($0.isEditExerciseViewPresented, $0.currentWorkout) }
+        reactor.state.map { ($0.isEditExerciseViewPresented, $0.currentWorkoutData) }
             .distinctUntilChanged { $0 == $1 }
             .filter { $0.0 }
             .observe(on: MainScheduler.instance)

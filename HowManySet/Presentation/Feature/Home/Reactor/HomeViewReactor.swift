@@ -137,9 +137,7 @@ final class HomeViewReactor: Reactor {
         var didExerciseCount: Int
         var totalSetCountInRoutine: Int
         var didSetCount: Int
-        /// 현재 사용자 uid
-        var uid: String?
-        var currentWorkout: Workout
+        var currentWorkoutData: Workout
         // 백그라운드 용
         var workoutStartDate: Date? /// 운동 시작 시각
         var accumulatedWorkoutTime: TimeInterval /// 총 누적된 운동 시간 (+background)
@@ -147,6 +145,10 @@ final class HomeViewReactor: Reactor {
         var accumulatedRestRemainingTime: TimeInterval /// 총 누적된 휴식 시간 (+background)
         /// 현재 루틴의 모든 운동 완료
         var currentRoutineCompleted: Bool
+        /// 현재 사용자 uid
+        var uid: String?
+        /// 현재 루틴 ID
+        var documentID: String
         /// 현재  WorkoutRecordID
         var recordID: String
     }
@@ -618,8 +620,9 @@ final class HomeViewReactor: Reactor {
 //            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
 //                [String(set.weight), String(set.reps)]
 //            }
-            newState.currentWorkout = Workout(
+            newState.currentWorkoutData = Workout(
                 id: currentExercise.workoutID,
+                documentID: newState.documentID,
                 name: currentExercise.currentExerciseName,
                 sets: currentExercise.setInfo,
                 comment: currentExercise.memoInExercise
@@ -953,12 +956,12 @@ extension HomeViewReactor {
         let weightSet: [[String]] = firstWorkout.sets.map { set in
             [String(set.weight), String(set.reps)]
         }
-        let initialWorkoutStateForEdit = WorkoutStateForEdit(
-            currentRoutine: initialRoutine,
-            currentExcerciseName: firstWorkout.name,
-            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
-            currentWeightSet: weightSet
-        )
+//        let initialWorkoutStateForEdit = WorkoutStateForEdit(
+//            currentRoutine: initialRoutine,
+//            currentExcerciseName: firstWorkout.name,
+//            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
+//            currentWeightSet: weightSet
+//        )
         
         // Firebase uid
         let uid = FirebaseAuthService().fetchCurrentUser()?.uid
@@ -989,11 +992,12 @@ extension HomeViewReactor {
             didExerciseCount: 0,
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
-            uid: uid,
-            currentWorkout: initialRoutine.workouts[0],
+            currentWorkoutData: initialRoutine.workouts[0],
             accumulatedWorkoutTime: 0,
             accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
+            uid: uid,
+            documentID: initialRoutine.documentID, 
             recordID: ""
         )
     }
