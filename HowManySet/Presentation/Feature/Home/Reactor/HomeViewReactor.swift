@@ -85,8 +85,8 @@ final class HomeViewReactor: Reactor {
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
         case setEditExerciseViewPresented(Bool)
-        /// 운동 편집 시 Workout으로 변형
-        case convertToWorkoutForEdit(at: Int)
+        /// 운동 편집 시 Workout 변경
+        case updateCurrentWorkout(at: Int)
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
@@ -162,7 +162,7 @@ final class HomeViewReactor: Reactor {
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
     
     private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
-
+    
     /// 운동 종료/완료시 RecordUpdate (+ 루틴에 대한 메모)
     private let updateRecordUseCase: UpdateRecordUseCase
     
@@ -315,7 +315,7 @@ final class HomeViewReactor: Reactor {
             
         case let .editExerciseViewPresented(cardIndex, isPresented):
             return .concat([
-                .just(.convertToWorkoutForEdit(at: cardIndex)),
+                .just(.updateCurrentWorkout(at: cardIndex)),
                 .just(.setEditExerciseViewPresented(isPresented))
             ])
             
@@ -390,10 +390,10 @@ final class HomeViewReactor: Reactor {
             
         case .didEnterBackgroundWhileResting:
             return .concat([
-                   .just(.setRestRemainingStartDate(Date())),
-                   // 휴식 중 백그라운드 진입 시 restRemainingTime 설정
-                   .just(.setRestRemainingTimeWhenBackgrounded(Double(currentState.restRemainingTime)))
-               ])
+                .just(.setRestRemainingStartDate(Date())),
+                // 휴식 중 백그라운드 진입 시 restRemainingTime 설정
+                .just(.setRestRemainingTimeWhenBackgrounded(Double(currentState.restRemainingTime)))
+            ])
         }//action
     }//mutate
     
@@ -510,14 +510,13 @@ final class HomeViewReactor: Reactor {
                 newState.isRestPaused = false
             }
             
-        // MARK: - 현재 운동 데이터 저장
-        // 운동 완료 시 모든 정보(Record, Summary) 저장
-        // 운동 완료 시 호출, 추후에 운동 중 변경 기능 추가 시 여기서 처리 할 수도 있음.
+            // MARK: - 현재 운동 데이터 저장
+            // 운동 완료 시 모든 정보(Record, Summary) 저장
         case .saveWorkoutData:
             let routineDidProgress = Float(newState.didSetCount) / Float(newState.totalSetCountInRoutine)
             let recordID = UUID().uuidString
             newState.recordID = recordID
-        
+            
             // 운동 완료 화면에 보여질 데이터들
             newState.workoutSummary = WorkoutSummary(
                 routineName: newState.workoutRoutine.name,
@@ -565,7 +564,7 @@ final class HomeViewReactor: Reactor {
             
             print("🎬 [updatedWorkoutRecord]: \(updatedWorkoutRecord)")
             saveRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
-                        
+            
         case let .setTrueCurrentCardViewCompleted(cardIndex):
             if newState.workoutCardStates.indices.contains(cardIndex) {
                 newState.currentExerciseAllSetsCompleted = true
@@ -582,13 +581,13 @@ final class HomeViewReactor: Reactor {
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
             
-        // MARK: - 각 운동 종목 메모 업데이트
+            // MARK: - 각 운동 종목 메모 업데이트
         case let .updateExerciseMemo(newMemo):
             let currentIndex = newState.currentExerciseIndex
             let currentExercise = newState.workoutCardStates[currentIndex]
             // 뷰에 반영
             newState.workoutCardStates[currentIndex].memoInExercise = newMemo
-    
+            
             let updatedWorkout = Workout(
                 id: currentExercise.workoutID,
                 documentID: newState.workoutRoutine.documentID,
@@ -599,7 +598,7 @@ final class HomeViewReactor: Reactor {
             print("📋 업데이트된 메모: \(String(describing: newMemo))")
             
             updateWorkoutUseCase.execute(uid: newState.uid, item: updatedWorkout)
-
+            
         case let .stopRestTimer(isStopped):
             if isStopped {
                 newState.isResting = false
@@ -615,11 +614,12 @@ final class HomeViewReactor: Reactor {
                 newState.restStartDate = Date()
             }
             
-        case let .convertToWorkoutForEdit(cardIndex):
+            // MARK: - 운동 중 운동 편집 시 수행
+        case let .updateCurrentWorkout(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
-//            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
-//                [String(set.weight), String(set.reps)]
-//            }
+            //            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
+            //                [String(set.weight), String(set.reps)]
+            //            }
             newState.currentWorkoutData = Workout(
                 id: currentExercise.workoutID,
                 documentID: newState.documentID,
@@ -627,10 +627,29 @@ final class HomeViewReactor: Reactor {
                 sets: currentExercise.setInfo,
                 comment: currentExercise.memoInExercise
             )
-        
+            
+            let updatedWorkout = newState.currentWorkoutData
+            let currentSetIndex = currentExercise.setIndex
+            newState.workoutCardStates[cardIndex] = WorkoutCardState(
+                workoutID: currentExercise.workoutID,
+                currentExerciseName: updatedWorkout.name,
+                currentWeight: updatedWorkout.sets[currentSetIndex].weight,
+                currentUnit: updatedWorkout.sets[currentSetIndex].unit,
+                currentReps: updatedWorkout.sets[currentSetIndex].reps,
+                setInfo: updatedWorkout.sets,
+                setIndex: currentSetIndex,
+                exerciseIndex: currentExercise.exerciseIndex,
+                totalExerciseCount: currentExercise.totalExerciseCount,
+                totalSetCount: updatedWorkout.sets.count,
+                currentExerciseNumber: currentExercise.currentExerciseNumber,
+                currentSetNumber: currentExercise.currentSetNumber,
+                setProgressAmount: currentExercise.setProgressAmount,
+                allSetsCompleted: currentExercise.allSetsCompleted
+            )
+            
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
-
+            
             // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
             let updatedWorkoutRecord = WorkoutRecord(
                 rmID: newState.recordID,
@@ -745,7 +764,7 @@ private extension HomeViewReactor {
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
             var currentCardState = currentState.workoutCardStates[cardIndex]
-//            currentCardState.setProgressAmount += 1
+            //            currentCardState.setProgressAmount += 1
             print("🗂️🗂️ 초기 nextExerciseIndex: \(nextExerciseIndex)")
             
             // 다음,이전 인덱스가 존재하고 다음,이전 카드 모든 세트 완료 시
@@ -899,8 +918,8 @@ extension HomeViewReactor.State {
 // MARK: InitialState 관련
 extension HomeViewReactor {
     
-//    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
-//    /// 바로 시작 되도록 isWorkingout = true
+    //    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
+    //    /// 바로 시작 되도록 isWorkingout = true
     static func fetchedInitialState(routine: WorkoutRoutine) -> State {
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routine
@@ -953,15 +972,15 @@ extension HomeViewReactor {
         )
         
         let firstWorkout = initialRoutine.workouts[0]
-        let weightSet: [[String]] = firstWorkout.sets.map { set in
-            [String(set.weight), String(set.reps)]
-        }
-//        let initialWorkoutStateForEdit = WorkoutStateForEdit(
-//            currentRoutine: initialRoutine,
-//            currentExcerciseName: firstWorkout.name,
-//            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
-//            currentWeightSet: weightSet
-//        )
+        //        let weightSet: [[String]] = firstWorkout.sets.map { set in
+        //            [String(set.weight), String(set.reps)]
+        //        }
+        //        let initialWorkoutStateForEdit = WorkoutStateForEdit(
+        //            currentRoutine: initialRoutine,
+        //            currentExcerciseName: firstWorkout.name,
+        //            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
+        //            currentWeightSet: weightSet
+        //        )
         
         // Firebase uid
         let uid = FirebaseAuthService().fetchCurrentUser()?.uid
@@ -997,7 +1016,7 @@ extension HomeViewReactor {
             accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
             uid: uid,
-            documentID: initialRoutine.documentID, 
+            documentID: initialRoutine.documentID,
             recordID: ""
         )
     }
