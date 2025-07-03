@@ -58,6 +58,7 @@ final class OnboardingView: UIView {
         $0.font = .pretendard(size: 20, weight: .bold)
         $0.textColor = .white
         $0.textAlignment = .center
+        $0.numberOfLines = 0
     }
     
     /// 온보딩 안내 이미지를 표시하는 이미지 뷰. 중앙에 배치.

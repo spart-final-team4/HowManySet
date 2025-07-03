@@ -170,32 +170,32 @@ final class OnBoardingViewReactor: Reactor {
         .init(
             title: String(localized: "운동 이름부터 세트 수까지"),
             subtitle: String(localized: "내 루틴에 맞게 직접 설정해보세요"),
-            imageName: "Onboard_SetRoutine"
+            imageName: "Onboarding_SetRoutine"
         ),
         .init(
             title: String(localized: "오늘은 어떤 운동할까?"),
             subtitle: String(localized: "원하는 루틴만 골라 시작하세요"),
-            imageName: "Onboard_RoutineList"
+            imageName: "Onboarding_RoutineList"
         ),
         .init(
             title: String(localized: "운동을 완료하면 세트 완료를 클릭하고,"),
-            subtitle: String(localized: "휴식 시간을 미리 설정해보세요"),
-            imageName: "Onboard_BreakTime"
+            subtitle: String(localized: "다음 휴식 시간을 미리 설정해보세요"),
+            imageName: "Onboarding_StartWorkout"
         ),
         .init(
             title: String(localized: "운동 중 화면에서 무게, 횟수 클릭 시"),
             subtitle: String(localized: "세트 수, 무게를 변경할 수 있어요"),
-            imageName: "Onboard_WorkOutSetting"
+            imageName: "Onboarding_SetWorkout"
         ),
         .init(
             title: String(localized: "휴식 타이머를 확인하고,"),
             subtitle: String(localized: "물 한 잔으로 리프레시해보세요!"),
-            imageName: "Onboard_Water"
+            imageName: "Onboarding_Water"
         ),
         .init(
             title: String(localized: "운동 중엔 앱을 꺼도 OK!"),
             subtitle: String(localized: "잠금화면에서 운동 완료, 휴식까지 한 번에"),
-            imageName: "Onboard_LiveActivity"
+            imageName: "Onboarding_LiveActivity"
         )
     ]
 }
