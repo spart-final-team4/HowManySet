@@ -55,7 +55,7 @@ final class MyPageViewReactor: Reactor {
         /// 에러 정보
         var error: Error?
         /// 사용자 이름 (Firestore에서 fetch)
-        var userName: String?
+        var userName: String? = nil
     }
     
     /// 초기 상태
