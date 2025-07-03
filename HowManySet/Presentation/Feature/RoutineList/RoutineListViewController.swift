@@ -48,7 +48,6 @@ final class RoutineListViewController: UIViewController, View {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        LoadingIndicator.showLoadingIndicator()
         reactor?.action.onNext(.viewWillAppear)
     }
 
@@ -68,15 +67,6 @@ final class RoutineListViewController: UIViewController, View {
                     owner.coordinator?.presentRoutineNameView()
                 }
             }
-            .disposed(by: disposeBag)
-        
-        reactor.state
-            .map { $0.routines }
-            .distinctUntilChanged()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { _ in
-                LoadingIndicator.hideLoadingIndicator()
-            })
             .disposed(by: disposeBag)
 
         reactor.state
