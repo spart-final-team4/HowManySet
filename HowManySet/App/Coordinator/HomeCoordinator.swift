@@ -12,8 +12,7 @@ protocol HomeCoordinatorProtocol: Coordinator {
     func pushRoutineListView() 
     func presentEditAndMemoView()
     func presentEditExerciseView(
-        routineName: String,
-        workoutStateForEdit: WorkoutStateForEdit,
+        workout: Workout,
         onDismiss: (() -> Void)?
     )
     func presentEditRoutineView(with routine: WorkoutRoutine)
@@ -111,20 +110,20 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
     func presentEditExerciseView(
-        routineName: String,
-        workoutStateForEdit: WorkoutStateForEdit,
+        workout: Workout,
         onDismiss: (() -> Void)? = nil
     ) {
         let firestoreService = FirestoreService()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let reactor = AddExerciseViewReactor(
-            routineName: routineName,
-            saveRoutineUseCase: saveRoutineUseCase,
-            workoutStateForEdit: workoutStateForEdit,
-            caller: ViewCaller.fromHome
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
+        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
+        let reactor = EditExerciseViewReactor(
+            workout: workout,
+            updateWorkoutUseCase: updateWorkoutUseCase,
+            updateRoutineUseCase: updateRoutineUseCase
         )
-        let editExerciseVC = AddExerciseViewController(reactor: reactor)
+        let editExerciseVC = EditExerciseViewController(reactor: reactor)
         
         editExerciseVC.onDismiss = onDismiss
         
