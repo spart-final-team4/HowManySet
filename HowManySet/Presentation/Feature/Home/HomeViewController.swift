@@ -424,7 +424,9 @@ private extension HomeViewController {
                         })
                     })
                 })
-                .bind(onNext: {
+                .bind(onNext: { [weak self] _ in
+                    guard let self else { return }
+                    reactor.action.onNext(.editRoutineViewPresented(at: self.currentPage))
                     self.coordinator?.presentEditExerciseView(
                         workout: reactor.currentState.currentWorkoutData,
                         onDismiss: {
@@ -799,7 +801,6 @@ extension HomeViewController {
                 reactor.action.onNext(.saveButtonClickedAtEditExercise)
             }
             .disposed(by: disposeBag)
-        
         
         Observable.combineLatest(
             reactor.state.map { $0.workoutUpdateCompleted },
