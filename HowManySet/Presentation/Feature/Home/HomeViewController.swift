@@ -479,7 +479,7 @@ extension HomeViewController {
                 guard let self else { return }
                 self.coordinator?.popUpEndWorkoutAlert(
                     onConfirm: {
-                        reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                        reactor.action.onNext(.stopButtonClicked)
                         LiveActivityService.shared.stop() // 라이브 액티비티 종료
                         return reactor.currentState.workoutSummary
                     },
@@ -771,7 +771,7 @@ extension HomeViewController {
                             // 운동 완료 처리
                             if let reactor = self.reactor {
                                 self.coordinator?.popUpCompletedWorkoutAlert(onConfirm: {
-                                    reactor.action.onNext(.stopButtonClicked(isEnded: true))
+                                    reactor.action.onNext(.stopButtonClicked)
                                     LiveActivityService.shared.stop() // 라이브 액티비티 종료
                                     return reactor.currentState.workoutSummary
                                 }, onCancel: { [weak self] in
