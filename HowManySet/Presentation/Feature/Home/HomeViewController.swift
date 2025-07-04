@@ -801,10 +801,10 @@ extension HomeViewController {
         reactor.state.map { $0.workoutCardStates }
             .distinctUntilChanged { $0[self.currentPage] }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] (newCardStates: [WorkoutCardState]) in
-            guard let self else { return }
-            print("새 카드 정보", newCardStates[self.currentPage])
-            self.pagingCardViewContainer[self.currentPage].configure(with: newCardStates[self.currentPage])
+            .bind(onNext: { [weak self] newCardStates in
+                guard let self else { return }
+//                print("새 카드 정보", newCardStates[self.currentPage])
+                self.pagingCardViewContainer[self.currentPage].configure(with: newCardStates[self.currentPage])
             })
             .disposed(by: disposeBag)
         
