@@ -17,9 +17,7 @@ final class EditExerciseViewController: UIViewController, View {
     typealias Reactor = EditExerciseViewReactor
     
     var disposeBag = DisposeBag()
-    
-    var onDismiss: (() -> Void)?
-    
+        
     private let scrollView = UIScrollView()
     private let headerView = EditExerciseHeaderView()
     private let headerBorderLineView = UIView().then {
@@ -43,12 +41,6 @@ final class EditExerciseViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        onDismiss?()
     }
     
     func bind(reactor: EditExerciseViewReactor) {
