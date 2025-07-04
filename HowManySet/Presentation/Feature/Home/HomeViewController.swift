@@ -426,7 +426,6 @@ private extension HomeViewController {
                 })
                 .bind(onNext: { [weak self] _ in
                     guard let self else { return }
-                    reactor.action.onNext(.editRoutineViewPresented(at: self.currentPage))
                     self.coordinator?.presentEditExerciseView(
                         workout: reactor.currentState.currentWorkoutData
                     )
@@ -776,13 +775,13 @@ extension HomeViewController {
                 }
             }).disposed(by: disposeBag)
     
-        reactor.state.map { $0.workoutCardStates }
-            .distinctUntilChanged { $0[self.currentPage] }
+        reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
+            .distinctUntilChanged { $0[$1] }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] newCardStates in
+            .bind(onNext: { [weak self] newCardStates, currentIndex in
                 guard let self else { return }
-                print("새 카드 정보", newCardStates[self.currentPage])
-                self.pagingCardViewContainer[self.currentPage].configure(with: newCardStates[self.currentPage])
+                print("새 카드 정보", newCardStates[currentIndex])
+                self.pagingCardViewContainer[currentIndex].configure(with: newCardStates[currentIndex])
             })
             .disposed(by: disposeBag)
         
