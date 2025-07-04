@@ -790,20 +790,43 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
         
         NotificationCenter.default.rx.notification(Notification.Name("UpdateWorkout"))
+            .observe(on: MainScheduler.instance)
             .bind { [weak self] _ in
                 guard let self else { return }
                 reactor.action.onNext(.saveButtonClickedAtEditExercise(at: self.currentPage))
             }
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.workoutUpdateCompleted }
-            .filter { $0 }
-            .bind(onNext: { [weak self] _ in
-                guard let self else { return }
-                print(reactor.currentState.workoutCardStates[self.currentPage])
-                self.pagingCardViewContainer[self.currentPage].configure(with: reactor.currentState.workoutCardStates[self.currentPage])
-            })
-            .disposed(by: disposeBag)
+        
+        Observable.combineLatest(
+            reactor.state.map { $0.workoutUpdateCompleted },
+            reactor.state.map { $0.workoutCardStates }
+        )
+        .filter { $0.0 }
+        .distinctUntilChanged { $0.0 }
+        .observe(on: MainScheduler.instance)
+        .bind(onNext: { [weak self] _, newCardStates in
+            guard let self else { return }
+            print(newCardStates[self.currentPage])
+            self.pagingCardViewContainer[self.currentPage].configure(with: newCardStates[self.currentPage])
+        })
+        .disposed(by: disposeBag)
+        
+//        reactor.state.map { $0.isWorkingout }
+//            .distinctUntilChanged()
+//            .filter { $0 }
+//            .take(1)
+//            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+//            .map { _ -> [WorkoutCardState] in
+//                // 백그라운드에서 데이터 준비
+//                return reactor.currentState.workoutCardStates
+//            }
+//            .observe(on: MainScheduler.asyncInstance)
+//            .bind(onNext: { [weak self] cardStates in
+//                guard let self else { return }
+//                print("--- 운동시작 ---")
+//                self.configureExerciseCardViews(cardStates: cardStates)
+//            }).disposed(by: disposeBag)
         
         // MARK: - LiveActivity 관련
         // contentState 캐싱

@@ -98,6 +98,8 @@ final class HomeViewReactor: Reactor {
         /// 현재 루틴 완료 설정
         case setCurrentRoutineCompleted
         case setWorkoutUpdateCompleted
+        /// 운동 편집 시 최신 Routine 로드
+        case loadUpdatedRoutine([WorkoutRoutine])
     }
     
     // MARK: - State is a current view state
@@ -316,6 +318,8 @@ final class HomeViewReactor: Reactor {
 
         case let .saveButtonClickedAtEditExercise(cardIndex):
             return .concat([
+                fetchRoutineUseCase.execute(uid: currentState.uid)
+                    .map { Mutation.loadUpdatedRoutine($0) }.asObservable(),
                 .just(.convertToWorkoutForEdit(at: cardIndex)),
                 .just(.setWorkoutUpdateCompleted)
             ])
@@ -623,6 +627,7 @@ final class HomeViewReactor: Reactor {
             //            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
             //                [String(set.weight), String(set.reps)]
             //            }
+            
             let updatedWorkout = Workout(
                 id: currentExercise.workoutID,
                 documentID: newState.documentID,
@@ -630,6 +635,8 @@ final class HomeViewReactor: Reactor {
                 sets: currentExercise.setInfo,
                 comment: currentExercise.memoInExercise
             )
+            print("변경된 운동 이름: ", updatedWorkout.name)
+
             newState.currentWorkoutData = updatedWorkout
             let currentSetIndex = currentExercise.setIndex
             newState.workoutCardStates[cardIndex] = WorkoutCardState(
@@ -648,7 +655,6 @@ final class HomeViewReactor: Reactor {
                 setProgressAmount: currentExercise.setProgressAmount,
                 allSetsCompleted: currentExercise.allSetsCompleted
             )
-            print(updatedWorkout.name)
             
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
@@ -696,6 +702,23 @@ final class HomeViewReactor: Reactor {
             
         case .setWorkoutUpdateCompleted:
             newState.workoutUpdateCompleted = true
+            
+        case let .loadUpdatedRoutine(routines):
+            print("routines: \(routines)\n\n")
+            if let uid {
+                routines.forEach { routine in
+                    if routine.documentID == currentState.workoutRoutine.documentID {
+                        newState.workoutRoutine = routine
+                        newState.workoutCardStates
+                    }
+                }
+            } else {
+                routines.forEach { routine in
+                    if routine.rmID == currentState.workoutRoutine.rmID {
+                        newState.workoutRoutine = routine
+                    }
+                }
+            }
         }//switch mutation
         return newState
     }//reduce
@@ -1023,5 +1046,9 @@ extension HomeViewReactor {
             recordID: "",
             workoutUpdateCompleted: false
         )
+    }
+    
+    func updateRoutine() {
+        
     }
 }
