@@ -33,8 +33,8 @@ final class HomeViewReactor: Reactor {
         case editAndMemoViewPresented(at: Int)
         /// MemoTextView의 메모로 업데이트
         case updateCurrentExerciseMemoWhenDismissed(with: String)
-        /// 운동 편집 뷰 닫힐 시
-        case editExerciseViewDismissed(at: Int)
+        /// 운동 편집 모달에서 저장하기 클릭 시
+        case saveButtonClickedAtEditExercise(at: Int)
         /// 운동 완료 화면에서 확인 클릭 시 - 루틴 메모만 Update
         case confirmButtonClickedForSavingMemo(newMemo: String?)
         /// 운동 완료 후 카드 삭제 완료
@@ -97,6 +97,7 @@ final class HomeViewReactor: Reactor {
         case setRestRemainingTimeWhenBackgrounded(TimeInterval) /// 총 누적된 남은 휴식 시간 (+background) 설정
         /// 현재 루틴 완료 설정
         case setCurrentRoutineCompleted
+        case setWorkoutUpdateCompleted
     }
     
     // MARK: - State is a current view state
@@ -151,6 +152,7 @@ final class HomeViewReactor: Reactor {
         var documentID: String
         /// 현재  WorkoutRecordID
         var recordID: String
+        var workoutUpdateCompleted: Bool
     }
     
     // initialState 주입으로 변경
@@ -312,11 +314,11 @@ final class HomeViewReactor: Reactor {
             
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
-            
-        case let .editExerciseViewDismissed(cardIndex):
+
+        case let .saveButtonClickedAtEditExercise(cardIndex):
             return .concat([
-                .just(.setEditExerciseViewPresented(false)),
-                .just(.convertToWorkoutForEdit(at: cardIndex))
+                .just(.convertToWorkoutForEdit(at: cardIndex)),
+                .just(.setWorkoutUpdateCompleted)
             ])
             
         case let .confirmButtonClickedForSavingMemo(newMemo):
@@ -622,15 +624,14 @@ final class HomeViewReactor: Reactor {
             //            let currentSetsData = newState.workoutRoutine.workouts[cardIndex].sets.map { set in
             //                [String(set.weight), String(set.reps)]
             //            }
-            newState.currentWorkoutData = Workout(
+            let updatedWorkout = Workout(
                 id: currentExercise.workoutID,
                 documentID: newState.documentID,
                 name: currentExercise.currentExerciseName,
                 sets: currentExercise.setInfo,
                 comment: currentExercise.memoInExercise
             )
-            
-            let updatedWorkout = newState.currentWorkoutData
+            newState.currentWorkoutData = updatedWorkout
             let currentSetIndex = currentExercise.setIndex
             newState.workoutCardStates[cardIndex] = WorkoutCardState(
                 workoutID: currentExercise.workoutID,
@@ -648,6 +649,7 @@ final class HomeViewReactor: Reactor {
                 setProgressAmount: currentExercise.setProgressAmount,
                 allSetsCompleted: currentExercise.allSetsCompleted
             )
+            print(updatedWorkout.name)
             
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
@@ -669,6 +671,9 @@ final class HomeViewReactor: Reactor {
             updateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
             
         case let .setEditExerciseViewPresented(isPresented):
+            newState.workoutUpdateCompleted = false
+            print("이전 isPresented: \(newState.isEditExerciseViewPresented)")
+            print("다음 isPresented: \(isPresented)")
             newState.isEditExerciseViewPresented = isPresented
             
         case let .setUpdatingIndex(cardIndex):
@@ -693,6 +698,8 @@ final class HomeViewReactor: Reactor {
             newState.accumulatedRestRemainingTime = time
             newState.restRemainingTime = Float(time)
             
+        case .setWorkoutUpdateCompleted:
+            newState.workoutUpdateCompleted = true
         }//switch mutation
         return newState
     }//reduce
@@ -1018,7 +1025,8 @@ extension HomeViewReactor {
             currentRoutineCompleted: false,
             uid: uid,
             documentID: initialRoutine.documentID,
-            recordID: ""
+            recordID: "",
+            workoutUpdateCompleted: false
         )
     }
 }
