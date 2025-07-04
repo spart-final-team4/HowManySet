@@ -1045,7 +1045,7 @@ extension HomeViewReactor {
                     totalSetCount: workout.sets.count,
                     currentExerciseNumber: i + 1,
                     currentSetNumber: currentSet+1,
-                    setProgressAmount: currentSet+1,
+                    setProgressAmount: currentSet,
                     memoInExercise: workout.comment,
                     allSetsCompleted: currentState.currentExerciseAllSetsCompleted
                 )
