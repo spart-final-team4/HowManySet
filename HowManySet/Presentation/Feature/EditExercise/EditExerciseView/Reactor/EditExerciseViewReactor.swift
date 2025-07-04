@@ -107,6 +107,7 @@ final class EditExerciseViewReactor: Reactor {
             if case .success = validationWorkout(workout: newWorkout) {
                 if case .forEdit = newState.mode {
                     updateWorkoutUseCase.execute(uid: uid, item: newWorkout)
+                    NotificationCenter.default.post(name: NSNotification.Name("UpdateWorkout"), object: nil, userInfo: nil)
                 } else if case .forAdd = newState.mode {
                     var newRoutine = newState.routine
                     newRoutine.workouts.append(newWorkout)

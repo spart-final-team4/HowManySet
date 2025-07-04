@@ -427,11 +427,7 @@ private extension HomeViewController {
                 .bind(onNext: {
                     self.coordinator?.presentEditExerciseView(
                         workout: reactor.currentState.currentWorkoutData,
-                        onDismiss: {
-                            reactor.action.onNext(.editExerciseViewDismissed(
-                                at: self.getCurrentVisibleExerciseIndex())
-                            )
-                        }
+                        onDismiss: {}
                     )
                 })
                 .disposed(by: disposeBag)
@@ -792,6 +788,22 @@ extension HomeViewController {
                     }
                 }
             }).disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx.notification(Notification.Name("UpdateWorkout"))
+            .bind { [weak self] _ in
+                guard let self else { return }
+                reactor.action.onNext(.saveButtonClickedAtEditExercise(at: self.currentPage))
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.workoutUpdateCompleted }
+            .filter { $0 }
+            .bind(onNext: { [weak self] _ in
+                guard let self else { return }
+                print(reactor.currentState.workoutCardStates[self.currentPage])
+                self.pagingCardViewContainer[self.currentPage].configure(with: reactor.currentState.workoutCardStates[self.currentPage])
+            })
+            .disposed(by: disposeBag)
         
         // MARK: - LiveActivity 관련
         // contentState 캐싱
