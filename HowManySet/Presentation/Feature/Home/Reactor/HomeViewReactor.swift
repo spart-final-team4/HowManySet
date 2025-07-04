@@ -31,8 +31,6 @@ final class HomeViewReactor: Reactor {
         case stopButtonClicked
         /// 카드의 운동 옵션 버튼 클릭으로 editAndMemoView present시
         case editAndMemoViewPresented(at: Int)
-        // 운동 편집 모달 present/dismiss
-        case editRoutineViewPresented(at: Int)
         /// MemoTextView의 메모로 업데이트
         case updateCurrentExerciseMemoWhenDismissed(with: String)
         /// 운동 편집 모달에서 저장하기 클릭 시
@@ -86,8 +84,6 @@ final class HomeViewReactor: Reactor {
         case updateExerciseMemo(with: String?)
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
-        /// 운동 편집 시 Workout으로 변형
-        case convertToWorkoutForEdit(at: Int)
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
@@ -309,9 +305,6 @@ final class HomeViewReactor: Reactor {
             let currentExerciseMemo = currentExercise.memoInExercise
             print("📋 현재메모: \(String(describing: currentExerciseMemo))")
             return .just(.setEditAndMemoViewPresented(true))
-            
-        case let .editRoutineViewPresented(cardIndex):
-            return .just(.convertToWorkoutForEdit(at: cardIndex))
             
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
@@ -570,13 +563,14 @@ final class HomeViewReactor: Reactor {
                     print("\($0.currentExerciseName), \( $0.allSetsCompleted)")
                 }
             }
-            
+        
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
+            print("🔍 현재 운동 정보!: \(newState.workoutRoutine.workouts[newIndex])")
             newState.currentExerciseIndex = newIndex
             newState.updatingIndex = newIndex
             newState.currentWorkoutData = newState.workoutRoutine.workouts[newIndex]
-            
+                        
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
             
@@ -612,19 +606,6 @@ final class HomeViewReactor: Reactor {
                 newState.restStartTime = nil
                 newState.restStartDate = Date()
             }
-            
-            // MARK: - 운동 편집 모달 present시 뷰 정보 설정
-        case let .convertToWorkoutForEdit(cardIndex):
-            let currentExercise = newState.workoutCardStates[cardIndex]
-            
-            let updatedWorkout = Workout(
-                id: currentExercise.workoutID,
-                documentID: newState.documentID,
-                name: currentExercise.currentExerciseName,
-                sets: currentExercise.setInfo,
-                comment: currentExercise.memoInExercise
-            )
-            newState.currentWorkoutData = updatedWorkout
             
             // MARK: - 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
