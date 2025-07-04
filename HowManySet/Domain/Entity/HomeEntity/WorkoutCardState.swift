@@ -42,3 +42,16 @@ struct WorkoutCardState: Codable {
     /// 현재 세트의 반복수
     var currentRepsForSave: Int { setInfo[setIndex].reps }
 }
+
+/// 운동 편집 시 변경되는 값들만 체크하는 ==
+extension WorkoutCardState: Equatable {
+    static func == (lhs: WorkoutCardState, rhs: WorkoutCardState) -> Bool {
+        return lhs.currentExerciseName == rhs.currentExerciseName &&
+        lhs.currentWeight == rhs.currentWeight &&
+        lhs.currentUnit == rhs.currentUnit &&
+        lhs.currentReps == rhs.currentReps &&
+        lhs.setInfo == rhs.setInfo &&
+        lhs.totalSetCount == rhs.totalSetCount &&
+        lhs.memoInExercise == rhs.memoInExercise
+    }
+}
