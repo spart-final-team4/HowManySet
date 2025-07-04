@@ -87,10 +87,10 @@ final class HomeViewReactor: Reactor {
         case updateExerciseMemo(with: String?)
         /// 휴식 타이머 중단
         case stopRestTimer(Bool)
-        case setEditExerciseViewPresented
         /// 운동 편집 시 Workout으로 변형
         case convertToWorkoutForEdit(at: Int)
         case setEditExerciseViewDismissed
+        case setWorkoutUpdateCompleted
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
@@ -101,7 +101,6 @@ final class HomeViewReactor: Reactor {
         case setRestRemainingTimeWhenBackgrounded(TimeInterval) /// 총 누적된 남은 휴식 시간 (+background) 설정
         /// 현재 루틴 완료 설정
         case setCurrentRoutineCompleted
-        case setWorkoutUpdateCompleted
         /// 운동 편집 시 최신 Routine 로드
         case loadUpdatedRoutine([WorkoutRoutine])
     }
@@ -316,10 +315,7 @@ final class HomeViewReactor: Reactor {
             return .just(.setEditAndMemoViewPresented(true))
             
         case let .editRoutineViewPresented(cardIndex):
-            return .concat([
-                .just(.setEditExerciseViewPresented),
-                .just(.convertToWorkoutForEdit(at: cardIndex))
-            ])
+            return .just(.convertToWorkoutForEdit(at: cardIndex))
             
         case .editRoutineViewDismissed:
             return .just(.setEditExerciseViewDismissed)
@@ -628,7 +624,7 @@ final class HomeViewReactor: Reactor {
                 newState.restStartDate = Date()
             }
             
-            // MARK: - 운동 중 운동 편집 시 수행
+            // MARK: - 운동 중 운동 편집 모달 present 시 뷰 정보 설정
         case let .convertToWorkoutForEdit(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
             
@@ -639,26 +635,7 @@ final class HomeViewReactor: Reactor {
                 sets: currentExercise.setInfo,
                 comment: currentExercise.memoInExercise
             )
-            print("변경된 운동 이름: ", updatedWorkout.name)
-            
             newState.currentWorkoutData = updatedWorkout
-            let currentSetIndex = currentExercise.setIndex
-            newState.workoutCardStates[cardIndex] = WorkoutCardState(
-                workoutID: currentExercise.workoutID,
-                currentExerciseName: updatedWorkout.name,
-                currentWeight: updatedWorkout.sets[currentSetIndex].weight,
-                currentUnit: updatedWorkout.sets[currentSetIndex].unit,
-                currentReps: updatedWorkout.sets[currentSetIndex].reps,
-                setInfo: updatedWorkout.sets,
-                setIndex: currentSetIndex,
-                exerciseIndex: currentExercise.exerciseIndex,
-                totalExerciseCount: currentExercise.totalExerciseCount,
-                totalSetCount: updatedWorkout.sets.count,
-                currentExerciseNumber: currentExercise.currentExerciseNumber,
-                currentSetNumber: currentExercise.currentSetNumber,
-                setProgressAmount: currentExercise.setProgressAmount,
-                allSetsCompleted: currentExercise.allSetsCompleted
-            )
             
             // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
@@ -679,11 +656,11 @@ final class HomeViewReactor: Reactor {
             
             updateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
             
-        case .setEditExerciseViewPresented:
-            break
-            
         case .setEditExerciseViewDismissed:
             newState.workoutUpdateCompleted = false
+            
+        case .setWorkoutUpdateCompleted:
+            newState.workoutUpdateCompleted = true
             
         case let .setUpdatingIndex(cardIndex):
             print("Updating인 CARDINDEX: \(cardIndex)")
@@ -706,9 +683,6 @@ final class HomeViewReactor: Reactor {
         case let .setRestRemainingTimeWhenBackgrounded(time):
             newState.accumulatedRestRemainingTime = time
             newState.restRemainingTime = Float(time)
-            
-        case .setWorkoutUpdateCompleted:
-            newState.workoutUpdateCompleted = true
             
         case let .loadUpdatedRoutine(routines):
             if uid != nil {
