@@ -585,8 +585,7 @@ final class HomeViewReactor: Reactor {
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             newState.currentExerciseIndex = newIndex
             newState.updatingIndex = newIndex
-//            newState.currentWorkoutData
-//            newState.workoutRoutine.workouts[newIndex]
+            newState.currentWorkoutData = newState.workoutRoutine.workouts[newIndex]
             
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
@@ -624,7 +623,7 @@ final class HomeViewReactor: Reactor {
                 newState.restStartDate = Date()
             }
             
-            // MARK: - 운동 중 운동 편집 모달 present 시 뷰 정보 설정
+            // MARK: - 운동 편집 모달 present시 뷰 정보 설정
         case let .convertToWorkoutForEdit(cardIndex):
             let currentExercise = newState.workoutCardStates[cardIndex]
             
@@ -637,7 +636,7 @@ final class HomeViewReactor: Reactor {
             )
             newState.currentWorkoutData = updatedWorkout
             
-            // MARK: - 운동완료 페이지에서 확인 시 루틴 메모 업데이트
+            // MARK: - 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
             
             // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
@@ -744,9 +743,7 @@ private extension HomeViewReactor {
         // 다음 세트가 있는 경우 (휴식 시작)
         // 해당 상태에서 Forward 버튼을 누르면 휴식 스킵
         if nextSetIndex < currentCardState.totalSetCount {
-            
             let nextSet = currentWorkout.sets[nextSetIndex]
-            
             currentCardState.setIndex = nextSetIndex
             currentCardState.currentSetNumber = nextSetIndex + 1
             currentCardState.setProgressAmount += 1
@@ -756,10 +753,7 @@ private extension HomeViewReactor {
             
             /// 변경된 카드 State!
             let updatedCardState = currentCardState
-            
-            print("현재 세트 정보: \(updatedCardState)")
-            print("설정될 휴식시간: \(restTime)초")
-            
+
             return .concat([
                 .just(.setResting(isResting)),
                 // 카드 정보 업데이트
