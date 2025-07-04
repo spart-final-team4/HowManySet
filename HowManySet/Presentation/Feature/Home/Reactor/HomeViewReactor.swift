@@ -185,9 +185,7 @@ final class HomeViewReactor: Reactor {
     
     // MARK: - Mutate(실제로 일어날 변화 구현) Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
-        
-        print(#function)
-        
+                
         switch action {
             /// 초기 루틴 선택 시
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
@@ -460,7 +458,6 @@ final class HomeViewReactor: Reactor {
             } else { // 다음 세트로
                 newState.didSetCount += 1
             }
-            print("🚬 완료한 세트 수: \(newState.didSetCount), 완료한 운동 수: \(newState.didExerciseCount)")
             
         case let .updateWorkoutCardState(updatedState, oldState, oldIndex):
             
@@ -543,9 +540,7 @@ final class HomeViewReactor: Reactor {
                     comment: workout.comment
                 ))
             }
-            
-            print(didWorkout)
-            
+                        
             print("현재 루틴 ID: \(newState.workoutRoutine.rmID)")
             
             let newWorkoutRoutine = WorkoutRoutine(
@@ -582,8 +577,8 @@ final class HomeViewReactor: Reactor {
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             newState.currentExerciseIndex = newIndex
             newState.updatingIndex = newIndex
-            newState.currentWorkoutData = newState.workoutRoutine.workouts[newIndex]
-            print(newState.workoutRoutine.workouts[newIndex])
+            newState.currentWorkoutData
+            newState.workoutRoutine.workouts[newIndex]
             
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
@@ -704,8 +699,7 @@ final class HomeViewReactor: Reactor {
             newState.workoutUpdateCompleted = true
             
         case let .loadUpdatedRoutine(routines):
-            print("routines: \(routines)\n\n")
-            if let uid {
+            if uid != nil {
                 routines.forEach { routine in
                     if routine.documentID == currentState.workoutRoutine.documentID {
                         newState.workoutRoutine = routine
