@@ -122,7 +122,9 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         let editExerciseVC = EditExerciseViewController(reactor: reactor)
         editExerciseVC.onEditCompleted = { [weak self] in
             guard let self else { return }
-            self.homeViewReactor?.action.onNext(.saveButtonClickedAtEditExercise)
+            DispatchQueue.main.async {
+                self.homeViewReactor?.action.onNext(.saveButtonClickedAtEditExercise)
+            }
         }
         if let sheet = editExerciseVC.sheetPresentationController {
             sheet.detents = [.large()]
