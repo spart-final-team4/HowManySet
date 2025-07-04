@@ -17,6 +17,8 @@ final class EditExerciseViewController: UIViewController, View {
     typealias Reactor = EditExerciseViewReactor
     
     var disposeBag = DisposeBag()
+    
+    var onEditCompleted: (() -> Void)?
         
     private let scrollView = UIScrollView()
     private let headerView = EditExerciseHeaderView()
@@ -56,7 +58,11 @@ final class EditExerciseViewController: UIViewController, View {
                 LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
                 return Reactor.Action.saveExcerciseButtonTapped((self.getCurrentName(), self.getCurrentWorkoutSets()))
             }
-            .bind(to: reactor.action)
+            .bind(onNext: { [weak self] action in
+                guard let self else { return }
+                reactor.action.onNext(action)
+                self.onEditCompleted?()
+            })
             .disposed(by: disposeBag)
         
         // textField 밖에 누르면 키보드 내려가도록 구현

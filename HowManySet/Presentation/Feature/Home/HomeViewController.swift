@@ -702,7 +702,6 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] currentIndex in
                 guard let self else { return }
-                
                 // 삭제할 카드 찾기 (exerciseIndex 기준)
                 guard let cardToHideIndex = self.pagingCardViewContainer.firstIndex(
                     where: { $0.index == currentIndex }
@@ -717,16 +716,13 @@ extension HomeViewController {
                 
                 self.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
                     guard let self else { return }
-                    
                     self.animateCardDeletion(cardToHide) { [weak self] in
                         guard let self else { return }
-                        
                         // 현재 보이는 카드 중에서의 인덱스 찾기
                         guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
                             print("⚠️ 현재 visible 카드 인덱스를 찾을 수 없습니다.")
                             return
                         }
-                        
                         // 다음 페이지 계산
                         let newPage: Int
                         if currentVisibleIndex >= visibleCardsBeforeHiding.count - 1 {
@@ -736,29 +732,21 @@ extension HomeViewController {
                             // 마지막이 아닌 경우, 현재 페이지 유지
                             newPage = currentVisibleIndex
                         }
-                        
                         print("💻 삭제 전 visible 카드 수: \(visibleCardsBeforeHiding.count), 현재 visible 인덱스: \(currentVisibleIndex), 새로운 페이지: \(newPage)")
-                        
-                        
                         // 남은 visible 카드 확인
                         let remainingVisibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
-                        
                         // 유효한 페이지 범위로 조정
                         let finalNewPage = min(newPage, remainingVisibleCards.count - 1)
-                        
                         print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
-                        
                         // 레이아웃 재조정
                         self.setExerciseCardViewslayout(
                             cardContainer: self.pagingCardViewContainer,
                             newPage: finalNewPage
                         )
-                        
                         // Reactor에 페이지 변경 알림
                         if remainingVisibleCards.indices.contains(finalNewPage) {
                             let newExerciseIndex = remainingVisibleCards[finalNewPage].index
                             print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
-                            
                             if let reactor = self.reactor {
                                 reactor.action.onNext(.pageChanged(to: newExerciseIndex))
                                 reactor.action.onNext(.cardDeleteAnimationCompleted(oldIndex: currentIndex, nextIndex: newExerciseIndex))
@@ -787,23 +775,13 @@ extension HomeViewController {
                     }
                 }
             }).disposed(by: disposeBag)
-        
-        // MARK: - 운동 편집 모달 저장 버튼 클릭 시
-        NotificationCenter.default.rx.notification(Notification.Name("UpdateWorkout"))
-            .observe(on: MainScheduler.instance)
-            .bind { _ in
-                if reactor.currentState.isWorkingout {
-                    reactor.action.onNext(.saveButtonClickedAtEditExercise)
-                }
-            }
-            .disposed(by: disposeBag)
     
         reactor.state.map { $0.workoutCardStates }
             .distinctUntilChanged { $0[self.currentPage] }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] newCardStates in
                 guard let self else { return }
-//                print("새 카드 정보", newCardStates[self.currentPage])
+                print("새 카드 정보", newCardStates[self.currentPage])
                 self.pagingCardViewContainer[self.currentPage].configure(with: newCardStates[self.currentPage])
             })
             .disposed(by: disposeBag)
