@@ -127,7 +127,6 @@ final class HomeViewReactor: Reactor {
         var memoInRoutine: String?
         var currentExerciseAllSetsCompleted: Bool
         var isEditAndMemoViewPresented: Bool
-        var isEditExerciseViewPresented: Bool
         var isRestTimerStopped: Bool
         // 기록 관련
         /// 저장되는 운동 기록 정보
@@ -672,9 +671,6 @@ final class HomeViewReactor: Reactor {
             
         case let .setEditExerciseViewPresented(isPresented):
             newState.workoutUpdateCompleted = false
-            print("이전 isPresented: \(newState.isEditExerciseViewPresented)")
-            print("다음 isPresented: \(isPresented)")
-            newState.isEditExerciseViewPresented = isPresented
             
         case let .setUpdatingIndex(cardIndex):
             print("Updating인 CARDINDEX: \(cardIndex)")
@@ -1011,7 +1007,6 @@ extension HomeViewReactor {
             memoInRoutine: initialWorkoutRecord.comment,
             currentExerciseAllSetsCompleted: false,
             isEditAndMemoViewPresented: false,
-            isEditExerciseViewPresented: false,
             isRestTimerStopped: false,
             workoutRecord: initialWorkoutRecord,
             workoutSummary: initialWorkoutSummary,
