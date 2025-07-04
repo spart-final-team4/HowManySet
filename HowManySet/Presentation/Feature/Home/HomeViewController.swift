@@ -428,10 +428,7 @@ private extension HomeViewController {
                     guard let self else { return }
                     reactor.action.onNext(.editRoutineViewPresented(at: self.currentPage))
                     self.coordinator?.presentEditExerciseView(
-                        workout: reactor.currentState.currentWorkoutData,
-                        onDismiss: {
-                            reactor.action.onNext(.editRoutineViewDismissed)
-                        }
+                        workout: reactor.currentState.currentWorkoutData
                     )
                 })
                 .disposed(by: disposeBag)

@@ -11,10 +11,7 @@ protocol HomeCoordinatorProtocol: Coordinator {
 //    func startFromEditRoutine() -> (UIViewController, HomeViewReactor)
     func pushRoutineListView() 
     func presentEditAndMemoView()
-    func presentEditExerciseView(
-        workout: Workout,
-        onDismiss: (() -> Void)?
-    )
+    func presentEditExerciseView(workout: Workout)
     func presentEditRoutineView(with routine: WorkoutRoutine)
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?)
@@ -110,8 +107,7 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
     func presentEditExerciseView(
-        workout: Workout,
-        onDismiss: (() -> Void)? = nil
+        workout: Workout
     ) {
         let firestoreService = FirestoreService()
         let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
@@ -124,14 +120,10 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
             updateRoutineUseCase: updateRoutineUseCase
         )
         let editExerciseVC = EditExerciseViewController(reactor: reactor)
-        
-        editExerciseVC.onDismiss = onDismiss
-        
         if let sheet = editExerciseVC.sheetPresentationController {
             sheet.detents = [.large()]
             sheet.prefersGrabberVisible = true
         }
-        
         navigationController.present(editExerciseVC, animated: true)
     }
         

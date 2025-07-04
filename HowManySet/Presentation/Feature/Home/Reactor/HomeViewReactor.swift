@@ -33,7 +33,6 @@ final class HomeViewReactor: Reactor {
         case editAndMemoViewPresented(at: Int)
         // 운동 편집 모달 present/dismiss
         case editRoutineViewPresented(at: Int)
-        case editRoutineViewDismissed
         /// MemoTextView의 메모로 업데이트
         case updateCurrentExerciseMemoWhenDismissed(with: String)
         /// 운동 편집 모달에서 저장하기 클릭 시
@@ -89,8 +88,6 @@ final class HomeViewReactor: Reactor {
         case stopRestTimer(Bool)
         /// 운동 편집 시 Workout으로 변형
         case convertToWorkoutForEdit(at: Int)
-        case setEditExerciseViewDismissed
-        case setWorkoutUpdateCompleted
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
@@ -156,7 +153,6 @@ final class HomeViewReactor: Reactor {
         var documentID: String
         /// 현재  WorkoutRecordID
         var recordID: String
-        var workoutUpdateCompleted: Bool
     }
     
     // initialState 주입으로 변경
@@ -317,18 +313,12 @@ final class HomeViewReactor: Reactor {
         case let .editRoutineViewPresented(cardIndex):
             return .just(.convertToWorkoutForEdit(at: cardIndex))
             
-        case .editRoutineViewDismissed:
-            return .just(.setEditExerciseViewDismissed)
-            
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
             
         case .saveButtonClickedAtEditExercise:
-            return .concat([
-                fetchRoutineUseCase.execute(uid: currentState.uid)
-                    .map { Mutation.loadUpdatedRoutine($0) }.asObservable(),
-                .just(.setWorkoutUpdateCompleted)
-            ])
+            return fetchRoutineUseCase.execute(uid: currentState.uid)
+                    .map { Mutation.loadUpdatedRoutine($0) }.asObservable()
             
         case let .confirmButtonClickedForSavingMemo(newMemo):
             if newMemo != nil,
@@ -654,12 +644,6 @@ final class HomeViewReactor: Reactor {
             print("새로운 루틴 메모: \(String(describing: newMemo))")
             
             updateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
-            
-        case .setEditExerciseViewDismissed:
-            newState.workoutUpdateCompleted = false
-            
-        case .setWorkoutUpdateCompleted:
-            newState.workoutUpdateCompleted = true
             
         case let .setUpdatingIndex(cardIndex):
             print("Updating인 CARDINDEX: \(cardIndex)")
@@ -1009,8 +993,7 @@ extension HomeViewReactor {
             currentRoutineCompleted: false,
             uid: uid,
             documentID: initialRoutine.documentID,
-            recordID: "",
-            workoutUpdateCompleted: false
+            recordID: ""
         )
     }
     
