@@ -776,7 +776,7 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
     
         reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
-            .distinctUntilChanged { $0[$1] }
+            .distinctUntilChanged { $0.0 }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] newCardStates, currentIndex in
                 guard let self else { return }
