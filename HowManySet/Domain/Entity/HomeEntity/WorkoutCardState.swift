@@ -47,9 +47,6 @@ struct WorkoutCardState: Codable {
 extension WorkoutCardState: Equatable {
     static func == (lhs: WorkoutCardState, rhs: WorkoutCardState) -> Bool {
         return lhs.currentExerciseName == rhs.currentExerciseName &&
-        lhs.currentWeight == rhs.currentWeight &&
-        lhs.currentUnit == rhs.currentUnit &&
-        lhs.currentReps == rhs.currentReps &&
         lhs.setInfo == rhs.setInfo &&
         lhs.totalSetCount == rhs.totalSetCount &&
         lhs.memoInExercise == rhs.memoInExercise

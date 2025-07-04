@@ -222,11 +222,9 @@ private extension HomeViewController {
         pagingCardViewContainer.removeAll()
         
         for (i, cardState) in cardStates.enumerated() {
-            
             let cardView = HomePagingCardView(frame: .zero, index: cardState.exerciseIndex).then {
                 $0.layer.cornerRadius = 20
             }
-            
             // 레이아웃 설정
             pagingScrollContentView.addSubview(cardView)
             
@@ -236,7 +234,6 @@ private extension HomeViewController {
                 $0.leading.equalToSuperview()
                     .offset(cardInset + CGFloat(i) * screenWidth)
             }
-            
             // 뷰 저장하는 리스트에 append
             pagingCardViewContainer.append(cardView)
             // UI 정보 설정만 (버튼 바인딩은 별도로)
@@ -258,12 +255,10 @@ private extension HomeViewController {
         
         // 초기에도 애니메이션 적용되도록
         handlePageChanged()
-        
         // 카드뷰 생성 후 버튼 바인딩
         if let reactor = self.reactor {
             self.bindCardViewsButton(reactor: reactor)
         }
-        
     }
     
     // MARK: - 현재 운동 카드 삭제 시 레이아웃 조정, 변경된 transform 초기화, 리바인딩
@@ -324,7 +319,6 @@ private extension HomeViewController {
     // MARK: - 애니메이션
     /// 페이징 시 애니메이션 및 내부 콘텐츠 offset 수정
     func handlePageChanged(newCurrentPage: Int = 0) {
-        
         let previousPage = newCurrentPage - 1
         let nextPage = newCurrentPage + 1
         let offsetX = Int(UIScreen.main.bounds.width) * newCurrentPage
