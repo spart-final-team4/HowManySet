@@ -987,32 +987,34 @@ extension HomeViewReactor {
         currentExerciseIndex: Int) -> [WorkoutCardState]
     {
         let currentWorkoutCard = currentState.workoutCardStates[currentExerciseIndex]
-        let currentSet = currentWorkoutCard.setIndex
+        let currentSetIndex = currentWorkoutCard.setIndex
         var updatedWorkoutCard: WorkoutCardState
         var updatedWorkoutCardStates = currentState.workoutCardStates
-        // 현재 루틴의 모든 정보를 workoutCardStates에 저장
-        for (i, workout) in updatedRoutine.workouts.enumerated() {
-            if currentWorkoutCard.workoutID == workout.id {
-                updatedWorkoutCard = WorkoutCardState(
-                    workoutID: workout.id,
-                    currentExerciseName: workout.name,
-                    currentWeight: workout.sets[currentSet].weight,
-                    currentUnit: workout.sets[currentSet].unit,
-                    currentReps: workout.sets[currentSet].reps,
-                    setInfo: workout.sets,
-                    setIndex: currentSet,
-                    exerciseIndex: i,
-                    totalExerciseCount: currentState.totalExerciseCount,
-                    totalSetCount: workout.sets.count,
-                    currentExerciseNumber: i + 1,
-                    currentSetNumber: currentSet+1,
-                    setProgressAmount: currentSet,
-                    memoInExercise: workout.comment,
-                    allSetsCompleted: currentState.currentExerciseAllSetsCompleted
-                )
-                updatedWorkoutCardStates[currentExerciseIndex] = updatedWorkoutCard
-                break
+        if let workout = updatedRoutine.workouts.first(where: { currentWorkoutCard.workoutID == $0.id }) {
+            var newSetIndex: Int
+            if currentSetIndex >= currentWorkoutCard.totalSetCount {
+                newSetIndex = workout.sets.count - 1
+            } else {
+                newSetIndex = currentSetIndex
             }
+            updatedWorkoutCard = WorkoutCardState(
+                workoutID: workout.id,
+                currentExerciseName: workout.name,
+                currentWeight: workout.sets[newSetIndex].weight,
+                currentUnit: workout.sets[newSetIndex].unit,
+                currentReps: workout.sets[newSetIndex].reps,
+                setInfo: workout.sets,
+                setIndex: newSetIndex,
+                exerciseIndex: currentWorkoutCard.exerciseIndex,
+                totalExerciseCount: currentState.totalExerciseCount,
+                totalSetCount: workout.sets.count,
+                currentExerciseNumber: currentWorkoutCard.currentExerciseNumber,
+                currentSetNumber: newSetIndex+1,
+                setProgressAmount: newSetIndex,
+                memoInExercise: workout.comment,
+                allSetsCompleted: currentState.currentExerciseAllSetsCompleted
+            )
+            updatedWorkoutCardStates[currentExerciseIndex] = updatedWorkoutCard
         }
         return updatedWorkoutCardStates
     }
