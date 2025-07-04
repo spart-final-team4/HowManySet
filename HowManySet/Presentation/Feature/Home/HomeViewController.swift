@@ -812,22 +812,6 @@ extension HomeViewController {
         })
         .disposed(by: disposeBag)
         
-//        reactor.state.map { $0.isWorkingout }
-//            .distinctUntilChanged()
-//            .filter { $0 }
-//            .take(1)
-//            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-//            .map { _ -> [WorkoutCardState] in
-//                // 백그라운드에서 데이터 준비
-//                return reactor.currentState.workoutCardStates
-//            }
-//            .observe(on: MainScheduler.asyncInstance)
-//            .bind(onNext: { [weak self] cardStates in
-//                guard let self else { return }
-//                print("--- 운동시작 ---")
-//                self.configureExerciseCardViews(cardStates: cardStates)
-//            }).disposed(by: disposeBag)
-        
         // MARK: - LiveActivity 관련
         // contentState 캐싱
         var cachedContentState: HowManySetWidgetAttributes.ContentState?

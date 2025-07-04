@@ -315,7 +315,7 @@ final class HomeViewReactor: Reactor {
             
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
             return .just(.updateExerciseMemo(with: newMemo))
-
+            
         case let .saveButtonClickedAtEditExercise(cardIndex):
             return .concat([
                 fetchRoutineUseCase.execute(uid: currentState.uid)
@@ -495,7 +495,7 @@ final class HomeViewReactor: Reactor {
                !newState.isRestTimerStopped {
                 // 0.01초씩 감소
                 newState.restRemainingTime = max(newState.restRemainingTime - 0.01, 0)
-//                print("REACTOR - 남은 휴식 시간: \(newState.restRemainingTime)")
+                //                print("REACTOR - 남은 휴식 시간: \(newState.restRemainingTime)")
                 if newState.restRemainingTime.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
@@ -636,7 +636,7 @@ final class HomeViewReactor: Reactor {
                 comment: currentExercise.memoInExercise
             )
             print("변경된 운동 이름: ", updatedWorkout.name)
-
+            
             newState.currentWorkoutData = updatedWorkout
             let currentSetIndex = currentExercise.setIndex
             newState.workoutCardStates[cardIndex] = WorkoutCardState(
@@ -709,7 +709,10 @@ final class HomeViewReactor: Reactor {
                 routines.forEach { routine in
                     if routine.documentID == currentState.workoutRoutine.documentID {
                         newState.workoutRoutine = routine
-                        newState.workoutCardStates
+                        newState.workoutCardStates  = updateCurrentWorkoutCard(
+                            updatedRoutine: routine,
+                            currentExerciseIndex: newState.currentExerciseIndex
+                        )
                     }
                 }
             } else {
@@ -977,7 +980,6 @@ extension HomeViewReactor {
         }
         
         let initialWorkoutRecord = WorkoutRecord(
-            // TODO: 검토 필요
             rmID:  UUID().uuidString,
             documentID: routine.documentID,
             uuid: UUID().uuidString,
@@ -997,17 +999,6 @@ extension HomeViewReactor {
             setDidCount: 0,
             routineMemo: initialWorkoutRecord.comment
         )
-        
-        let firstWorkout = initialRoutine.workouts[0]
-        //        let weightSet: [[String]] = firstWorkout.sets.map { set in
-        //            [String(set.weight), String(set.reps)]
-        //        }
-        //        let initialWorkoutStateForEdit = WorkoutStateForEdit(
-        //            currentRoutine: initialRoutine,
-        //            currentExcerciseName: firstWorkout.name,
-        //            currentUnit: firstWorkout.sets.first?.unit ?? "kg",
-        //            currentWeightSet: weightSet
-        //        )
         
         // Firebase uid
         let uid = FirebaseAuthService().fetchCurrentUser()?.uid
@@ -1048,7 +1039,39 @@ extension HomeViewReactor {
         )
     }
     
-    func updateRoutine() {
-        
+    /// 운동 편집 시 해당 운동카드 변경
+    func updateCurrentWorkoutCard(
+        updatedRoutine: WorkoutRoutine,
+        currentExerciseIndex: Int) -> [WorkoutCardState]
+    {
+        let currentWorkoutCard = currentState.workoutCardStates[currentExerciseIndex]
+        let currentSet = currentWorkoutCard.setIndex
+        var updatedWorkoutCard: WorkoutCardState
+        var updatedWorkoutCardStates = currentState.workoutCardStates
+        // 현재 루틴의 모든 정보를 workoutCardStates에 저장
+        for (i, workout) in updatedRoutine.workouts.enumerated() {
+            if currentWorkoutCard.workoutID == workout.id {
+                updatedWorkoutCard = WorkoutCardState(
+                    workoutID: workout.id,
+                    currentExerciseName: workout.name,
+                    currentWeight: workout.sets[currentSet].weight,
+                    currentUnit: workout.sets[currentSet].unit,
+                    currentReps: workout.sets[currentSet].reps,
+                    setInfo: workout.sets,
+                    setIndex: currentSet,
+                    exerciseIndex: i,
+                    totalExerciseCount: currentState.totalExerciseCount,
+                    totalSetCount: workout.sets.count,
+                    currentExerciseNumber: i + 1,
+                    currentSetNumber: currentSet+1,
+                    setProgressAmount: currentSet+1,
+                    memoInExercise: workout.comment,
+                    allSetsCompleted: currentState.currentExerciseAllSetsCompleted
+                )
+                updatedWorkoutCardStates[currentExerciseIndex] = updatedWorkoutCard
+                break
+            }
+        }
+        return updatedWorkoutCardStates
     }
 }
