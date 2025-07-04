@@ -564,9 +564,7 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] isWorkingout in
                 guard let self else { return }
-                
                 self.workoutTimeLabel.text = reactor.currentState.workoutTime.toWorkOutTimeLabel()
-                
             }).disposed(by: disposeBag)
         
         // 휴식 중 여부에 따라 뷰 표현 전환
@@ -793,28 +791,25 @@ extension HomeViewController {
                 }
             }).disposed(by: disposeBag)
         
-        // MARK: - 운동 중 운동 편집 시
+        // MARK: - 운동 편집 모달 저장 버튼 클릭 시
         NotificationCenter.default.rx.notification(Notification.Name("UpdateWorkout"))
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] _ in
-                guard let self else { return }
-                reactor.action.onNext(.saveButtonClickedAtEditExercise)
+            .bind { _ in
+                if reactor.currentState.isWorkingout {
+                    reactor.action.onNext(.saveButtonClickedAtEditExercise)
+                }
             }
             .disposed(by: disposeBag)
-        
-        Observable.combineLatest(
-            reactor.state.map { $0.workoutUpdateCompleted },
-            reactor.state.map { $0.workoutCardStates }
-        )
-        .filter { $0.0 }
-        .distinctUntilChanged { $0.0 }
-        .observe(on: MainScheduler.instance)
-        .bind(onNext: { [weak self] _, newCardStates in
+    
+        reactor.state.map { $0.workoutCardStates }
+            .distinctUntilChanged { $0[self.currentPage] }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { [weak self] (newCardStates: [WorkoutCardState]) in
             guard let self else { return }
-            print(newCardStates[self.currentPage])
+            print("새 카드 정보", newCardStates[self.currentPage])
             self.pagingCardViewContainer[self.currentPage].configure(with: newCardStates[self.currentPage])
-        })
-        .disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
         
         // MARK: - LiveActivity 관련
         // contentState 캐싱
