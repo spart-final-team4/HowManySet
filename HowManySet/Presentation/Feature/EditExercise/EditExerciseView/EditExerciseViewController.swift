@@ -45,6 +45,12 @@ final class EditExerciseViewController: UIViewController, View {
         super.viewDidLoad()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        onDismiss?()
+    }
+    
     func bind(reactor: EditExerciseViewReactor) {
         
         contentView.unitSelectionRelay
