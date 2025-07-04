@@ -628,7 +628,6 @@ final class HomeViewReactor: Reactor {
             
             // MARK: - 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
-            
             // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
             let updatedWorkoutRecord = WorkoutRecord(
                 rmID: newState.recordID,
@@ -673,7 +672,7 @@ final class HomeViewReactor: Reactor {
                     if routine.documentID == currentState.workoutRoutine.documentID {
                         newState.workoutRoutine = routine
                         // MARK: - 변경된 운동 정보로 카드 업데이트
-                        newState.workoutCardStates  = updateCurrentWorkoutCard(
+                        newState.workoutCardStates = updateCurrentWorkoutCard(
                             updatedRoutine: routine,
                             currentExerciseIndex: newState.currentExerciseIndex
                         )
@@ -683,6 +682,10 @@ final class HomeViewReactor: Reactor {
                 routines.forEach { routine in
                     if routine.rmID == currentState.workoutRoutine.rmID {
                         newState.workoutRoutine = routine
+                        newState.workoutCardStates = updateCurrentWorkoutCard(
+                            updatedRoutine: routine,
+                            currentExerciseIndex: newState.currentExerciseIndex
+                        )
                     }
                 }
             }
