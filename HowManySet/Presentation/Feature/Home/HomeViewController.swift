@@ -427,7 +427,9 @@ private extension HomeViewController {
                 .bind(onNext: {
                     self.coordinator?.presentEditExerciseView(
                         workout: reactor.currentState.currentWorkoutData,
-                        onDismiss: {}
+                        onDismiss: {
+                            reactor.action.onNext(.editRoutineViewDismissed)
+                        }
                     )
                 })
                 .disposed(by: disposeBag)
@@ -789,11 +791,12 @@ extension HomeViewController {
                 }
             }).disposed(by: disposeBag)
         
+        // MARK: - 운동 중 운동 편집 시
         NotificationCenter.default.rx.notification(Notification.Name("UpdateWorkout"))
             .observe(on: MainScheduler.instance)
             .bind { [weak self] _ in
                 guard let self else { return }
-                reactor.action.onNext(.saveButtonClickedAtEditExercise(at: self.currentPage))
+                reactor.action.onNext(.saveButtonClickedAtEditExercise)
             }
             .disposed(by: disposeBag)
         
