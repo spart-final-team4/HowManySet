@@ -769,8 +769,10 @@ extension HomeViewController {
                 }
             }).disposed(by: disposeBag)
     
+        // MARK: - 운동 중 편집 시
         reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
-            .distinctUntilChanged { $0.0 }
+            .distinctUntilChanged { $0.0 == $1.0 }
+            .skip(1) // 초기 바인딩 시 변경 무시
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] newCardStates, currentIndex in
                 guard let self else { return }
