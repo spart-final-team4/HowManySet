@@ -775,7 +775,7 @@ extension HomeViewController {
             .bind(onNext: { [weak self] newCardStates, currentIndex in
                 guard let self else { return }
                 print("새 카드 정보", newCardStates[currentIndex])
-                self.pagingCardViewContainer[currentIndex].configure(with: newCardStates[currentIndex])
+                self.pagingCardViewContainer[currentIndex].configure(with: newCardStates[currentIndex], isEdited: true)
             })
             .disposed(by: disposeBag)
         
