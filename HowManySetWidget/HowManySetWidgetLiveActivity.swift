@@ -68,10 +68,6 @@ struct HowManySetWidgetLiveActivity: Widget {
             let updatedRestRemaining = max(context.state.restSecondsRemaining - Int(elapsedRestRemaining), 0)
 
             // Lock screen/banner UI goes here
-            
-            let workoutTime = context.state.workoutTime
-            let restRemaining = context.state.restSecondsRemaining
-            
             VStack {
                 if !context.state.currentRoutineCompleted {
                     VStack(alignment: .leading, spacing: 10) {
@@ -429,6 +425,24 @@ extension HowManySetWidgetAttributes.ContentState {
             currentIndex: self.currentIndex,
             accumulatedWorkoutTime: self.accumulatedWorkoutTime,
             accumulatedRestRemaining: self.accumulatedRestRemaining
+        )
+    }
+    
+    func updateOtherStates(from data: WorkoutDataForLiveActivity) -> Self {
+        return HowManySetWidgetAttributes.ContentState(
+            workoutTime: data.workoutTime,
+            isWorkingout: data.isWorkingout,
+            exerciseName: data.exerciseName,
+            exerciseInfo: data.exerciseInfo,
+            currentRoutineCompleted: data.currentRoutineCompleted,
+            isResting: self.isResting,
+            restSecondsRemaining: self.restSecondsRemaining,
+            isRestPaused: data.isRestPaused,
+            currentSet: data.currentSet,
+            totalSet: data.totalSet,
+            currentIndex: data.currentIndex,
+            accumulatedWorkoutTime: data.accumulatedWorkoutTime,
+            accumulatedRestRemaining: data.accumulatedRestRemaining
         )
     }
 }
