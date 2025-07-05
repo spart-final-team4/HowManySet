@@ -312,6 +312,7 @@ final class HomeViewReactor: Reactor {
         case .saveButtonClickedAtEditExercise:
             return fetchRoutineUseCase.execute(uid: currentState.uid)
                 .map { Mutation.loadUpdatedRoutine($0) }.asObservable()
+                .subscribe(on: MainScheduler.instance)
             
         case let .confirmButtonClickedForSavingMemo(newMemo):
             if newMemo != nil,
@@ -737,7 +738,7 @@ private extension HomeViewReactor {
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
             var nextExerciseIndex = currentState.workoutCardStates.indices.contains(cardIndex) ? cardIndex : 0
             var currentCardState = currentState.workoutCardStates[cardIndex]
-            //            currentCardState.setProgressAmount += 1
+            currentCardState.setProgressAmount += 1
             print("🗂️🗂️ 초기 nextExerciseIndex: \(nextExerciseIndex)")
             
             // 다음,이전 인덱스가 존재하고 다음,이전 카드 모든 세트 완료 시
@@ -749,12 +750,9 @@ private extension HomeViewReactor {
                        !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
                 nextExerciseIndex -= 1
             }
-            currentCardState.setProgressAmount += 1
-            
             print("🗂️ 현재 index: \(currentState.currentExerciseIndex), 🗂️ 다음 index: \(nextExerciseIndex)")
             
             if nextExerciseIndex != cardIndex {
-                
                 return .concat([
                     .just(.setResting(isResting)),
                     .just(.setTrueCurrentCardViewCompleted(at: cardIndex)),
@@ -989,24 +987,15 @@ extension HomeViewReactor {
     {
         let currentWorkoutCard = currentState.workoutCardStates[currentExerciseIndex]
         let currentSetIndex = currentWorkoutCard.setIndex
+        let currentProgressAmount = currentWorkoutCard.setProgressAmount
         var updatedWorkoutCard: WorkoutCardState
         var updatedWorkoutCardStates = currentState.workoutCardStates
         if let workout = updatedRoutine.workouts.first(where: { currentWorkoutCard.workoutID == $0.id }) {
-            var newSetIndex: Int
-            var newSetProgressAmount: Int
-            var allSetsCompleted = currentState.currentExerciseAllSetsCompleted
-            if currentSetIndex >= workout.sets.count {
-                newSetIndex = workout.sets.count - 1
-                if workout.sets.count == 1 {
-                    newSetProgressAmount = 1
-                } else {
-                    newSetProgressAmount = workout.sets.count - 1
-                }
-                allSetsCompleted = true
-            } else {
-                newSetIndex = currentSetIndex
-                newSetProgressAmount = currentSetIndex
-            }
+            let newSetCount = workout.sets.count
+            // newProgressAmount = 기존 값 그대로 유지, 단 총 세트수 넘으면 보정
+            let newProgressAmount = min(currentProgressAmount, newSetCount)
+            let newSetIndex = min(currentSetIndex, newSetCount - 1)
+            let allSetsCompleted = (newProgressAmount >= newSetCount)
             updatedWorkoutCard = WorkoutCardState(
                 workoutID: workout.id,
                 currentExerciseName: workout.name,
@@ -1020,7 +1009,7 @@ extension HomeViewReactor {
                 totalSetCount: workout.sets.count,
                 currentExerciseNumber: currentWorkoutCard.currentExerciseNumber,
                 currentSetNumber: newSetIndex+1,
-                setProgressAmount: newSetProgressAmount,
+                setProgressAmount: newProgressAmount,
                 memoInExercise: workout.comment,
                 allSetsCompleted: allSetsCompleted
             )
