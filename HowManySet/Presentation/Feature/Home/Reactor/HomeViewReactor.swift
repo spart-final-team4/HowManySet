@@ -180,7 +180,7 @@ final class HomeViewReactor: Reactor {
     
     // MARK: - Mutate(실제로 일어날 변화 구현) Action -> Mutation
     func mutate(action: Action) -> Observable<Mutation> {
-                
+        
         switch action {
             /// 초기 루틴 선택 시
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
@@ -311,7 +311,7 @@ final class HomeViewReactor: Reactor {
             
         case .saveButtonClickedAtEditExercise:
             return fetchRoutineUseCase.execute(uid: currentState.uid)
-                    .map { Mutation.loadUpdatedRoutine($0) }.asObservable()
+                .map { Mutation.loadUpdatedRoutine($0) }.asObservable()
             
         case let .confirmButtonClickedForSavingMemo(newMemo):
             if newMemo != nil,
@@ -531,7 +531,7 @@ final class HomeViewReactor: Reactor {
                     comment: workout.comment
                 ))
             }
-                        
+            
             print("현재 루틴 ID: \(newState.workoutRoutine.rmID)")
             
             let newWorkoutRoutine = WorkoutRoutine(
@@ -563,14 +563,14 @@ final class HomeViewReactor: Reactor {
                     print("\($0.currentExerciseName), \( $0.allSetsCompleted)")
                 }
             }
-        
+            
         case let .changeExerciseIndex(newIndex):
             print("🔍 현재 운동 인덱스!: \(newIndex)")
             print("🔍 현재 운동 정보!: \(newState.workoutRoutine.workouts[newIndex])")
             newState.currentExerciseIndex = newIndex
             newState.updatingIndex = newIndex
             newState.currentWorkoutData = newState.workoutRoutine.workouts[newIndex]
-                        
+            
         case let .setEditAndMemoViewPresented(presented):
             newState.isEditAndMemoViewPresented = presented
             
@@ -652,21 +652,23 @@ final class HomeViewReactor: Reactor {
             if uid != nil {
                 if let routine = routines
                     .first(where: { $0.documentID == currentState.workoutRoutine.documentID }) {
-                        newState.workoutRoutine = routine
-                        newState.workoutCardStates = updateCurrentWorkoutCard(
-                            updatedRoutine: routine,
-                            currentExerciseIndex: newState.currentExerciseIndex
-                        )
-                    }
-                } else {
-                    if let routine = routines
-                        .first(where: { $0.rmID == currentState.workoutRoutine.rmID }) {
-                            newState.workoutRoutine = routine
-                            newState.workoutCardStates = updateCurrentWorkoutCard(
-                                updatedRoutine: routine,
-                                currentExerciseIndex: newState.currentExerciseIndex
-                            )
-                    }
+                    newState.workoutRoutine = routine
+                    newState.workoutCardStates = updateCurrentWorkoutCard(
+                        updatedRoutine: routine,
+                        currentExerciseIndex: newState.currentExerciseIndex
+                    )
+                    newState.currentWorkoutData = routine.workouts[newState.currentExerciseIndex]
+                }
+            } else {
+                if let routine = routines
+                    .first(where: { $0.rmID == currentState.workoutRoutine.rmID }) {
+                    newState.workoutRoutine = routine
+                    newState.workoutCardStates = updateCurrentWorkoutCard(
+                        updatedRoutine: routine,
+                        currentExerciseIndex: newState.currentExerciseIndex
+                    )
+                    newState.currentWorkoutData = routine.workouts[newState.currentExerciseIndex]
+                }
             }
         }//switch mutation
         return newState
@@ -719,7 +721,7 @@ private extension HomeViewReactor {
             
             /// 변경된 카드 State!
             let updatedCardState = currentCardState
-
+            
             return .concat([
                 .just(.setResting(isResting)),
                 // 카드 정보 업데이트
