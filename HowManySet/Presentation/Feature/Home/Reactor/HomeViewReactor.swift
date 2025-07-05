@@ -647,28 +647,26 @@ final class HomeViewReactor: Reactor {
             newState.accumulatedRestRemainingTime = time
             newState.restRemainingTime = Float(time)
             
+            // MARK: - 변경된 운동 정보로 카드 업데이트
         case let .loadUpdatedRoutine(routines):
             if uid != nil {
-                routines.forEach { routine in
-                    if routine.documentID == currentState.workoutRoutine.documentID {
-                        newState.workoutRoutine = routine
-                        // MARK: - 변경된 운동 정보로 카드 업데이트
-                        newState.workoutCardStates = updateCurrentWorkoutCard(
-                            updatedRoutine: routine,
-                            currentExerciseIndex: newState.currentExerciseIndex
-                        )
-                    }
-                }
-            } else {
-                routines.forEach { routine in
-                    if routine.rmID == currentState.workoutRoutine.rmID {
+                if let routine = routines
+                    .first(where: { $0.documentID == currentState.workoutRoutine.documentID }) {
                         newState.workoutRoutine = routine
                         newState.workoutCardStates = updateCurrentWorkoutCard(
                             updatedRoutine: routine,
                             currentExerciseIndex: newState.currentExerciseIndex
                         )
                     }
-                }
+                } else {
+                    if let routine = routines
+                        .first(where: { $0.rmID == currentState.workoutRoutine.rmID }) {
+                            newState.workoutRoutine = routine
+                            newState.workoutCardStates = updateCurrentWorkoutCard(
+                                updatedRoutine: routine,
+                                currentExerciseIndex: newState.currentExerciseIndex
+                            )
+                    }
             }
         }//switch mutation
         return newState
