@@ -714,7 +714,7 @@ private extension HomeViewReactor {
             let nextSet = currentWorkout.sets[nextSetIndex]
             currentCardState.setIndex = nextSetIndex
             currentCardState.currentSetNumber = nextSetIndex + 1
-            currentCardState.setProgressAmount += 1
+            currentCardState.setProgressAmount = nextSetIndex
             currentCardState.currentWeight = nextSet.weight
             currentCardState.currentUnit = nextSet.unit
             currentCardState.currentReps = nextSet.reps
@@ -749,6 +749,7 @@ private extension HomeViewReactor {
                        !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
                 nextExerciseIndex -= 1
             }
+            currentCardState.setProgressAmount += 1
             
             print("🗂️ 현재 index: \(currentState.currentExerciseIndex), 🗂️ 다음 index: \(nextExerciseIndex)")
             
@@ -992,10 +993,19 @@ extension HomeViewReactor {
         var updatedWorkoutCardStates = currentState.workoutCardStates
         if let workout = updatedRoutine.workouts.first(where: { currentWorkoutCard.workoutID == $0.id }) {
             var newSetIndex: Int
-            if currentSetIndex >= currentWorkoutCard.totalSetCount {
+            var newSetProgressAmount: Int
+            var allSetsCompleted = currentState.currentExerciseAllSetsCompleted
+            if currentSetIndex >= workout.sets.count {
                 newSetIndex = workout.sets.count - 1
+                if workout.sets.count == 1 {
+                    newSetProgressAmount = 1
+                } else {
+                    newSetProgressAmount = workout.sets.count - 1
+                }
+                allSetsCompleted = true
             } else {
                 newSetIndex = currentSetIndex
+                newSetProgressAmount = currentSetIndex
             }
             updatedWorkoutCard = WorkoutCardState(
                 workoutID: workout.id,
@@ -1010,9 +1020,9 @@ extension HomeViewReactor {
                 totalSetCount: workout.sets.count,
                 currentExerciseNumber: currentWorkoutCard.currentExerciseNumber,
                 currentSetNumber: newSetIndex+1,
-                setProgressAmount: newSetIndex,
+                setProgressAmount: newSetProgressAmount,
                 memoInExercise: workout.comment,
-                allSetsCompleted: currentState.currentExerciseAllSetsCompleted
+                allSetsCompleted: allSetsCompleted
             )
             updatedWorkoutCardStates[currentExerciseIndex] = updatedWorkoutCard
         }
