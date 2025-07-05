@@ -11,11 +11,7 @@ protocol HomeCoordinatorProtocol: Coordinator {
 //    func startFromEditRoutine() -> (UIViewController, HomeViewReactor)
     func pushRoutineListView() 
     func presentEditAndMemoView()
-    func presentEditExerciseView(
-        routineName: String,
-        workoutStateForEdit: WorkoutStateForEdit,
-        onDismiss: (() -> Void)?
-    )
+    func presentEditExerciseView(workout: Workout)
     func presentEditRoutineView(with routine: WorkoutRoutine)
     func pushRoutineCompleteView(with workoutSummary: WorkoutSummary)
     func popUpEndWorkoutAlert(onConfirm: @escaping () -> WorkoutSummary, onCancel: @escaping () -> Void?)
@@ -111,28 +107,29 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
     
     /// 운동 카드 가운데 회색 버튼 클릭시 해당 운동 종목 편집 화면 present
     func presentEditExerciseView(
-        routineName: String,
-        workoutStateForEdit: WorkoutStateForEdit,
-        onDismiss: (() -> Void)? = nil
+        workout: Workout
     ) {
         let firestoreService = FirestoreService()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
-        let reactor = AddExerciseViewReactor(
-            routineName: routineName,
-            saveRoutineUseCase: saveRoutineUseCase,
-            workoutStateForEdit: workoutStateForEdit,
-            caller: ViewCaller.fromHome
+        let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
+        let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
+        let reactor = EditExerciseViewReactor(
+            workout: workout,
+            updateWorkoutUseCase: updateWorkoutUseCase,
+            updateRoutineUseCase: updateRoutineUseCase
         )
-        let editExerciseVC = AddExerciseViewController(reactor: reactor)
-        
-        editExerciseVC.onDismiss = onDismiss
-        
+        let editExerciseVC = EditExerciseViewController(reactor: reactor)
+        editExerciseVC.onEditCompleted = { [weak self] in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.homeViewReactor?.action.onNext(.saveButtonClickedAtEditExercise)
+            }
+        }
         if let sheet = editExerciseVC.sheetPresentationController {
             sheet.detents = [.large()]
             sheet.prefersGrabberVisible = true
         }
-        
         navigationController.present(editExerciseVC, animated: true)
     }
         
