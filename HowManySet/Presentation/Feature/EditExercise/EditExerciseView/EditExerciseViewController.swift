@@ -20,7 +20,9 @@ final class EditExerciseViewController: UIViewController, View {
     
     var onEditCompleted: (() -> Void)?
         
-    private let scrollView = UIScrollView()
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
     private let headerView = EditExerciseHeaderView()
     private let headerBorderLineView = UIView().then {
         $0.backgroundColor = .systemGray3
