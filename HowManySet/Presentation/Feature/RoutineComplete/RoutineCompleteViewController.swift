@@ -466,7 +466,10 @@ private extension RoutineCompleteViewController {
         // 제외할 정보들
         activityViewController.excludedActivityTypes = [
             .addToReadingList,
-            .assignToContact
+            .assignToContact,
+            .print,
+            .markupAsPDF,
+            .mail
         ]
         
         present(activityViewController, animated: true)
