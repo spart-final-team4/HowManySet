@@ -803,15 +803,21 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
-        // LiveActivity 요소 업데이트
+        // LiveActivity isResting, isRemaining 제외한 요소들 업데이트
         reactor.state.map { $0.forLiveActivity }
-            .distinctUntilChanged { $0 == $1 }
+            .distinctUntilChanged { $0.isEqualExcludingRestStates(to: $1) }
             .map { data in
-                let newState = HowManySetWidgetAttributes.ContentState(from: data)
-                cachedContentState = newState
-                return newState
+                guard let cached = cachedContentState else {
+                    let data = reactor.currentState.forLiveActivity
+                    let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
+                    cachedContentState = newState
+                    return newState
+                }
+                let updated = cached.updateOtherStates(from: data)
+                cachedContentState = updated
+                return updated
             }
-            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .bind(onNext: { contentState in
                 LiveActivityService.shared.update(state: contentState)
             })
