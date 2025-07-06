@@ -453,7 +453,7 @@ private extension RoutineCompleteViewController {
         
         // 공유 버튼 누를 시 자동으로 운동 카드 부분 캡쳐
         if let screenshot = captureWorkoutSummaryScreenshot() {
-            activityItems = [screenshot]
+            activityItems = [shareText, screenshot]
         } else {
             activityItems = [shareText]
         }
@@ -469,7 +469,11 @@ private extension RoutineCompleteViewController {
             .assignToContact,
             .print,
             .markupAsPDF,
-            .mail
+            .mail,
+            .openInIBooks,
+            .sharePlay,
+            .collaborationInviteWithLink,
+            .collaborationCopyLink
         ]
         
         present(activityViewController, animated: true)
