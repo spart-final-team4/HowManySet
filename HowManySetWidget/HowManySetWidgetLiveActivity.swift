@@ -447,54 +447,21 @@ extension HowManySetWidgetAttributes.ContentState {
     }
 }
 
-extension HowManySetWidgetAttributes {
-    fileprivate static var preview: HowManySetWidgetAttributes {
-        HowManySetWidgetAttributes()
+extension WorkoutDataForLiveActivity {
+    /// isResting, restSecondsRemaining을 제외한 값들만 비교
+    func isEqualExcludingRestStates(to other: WorkoutDataForLiveActivity) -> Bool {
+        return self.workoutTime == other.workoutTime &&
+               self.isWorkingout == other.isWorkingout &&
+               self.exerciseName == other.exerciseName &&
+               self.exerciseInfo == other.exerciseInfo &&
+               self.currentRoutineCompleted == other.currentRoutineCompleted &&
+               self.isRestPaused == other.isRestPaused &&
+               self.currentSet == other.currentSet &&
+               self.totalSet == other.totalSet &&
+               self.currentIndex == other.currentIndex &&
+               self.accumulatedWorkoutTime == other.accumulatedWorkoutTime &&
+               self.accumulatedRestRemaining == other.accumulatedRestRemaining &&
+               self.workoutStartDate == other.workoutStartDate &&
+               self.restStartDate == other.restStartDate
     }
-}
-
-extension HowManySetWidgetAttributes.ContentState {
-    fileprivate static var workout: HowManySetWidgetAttributes.ContentState {
-        HowManySetWidgetAttributes.ContentState(
-            workoutTime: 5000,
-            isWorkingout: true,
-            exerciseName: "랫풀다운",
-            exerciseInfo: "60kg x 10회",
-            currentRoutineCompleted: false,
-            isResting: false,
-            restSecondsRemaining: 0,
-            isRestPaused: false,
-            currentSet: 2,
-            totalSet: 5,
-            currentIndex: 0,
-            accumulatedWorkoutTime: 0,
-            accumulatedRestRemaining: 0
-        )
-    }
-    
-    fileprivate static var rest: HowManySetWidgetAttributes.ContentState {
-        HowManySetWidgetAttributes.ContentState(
-            workoutTime: 5000,
-            isWorkingout: false,
-            exerciseName: "랫풀다운",
-            exerciseInfo: "60kg x 10회",
-            currentRoutineCompleted: false,
-            isResting: true,
-            restSecondsRemaining: 30,
-            isRestPaused: false,
-            currentSet: 2,
-            totalSet: 5,
-            currentIndex: 0,
-            accumulatedWorkoutTime: 0,
-            accumulatedRestRemaining: 0
-        )
-    }
-}
-
-@available(iOS 17.0, *)
-#Preview("Notification", as: .content, using: HowManySetWidgetAttributes.preview) {
-    HowManySetWidgetLiveActivity()
-} contentStates: {
-    HowManySetWidgetAttributes.ContentState.workout
-    HowManySetWidgetAttributes.ContentState.rest
 }
