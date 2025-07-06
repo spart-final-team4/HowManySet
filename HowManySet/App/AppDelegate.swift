@@ -11,6 +11,7 @@ import FirebaseAuth
 import GoogleSignIn
 import KakaoSDKCommon
 import KakaoSDKAuth
+import UserNotifications
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,6 +24,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Firebase 초기화
         FirebaseApp.configure()
+        // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
+        LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
+        // UNUserNotificationCenterDelegate 설정
+        UNUserNotificationCenter.current().delegate = self
+        // 알람 권한 요청
+        NotificationService.shared.requestNotification()
         
         // 세션-로컬 상태 불일치 시 강제 로그아웃 처리
         if let user = Auth.auth().currentUser {
@@ -59,11 +66,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             fatalError("Check Your AppKey")
         }
-
-        // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
-        LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
-        
-        NotificationService.shared.requestNotification()
         
         return true
     }
@@ -91,5 +93,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // 앱 종료 시 라이브 액티비티 종료
     func applicationWillTerminate(_ application: UIApplication) {
         LiveActivityService.shared.stop()
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    // 앱이 foreground일 때 알림 보여주기
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler:
+        @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
     }
 }
