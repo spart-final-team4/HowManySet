@@ -794,7 +794,7 @@ extension HomeViewController {
                 print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
                     LiveActivityService.shared.stop()
-                    LiveActivityService.shared.startQuicklyThenUpdate(with: data)
+                    LiveActivityService.shared.start(with: data)
                     cachedContentState = .init(from: data)
                 } else {
                     LiveActivityService.shared.stop()
