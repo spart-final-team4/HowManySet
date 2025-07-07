@@ -62,6 +62,7 @@ final class OnBoardingViewController: UIViewController, View {
     
     /// 온보딩만 시작하는 메서드 (닉네임 입력 건너뛰기)
     func startWithOnboardingOnly() {
+        setupOnboardingPages()
         nicknameInputView.isHidden = true
         onboardingView.isHidden = false
         onboardingView.pageIndicator.currentPage = 0
