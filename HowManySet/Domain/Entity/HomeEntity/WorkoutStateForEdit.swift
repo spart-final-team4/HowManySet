@@ -13,4 +13,5 @@ struct WorkoutStateForEdit: Equatable, Codable {
     var currentExcerciseName: String
     var currentUnit: String
     var currentWeightSet: [[String]]
+    var currentMemo: String?
 }
