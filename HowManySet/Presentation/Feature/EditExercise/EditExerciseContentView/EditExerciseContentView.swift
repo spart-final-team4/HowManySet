@@ -121,6 +121,18 @@ final class EditExerciseContentView: UIView {
                     var newValue = owner.excerciseInfoRelay.value
                     newValue[contentView.order] = element
                     owner.excerciseInfoRelay.accept(newValue)
+                    // 해당 셀 아래 모든 셀 값 변경
+                    let belowStart = contentView.order + 1
+                    let numSubviews = owner.verticalContentStackView.arrangedSubviews.count
+                    for idx in belowStart..<(numSubviews - 1) {
+                        if let belowCell = owner.verticalContentStackView.arrangedSubviews[idx] as? EditExerciseHorizontalContentStackView {
+                            belowCell.configure(weight: Double(element[0]) ?? 0.0, reps: Int(element[1]) ?? 0)
+                        }
+                        if newValue.count > idx {
+                            newValue[idx] = element
+                        }
+                    }
+                    owner.excerciseInfoRelay.accept(newValue)
                 }
             }.disposed(by: disposeBag)
     }
@@ -272,6 +284,18 @@ extension EditExerciseContentView {
                     if owner.excerciseInfoRelay.value.count > contentView.order {
                         var newValue = owner.excerciseInfoRelay.value
                         newValue[contentView.order] = element
+                        owner.excerciseInfoRelay.accept(newValue)
+                        // 해당 셀 아래 모든 셀 값 변경
+                        let belowStart = contentView.order + 1
+                        let numSubviews = owner.verticalContentStackView.arrangedSubviews.count
+                        for idx in belowStart..<(numSubviews - 1) {
+                            if let belowCell = owner.verticalContentStackView.arrangedSubviews[idx] as? EditExerciseHorizontalContentStackView {
+                                belowCell.configure(weight: Double(element[0]) ?? 0.0, reps: Int(element[1]) ?? 0)
+                            }
+                            if newValue.count > idx {
+                                newValue[idx] = element
+                            }
+                        }
                         owner.excerciseInfoRelay.accept(newValue)
                     }
                 }.disposed(by: disposeBag)
