@@ -17,9 +17,9 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
-        
+    
     var disposeBag = DisposeBag()
-        
+    
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
     
@@ -192,7 +192,7 @@ private extension HomeViewController {
             $0.height.equalToSuperview().multipliedBy(0.15)
         }
     }
-
+    
     /// 스크롤 뷰 기준으로 레이아웃 재설정
     func remakeOtherViewsWithScrollView() {
         
@@ -768,7 +768,7 @@ extension HomeViewController {
                     }
                 }
             }).disposed(by: disposeBag)
-    
+        
         // MARK: - 운동 중 편집 시
         reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
             .distinctUntilChanged { $0.0 == $1.0 }
@@ -823,46 +823,30 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
         
-        // 휴식 상태 변화 시 즉시 업데이트
-        reactor.state.map { $0.isResting }
-            .distinctUntilChanged()
-            .map { isResting -> HowManySetWidgetAttributes.ContentState in
-                guard let cached = cachedContentState else {
-                    let data = reactor.currentState.forLiveActivity
-                    let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
-                    cachedContentState = newState
-                    return newState
-                }
-                let updated = cached.updateRestState(isResting)
-                cachedContentState = updated
-                return updated
-            }
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { contentState in
-                LiveActivityService.shared.update(state: contentState)
-            })
-            .disposed(by: disposeBag)
         
-        // 휴식시간 즉시 업데이트
-        reactor.state.map { $0.restRemainingTime }
-            .distinctUntilChanged()
-            .map { restRemaining -> HowManySetWidgetAttributes.ContentState in
-                guard let cached = cachedContentState else {
-                    let data = reactor.currentState.forLiveActivity
-                    let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
-                    cachedContentState = newState
-                    return newState
-                }
-                let updated = cached.updateRestRemaining(restRemaining)
-                cachedContentState = updated
-                return updated
+        Observable.combineLatest(
+            reactor.state.map { $0.isResting },
+            reactor.state.map { $0.restRemainingTime }
+        )
+        .distinctUntilChanged { $0 == $1 }
+        .map { restInfo -> HowManySetWidgetAttributes.ContentState in
+            let (isResting, restRemaining) = restInfo
+            guard let cached = cachedContentState else {
+                let data = reactor.currentState.forLiveActivity
+                let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
+                cachedContentState = newState
+                return newState
             }
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { contentState in
-                LiveActivityService.shared.update(state: contentState)
-            })
-            .disposed(by: disposeBag)
-        
+            let updated = cached.updateRestInfo(isResting, restRemaining)
+            cachedContentState = updated
+            return updated
+        }
+        .observe(on: MainScheduler.instance)
+        .bind(onNext: { contentState in
+            LiveActivityService.shared.update(state: contentState)
+        })
+        .disposed(by: disposeBag)
+
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .bind { _ in
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
@@ -936,7 +920,7 @@ private extension HomeViewController {
         // 카드가 위로 사라지면서 페이드아웃
         UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: {
             cardView.transform = CGAffineTransform(translationX: 0, y: -cardView.frame.height)
-            .scaledBy(x: 0.8, y: 0.8)
+                .scaledBy(x: 0.8, y: 0.8)
             cardView.alpha = 0.1
         }, completion: { _ in
             cardView.isHidden = true
