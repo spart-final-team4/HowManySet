@@ -25,6 +25,7 @@ final class OnBoardingViewReactor: Reactor {
         case skipOnboarding             // 온보딩 건너뛰기 액션
         case completeNicknameSetting    // 닉네임 설정 완료 액션
         case setNicknameCompleted       // 닉네임 완료 상태 직접 설정
+        case pageSwiped(to: Int)        // 스와이프로 페이지 변경 액션
     }
     
     /// 상태 변경을 위한 변이 타입
@@ -117,6 +118,11 @@ final class OnBoardingViewReactor: Reactor {
         
         case .setNicknameCompleted:
             return Observable.just(.forceSetNicknameComplete)
+
+        case .pageSwiped(to: let index):
+            // 스와이프된 페이지 인덱스가 현재 페이지와 다를 경우에만 상태를 변경합니다.
+            guard currentState.currentPageIndex != index else { return .empty() }
+            return Observable.just(.setPageIndex(index))
         }
     }
     
