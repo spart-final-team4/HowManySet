@@ -145,9 +145,9 @@ final class EditExerciseContentView: UIView {
         }
     }
     
-    /// 초기 상태에서 3개의 세트를 자동 추가합니다.
+    /// 초기 상태에서 5개의 세트를 자동 추가합니다.
     func setInitialState() {
-        for _ in 1...3 {
+        for _ in 1...5 {
             addContentView()
         }
     }
