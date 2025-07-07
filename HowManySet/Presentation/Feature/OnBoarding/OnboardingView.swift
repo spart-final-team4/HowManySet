@@ -36,7 +36,6 @@ final class OnboardingView: UIView {
     
     // MARK: - SE3 대응 (375 x 667 pt)
     private let customInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 16 : 20
-    private let imageHeightMultiplier: CGFloat = UIScreen.main.bounds.width <= 375 ? 1.0 : 1.3
     
     /// 오른쪽 상단 닫기(X) 버튼. 온보딩 화면을 종료할 때 사용.
     let closeButton = UIButton(type: .system).then {
@@ -45,29 +44,18 @@ final class OnboardingView: UIView {
         $0.contentHorizontalAlignment = .right
         $0.contentVerticalAlignment = .top
     }
- 
-    /// 온보딩 안내 타이틀 라벨. 중앙 상단에 위치.
-    let titleLabel = UILabel().then {
-        $0.font = .pretendard(size: 16, weight: .regular)
-        $0.textColor = .white
-        $0.textAlignment = .center
+    
+    let scrollView = UIScrollView().then {
+        $0.isPagingEnabled = true
+        $0.showsHorizontalScrollIndicator = false
+        $0.bounces = false
     }
     
-    /// 온보딩 안내 서브타이틀 라벨. 타이틀 하단에 위치.
-    let subTitleLabel = UILabel().then {
-        $0.font = .pretendard(size: 20, weight: .bold)
-        $0.textColor = .white
-        $0.textAlignment = .center
-        $0.numberOfLines = 0
+    private let pageContentStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 0
+        $0.distribution = .fillEqually
     }
-    
-    /// 온보딩 안내 이미지를 표시하는 이미지 뷰. 중앙에 배치.
-    let centerImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
-    }
-    
-    /// centerImage와 nextButton 중앙에 pageIndicator 배치를 위한 spacerView
-    let spacerView = UIView()
     
     /// 온보딩 진행 상황을 표시하는 페이지 인디케이터(UIPageControl).
     let pageIndicator = UIPageControl().then {
@@ -88,17 +76,24 @@ final class OnboardingView: UIView {
         $0.clipsToBounds = true
     }
     
-    // MARK: - Init
-    /**
-     온보딩 뷰를 초기화하고 UI 요소를 배치합니다.
-     */
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func addPageContentViews(_ views: [UIView]) {
+        views.forEach { view in
+            pageContentStackView.addArrangedSubview(view)
+            // 각 페이지 뷰의 너비를 OnboardingView의 너비와 동일하게 설정
+            view.snp.makeConstraints {
+                $0.width.equalTo(self.snp.width)
+            }
+        }
     }
 }
 
@@ -117,7 +112,8 @@ private extension OnboardingView {
     
     /// 서브뷰 계층 구조 설정
     func setViewHierarchy() {
-        self.addSubviews(closeButton, titleLabel, subTitleLabel, centerImageView, spacerView, pageIndicator, nextButton)
+        self.addSubviews(closeButton, scrollView, pageIndicator, nextButton)
+        scrollView.addSubview(pageContentStackView)
     }
     
     /// SnapKit을 활용한 오토레이아웃 제약조건 설정
@@ -128,32 +124,20 @@ private extension OnboardingView {
             $0.width.height.equalTo(32)
         }
         
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(56)
-            $0.leading.trailing.equalToSuperview().inset(customInset)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(closeButton.snp.bottom).offset(12)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(pageIndicator.snp.top).offset(-16)
         }
         
-        subTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(customInset)
+        pageContentStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalTo(scrollView.snp.height)
         }
         
-        centerImageView.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(45)
-            $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(customInset)
-            $0.height.equalTo(centerImageView.snp.width).multipliedBy(imageHeightMultiplier)
-        }
-        
-        spacerView.snp.makeConstraints {
-            $0.top.equalTo(centerImageView.snp.bottom)
-            $0.bottom.equalTo(nextButton.snp.top)
-            $0.centerX.equalToSuperview()
-        }
-
         pageIndicator.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalTo(spacerView.snp.centerY)
+            $0.bottom.equalTo(nextButton.snp.top).offset(-24)
             $0.height.equalTo(16)
         }
         
