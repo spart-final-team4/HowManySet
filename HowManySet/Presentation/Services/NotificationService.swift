@@ -30,13 +30,12 @@ final class NotificationService {
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("알림 예약 실패: \(error.localizedDescription)")
-            } else {
-                print("\(seconds)초 뒤에 알림이 성공적으로 예약되었습니다.")
             }
         }
     }
     
-    func pauseRestNotification() {
+    func removeRestNotification() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["restFinished"])
+        print("알림 예약 제거")
     }
 }

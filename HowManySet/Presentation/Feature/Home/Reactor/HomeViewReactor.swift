@@ -495,7 +495,7 @@ final class HomeViewReactor: Reactor {
             if isPaused {
                 newState.restStartDate = nil
                 newState.isRestPaused = true
-                NotificationService.shared.pauseRestNotification()
+                NotificationService.shared.removeRestNotification()
             } else {
                 if currentState.isResting {
                     NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
@@ -596,6 +596,7 @@ final class HomeViewReactor: Reactor {
             
         case let .stopRestTimer(isStopped):
             if isStopped {
+                NotificationService.shared.removeRestNotification()
                 newState.isResting = false
                 newState.isRestTimerStopped = true
                 newState.restRemainingTime = 0.0
