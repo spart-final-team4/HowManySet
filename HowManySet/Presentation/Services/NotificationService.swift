@@ -35,4 +35,8 @@ final class NotificationService {
             }
         }
     }
+    
+    func pauseRestNotification() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["restFinished"])
+    }
 }

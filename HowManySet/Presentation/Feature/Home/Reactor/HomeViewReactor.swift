@@ -495,7 +495,11 @@ final class HomeViewReactor: Reactor {
             if isPaused {
                 newState.restStartDate = nil
                 newState.isRestPaused = true
+                NotificationService.shared.pauseRestNotification()
             } else {
+                if currentState.isResting {
+                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                }
                 // 현재 시각부터 타이머 재시작
                 newState.restStartDate = Date()
                 newState.isRestPaused = false
