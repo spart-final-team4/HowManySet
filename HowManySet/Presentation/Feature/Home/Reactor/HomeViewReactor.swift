@@ -488,8 +488,6 @@ final class HomeViewReactor: Reactor {
                 if newState.restRemainingTime.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
-                    // 휴식 종료 시 푸시 알림
-                    NotificationService.shared.sendRestFinishedNotification()
                 }
             }
             
@@ -706,6 +704,7 @@ private extension HomeViewReactor {
                 )
                 .map { _ in Mutation.restRemainingUpdating }
                 .observe(on: MainScheduler.asyncInstance)
+            NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
         }
         
         // 다음 세트가 있는 경우 (휴식 시작)

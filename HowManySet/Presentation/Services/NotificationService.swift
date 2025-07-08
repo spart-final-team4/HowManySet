@@ -18,15 +18,21 @@ final class NotificationService {
         }
     }
     
-    func sendRestFinishedNotification() {
+    func scheduleRestFinishedNotification(seconds: TimeInterval) {
         let content = UNMutableNotificationContent()
         content.title = String(localized: "휴식 종료!")
         content.body = String(localized: "이제 다음 세트를 시작하세요!")
         content.sound = .default
+
+        let trigeer = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
+        let request = UNNotificationRequest(identifier: "restFinished", content: content, trigger: trigeer)
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-        
-        let request = UNNotificationRequest(identifier: "restFinished", content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("알림 예약 실패: \(error.localizedDescription)")
+            } else {
+                print("\(seconds)초 뒤에 알림이 성공적으로 예약되었습니다.")
+            }
+        }
     }
 }
