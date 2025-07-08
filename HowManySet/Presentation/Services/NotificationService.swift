@@ -24,8 +24,8 @@ final class NotificationService {
         content.body = String(localized: "이제 다음 세트를 시작하세요!")
         content.sound = .default
 
-        let trigeer = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
-        let request = UNNotificationRequest(identifier: "restFinished", content: content, trigger: trigeer)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
+        let request = UNNotificationRequest(identifier: "restFinished", content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
