@@ -8,8 +8,7 @@
 import UIKit
 
 protocol HomeCoordinatorProtocol: Coordinator {
-//    func startFromEditRoutine() -> (UIViewController, HomeViewReactor)
-    func pushRoutineListView() 
+    func presentRoutineListView() 
     func presentEditAndMemoView()
     func presentEditExerciseView(workout: Workout)
     func presentEditRoutineView(with routine: WorkoutRoutine)
