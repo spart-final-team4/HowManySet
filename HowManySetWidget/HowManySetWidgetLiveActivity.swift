@@ -48,7 +48,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 
 struct HowManySetWidgetLiveActivity: Widget {
     
-    private let buttonSize: CGFloat = 50
+    private let buttonSize: CGFloat = 54
     private let buttonSizeAtDynamic: CGFloat = 44
     private let restSecondsRemainigLabelSize: CGFloat = 46
     private let restText = String(localized: "휴식")
@@ -110,7 +110,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                             Image(systemName: "checkmark")
                                                 .foregroundStyle(.brand)
                                                 .fontWeight(.bold)
-                                                .font(.title3)
+                                                .font(.title2)
                                         }
                                         .frame(width: buttonSize, height: buttonSize)
                                         .background(Circle().fill(.green10))
@@ -157,7 +157,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                             Image(systemName: "forward.end.fill")
                                                 .foregroundStyle(.brand)
                                                 .fontWeight(.semibold)
-                                                .font(.title3)
+                                                .font(.title2)
                                         }
                                         .frame(width: buttonSize, height: buttonSize)
                                         .background(Circle().fill(Color("green10")))
@@ -171,7 +171,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                             Image(systemName: context.state.isRestPaused ? "play.fill" : "pause.fill")
                                                 .foregroundStyle(.white)
                                                 .fontWeight(.semibold)
-                                                .font(.title3)
+                                                .font(.title2)
                                         }
                                         .frame(width: buttonSize, height: buttonSize)
                                         .background(Circle().fill(Color("RoundButtonBG")))
