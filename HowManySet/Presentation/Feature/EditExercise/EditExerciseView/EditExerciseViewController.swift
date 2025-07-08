@@ -205,7 +205,7 @@ private extension EditExerciseViewController {
 
 private extension EditExerciseViewController {
     func getCurrentWorkoutSets() -> [[String]] {
-        return contentView.excerciseInfoRelay.value
+        return contentView.exerciseInfoRelay.value
     }
     
     func getCurrentName() -> String {

@@ -31,7 +31,7 @@ final class EditExerciseContentView: UIView {
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExerciseContentHeaderView()
     private(set) var unitSelectionRelay = BehaviorRelay<String>(value: "kg")
-    private(set) var excerciseInfoRelay = BehaviorRelay<[[String]]>(value: [[]])
+    private(set) var exerciseInfoRelay = BehaviorRelay<[[String]]>(value: [[]])
     
     /// 세트 정보와 추가 버튼을 포함하는 수직 스택뷰입니다.
     private let verticalContentStackView = UIStackView().then {
@@ -108,19 +108,19 @@ final class EditExerciseContentView: UIView {
                 owner.verticalContentStackView.removeArrangedSubview(contentView)
                 contentView.removeFromSuperview()
                 owner.reorder()
-                var newValue = owner.excerciseInfoRelay.value
+                var newValue = owner.exerciseInfoRelay.value
                 newValue.remove(at: contentView.order)
-                owner.excerciseInfoRelay.accept(newValue)
+                owner.exerciseInfoRelay.accept(newValue)
             }.disposed(by: disposeBag)
         
-        excerciseInfoRelay.accept(excerciseInfoRelay.value + [["", ""]])
+        exerciseInfoRelay.accept(exerciseInfoRelay.value + [["", ""]])
         
         contentView.weightRepsRelay
             .subscribe(with: self) { owner, element in
-                if owner.excerciseInfoRelay.value.count > contentView.order {
-                    var newValue = owner.excerciseInfoRelay.value
+                if owner.exerciseInfoRelay.value.count > contentView.order {
+                    var newValue = owner.exerciseInfoRelay.value
                     newValue[contentView.order] = element
-                    owner.excerciseInfoRelay.accept(newValue)
+                    owner.exerciseInfoRelay.accept(newValue)
                     // 해당 셀 아래 모든 셀 값 변경
                     let belowStart = contentView.order + 1
                     let numSubviews = owner.verticalContentStackView.arrangedSubviews.count
@@ -132,7 +132,7 @@ final class EditExerciseContentView: UIView {
                             newValue[idx] = element
                         }
                     }
-                    owner.excerciseInfoRelay.accept(newValue)
+                    owner.exerciseInfoRelay.accept(newValue)
                 }
             }.disposed(by: disposeBag)
     }
@@ -158,7 +158,7 @@ final class EditExerciseContentView: UIView {
             horizontalContentTitleStackView,
             addContentButton
         )
-        excerciseInfoRelay.accept([[]])
+        exerciseInfoRelay.accept([[]])
         setInitialState()
     }
 }
@@ -242,7 +242,7 @@ extension EditExerciseContentView {
         
         verticalContentStackView.addArrangedSubview(addContentButton)
         
-        excerciseInfoRelay.accept(sets)
+        exerciseInfoRelay.accept(sets)
     }
 }
 
@@ -273,18 +273,18 @@ extension EditExerciseContentView {
                     owner.verticalContentStackView.removeArrangedSubview(contentView)
                     contentView.removeFromSuperview()
                     owner.reorder()
-                    var newValue = owner.excerciseInfoRelay.value
+                    var newValue = owner.exerciseInfoRelay.value
                     newValue.remove(at: contentView.order)
-                    owner.excerciseInfoRelay.accept(newValue)
+                    owner.exerciseInfoRelay.accept(newValue)
                 }.disposed(by: disposeBag)
             
             contentView.weightRepsRelay
                 .skip(1)
                 .subscribe(with: self) { owner, element in
-                    if owner.excerciseInfoRelay.value.count > contentView.order {
-                        var newValue = owner.excerciseInfoRelay.value
+                    if owner.exerciseInfoRelay.value.count > contentView.order {
+                        var newValue = owner.exerciseInfoRelay.value
                         newValue[contentView.order] = element
-                        owner.excerciseInfoRelay.accept(newValue)
+                        owner.exerciseInfoRelay.accept(newValue)
                         // 해당 셀 아래 모든 셀 값 변경
                         let belowStart = contentView.order + 1
                         let numSubviews = owner.verticalContentStackView.arrangedSubviews.count
@@ -296,11 +296,11 @@ extension EditExerciseContentView {
                                 newValue[idx] = element
                             }
                         }
-                        owner.excerciseInfoRelay.accept(newValue)
+                        owner.exerciseInfoRelay.accept(newValue)
                     }
                 }.disposed(by: disposeBag)
             contentView.configure(weight: weight, reps: reps)
-            excerciseInfoRelay.accept(excerciseInfoRelay.value + [[String(weight), String(reps)]])
+            exerciseInfoRelay.accept(exerciseInfoRelay.value + [[String(weight), String(reps)]])
         }
     }
     
