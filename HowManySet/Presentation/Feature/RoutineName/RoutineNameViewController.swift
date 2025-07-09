@@ -63,6 +63,7 @@ extension RoutineNameViewController {
                 owner.routineNameView.publicNextButton.animateTap {
                     reactor.action.onNext(.setRoutineName(text))
                     owner.dismiss(animated: true) {
+                        owner.coordinator?.switchToSecondTap()
                         owner.coordinator?.pushEditExcerciseView(routineName: text)
                     }
                 }

@@ -64,6 +64,9 @@ final class RoutineListViewController: UIViewController, View {
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
                 owner.routineListView.publicAddNewRoutineButton.animateTap {
+                    if owner.presentingViewController != nil {
+                        owner.dismiss(animated: true)
+                    }
                     owner.coordinator?.presentRoutineNameView()
                 }
             }

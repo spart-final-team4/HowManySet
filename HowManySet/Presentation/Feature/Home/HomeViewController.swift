@@ -41,7 +41,7 @@ final class HomeViewController: UIViewController, View {
     }
     
     private lazy var pauseButton = UIButton().then {
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 26), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         $0.tintColor = .white
     }
@@ -53,17 +53,17 @@ final class HomeViewController: UIViewController, View {
     }
     
     private lazy var stopButton = UIButton().then {
-        $0.layer.cornerRadius = 22
+        $0.layer.cornerRadius = 26
         $0.backgroundColor = .roundButtonBG
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "stop.fill"), for: .normal)
         $0.tintColor = .pauseButton
     }
     
     private lazy var forwardButton = UIButton().then {
-        $0.layer.cornerRadius = 22
+        $0.layer.cornerRadius = 26
         $0.backgroundColor = .roundButtonBG
-        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 16), forImageIn: .normal)
+        $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "forward.end.fill"), for: .normal)
         $0.tintColor = .white
     }
@@ -148,24 +148,25 @@ private extension HomeViewController {
         topTimerHStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(cardContainer.snp.top).offset(-32)
+            $0.bottom.equalTo(cardContainer.snp.top).offset(-24)
         }
         
         buttonHStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(cardContainer.snp.top).offset(-32)
+            $0.bottom.equalTo(cardContainer.snp.top).offset(-24)
         }
         
         stopButton.snp.makeConstraints {
-            $0.width.height.equalTo(44)
+            $0.width.height.equalTo(52)
         }
         
         forwardButton.snp.makeConstraints {
-            $0.width.height.equalTo(44)
+            $0.width.height.equalTo(52)
         }
         
         cardContainer.snp.makeConstraints {
+            $0.top.equalTo(buttonHStackView.snp.bottom).offset(24)
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.height.equalToSuperview().multipliedBy(0.45)
         }
@@ -181,12 +182,12 @@ private extension HomeViewController {
         }
         
         pageController.snp.makeConstraints {
-            $0.top.equalTo(cardContainer.snp.bottom).offset(16)
+            $0.top.equalTo(cardContainer.snp.bottom)
             $0.centerX.equalToSuperview()
         }
         
         restInfoView.snp.makeConstraints {
-            $0.top.equalTo(pageController.snp.bottom).offset(16)
+            $0.top.equalTo(pageController.snp.bottom).offset(6)
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.centerX.equalToSuperview()
             $0.height.equalToSuperview().multipliedBy(0.15)
