@@ -56,7 +56,7 @@ final class HomeViewReactor: Reactor {
         /// 하단 휴식 버튼 누를 시 동작
         case setRestTime(Float)
         /// 휴식 프로그레스 휴식 시간 설정
-        case setRestTimeDataAtProgressBar(Float)
+        case setRestTimeDataAtProgressBar(Float, Float? = nil)
         case workoutTimeUpdating
         case restRemainingUpdating
         case pauseAndPlayWorkout(Bool)
@@ -378,7 +378,7 @@ final class HomeViewReactor: Reactor {
                 let elapsedTime = Date().timeIntervalSince(startDate)
                 let newRestRemainingTime = max(0, currentState.accumulatedRestRemainingTime - elapsedTime)
                 print("💤 elapsedTime: \(elapsedTime) ")
-                return .just(.setRestTimeDataAtProgressBar(Float(newRestRemainingTime)))
+                return .just(.setRestTimeDataAtProgressBar(currentState.restTime, Float(newRestRemainingTime)))
             } else {
                 return .empty()
             }
@@ -426,10 +426,14 @@ final class HomeViewReactor: Reactor {
                 newState.restTime += restTime
             }
             
-        case let .setRestTimeDataAtProgressBar(restTime):
+        case let .setRestTimeDataAtProgressBar(restTime, restRemaining):
             if restTime > 0 {
                 newState.restStartTime = restTime
-                newState.restRemainingTime = restTime
+                if let restRemaining {
+                    newState.restRemainingTime = restRemaining
+                } else {
+                    newState.restRemainingTime = restTime
+                }
                 newState.isRestTimerStopped = false
             } else {
                 newState.restStartTime = nil
@@ -749,7 +753,7 @@ private extension HomeViewReactor {
             if currentState.workoutCardStates.indices.contains(cardIndex + 1),
                !currentState.workoutCardStates[cardIndex + 1].allSetsCompleted {
                 nextExerciseIndex += 1
-            } else if  currentState.workoutCardStates.indices.contains(cardIndex - 1),
+            } else if currentState.workoutCardStates.indices.contains(cardIndex - 1),
                        !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
                 nextExerciseIndex -= 1
             }
