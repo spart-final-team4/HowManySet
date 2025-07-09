@@ -22,10 +22,13 @@ final class MemoInfoCell: UICollectionViewCell {
 
     // MARK: - configure
     func configure(comment: String?) {
-        let isEmpty = (comment?.isEmpty ?? true)
+        let isEmpty = comment?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         memoTextView.text = isEmpty ? placeholderText : comment
         memoTextView.textColor = isEmpty ? .grey3 : .white
         memoTextView.layer.borderWidth = 0
+        
+        print("configure - comment: \(comment ?? "nil")")
+        print("❓ placeholder 적용됐는지: \(isEmpty)")
     }
 }
 

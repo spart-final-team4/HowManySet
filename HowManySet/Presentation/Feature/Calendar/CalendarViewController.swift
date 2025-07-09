@@ -15,6 +15,9 @@ final class CalendarViewController: UIViewController, View {
     // 기록이 있는 날짜를 담아놓을 배열 생성
     private var recordedDates: [Date] = []
 
+    // 오늘 날짜
+    let today = Date()
+
     // RxDataSource 사용을 위한 Model 생성
     typealias RecordSection = SectionModel<String, WorkoutRecord>
 
@@ -35,17 +38,15 @@ final class CalendarViewController: UIViewController, View {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // 캘린더 날짜 선택 해제
-        if let selectedDate = calendarView.publicCalendar.selectedDate {
-            calendarView.publicCalendar.deselect(selectedDate)
-        }
+        // 캘린더에서 오늘 날짜 선택
+        calendarView.publicCalendar.select(today)
 
-        // Reactor 상태도 초기화
-        reactor?.action.onNext(.clearSelection)
+        // 선택된 날짜에 대한 액션 트리거
+        reactor?.action.onNext(.selectDate(today))
 
         // 선택된 날짜 기준 fetch
         reactor?.action.onNext(.viewWillAppear)
-        
+
         calendarView.publicCalendar.locale = Locale.current // 사용자 언어 설정에 따라서 캘린더 언어 설정 동일하게 설정
     }
 
