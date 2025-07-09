@@ -488,8 +488,6 @@ final class HomeViewReactor: Reactor {
                 if newState.restRemainingTime.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
-                    // 휴식 종료 시 푸시 알림
-                    NotificationService.shared.sendRestFinishedNotification()
                 }
             }
             
@@ -497,7 +495,11 @@ final class HomeViewReactor: Reactor {
             if isPaused {
                 newState.restStartDate = nil
                 newState.isRestPaused = true
+                NotificationService.shared.removeRestNotification()
             } else {
+                if currentState.isResting {
+                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                }
                 // 현재 시각부터 타이머 재시작
                 newState.restStartDate = Date()
                 newState.isRestPaused = false
@@ -594,6 +596,7 @@ final class HomeViewReactor: Reactor {
             
         case let .stopRestTimer(isStopped):
             if isStopped {
+                NotificationService.shared.removeRestNotification()
                 newState.isResting = false
                 newState.isRestTimerStopped = true
                 newState.restRemainingTime = 0.0
@@ -706,6 +709,7 @@ private extension HomeViewReactor {
                 )
                 .map { _ in Mutation.restRemainingUpdating }
                 .observe(on: MainScheduler.asyncInstance)
+            NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
         }
         
         // 다음 세트가 있는 경우 (휴식 시작)
