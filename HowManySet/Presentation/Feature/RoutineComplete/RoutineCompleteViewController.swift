@@ -24,7 +24,7 @@ final class RoutineCompleteViewController: UIViewController, View {
     
     private let exerciseCompletedText = String(localized: "운동 완료! 수고했어요")
     private let exerciseRecordSavedText = String(localized: "운동 기록 저장됨")
-    private let memoPlaceHolderText = String(localized: "메모를 입력해 주세요.")
+    private let memoPlaceHolderText = String(localized: "메모를 입력해주세요.")
     private let confirmText = String(localized: "확인")
         
     private let cardInset: CGFloat = UIScreen.main.bounds.width <= 375 ? 24 : 28
