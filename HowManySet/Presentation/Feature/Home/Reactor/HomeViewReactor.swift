@@ -378,7 +378,7 @@ final class HomeViewReactor: Reactor {
                 let elapsedTime = Date().timeIntervalSince(startDate)
                 let newRestRemainingTime = max(0, currentState.accumulatedRestRemainingTime - elapsedTime)
                 print("💤 elapsedTime: \(elapsedTime) ")
-                return .just(.setRestRemainingTimeWhenBackgrounded(newRestRemainingTime))
+                return .just(.setRestTimeDataAtProgressBar(Float(newRestRemainingTime)))
             } else {
                 return .empty()
             }
