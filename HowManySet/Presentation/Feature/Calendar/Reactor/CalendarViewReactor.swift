@@ -12,7 +12,6 @@ final class CalendarViewReactor: Reactor {
         case viewWillAppear
         case selectDate(Date)
         case deleteItem(IndexPath)
-        case clearSelection
     }
 
     // MARK: - Mutate is a state manipulator which is not exposed to a view
@@ -21,7 +20,6 @@ final class CalendarViewReactor: Reactor {
         case setSelectedDate(Date)
         case setSelectedRecords([WorkoutRecord])
         case deleteRecordAt(IndexPath)
-        case clearSelectedDate
     }
 
     // MARK: - State is a current view state
@@ -91,9 +89,6 @@ final class CalendarViewReactor: Reactor {
             deleteRecordUseCase.execute(uid: uid, item: recordToDelete)
 
             return .just(.deleteRecordAt(indexPath))
-
-        case .clearSelection:
-            return .just(.clearSelectedDate)
         }
     }
 
@@ -112,9 +107,6 @@ final class CalendarViewReactor: Reactor {
             var updatedRecords = state.selectedRecords
             updatedRecords.remove(at: indexPath.row)
             newState.selectedRecords = updatedRecords
-        case .clearSelectedDate:
-            newState.selectedDate = Date()
-            newState.selectedRecords = []
         }
 
         return newState
