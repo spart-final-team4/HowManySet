@@ -843,7 +843,7 @@ extension HomeViewController {
             cachedContentState = updated
             return updated
         }
-        .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+        .debounce(.milliseconds(10), scheduler: MainScheduler.instance) // timer interval과 맞춤
         .bind(onNext: { contentState in
             LiveActivityService.shared.update(state: contentState)
         })
