@@ -12,6 +12,7 @@ protocol RoutineListCoordinatorProtocol: Coordinator {
     func pushEditExcerciseView(routineName: String)
     func pushEditRoutineView(with: WorkoutRoutine)
     func presentEditRoutinView(with: WorkoutRoutine)
+    func switchToSecondTap()
 }
 
 /// 루틴 리스트 화면 관련 coordinator
@@ -104,6 +105,12 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
         if let homeCoordinator {
             let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator)
             editRoutineCoordinator.startModal()
+        }
+    }
+    
+    func switchToSecondTap() {
+        if self.navigationController.tabBarController?.selectedIndex == 0 {
+            self.navigationController.tabBarController?.selectedIndex = 1
         }
     }
 }

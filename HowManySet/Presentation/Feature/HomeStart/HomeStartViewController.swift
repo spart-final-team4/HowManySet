@@ -98,7 +98,7 @@ private extension HomeStartViewController {
                     UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         self.routineStartCardView.routineSelectButton.transform = .identity
                     }, completion: { _ in
-                        self.coordinator?.pushRoutineListView()
+                        self.coordinator?.presentRoutineListView()
                     })
                 })
             })

@@ -17,8 +17,6 @@ final class RoutineListView: UIView {
         self.caller = caller
         super.init(frame: frame)
         setupUI()
-        
-        setHiddenWithCaller()
     }
     
     required init?(coder: NSCoder) {
@@ -106,14 +104,5 @@ private extension RoutineListView {
 
         // 테이블 뷰에 적용
         routineTableView.tableFooterView = footerView
-    }
-}
-
-// MARK: - Private Methods
-private extension RoutineListView {
-    
-    /// 홈에서 띄울 시 버튼 hidden 
-    func setHiddenWithCaller() {
-        addNewRoutineButton.isHidden = caller == .fromHome ? true : false
     }
 }
