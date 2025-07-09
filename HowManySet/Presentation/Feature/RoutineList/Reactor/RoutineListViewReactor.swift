@@ -77,7 +77,7 @@ final class RoutineListViewReactor: Reactor {
                     deleteRoutineUseCase.execute(uid: uid, item: routines[i])
                 }
             }
-            newState.routines = newRoutines
+            newState.routines = newRoutines.reversed() // 내림차순 정렬
         case let .deleteRoutineAt(indexPath):
             var updated = state.routines
             updated.remove(at: indexPath.section)
