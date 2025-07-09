@@ -54,9 +54,9 @@ final class CalendarViewReactor: Reactor {
         case let .selectDate(date):
             let fetchRecords = fetchRecordUseCase.execute(uid: uid)
                 .map { allRecords in
-                    let filteredRecords = allRecords.filter {
-                        Calendar.current.isDate($0.date, inSameDayAs: date)
-                    }
+                    let filteredRecords = allRecords
+                        .filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
+                        .sorted { $0.date > $1.date }
                     return Mutation.setSelectedRecords(filteredRecords)
                 }
                 .asObservable()
