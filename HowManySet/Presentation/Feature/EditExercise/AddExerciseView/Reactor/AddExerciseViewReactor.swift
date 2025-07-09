@@ -197,9 +197,6 @@ final class AddExerciseViewReactor: Reactor {
         if workout.name.count <= 1 {
             return ValidWorkout.workoutNameTooShort
         }
-        if workout.sets.contains(where: { $0.reps == 0 || $0.weight == 0}) {
-            return ValidWorkout.workoutContainsZero
-        }
         if workout.sets.contains(where: { $0.reps < 0 || $0.weight < 0}) {
             return ValidWorkout.workoutInvalidCharacters
         }

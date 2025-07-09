@@ -125,7 +125,7 @@ final class AddExerciseViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         // 세트 정보 변경
-        contentView.excerciseInfoRelay
+        contentView.exerciseInfoRelay
             .map { Reactor.Action.changeExcerciseWeightSet($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
