@@ -198,9 +198,12 @@ extension RecordDetailViewController {
 
                 textView.rx.didEndEditing
                     .bind(with: owner) { _, _ in
-                        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        let trimmed = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if trimmed.isEmpty {
                             textView.text = String(localized: "메모를 입력해주세요.")
                             textView.textColor = .grey3
+                        } else {
+                            textView.textColor = .white
                         }
                         textView.layer.borderWidth = 0
                     }

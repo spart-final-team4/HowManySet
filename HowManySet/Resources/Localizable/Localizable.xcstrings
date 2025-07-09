@@ -907,6 +907,7 @@
       }
     },
     "메모를 입력해 주세요." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
