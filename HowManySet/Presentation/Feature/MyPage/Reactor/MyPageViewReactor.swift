@@ -16,8 +16,6 @@ import FirebaseFirestore
 /// - Firestore 기반 닉네임 fetch 추가
 final class MyPageViewReactor: Reactor {
     
-    private let fetchUserSettingUseCase: FetchUserSettingUseCase
-    private let saveUserSettingUseCase: SaveUserSettingUseCase
     private let authUseCase: AuthUseCaseProtocol
     
     /// 사용자 액션 (뷰에서 발생하는 이벤트)
@@ -63,12 +61,8 @@ final class MyPageViewReactor: Reactor {
     
     /// 생성자
     /// - Parameters:
-    ///   - fetchUserSettingUseCase: 사용자 설정 조회용 유스케이스
-    ///   - saveUserSettingUseCase: 사용자 설정 저장용 유스케이스
     ///   - authUseCase: 인증 관련 유스케이스
-    init(fetchUserSettingUseCase: FetchUserSettingUseCase, saveUserSettingUseCase: SaveUserSettingUseCase, authUseCase: AuthUseCaseProtocol) {
-        self.fetchUserSettingUseCase = fetchUserSettingUseCase
-        self.saveUserSettingUseCase = saveUserSettingUseCase
+    init(authUseCase: AuthUseCaseProtocol) {
         self.authUseCase = authUseCase
         self.initialState = State(presentTarget: nil)
     }
