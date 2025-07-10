@@ -198,7 +198,7 @@ private extension RoutineCompleteViewController {
         
         setViewHiearchy()
         setConstraints()
-//        configureKeyboardNotifications()
+        configureKeyboardNotifications()
     }
     
     func setViewHiearchy() {
