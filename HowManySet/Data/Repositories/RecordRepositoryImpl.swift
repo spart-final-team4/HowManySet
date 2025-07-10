@@ -82,7 +82,11 @@ private extension RecordRepositoryImpl {
     
     func createRecordToRealm(item: WorkoutRecord) {
         let record = RMWorkoutRecord(dto: WorkoutRecordDTO(entity: item))
-        realmService.create(item: record)
+        do {
+            try realmService.create(item: record)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     // MARK: - Record Read
@@ -108,13 +112,14 @@ private extension RecordRepositoryImpl {
     }
     
     func readRecordFromRealm() -> Single<[WorkoutRecord]> {
-        return Single.create {[weak self] observer in
-            guard let records = self?.realmService.read(type: .workoutRecord) else {
-                observer(.failure(RealmErrorType.dataNotFound))
-                return Disposables.create()
+        return Single.create {[unowned self] observer in
+            do {
+                let records = try self.realmService.read(type: .workoutRecord)
+                let recordDTO = records.map{ ($0 as! RMWorkoutRecord).toDTO() }
+                observer(.success(recordDTO.map { $0.toEntity() }))
+            } catch {
+                observer(.failure(error))
             }
-            let recordDTO = records.map{ ($0 as! RMWorkoutRecord).toDTO() }
-            observer(.success(recordDTO.map { $0.toEntity() }))
             return Disposables.create()
         }
     }
@@ -138,11 +143,16 @@ private extension RecordRepositoryImpl {
     }
     
     func updateRecordToRealm(item: WorkoutRecord) {
-        if let record = realmService.read(type: .workoutRecord, primaryKey: item.rmID) as? RMWorkoutRecord {
-            realmService.update(item: record) { (savedRecord: RMWorkoutRecord) in
-                savedRecord.comment = item.comment
+        do {
+            if let record = try realmService.read(type: .workoutRecord, primaryKey: item.rmID) as? RMWorkoutRecord {
+                try realmService.update(item: record) { (savedRecord: RMWorkoutRecord) in
+                    savedRecord.comment = item.comment
+                }
             }
+        } catch {
+            print(error.localizedDescription)
         }
+        
     }
     
     // MARK: - Record Delete
@@ -162,7 +172,11 @@ private extension RecordRepositoryImpl {
     
     func deleteRecordToRealm(item: WorkoutRecord) {
         let record = RMWorkoutRecord(dto: WorkoutRecordDTO(entity: item))
-        realmService.delete(item: record)
+        do {
+            try realmService.delete(item: record)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     // MARK: - Record Delete All
@@ -178,6 +192,10 @@ private extension RecordRepositoryImpl {
     }
     
     func deleteAllRecordRealm() {
-        realmService.deleteAll(type: .workoutRecord)
+        do {
+            try realmService.deleteAll(type: .workoutRecord)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
 }

@@ -57,12 +57,16 @@ private extension WorkoutRepositoryImpl {
     }
     
     func updateWorkoutRealm(workout: Workout) {
-        if let newWorkout = realmService.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
-            realmService.update(item: newWorkout) { (savedWorkout: RMWorkout) in
-                savedWorkout.name = workout.name
-                savedWorkout.comment = workout.comment
-                savedWorkout.setArray = workout.sets.map{ RMWorkoutSet(dto: WorkoutSetDTO(entity: $0)) }
+        do {
+            if let newWorkout = try realmService.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
+                try realmService.update(item: newWorkout) { (savedWorkout: RMWorkout) in
+                    savedWorkout.name = workout.name
+                    savedWorkout.comment = workout.comment
+                    savedWorkout.setArray = workout.sets.map{ RMWorkoutSet(dto: WorkoutSetDTO(entity: $0)) }
+                }
             }
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
@@ -81,8 +85,12 @@ private extension WorkoutRepositoryImpl {
     }
     
     func deleteWorkoutRealm(workout: Workout) {
-        if let workout = realmService.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
-            realmService.delete(item: workout)
+        do {
+            if let workout = try realmService.read(type: .workout, primaryKey: workout.id) as? RMWorkout {
+                try realmService.delete(item: workout)
+            }
+        } catch {
+            print(error.localizedDescription)
         }
     }
     

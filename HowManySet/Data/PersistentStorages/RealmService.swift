@@ -12,39 +12,50 @@ import RealmSwift
 /// `RealmServiceProtocol`을 구현하며, Realm 객체를 생성, 조회, 수정, 삭제할 수 있습니다.
 final class RealmService: RealmServiceProtocol {
     
-    init() {
-        // Realm 주소
-        print("## realm file dir -> \(Realm.Configuration.defaultConfiguration.fileURL!)")
+    func openRealm() throws -> Realm {
+        do {
+            return try Realm()
+        } catch {
+            throw(RealmErrorType.openRealmDatabaseFailed)
+        }
     }
 
     /// Realm에 객체를 생성(저장)합니다.
     /// - Parameter item: 저장할 Realm 객체
-    func create<T: Object>(item: T) {
+    func create<T: Object>(item: T) throws {
         do {
-            let realm = try Realm()
+            let realm = try openRealm()
             try realm.write {
                 realm.add(item)
             }
+        } catch RealmErrorType.openRealmDatabaseFailed {
+            throw(RealmErrorType.openRealmDatabaseFailed)
         } catch {
-            print("create Failed: \(error.localizedDescription)")
+            throw(RealmErrorType.databaseWriteFailed)
         }
     }
 
     /// Realm에서 특정 타입의 객체 목록을 조회합니다.
     /// - Parameter type: 조회할 Realm 객체 타입 (`RealmDataType`)
     /// - Returns: 조회된 객체의 리스트 (`Results<T>`), 없으면 `nil`
-    func read<T: Object>(type: RealmDataType<T>) -> Results<T>? {
-        let realm = try? Realm()
-        return realm?.objects(type.type)
-    }
-    
-    func read<T: Object>(type: RealmDataType<T>, primaryKey: String) -> Object? {
+    func read<T: Object>(type: RealmDataType<T>) throws -> Results<T> {
         do {
             let realm = try Realm()
-            guard let data = realm.object(ofType: type.type.self, forPrimaryKey: primaryKey) else { return nil }
+            return realm.objects(type.type)
+        } catch {
+            throw(RealmErrorType.openRealmDatabaseFailed)
+        }
+    }
+    
+    func read<T: Object>(type: RealmDataType<T>, primaryKey: String) throws -> Object {
+        do {
+            let realm = try Realm()
+            guard let data = realm.object(ofType: type.type.self, forPrimaryKey: primaryKey) else {
+                throw(RealmErrorType.objectBindingFailed)
+            }
             return data
         } catch {
-            return nil
+            throw(RealmErrorType.openRealmDatabaseFailed)
         }
     }
 
@@ -52,7 +63,7 @@ final class RealmService: RealmServiceProtocol {
     /// - Parameters:
     ///   - item: 업데이트할 Realm 객체
     ///   - completion: 변경 사항을 적용할 클로저
-    func update<T: Object>(item: T, completion: @escaping (T) -> Void) {
+    func update<T: Object>(item: T, completion: @escaping (T) -> Void) throws {
         do {
             let realm = try Realm()
             try realm.write {
@@ -64,62 +75,73 @@ final class RealmService: RealmServiceProtocol {
                 completion(item)
                 realm.add(item, update: .modified)
             }
+        } catch RealmErrorType.openRealmDatabaseFailed {
+            throw(RealmErrorType.openRealmDatabaseFailed)
         } catch {
-            print("update failed: \(error.localizedDescription)")
+            throw(RealmErrorType.databaseWriteFailed)
         }
     }
 
     /// Realm에서 특정 객체를 삭제합니다.
     /// - Parameter item: 삭제할 Realm 객체
-    func delete<T: Object>(item: T) {
-        let realm = try? Realm()
-        guard let primaryKey = T.primaryKey() else {
-            print("⚠️ \(T.self)는 primaryKey가 없어서 안전한 삭제가 불가능합니다.")
-            return
-        }
+    func delete<T: Object>(item: T) throws {
         
-        // 2. item에서 primary key 값을 안전하게 꺼냄
-        guard let keyValue = item.value(forKey: primaryKey) else {
-            print("⚠️ 객체에서 primary key 값을 가져올 수 없습니다.")
-            return
-        }
-        guard let objToDelete = realm?.object(ofType: T.self, forPrimaryKey: keyValue) else {
-            print("❌ Realm에 해당 객체가 존재하지 않습니다.")
-            return
-        }
         do {
-            try realm?.write {
-                realm?.delete(objToDelete)
+            let realm = try openRealm()
+            
+            guard let primaryKey = T.primaryKey() else {
+                print("⚠️ \(T.self)는 primaryKey가 없어서 안전한 삭제가 불가능합니다.")
+                throw(RealmErrorType.nonePrimaryKey)
             }
+            
+            guard let keyValue = item.value(forKey: primaryKey) else {
+                print("⚠️ 객체에서 primary key 값을 가져올 수 없습니다.")
+                throw(RealmErrorType.incorrectPrimaryKey)
+            }
+            
+            guard let objToDelete = realm.object(ofType: T.self, forPrimaryKey: keyValue) else {
+                print("❌ Realm에 해당 객체가 존재하지 않습니다.")
+                throw(RealmErrorType.dataNotFound)
+            }
+            
+            try realm.write {
+                realm.delete(objToDelete)
+            }
+            
+        } catch RealmErrorType.openRealmDatabaseFailed {
+            throw(RealmErrorType.openRealmDatabaseFailed)
         } catch {
-            print("delete Failed: \(error.localizedDescription)")
+            throw(RealmErrorType.databaseWriteFailed)
         }
     }
 
     /// Realm에서 특정 타입의 모든 객체를 삭제합니다.
     /// - Parameter type: 삭제할 Realm 객체 타입 (`RealmDataType`)
-    func deleteAll<T: Object>(type: RealmDataType<T>) {
+    func deleteAll<T: Object>(type: RealmDataType<T>) throws {
         do {
-            let realm = try Realm()
+            let realm = try openRealm()
             try realm.write {
-                if let datas = read(type: type) {
-                    realm.delete(datas)
-                }
+                let datas = try read(type: type)
+                realm.delete(datas)
             }
-        } catch {
-            print("delete specific data All Failed: \(error.localizedDescription) ")
+        } catch RealmErrorType.openRealmDatabaseFailed {
+            throw(RealmErrorType.openRealmDatabaseFailed)
+        } catch RealmErrorType.databaseWriteFailed {
+            throw(RealmErrorType.databaseWriteFailed)
         }
     }
 
     /// Realm에 저장된 모든 객체를 삭제합니다.
-    func deleteAll() {
+    func deleteAll() throws {
         do {
             let realm = try Realm()
             try realm.write {
                 realm.deleteAll()
             }
-        } catch {
-            print("delete All Failed: \(error.localizedDescription)")
+        } catch RealmErrorType.openRealmDatabaseFailed {
+            throw(RealmErrorType.openRealmDatabaseFailed)
+        } catch RealmErrorType.databaseWriteFailed {
+            throw(RealmErrorType.databaseWriteFailed)
         }
     }
 }
