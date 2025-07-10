@@ -20,13 +20,7 @@ protocol RealmServiceProtocol {
     /// - Returns: 조회된 객체들의 결과 리스트(`Results<T>`), 없을 경우 `nil`
     func read<T: Object>(type: RealmDataType<T>) -> Results<T>?
     
-    /// 특정 인덱스 위치의 객체를 조회합니다.
-    /// - Parameters:
-    ///   - index: 조회할 위치의 인덱스
-    ///   - type: 조회할 Realm 객체 타입
-    /// - Returns: 해당 인덱스의 Realm 객체, 없을 경우 `nil`
-    func read<T: Object>(at index: Int, type: RealmDataType<T>) -> Object?
-    
+    func read<T: Object>(type: RealmDataType<T>, primaryKey: String) -> Object?
     /// 특정 객체를 업데이트합니다.
     /// - Parameters:
     ///   - item: 업데이트할 Realm 객체

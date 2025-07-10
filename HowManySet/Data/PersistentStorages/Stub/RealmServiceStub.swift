@@ -10,6 +10,10 @@ import RealmSwift
 
 class RealmServiceStub: RealmServiceProtocol {
     
+    func read<T>(type: RealmDataType<T>, primaryKey: String) -> Object? {
+        return nil
+    }
+    
     private let realm: Realm
     
     init() {

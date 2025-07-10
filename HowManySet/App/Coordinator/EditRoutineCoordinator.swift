@@ -50,8 +50,11 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
                                 resultHandler: @escaping (Bool) -> Void
     ) {
         let firestoreService = FirestoreService()
-        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
         let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
 
@@ -75,8 +78,11 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     /// EditExercise를 present하는 메서드
     func presentEditExerciseView(workout: Workout, resultHandler: @escaping (Bool) -> Void) {
         let firestoreService = FirestoreService()
-        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
         let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
 

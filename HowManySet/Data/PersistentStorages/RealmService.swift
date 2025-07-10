@@ -12,9 +12,7 @@ import RealmSwift
 /// `RealmServiceProtocol`을 구현하며, Realm 객체를 생성, 조회, 수정, 삭제할 수 있습니다.
 final class RealmService: RealmServiceProtocol {
     
-    static let shared = RealmService()
-    
-    private init() {
+    init() {
         // Realm 주소
         print("## realm file dir -> \(Realm.Configuration.defaultConfiguration.fileURL!)")
     }
@@ -50,19 +48,6 @@ final class RealmService: RealmServiceProtocol {
         }
     }
 
-    /// Realm에서 특정 인덱스에 해당하는 객체를 조회합니다.
-    /// - Parameters:
-    ///   - index: 조회할 객체의 인덱스
-    ///   - type: 조회할 Realm 객체 타입 (`RealmDataType`)
-    /// - Returns: 조회된 객체가 존재하면 반환, 없으면 `nil`
-    func read<T>(at index: Int, type: RealmDataType<T>) -> Object? {
-        let realm = try? Realm()
-        if index >= realm?.objects(type.type).count ?? 0 {
-            return nil
-        }
-        return realm?.objects(type.type)[index]
-    }
-
     /// Realm에 저장된 객체를 업데이트합니다.
     /// - Parameters:
     ///   - item: 업데이트할 Realm 객체
@@ -71,27 +56,14 @@ final class RealmService: RealmServiceProtocol {
         do {
             let realm = try Realm()
             try realm.write {
-                completion(item)
-                realm.add(item, update: .modified)
-            }
-        } catch {
-            print("update failed: \(error.localizedDescription)")
-        }
-    }
-    
-    func updateRoutine(item: RMWorkoutRoutine, workouts: [RMWorkout], completion: @escaping (RMWorkoutRoutine) -> Void) {
-        do {
-            let realm = try Realm()
-            
-            try realm.write {
-                workouts.forEach { workout in
-                    realm.add(workout, update: .modified)
+                if let data = item as? RMWorkoutRoutine {
+                    data.workouts.forEach { workout in
+                        realm.add(workout, update: .modified)
+                    }
                 }
-                
                 completion(item)
                 realm.add(item, update: .modified)
             }
-            
         } catch {
             print("update failed: \(error.localizedDescription)")
         }
