@@ -92,7 +92,6 @@ final class EditRoutineViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .loadWorkout(let routines):
-            print("routines: \(routines)\n\n")
             if let uid {
                 routines.forEach { routine in
                     if routine.documentID == currentState.routine.documentID {
