@@ -109,8 +109,11 @@ final class HomeCoordinator: HomeCoordinatorProtocol {
         workout: Workout
     ) {
         let firestoreService = FirestoreService()
-        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
         let updateWorkoutUseCase = UpdateWorkoutUseCase(repository: workoutRepository)
         let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
         let reactor = EditExerciseViewReactor(

@@ -136,13 +136,5 @@ final class EditRoutineViewReactor: Reactor {
         return newState
     }
     
-    func deleteWorkout(item: Workout) {
-//        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
-//        if let uid = uid {
-//            fsDeleteWorkoutUseCase.execute(uid: uid, item: item)
-//        } else {
-//            deleteRoutineUseCase.execute(item: item)
-//        }
-    }
 }
 

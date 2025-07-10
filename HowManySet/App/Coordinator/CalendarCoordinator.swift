@@ -40,7 +40,9 @@ final class CalendarCoordinator: CalendarCoordinatorProtocol {
     /// large sheet 스타일 + grabber 표시
     func presentRecordDetailView(record: WorkoutRecord) {
         let firestoreService = FirestoreService()
-        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService,
+                                                    realmService: realmService)
         let updateRecordUseCase = UpdateRecordUseCase(repository: recordRepository)
 
         let reactor = RecordDetailViewReactor(
