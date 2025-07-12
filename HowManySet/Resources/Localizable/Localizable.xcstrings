@@ -927,7 +927,8 @@
             "value" : "메모를 입력해 주세요."
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "메모를 입력해주세요." : {
       "localizations" : {
@@ -1189,6 +1190,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "버전 정보"
+          }
+        }
+      }
+    },
+    "분" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "min"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "분"
           }
         }
       }
@@ -1988,7 +2012,6 @@
       }
     },
     "운동 기록이 삭제되었습니다!" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
