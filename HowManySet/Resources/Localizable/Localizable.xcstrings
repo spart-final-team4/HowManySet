@@ -2384,6 +2384,29 @@
         }
       }
     },
+    "운동을 종료할까요?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Want to end the workout?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "運動を終了しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "운동을 종료할까요?"
+          }
+        }
+      }
+    },
     "운동이 추가되었어요!" : {
       "localizations" : {
         "en" : {
@@ -2424,6 +2447,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "운동정보 입력"
+          }
+        }
+      }
+    },
+    "운동종료" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ending a workout"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "運動終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "운동종료"
           }
         }
       }
@@ -2712,6 +2758,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "종목 수: %d"
+          }
+        }
+      }
+    },
+    "지금까지의 기록만 저장됩니다." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the history up to this point is saved."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これまでの記録のみが保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금까지의 기록만 저장됩니다."
           }
         }
       }
