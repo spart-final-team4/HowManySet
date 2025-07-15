@@ -60,10 +60,11 @@ final class EditExerciseViewController: UIViewController, View {
                 LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
                 return Reactor.Action.saveExcerciseButtonTapped((self.getCurrentName(), self.getCurrentWorkoutSets()))
             }
+            .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] action in
                 guard let self else { return }
-                reactor.action.onNext(action)
                 self.onEditCompleted?()
+                reactor.action.onNext(action)
             })
             .disposed(by: disposeBag)
         

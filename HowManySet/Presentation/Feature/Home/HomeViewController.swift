@@ -771,11 +771,13 @@ extension HomeViewController {
             }).disposed(by: disposeBag)
         
         // MARK: - 운동 중 편집 시
-        reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
-            .distinctUntilChanged { $0.0 == $1.0 }
+        reactor.state.map { $0.workoutCardStates }
+            .distinctUntilChanged()
+            .skip(1)
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] newCardStates, currentIndex in
+            .bind(onNext: { [weak self] newCardStates in
                 guard let self else { return }
+                let currentIndex = reactor.currentState.currentExerciseIndex
                 print("새 카드 정보", newCardStates[currentIndex])
                 self.pagingCardViewContainer[currentIndex].configure(with: newCardStates[currentIndex], isEdited: true)
             })
