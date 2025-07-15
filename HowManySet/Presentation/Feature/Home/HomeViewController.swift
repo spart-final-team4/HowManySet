@@ -772,7 +772,6 @@ extension HomeViewController {
         
         // MARK: - 운동 중 편집 시
         reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
-            .skip(1)
             .distinctUntilChanged { $0.0 == $1.0 }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { [weak self] newCardStates, currentIndex in
@@ -795,7 +794,6 @@ extension HomeViewController {
                 let (isWorkingout, data) = state
                 print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
-                    LiveActivityService.shared.stop()
                     LiveActivityService.shared.start(with: data)
                     cachedContentState = .init(from: data)
                 } else {
