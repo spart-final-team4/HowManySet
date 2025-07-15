@@ -55,18 +55,22 @@ final class EditExerciseViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        footerView.saveExcerciseButtonRelay
-            .map { [unowned self] in
-                LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
-                return Reactor.Action.saveExcerciseButtonTapped((self.getCurrentName(), self.getCurrentWorkoutSets()))
-            }
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] action in
-                guard let self else { return }
-                self.onEditCompleted?()
-                reactor.action.onNext(action)
-            })
-            .disposed(by: disposeBag)
+        Observable.combineLatest(
+            footerView.saveExcerciseButtonRelay,
+            headerView.exerciseNameRelay,
+            contentView.exerciseInfoRelay
+        )
+        .map { (_, name, sets) in
+            Reactor.Action.saveExcerciseButtonTapped((name, sets))
+        }
+        .observe(on: MainScheduler.instance)
+        .bind(onNext: { [weak self] action in
+            guard let self else { return }
+            LoadingIndicator.showBottomSheetLoadingIndicator(on: self)
+            reactor.action.onNext(action)
+            self.onEditCompleted?()
+        })
+        .disposed(by: disposeBag)
         
         // textField 밖에 누르면 키보드 내려가도록 구현
         let tapGesture = UITapGestureRecognizer()
