@@ -188,7 +188,7 @@ final class HomeViewReactor: Reactor {
             // 운동 타이머
             let workoutTimer = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.asyncInstance)
                 .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
-                .withLatestFrom(self.state.map{ $0.isWorkoutPaused }) { _, isPaused in return isPaused }
+                .withLatestFrom(self.state.map { $0.isWorkoutPaused }) { _, isPaused in return isPaused }
                 .filter { !$0 }
                 .map { _ in Mutation.workoutTimeUpdating }
                 .observe(on: MainScheduler.asyncInstance)
@@ -351,7 +351,6 @@ final class HomeViewReactor: Reactor {
                     .just(.stopRestTimer(true)),
                     .just(.setWorkingout(false))
                 ])
-                
             }
             
             // 백그라운드 시간도 포함한 운동 시간 설정
@@ -498,7 +497,7 @@ final class HomeViewReactor: Reactor {
                 newState.isRestPaused = true
                 NotificationService.shared.removeRestNotification()
             } else {
-                if currentState.isResting {
+                if currentState.isResting, currentState.restRemainingTime > 0 {
                     NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
                 }
                 // 현재 시각부터 타이머 재시작
@@ -711,7 +710,9 @@ private extension HomeViewReactor {
                 )
                 .map { _ in Mutation.restRemainingUpdating }
                 .observe(on: MainScheduler.asyncInstance)
-            NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
+            if restTime > 0 {
+                NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
+            }
         }
         
         // 다음 세트가 있는 경우 (휴식 시작)
