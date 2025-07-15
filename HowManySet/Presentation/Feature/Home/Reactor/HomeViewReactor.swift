@@ -312,7 +312,6 @@ final class HomeViewReactor: Reactor {
         case .saveButtonClickedAtEditExercise:
             return fetchRoutineUseCase.execute(uid: currentState.uid)
                 .map { Mutation.loadUpdatedRoutine($0) }.asObservable()
-                .subscribe(on: MainScheduler.instance)
             
         case let .confirmButtonClickedForSavingMemo(newMemo):
             if newMemo != nil,
