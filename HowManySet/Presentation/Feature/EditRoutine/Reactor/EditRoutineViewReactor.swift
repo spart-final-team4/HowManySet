@@ -92,7 +92,6 @@ final class EditRoutineViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .loadWorkout(let routines):
-            print("routines: \(routines)\n\n")
             if let uid {
                 routines.forEach { routine in
                     if routine.documentID == currentState.routine.documentID {
@@ -136,13 +135,5 @@ final class EditRoutineViewReactor: Reactor {
         return newState
     }
     
-    func deleteWorkout(item: Workout) {
-//        let uid = FirebaseAuthService().fetchCurrentUser()?.uid
-//        if let uid = uid {
-//            fsDeleteWorkoutUseCase.execute(uid: uid, item: item)
-//        } else {
-//            deleteRoutineUseCase.execute(item: item)
-//        }
-    }
 }
 

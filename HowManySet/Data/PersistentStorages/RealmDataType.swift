@@ -43,4 +43,26 @@ enum RealmDataType<T: Object>: RealmDataTypeProtocol {
 enum RealmErrorType: Error {
     /// 데이터를 찾을 수 없는 경우
     case dataNotFound
+    case openRealmDatabaseFailed
+    case objectBindingFailed
+    case databaseWriteFailed
+    case nonePrimaryKey
+    case incorrectPrimaryKey
+    
+    var localizedDescription: String {
+        switch self {
+        case .dataNotFound:
+            return "Realm:: 데이터를 찾을 수 없습니다."
+        case .openRealmDatabaseFailed:
+            return "Realm:: 데이터베이스를 여는데 실패하였습니다. (try realm())"
+        case .objectBindingFailed:
+            return "Realm:: 메서드내 옵셔널바인딩을 실패하였습니다."
+        case .databaseWriteFailed:
+            return "Realm:: write 구문 실패하였습니다. (try realm.write)"
+        case .nonePrimaryKey:
+            return "Realm:: 해당 데이터모델은 PrimaryKey가 존재하지 않습니다."
+        case .incorrectPrimaryKey:
+            return "Realm:: PrimaryKey가 일치하지 않습니다."
+        }
+    }
 }
