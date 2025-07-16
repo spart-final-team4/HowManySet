@@ -106,7 +106,6 @@ final class HomeViewController: UIViewController, View {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(#function)
         
         setupUI()
     }
@@ -249,11 +248,8 @@ private extension HomeViewController {
                 $0.trailing.equalTo(lastCard.snp.trailing).offset(cardInset)
             }
         }
-        
         pageController.numberOfPages = cardStates.count
-        
-        print(pagingCardViewContainer.count)
-        
+//        print(pagingCardViewContainer.count)
         // 초기에도 애니메이션 적용되도록
         handlePageChanged()
         // 카드뷰 생성 후 버튼 바인딩
@@ -295,14 +291,12 @@ private extension HomeViewController {
             }
             
             // 페이지 업데이트
-            print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
-            
+//            print("변경 전 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
             self.previousPage = newPage
             self.currentPage = newPage
             self.pageController.currentPage = newPage
             self.pageController.numberOfPages = visibleCards.count
-            
-            print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
+//            print("변경 후 - previousPage: \(self.previousPage), currentPage: \(self.currentPage) ")
             
             // 현재 페이지 업데이트 후 offsetX 조정
             let offsetX = CGFloat(newPage) * UIScreen.main.bounds.width
@@ -311,7 +305,7 @@ private extension HomeViewController {
             // 카드 재정렬 후 버튼 바인딩 재설정 (약간의 지연 추가)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 guard let self = self, let reactor = self.reactor else { return }
-                print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
+//                print("🔄 레이아웃 재설정 후 버튼 바인딩 재실행")
                 self.bindCardViewsButton(reactor: reactor)
             }
             
@@ -348,9 +342,9 @@ private extension HomeViewController {
         self.pageController.currentPage = newCurrentPage
         self.pageController.numberOfPages = visibleCards.count
         
-        print("currentPage: \(self.currentPage)")
-        print("page 변경: \(self.previousPage) -> \(newCurrentPage)")
-        print("page -> \(previousPage), \(newCurrentPage), \(nextPage)")
+//        print("currentPage: \(self.currentPage)")
+//        print("page 변경: \(self.previousPage) -> \(newCurrentPage)")
+//        print("page -> \(previousPage), \(newCurrentPage), \(nextPage)")
     }
     
     // MARK: - 현재 페이지에서 visible한 카드의 실제 exerciseIndex를 반환하는 함수
@@ -366,22 +360,19 @@ private extension HomeViewController {
     func bindCardViewsButton(reactor: HomeViewReactor) {
         // visible한 카드들만 필터링
         let visibleCards = pagingCardViewContainer.filter { !$0.isHidden }
-        
-        print("🔄 버튼 바인딩 시작 - visible 카드 수: \(visibleCards.count)")
+//        print("🔄 버튼 바인딩 시작 - visible 카드 수: \(visibleCards.count)")
         
         // 각 visible 카드의 버튼 바인딩
         for cardView in visibleCards {
             // 기존 바인딩 해제 (개별적으로)
             cardView.disposeBag = DisposeBag()
-            
-            print("✅ 버튼 바인딩 - 카드 인덱스: \(cardView.index)")
+//            print("✅ 버튼 바인딩 - 카드 인덱스: \(cardView.index)")
             
             // 세트 완료 버튼
             cardView.setCompleteButton.rx.tap
                 .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
                 .do(onNext: {
-                    print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
-                    
+//                    print("세트 완료 버튼 탭 감지 - index: \(cardView.index)")
                     UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
                         cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                     }, completion: { _ in
@@ -434,15 +425,13 @@ private extension HomeViewController {
                 .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
         }
-        print("✅ 버튼 바인딩 완료")
+//        print("✅ 버튼 바인딩 완료")
     }
 }
 
 // MARK: - Reactor Binding
 extension HomeViewController {
     func bind(reactor: HomeViewReactor) {
-        
-        print(#function)
         
         // MARK: - Action
         // 운동 중지 버튼 클릭 시
@@ -498,7 +487,7 @@ extension HomeViewController {
             .observe(on: MainScheduler.asyncInstance)
             .do(onNext: { [weak self] newPage in
                 guard let self else { return }
-                print("🔍 변경된 페이지: \(newPage)")
+//                print("🔍 변경된 페이지: \(newPage)")
                 // 페이지가 변경 되었을 때만 조정
                 if newPage != previousPage {
                     handlePageChanged(newCurrentPage: newPage)
@@ -545,7 +534,7 @@ extension HomeViewController {
             .observe(on: MainScheduler.asyncInstance)
             .bind(onNext: { [weak self] cardStates in
                 guard let self else { return }
-                print("--- 운동시작 ---")
+//                print("--- 운동시작 ---")
                 self.configureExerciseCardViews(cardStates: cardStates)
             }).disposed(by: disposeBag)
         
@@ -570,7 +559,6 @@ extension HomeViewController {
         .bind { [weak self] (data: (Float, Bool, Bool)) in
             guard let self else { return }
             let (restTime, isResting, _ ) = data
-            
             self.restInfoView.restTimeLabel.text = Int(restTime).toRestTimeLabel()
             
             if isResting {
@@ -700,7 +688,7 @@ extension HomeViewController {
                 guard let cardToHideIndex = self.pagingCardViewContainer.firstIndex(
                     where: { $0.index == currentIndex }
                 ) else {
-                    print("⚠️ 삭제할 카드를 찾을 수 없습니다. currentIndex: \(currentIndex)")
+//                    print("⚠️ 삭제할 카드를 찾을 수 없습니다. currentIndex: \(currentIndex)")
                     return
                 }
                 
@@ -714,7 +702,7 @@ extension HomeViewController {
                         guard let self else { return }
                         // 현재 보이는 카드 중에서의 인덱스 찾기
                         guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
-                            print("⚠️ 현재 visible 카드 인덱스를 찾을 수 없습니다.")
+//                            print("⚠️ 현재 visible 카드 인덱스를 찾을 수 없습니다.")
                             return
                         }
                         // 다음 페이지 계산
@@ -726,12 +714,12 @@ extension HomeViewController {
                             // 마지막이 아닌 경우, 현재 페이지 유지
                             newPage = currentVisibleIndex
                         }
-                        print("💻 삭제 전 visible 카드 수: \(visibleCardsBeforeHiding.count), 현재 visible 인덱스: \(currentVisibleIndex), 새로운 페이지: \(newPage)")
+//                        print("💻 삭제 전 visible 카드 수: \(visibleCardsBeforeHiding.count), 현재 visible 인덱스: \(currentVisibleIndex), 새로운 페이지: \(newPage)")
                         // 남은 visible 카드 확인
                         let remainingVisibleCards = self.pagingCardViewContainer.filter { !$0.isHidden }
                         // 유효한 페이지 범위로 조정
                         let finalNewPage = min(newPage, remainingVisibleCards.count - 1)
-                        print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
+//                        print("💻 최종 새로운 페이지: \(finalNewPage), 남은 카드 수: \(remainingVisibleCards.count)")
                         // 레이아웃 재조정
                         self.setExerciseCardViewslayout(
                             cardContainer: self.pagingCardViewContainer,
@@ -740,7 +728,7 @@ extension HomeViewController {
                         // Reactor에 페이지 변경 알림
                         if remainingVisibleCards.indices.contains(finalNewPage) {
                             let newExerciseIndex = remainingVisibleCards[finalNewPage].index
-                            print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
+//                            print("🔄 새로운 exercise index로 변경: \(newExerciseIndex)")
                             if let reactor = self.reactor {
                                 reactor.action.onNext(.pageChanged(to: newExerciseIndex))
                                 reactor.action.onNext(.cardDeleteAnimationCompleted(oldIndex: currentIndex, nextIndex: newExerciseIndex))
@@ -748,7 +736,7 @@ extension HomeViewController {
                         } else if remainingVisibleCards.isEmpty {
                             // 모든 운동 완료 시
                             reactor.action.onNext(.cardDeleteAnimationCompleted(oldIndex: currentIndex, nextIndex: currentIndex))
-                            print("🎉 모든 운동 완료!")
+//                            print("🎉 모든 운동 완료!")
                             // 운동 완료 처리
                             if let reactor = self.reactor {
                                 self.coordinator?.popUpCompletedWorkoutAlert(onConfirm: {
@@ -773,12 +761,17 @@ extension HomeViewController {
         // MARK: - 운동 중 편집 시
         reactor.state.map { ($0.workoutCardStates, $0.currentExerciseIndex) }
             .skip(1)
+            .map {
+                let currentIndex = reactor.currentState.currentExerciseIndex
+                let newCardState = $0[currentIndex]
+                return (newCardState, $1)
+            }
             .distinctUntilChanged { $0.0 == $1.0 }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { [weak self] newCardStates, currentIndex in
+            .bind(onNext: { [weak self] (newCardState, index) in
                 guard let self else { return }
-                print("새 카드 정보", newCardStates[currentIndex])
-                self.pagingCardViewContainer[currentIndex].configure(with: newCardStates[currentIndex], isEdited: true)
+//                print("새 카드 정보", newCardState)
+                self.pagingCardViewContainer[index].configure(with: newCardState, isEdited: true)
             })
             .disposed(by: disposeBag)
         
@@ -793,9 +786,8 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
                 let (isWorkingout, data) = state
-                print("ISWORKINGOUT: \(isWorkingout)")
+//                print("ISWORKINGOUT: \(isWorkingout)")
                 if isWorkingout {
-                    LiveActivityService.shared.stop()
                     LiveActivityService.shared.start(with: data)
                     cachedContentState = .init(from: data)
                 } else {
@@ -859,7 +851,7 @@ extension HomeViewController {
         NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
             .observe(on: MainScheduler.instance)
             .bind { _ in
-                print("🐈‍⬛ didEnterBackground!")
+//                print("🐈‍⬛ didEnterBackground!")
                 if reactor.currentState.isResting {
                     reactor.action.onNext(.didEnterBackgroundWhileResting)
                 }
@@ -870,7 +862,7 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-                    print("🎬 휴식 재생/일시정지 이벤트 감지! 인덱스: \(String(describing: index))")
+//                    print("🎬 휴식 재생/일시정지 이벤트 감지! 인덱스: \(String(describing: index))")
                     reactor.action.onNext(.restPauseButtonClicked)
                 }
             }
@@ -880,7 +872,7 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+//                    print("🎬 세트 완료 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
                     reactor.action.onNext(.setCompleteButtonClicked(at: index))
                 }
             }
@@ -890,7 +882,7 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind { notification in
                 LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-                    print("🎬 스킵 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
+//                    print("🎬 스킵 버튼 이벤트 감지! 인덱스: \(String(describing: index))")
                     reactor.action.onNext(.forwardButtonClicked(at: index))
                 }
             }
