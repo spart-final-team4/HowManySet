@@ -616,10 +616,15 @@ final class HomeViewReactor: Reactor {
             
             // MARK: - 루틴 메모 업데이트
         case let .updateRoutineMemo(with: newMemo):
-            let placeholder = String(localized: "메모를 입력해주세요.")
-            let newComment = (newMemo == nil || newMemo == "" || newMemo == placeholder) ? nil : newMemo
-
-            // 저장되는 WorkoutRecord (state의 recordID를 가져옴)
+            let placeholders = [
+                String(localized: "메모를 입력해주세요."),
+                "메모를 입력해주세요.",
+                "Please enter a memo.",
+                "メモを入力してください。"
+            ]
+            let trimmedMemo = newMemo?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let newComment = (trimmedMemo == nil || trimmedMemo == "" || placeholders.contains(trimmedMemo!)) ? nil : trimmedMemo
+            
             let updatedWorkoutRecord = WorkoutRecord(
                 rmID: newState.recordID,
                 documentID: newState.workoutRecord.documentID,
@@ -627,12 +632,12 @@ final class HomeViewReactor: Reactor {
                 workoutRoutine: newState.workoutRoutine,
                 totalTime: newState.workoutTime,
                 workoutTime: newState.workoutTime,
-                comment: newComment, // 새로운 루틴 메모
+                comment: newComment,
                 date: Date()
             )
             print("updatedWorkoutRecord: \(updatedWorkoutRecord)")
             print("새로운 루틴 메모: \(String(describing: newComment))")
-
+            
             updateRecordUseCase.execute(uid: uid, item: updatedWorkoutRecord)
             
         case let .setUpdatingIndex(cardIndex):
