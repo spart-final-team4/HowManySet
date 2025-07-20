@@ -32,7 +32,9 @@ final class DIContainer {
     /// 루틴 리스트 화면을 생성하여 반환
     func makeRoutineListViewController(coordinator: RoutineListCoordinator, caller: ViewCaller) -> UIViewController {
         let firestoreService = FirestoreService()
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
         
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
@@ -50,7 +52,9 @@ final class DIContainer {
     /// 캘린더 화면을 생성하여 반환
     func makeCalendarViewController(coordinator: CalendarCoordinator) -> UIViewController {
         let firestoreService = FirestoreService()
-        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService,
+                                                    realmService: realmService)
         
         let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
@@ -65,31 +69,13 @@ final class DIContainer {
     
     /// 마이페이지 화면을 생성하여 반환
     func makeMyPageViewController(coordinator: MyPageCoordinator) -> UIViewController {
-        let userSettingRepository = UserSettingRepositoryImpl()
-        let fetchUserSettingUseCase = FetchUserSettingUseCase(repository: userSettingRepository)
-        let saveUserSettingUseCase = SaveUserSettingUseCase(repository: userSettingRepository)
-        
         let firestoreService: FirestoreServiceProtocol = FirestoreService()
-        let fsUserSettingRespository = FSUserSettingRepositoryImpl(
-            firestoreService: firestoreService
-        )
-        
-        let fsFetchUserSettingUseCase = FSFetchUserSettingUseCase(
-            repository: fsUserSettingRespository
-        )
-        let fsSaveUserSettingUseCase = FSSaveUserSettingUseCase(
-            repository: fsUserSettingRespository
-        )
         
         let firebaseAuthService = FirebaseAuthService()
         let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
         let authUseCase = AuthUseCase(repository: authRepository)
         
-        let reactor = MyPageViewReactor(
-            fetchUserSettingUseCase: fetchUserSettingUseCase,
-            saveUserSettingUseCase: saveUserSettingUseCase,
-            authUseCase: authUseCase
-        )
+        let reactor = MyPageViewReactor(authUseCase: authUseCase)
         
         return MyPageViewController(reactor: reactor, coordinator: coordinator)
     }
@@ -103,8 +89,11 @@ final class DIContainer {
     /// 운동 편집 뷰를 생성하여 반환
     func makeEditRoutineViewController(coordinator: EditRoutineCoordinator, with routine: WorkoutRoutine, caller: ViewCaller) -> UIViewController {
         let firestoreService = FirestoreService()
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
         let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
         let updateRoutineUseCase = UpdateRoutineUseCase(repository: routineRepository)
@@ -128,9 +117,13 @@ final class DIContainer {
         routine: WorkoutRoutine)
     -> (UIViewController, HomeViewReactor) {
         let firestoreService = FirestoreService()
-        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService)
-        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService)
-        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService)
+        let realmService = RealmService()
+        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService,
+                                                    realmService: realmService)
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let workoutRepository = WorkoutRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
         
         let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)

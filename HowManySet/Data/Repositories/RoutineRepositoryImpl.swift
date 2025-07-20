@@ -14,9 +14,14 @@ import RxSwift
 final class RoutineRepositoryImpl: RoutineRepository {
     
     private let firestoreService: FirestoreServiceProtocol
+    private let realmService: RealmServiceProtocol
     
-    init(firestoreService: FirestoreServiceProtocol) {
+    init(
+        firestoreService: FirestoreServiceProtocol,
+        realmService: RealmServiceProtocol
+    ) {
         self.firestoreService = firestoreService
+        self.realmService = realmService
     }
     
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 저장합니다.
@@ -85,7 +90,11 @@ private extension RoutineRepositoryImpl {
     
     func createRoutineToRealm(to item: WorkoutRoutine) {
         let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
-        RealmService.shared.create(item: routine)
+        do {
+            try realmService.create(item: routine)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     // MARK: Routine Read
@@ -111,15 +120,19 @@ private extension RoutineRepositoryImpl {
     }
     
     func fetchRoutineFromRealm() -> Single<[WorkoutRoutine]> {
-        return Single.create { observer in
-            guard let routines = RealmService.shared.read(type: .workoutRoutine) else {
-                observer(.failure(RealmErrorType.dataNotFound))
+        return Single.create { [weak self] observer in
+            guard let self = self else {
+                observer(.failure(RealmErrorType.objectBindingFailed))
                 return Disposables.create()
             }
             
-            let routineDTO: [WorkoutRoutineDTO] = routines.map{ ($0 as! RMWorkoutRoutine).toDTO()}
-            // 예시: 빈 배열 반환
-            observer(.success(routineDTO.map{$0.toEntity()}))
+            do {
+                let routines = try self.realmService.read(type: .workoutRoutine)
+                let routineDTO = routines.map{ ($0 as! RMWorkoutRoutine).toDTO() }
+                observer(.success(routineDTO.map{$0.toEntity()}))
+            } catch {
+                observer(.failure(RealmErrorType.dataNotFound))
+            }
             
             return Disposables.create()
         }
@@ -144,14 +157,17 @@ private extension RoutineRepositoryImpl {
     }
     
     func updateRoutineWithRelam(item: WorkoutRoutine) {
-        if let routine = RealmService.shared.read(type: .workoutRoutine,
-                                                  primaryKey: item.rmID)
-            as? RMWorkoutRoutine {
-            let newRMWorkout = item.workouts.map{ RMWorkout(dto: WorkoutDTO(entity: $0))}
-            RealmService.shared.updateRoutine(item: routine, workouts: newRMWorkout) { routine in
-                routine.name = item.name
-                routine.workoutArray = newRMWorkout
+        do {
+            if let routine = try realmService.read(type: .workoutRoutine,
+                                                   primaryKey: item.rmID)
+                as? RMWorkoutRoutine {
+                try realmService.update(item: routine) { newRoutine in
+                    newRoutine.name = item.name
+                    newRoutine.workoutArray = routine.workoutArray
+                }
             }
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
@@ -172,6 +188,11 @@ private extension RoutineRepositoryImpl {
     
     func deleteRoutineFromRealm(item: WorkoutRoutine) {
         let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
-        RealmService.shared.delete(item: routine)
+        do {
+            try realmService.delete(item: routine)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
     }
 }
