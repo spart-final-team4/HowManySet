@@ -129,10 +129,12 @@ private extension EditExerciseHorizontalContentStackView {
     
     func bind() {
         weightTextField.rx.text.orEmpty
+            .map { String($0.prefix(5)) }
             .bind(to: weightRelay)
             .disposed(by: disposeBag)
         
         repsTextField.rx.text.orEmpty
+            .map { String($0.prefix(4)) }
             .bind(to: repsRelay)
             .disposed(by: disposeBag)
         
