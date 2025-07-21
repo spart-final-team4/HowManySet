@@ -12,9 +12,9 @@ import Then
 final class HomeView: UIView {
     
     // MARK: - Properties
-    private let screenWidth = UIScreen.main.bounds.width
-    private let cardInset: CGFloat = 20
-    private let cardWidth = UIScreen.main.bounds.width - 40
+    let screenWidth = UIScreen.main.bounds.width
+    let cardInset: CGFloat = 20
+    let cardWidth = UIScreen.main.bounds.width - 40
     
     private let reactor: HomeViewReactor
     
@@ -24,11 +24,11 @@ final class HomeView: UIView {
         $0.spacing = 16
     }
     
-    private lazy var workoutTimeLabel = UILabel().then {
+    lazy var workoutTimeLabel = UILabel().then {
         $0.font = .monospacedDigitSystemFont(ofSize: 36, weight: .bold)
     }
     
-    private lazy var pauseButton = UIButton().then {
+    lazy var pauseButton = UIButton().then {
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 26), forImageIn: .normal)
         $0.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         $0.tintColor = .white
@@ -40,7 +40,7 @@ final class HomeView: UIView {
         $0.alignment = .trailing
     }
     
-    private lazy var stopButton = UIButton().then {
+    lazy var stopButton = UIButton().then {
         $0.layer.cornerRadius = 26
         $0.backgroundColor = .roundButtonBG
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
@@ -48,7 +48,7 @@ final class HomeView: UIView {
         $0.tintColor = .pauseButton
     }
     
-    private lazy var forwardButton = UIButton().then {
+    lazy var forwardButton = UIButton().then {
         $0.layer.cornerRadius = 26
         $0.backgroundColor = .roundButtonBG
         $0.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20), forImageIn: .normal)
@@ -60,24 +60,24 @@ final class HomeView: UIView {
         $0.alpha = 0
     }
     
-    private lazy var restInfoView = RestInfoView(frame: .zero, homeViewReactor: self.reactor).then {
+    lazy var restInfoView = RestInfoView(frame: .zero, homeViewReactor: self.reactor).then {
         $0.backgroundColor = .cardBackground
         $0.layer.cornerRadius = 20
     }
     
     // MARK: - 페이징 스크롤 뷰 관련
-    private lazy var pagingScrollView = UIScrollView().then {
+    lazy var pagingScrollView = UIScrollView().then {
         $0.showsHorizontalScrollIndicator = false
         $0.isPagingEnabled = true
     }
     
-    private lazy var pageController = UIPageControl().then {
+   lazy var pageController = UIPageControl().then {
         $0.currentPage = 0
         $0.numberOfPages = 0
         $0.hidesForSinglePage = false
     }
     
-    private lazy var pagingScrollContentView = UIView()
+    lazy var pagingScrollContentView = UIView()
     
     
     // MARK: - Initializer
