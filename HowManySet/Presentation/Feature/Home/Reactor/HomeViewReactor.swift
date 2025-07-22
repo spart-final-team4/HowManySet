@@ -501,12 +501,16 @@ final class HomeViewReactor: Reactor {
             /// 사용자가 수행한 운동 배열
             var didWorkout: [Workout] = []
             for (i, workout) in newState.workoutRoutine.workouts.enumerated() {
-                didWorkout.append(Workout(
-                    id: workout.id,
-                    name: workout.name,
-                    sets: Array(workout.sets.prefix(newState.workoutCardStates[i].setProgressAmount)),
-                    comment: workout.comment
-                ))
+                let setsDid = Array(workout.sets.prefix(newState.workoutCardStates[i].setProgressAmount))
+                if !setsDid.isEmpty {
+                    didWorkout.append(Workout(
+                        id: workout.id,
+                        name: workout.name,
+                        sets: setsDid,
+                        comment: workout.comment
+                    ))
+                    print(didWorkout)
+                }
             }
             
             let newWorkoutRoutine = WorkoutRoutine(
