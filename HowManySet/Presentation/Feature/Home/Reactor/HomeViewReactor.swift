@@ -64,10 +64,7 @@ final class HomeViewReactor: Reactor {
         /// 운동 완료 시 usecase이용해서 데이터 저장
         case saveWorkoutData
         /// 스킵(다음) 버튼 클릭 시 세트/운동 카운팅
-        case manageWorkoutCount(
-            isRoutineCompleted: Bool,
-            isCurrentExerciseCompleted: Bool
-        )
+        case manageWorkoutCount(isCurrentExerciseCompleted: Bool)
         /// 현재 운동 카드 업데이트
         case updateWorkoutCardState(
             updatedCardState: WorkoutCardState,
@@ -321,10 +318,7 @@ final class HomeViewReactor: Reactor {
             
             if oldIndex != nextIndex {
                 return .concat([
-                    .just(.manageWorkoutCount(
-                        isRoutineCompleted: false,
-                        isCurrentExerciseCompleted: true
-                    )),
+                    .just(.manageWorkoutCount(isCurrentExerciseCompleted: true)),
                     .just(.updateWorkoutCardState(
                         updatedCardState: currentState.workoutCardStates[nextIndex],
                         oldCardState: oldCardState,
@@ -334,11 +328,8 @@ final class HomeViewReactor: Reactor {
                 ])
             } else {
                 return .concat([
+                    .just(.manageWorkoutCount(isCurrentExerciseCompleted: true)),
                     .just(.setCurrentRoutineCompleted),
-                    .just(.manageWorkoutCount(
-                        isRoutineCompleted: true,
-                        isCurrentExerciseCompleted: true
-                    )),
                     .just(.setResting(false)),
                     .just(.setRestTime(0)),
                     .just(.stopRestTimer(true)),
@@ -429,16 +420,14 @@ final class HomeViewReactor: Reactor {
                 newState.isResting = false
             }
             
-        case let .manageWorkoutCount(isRoutineCompleted, isCurrentExerciseCompleted):
-            if isRoutineCompleted,
-               isCurrentExerciseCompleted { // 루틴 전체 완료
-                newState.didExerciseCount += 1
-                newState.didSetCount += 1
-            } else if isCurrentExerciseCompleted { // 현재 운동만 완료
-                // 현재 세트 완료 false로 재설정
+        case let .manageWorkoutCount(isCurrentExerciseCompleted):
+            if isCurrentExerciseCompleted { // 현재 운동 완료
                 newState.didExerciseCount += 1
                 newState.didSetCount += 1
             } else { // 다음 세트로
+                if newState.workoutCardStates[newState.currentExerciseIndex].setIndex <= 1 {
+                    newState.didExerciseCount += 1
+                }
                 newState.didSetCount += 1
             }
             
@@ -512,12 +501,16 @@ final class HomeViewReactor: Reactor {
             /// 사용자가 수행한 운동 배열
             var didWorkout: [Workout] = []
             for (i, workout) in newState.workoutRoutine.workouts.enumerated() {
-                didWorkout.append(Workout(
-                    id: workout.id,
-                    name: workout.name,
-                    sets: Array(workout.sets.prefix(newState.workoutCardStates[i].setProgressAmount)),
-                    comment: workout.comment
-                ))
+                let setsDid = Array(workout.sets.prefix(newState.workoutCardStates[i].setProgressAmount))
+                if !setsDid.isEmpty {
+                    didWorkout.append(Workout(
+                        id: workout.id,
+                        name: workout.name,
+                        sets: setsDid,
+                        comment: workout.comment
+                    ))
+                    print(didWorkout)
+                }
             }
             
             let newWorkoutRoutine = WorkoutRoutine(
