@@ -160,24 +160,6 @@ final class FirestoreService: FirestoreServiceProtocol {
         }
     }
 
-    /// Firestore에서 특정 타입의 모든 문서를 삭제합니다.
-    /// - Parameter type: 삭제할 Firestore 문서 타입
-    func deleteAll<T: Codable>(type: FirestoreDataType<T>) async throws {
-        do {
-            let snapshot = try await db.collection(type.collectionName).getDocuments()
-            let batch = db.batch()
-            
-            for document in snapshot.documents {
-                batch.deleteDocument(document.reference)
-            }
-            
-            try await batch.commit()
-        } catch {
-            print("delete All Failed: \(error.localizedDescription)")
-            throw FirestoreErrorType.networkError
-        }
-    }
-
     /// 사용자별 특정 타입의 모든 문서를 삭제합니다.
     /// - Parameters:
     ///   - userId: 사용자 ID
