@@ -23,10 +23,9 @@ final class FirestoreService: FirestoreServiceProtocol {
     ///   - item: 저장할 Firestore 문서 객체
     ///   - type: 저장할 Firestore 문서 타입
     /// - Returns: 생성된 문서의 ID
-    func create<T: Codable>(item: T, type: FirestoreDataType<T>) async throws -> String {
+    func create<T: Codable>(item: T, type: FirestoreDataType<T>) throws {
         do {
-            let docRef = try await db.collection(type.collectionName).addDocument(from: item)
-            return docRef.documentID
+            try db.collection(type.collectionName).addDocument(from: item)
         } catch {
             print("create Failed: \(error.localizedDescription)")
             throw FirestoreErrorType.networkError
