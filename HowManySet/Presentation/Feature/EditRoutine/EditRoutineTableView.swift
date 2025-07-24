@@ -101,7 +101,7 @@ final class EditRoutineTableView: UITableView {
         return EditRoutioneCellModel(
             name: workout.name,
             setText: String(format: String(localized: "총 %d세트"), workout.sets.count),
-            weightText: "\(workout.sets.map { $0.weight }.max()!)\(workout.sets[0].unit)",
+            weightText: "\(workout.sets.map { $0.weight }.max()!.clean)\(workout.sets[0].unit)",
             repsText: String(format: String(localized: "%d회"), workout.sets.map { $0.reps }.max()!)
         )
     }
