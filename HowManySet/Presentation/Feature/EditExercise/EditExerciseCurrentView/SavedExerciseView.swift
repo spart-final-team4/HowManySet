@@ -55,7 +55,7 @@ final class SavedExerciseView: UIView {
         self.setCountLabel.text = String(
             format: String(localized: "%d세트 * %@%@ * 총 %d회"),
             workout.sets.count,
-            "\(workout.sets.map{ $0.weight }.max()!.clean)",
+            workout.sets.map{ $0.weight }.max()!.clean,
             workout.sets[0].unit,
             workout.sets.map{ $0.reps }.reduce(0, +)
         )
