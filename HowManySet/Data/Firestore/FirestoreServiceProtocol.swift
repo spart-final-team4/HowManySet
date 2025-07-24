@@ -17,18 +17,6 @@ protocol FirestoreServiceProtocol {
     /// - Returns: 생성된 문서의 ID
     func create<T: Codable>(item: T, type: FirestoreDataType<T>) throws
     
-    /// 특정 타입의 모든 문서를 Firestore에서 조회합니다.
-    /// - Parameter type: 조회할 Firestore 문서 타입
-    /// - Returns: 조회된 문서들의 배열
-    func read<T: Codable>(type: FirestoreDataType<T>) async throws -> [T]
-    
-    /// 특정 ID의 문서를 조회합니다.
-    /// - Parameters:
-    ///   - id: 조회할 문서의 ID
-    ///   - type: 조회할 Firestore 문서 타입
-    /// - Returns: 해당 ID의 Firestore 문서, 없을 경우 `nil`
-    func read<T: Codable>(id: String, type: FirestoreDataType<T>) async throws -> T?
-    
     /// 사용자별 문서를 조회합니다.
     /// - Parameters:
     ///   - userId: 사용자 ID
@@ -47,6 +35,7 @@ protocol FirestoreServiceProtocol {
     ///   - id: 삭제할 문서의 ID
     ///   - type: 삭제할 Firestore 문서 타입
     func delete<T: Codable>(id: String, type: FirestoreDataType<T>) async throws
+    
     func deleteWorkout(id: String, item: FSWorkout) async throws
     
     /// 사용자별 특정 타입의 모든 문서를 삭제합니다.
