@@ -144,11 +144,8 @@ private extension RoutineRepositoryImpl {
             do {
                 let dto = WorkoutRoutineDTO(entity: item)
                 let fsRoutine = dto.toFSModel(userId: uid)
-                try await firestoreService.update(
-                    id: item.documentID,
-                    item: fsRoutine,
-                    type: FirestoreDataType<FSWorkoutRoutine>.workoutRoutine
-                )
+                try await firestoreService.updateRoutine(id: item.documentID,
+                                                         item: fsRoutine)
                 print("Firestore 루틴 업데이트 성공")
             } catch {
                 print("Firestore 루틴 업데이트 실패: \(error)")

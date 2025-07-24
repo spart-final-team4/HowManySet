@@ -36,12 +36,11 @@ protocol FirestoreServiceProtocol {
     /// - Returns: 해당 사용자의 문서들 배열
     func read<T: Codable>(userId: String, type: FirestoreDataType<T>) async throws -> [T]
     
-    /// 특정 문서를 업데이트합니다.
-    /// - Parameters:
-    ///   - id: 업데이트할 문서의 ID
-    ///   - item: 업데이트할 데이터
-    ///   - type: 업데이트할 Firestore 문서 타입
-    func update<T: Codable>(id: String, item: T, type: FirestoreDataType<T>) async throws
+    func updateWorkout(id: String, item: FSWorkout) async throws
+    
+    func updateRecord(id: String, item: FSWorkoutRecord) async throws
+    
+    func updateRoutine(id: String, item: FSWorkoutRoutine) async throws
     
     /// 특정 문서를 Firestore에서 삭제합니다.
     /// - Parameters:

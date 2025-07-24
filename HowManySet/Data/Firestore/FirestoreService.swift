@@ -82,46 +82,51 @@ final class FirestoreService: FirestoreServiceProtocol {
             throw FirestoreErrorType.dataNotFound
         }
     }
-
-    /// Firestore에 저장된 문서를 업데이트합니다.
-    /// - Parameters:
-    ///   - id: 업데이트할 문서의 ID
-    ///   - item: 업데이트할 데이터
-    ///   - type: 업데이트할 Firestore 문서 타입
-    func update<T: Codable>(id: String, item: T, type: FirestoreDataType<T>) async throws {
+    
+    func updateRoutine(id: String, item: FSWorkoutRoutine) async throws {
         do {
-            // Workout을 변경하는 경우
-            if let workout = item as? FSWorkout {
-                let docRef = db.collection("workout_routines").document(id)
-                
-                // 문서 가져오기
-                let snapshot = try await docRef.getDocument()
-                var routine = try snapshot.data(as: FSWorkoutRoutine.self)
-                
-                // 기존 workouts에서 id 매칭해서 업데이트
-                if let index = routine.workouts.firstIndex(where: { $0.uuid == workout.uuid }) {
-                    routine.workouts[index] = workout
-                    routine.updatedAt = Date() // 선택적으로 업데이트 시간 갱신
-                } else {
-                    throw NSError(domain: "WorkoutUpdate", code: 404, userInfo: [NSLocalizedDescriptionKey: "Workout not found in record"])
-                }
-                
-                // 업데이트 수행 (전체 교체)
-                try docRef.setData(from: routine, merge: true)
-            } else if let record = item as? FSWorkoutRecord {
-                let querySnapshot = try await db.collection("workout_records").whereField("uuid", isEqualTo: record.uuid).getDocuments()
-                
-                guard let document = querySnapshot.documents.first else {
-                    return
-                }
-                
-                let docRef = document.reference
-                
-                try await docRef.updateData(["comment": record.comment ?? ""])
+            try db.collection("workout_routines").document(id).setData(from: item)
+        } catch {
+            print("update failed: \(error.localizedDescription)")
+            throw FirestoreErrorType.networkError
+        }
+    }
+    
+    func updateWorkout(id: String, item: FSWorkout) async throws {
+        do {
+            let docRef = db.collection("workout_routines").document(id)
+            
+            // 문서 가져오기
+            let snapshot = try await docRef.getDocument()
+            var routine = try snapshot.data(as: FSWorkoutRoutine.self)
+            
+            // 기존 workouts에서 id 매칭해서 업데이트
+            if let index = routine.workouts.firstIndex(where: { $0.uuid == item.uuid }) {
+                routine.workouts[index] = item
+                routine.updatedAt = Date() // 선택적으로 업데이트 시간 갱신
             } else {
-                try db.collection(type.collectionName).document(id).setData(from: item)
+                throw NSError(domain: "WorkoutUpdate", code: 404, userInfo: [NSLocalizedDescriptionKey: "Workout not found in record"])
             }
             
+            // 업데이트 수행 (전체 교체)
+            try docRef.setData(from: routine, merge: true)
+        } catch {
+            print("update failed: \(error.localizedDescription)")
+            throw FirestoreErrorType.networkError
+        }
+    }
+    
+    func updateRecord(id: String, item: FSWorkoutRecord) async throws {
+        do {
+            let querySnapshot = try await db.collection("workout_records").whereField("uuid", isEqualTo: item.uuid).getDocuments()
+            
+            guard let document = querySnapshot.documents.first else {
+                return
+            }
+            
+            let docRef = document.reference
+            
+            try await docRef.updateData(["comment": item.comment ?? ""])
         } catch {
             print("update failed: \(error.localizedDescription)")
             throw FirestoreErrorType.networkError
