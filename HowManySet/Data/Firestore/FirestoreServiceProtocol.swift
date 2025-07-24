@@ -15,7 +15,7 @@ protocol FirestoreServiceProtocol {
     ///   - item: 저장할 Firestore 문서 객체
     ///   - type: 저장할 Firestore 문서 타입
     /// - Returns: 생성된 문서의 ID
-    func create<T: Codable>(item: T, type: FirestoreDataType<T>) async throws -> String
+    func create<T: Codable>(item: T, type: FirestoreDataType<T>) throws
     
     /// 특정 타입의 모든 문서를 Firestore에서 조회합니다.
     /// - Parameter type: 조회할 Firestore 문서 타입

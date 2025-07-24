@@ -76,15 +76,13 @@ final class RoutineRepositoryImpl: RoutineRepository {
 private extension RoutineRepositoryImpl {
     // MARK: Routine Create
     func createRoutineToFirebase(uid: String, to item: WorkoutRoutine) {
-        Task {
-            do {
-                let dto = WorkoutRoutineDTO(entity: item)
-                let fsRoutine = dto.toFSModel(userId: uid)
-                _ = try await firestoreService.create(item: fsRoutine, type: FirestoreDataType<FSWorkoutRoutine>.workoutRoutine)
-                print("Firestore 루틴 저장 성공")
-            } catch {
-                print("Firestore 루틴 저장 실패: \(error)")
-            }
+        do {
+            let dto = WorkoutRoutineDTO(entity: item)
+            let fsRoutine = dto.toFSModel(userId: uid)
+            try firestoreService.create(item: fsRoutine, type: FirestoreDataType<FSWorkoutRoutine>.workoutRoutine)
+            print("Firestore 루틴 저장 성공")
+        } catch {
+            print("Firestore 루틴 저장 실패: \(error)")
         }
     }
     
