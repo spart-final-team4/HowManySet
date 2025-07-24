@@ -44,11 +44,8 @@ private extension WorkoutRepositoryImpl {
             do {
                 let dto = WorkoutDTO(entity: workout)
                 let fsWorkout = dto.toFSModel()
-                try await firestoreService.update(
-                    id: workout.documentID ?? "",
-                    item: fsWorkout,
-                    type: FirestoreDataType<FSWorkout>.workout
-                )
+                try await firestoreService.updateWorkout(id: workout.documentID ?? "",
+                                                         item: fsWorkout)
                 print("Firestore 운동 업데이트 성공")
             } catch {
                 print("Firestore 운동 업데이트 실패: \(error)")
