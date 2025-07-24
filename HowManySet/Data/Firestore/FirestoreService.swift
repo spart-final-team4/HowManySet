@@ -32,36 +32,6 @@ final class FirestoreService: FirestoreServiceProtocol {
         }
     }
 
-    /// Firestore에서 특정 타입의 문서 목록을 조회합니다.
-    /// - Parameter type: 조회할 Firestore 문서 타입
-    /// - Returns: 조회된 문서들의 배열
-    func read<T: Codable>(type: FirestoreDataType<T>) async throws -> [T] {
-        do {
-            let snapshot = try await db.collection(type.collectionName).getDocuments()
-            return try snapshot.documents.compactMap { document in
-                try document.data(as: type.type)
-            }
-        } catch {
-            print("read Failed: \(error.localizedDescription)")
-            throw FirestoreErrorType.dataNotFound
-        }
-    }
-
-    /// Firestore에서 특정 ID에 해당하는 문서를 조회합니다.
-    /// - Parameters:
-    ///   - id: 조회할 문서의 ID
-    ///   - type: 조회할 Firestore 문서 타입
-    /// - Returns: 조회된 문서가 존재하면 반환, 없으면 `nil`
-    func read<T: Codable>(id: String, type: FirestoreDataType<T>) async throws -> T? {
-        do {
-            let document = try await db.collection(type.collectionName).document(id).getDocument()
-            return try document.data(as: type.type)
-        } catch {
-            print("read by ID Failed: \(error.localizedDescription)")
-            return nil
-        }
-    }
-
     /// 사용자별 문서를 조회합니다.
     /// - Parameters:
     ///   - userId: 사용자 ID
