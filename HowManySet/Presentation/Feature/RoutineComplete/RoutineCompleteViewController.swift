@@ -385,24 +385,23 @@ extension RoutineCompleteViewController {
         
         confirmButton.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
-            .map { Reactor.Action.confirmButtonClickedForSavingMemo }
+            .flatMapLatest { [weak self] _ -> Observable<Void> in
+                guard let self = self else { return .empty() }
+                return Observable<Void>.create { observer in
+                    // 클릭 애니메이션
+                    self.confirmButton.animateTap {
+                        observer.onNext(())
+                        observer.onCompleted()
+                    }
+                    return Disposables.create()
+                }
+            }
             .bind { [weak self] action in
                 guard let self else { return }
                 
                 let updatedMemo = self.memoTextView.text
-                
-                reactor.action.onNext(action(updatedMemo))
-                print("RCVC MEMO: \(String(describing: updatedMemo))")
-                
-                // 클릭 애니메이션
-                UIView.animate(withDuration: 0.1, animations: {
-                    self.confirmButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                }, completion: { _ in
-                    UIView.animate(withDuration: 0.1) {
-                        self.confirmButton.transform = .identity
-                    }
-                })
-                
+
+                reactor.action.onNext(.confirmButtonClickedForSavingMemo(newMemo: updatedMemo))
                 self.navigationController?.popToRootViewController(animated: true)
             }
             .disposed(by: disposeBag)
