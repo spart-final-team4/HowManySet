@@ -131,7 +131,11 @@ extension EditRoutineTableView: UITableViewDelegate {
         }
         footerView.configure(viewCaller: self.caller)
         footerView.plusExcerciseButtonTapped
-            .bind(to: footerViewTapped)
+            .subscribe(onNext: { [weak self] in // UI가 변하는 애니메이션을 처리하기 위해 .subscribe(onNext: 사용
+                footerView.animateTap { // 애니메이션 후에 바인딩 이벤트 전달
+                    self?.footerViewTapped.accept(())
+                }
+            })
             .disposed(by: footerView.disposeBag)
         
         return footerView
