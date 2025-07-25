@@ -422,10 +422,9 @@ final class HomeViewReactor: Reactor {
             
         case let .manageWorkoutCount(isCurrentExerciseCompleted):
             if isCurrentExerciseCompleted { // 현재 운동 완료
-                newState.didExerciseCount += 1
                 newState.didSetCount += 1
             } else { // 다음 세트로
-                if newState.workoutCardStates[newState.currentExerciseIndex].setIndex <= 1 {
+                if newState.workoutCardStates[newState.currentExerciseIndex].setIndex < 1 {
                     newState.didExerciseCount += 1
                 }
                 newState.didSetCount += 1
