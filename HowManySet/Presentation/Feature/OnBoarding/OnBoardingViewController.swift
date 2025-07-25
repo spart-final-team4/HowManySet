@@ -98,8 +98,12 @@ final class OnBoardingViewController: UIViewController, View {
             .disposed(by: disposeBag)
 
         nicknameInputView.nextButton.rx.tap
-            .map { _ in OnBoardingViewReactor.Action.completeNicknameSetting }
-            .bind(to: reactor.action)
+            .subscribe(onNext: { [weak self] in
+                guard let self else { return }
+                self.nicknameInputView.nextButton.animateTap {
+                    reactor.action.onNext(.completeNicknameSetting)
+                }
+            })
             .disposed(by: disposeBag)
 
         // 온보딩 관련 바인딩
