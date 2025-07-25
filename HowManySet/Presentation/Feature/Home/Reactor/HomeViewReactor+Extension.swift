@@ -58,15 +58,12 @@ extension HomeViewReactor {
             let updatedCardState = currentCardState
             
             return .concat([
+                .just(.manageWorkoutCount(isCurrentExerciseCompleted: false)),
                 .just(.setResting(isResting)),
                 // 카드 정보 업데이트
                 .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
                 .just(.setRestTimeDataAtProgressBar(restTime)),
-                restTimer,
-                .just(.manageWorkoutCount(
-                    isRoutineCompleted: false,
-                    isCurrentExerciseCompleted: false
-                ))
+                restTimer
             ])
             .observe(on: MainScheduler.instance)
         } else { // 현재 운동의 모든 세트 완료(카드 삭제), 다음 운동으로 이동 또는 루틴 종료
@@ -105,11 +102,8 @@ extension HomeViewReactor {
                 
                 if allCompleted { // 모든 운동 루틴 완료 시
                     return .concat([
+                        .just(.manageWorkoutCount(isCurrentExerciseCompleted: true)),
                         .just(.setCurrentRoutineCompleted),
-                        .just(.manageWorkoutCount(
-                            isRoutineCompleted: true,
-                            isCurrentExerciseCompleted: true
-                        )),
                         .just(.setResting(false)),
                         .just(.setRestTime(0)),
                         .just(.stopRestTimer(true)),
