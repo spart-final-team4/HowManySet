@@ -165,3 +165,35 @@ HowManySet
 │   └── Services
 └── Resources
 ```
+
+## 📚 트러블 슈팅 및 회고
+### 정근호
+| 내용 | 링크 |
+|------------------|----------------------------------|
+| ReactorKit bind() 호출 오류 | https://ellghts.notion.site/ReactorKit-bind-2346a15498a080d281f8f39b038cc504?source=copy_link |
+| 페이징 스크롤 뷰 관련 오류 | https://ellghts.notion.site/2346a15498a080f7b87afb1f181845d7?source=copy_link |
+| 편집 버튼 클릭 시 Reentrancy anomaly was detected | https://ellghts.notion.site/Reentrancy-anomaly-was-detected-2346a15498a08065b5c3e84ab0bfb98b?source=copy_link |
+| stopButton 클릭 시 로직 흐름 문제 | https://ellghts.notion.site/stopButton-2346a15498a0800f96e9c11042e30568?source=copy_link |
+| 운동 완료 시 숫자 데이터만 안나타나는 문제 | https://ellghts.notion.site/2346a15498a0801b9feac34e583fe864?source=copy_link |
+| LiveActivity에서 UIKit으로 만든 ProgressBar가 안보이는 오류 | https://ellghts.notion.site/LiveActivity-UIKit-ProgressBar-2346a15498a08059ab22df9d147ab6a8?source=copy_link |
+| LiveActivity AppIntent 동작 안되는 오류 | https://ellghts.notion.site/LiveActivity-AppIntent-2346a15498a0807997d8d2fc6cc74c9a?source=copy_link |
+| 운동 중 버튼들 클릭 시 Reentrancy anomaly was detected | https://ellghts.notion.site/Reentrancy-anomaly-was-detected-2346a15498a080f89592c7c57e532f9b?source=copy_link |
+| 탭바로 뷰 이동 시 오류 | https://ellghts.notion.site/2346a15498a08033b7a8f1f8ce1f46e8?source=copy_link |
+| Rx Polling → NotificationCenter로 변경 | https://ellghts.notion.site/Rx-Polling-NotificationCenter-2346a15498a080c9bbf3f9beb1d74c3e?source=copy_link |
+| LiveActivity 반응 최적화 | https://ellghts.notion.site/LiveActivity-2346a15498a08062a180d7ec8a485e73?source=copy_link |
+
+### 이민재
+| 내용 | 링크 |
+|------------------|----------------------------------|
+| RxDataSource 구독 해제 현상 | https://jenikeju.tistory.com/369 |
+| ReactorKit bind실행되지 않는 현상 | https://jenikeju.tistory.com/368 |
+
+### 조선우
+| 내용 | 링크 |
+|------------------|----------------------------------|
+|  |  |
+
+### 고욱현
+| 내용 | 링크 |
+|------------------|----------------------------------|
+|  |  |
