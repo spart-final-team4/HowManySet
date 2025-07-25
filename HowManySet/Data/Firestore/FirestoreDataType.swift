@@ -20,27 +20,25 @@ protocol FirestoreDataTypeProtocol {
 /// 다양한 Firestore DTO 타입을 나타내는 열거형입니다.
 /// 타입 캐스팅을 통해 구체 타입 정보를 제공합니다.
 enum FirestoreDataType<T: Codable>: FirestoreDataTypeProtocol {
-    /// WorkoutSetDTO 타입
-    case workoutSet
-    /// WorkoutDTO 타입
-    case workout
     /// WorkoutRoutineDTO 타입
     case workoutRoutine
     /// WorkoutRecordDTO 타입
     case workoutRecord
-    /// UserSettingDTO 타입
-//    case userSetting
+    /// For Test
+    case mockWorkoutRoutine
+    /// For Test
+    case mockWorkoutRecord
 
     /// 각 케이스에 해당하는 Firestore 문서 타입 반환
     var type: T.Type {
         switch self {
-        case .workoutSet:
-            return FSWorkoutSet.self as! T.Type
-        case .workout:
-            return FSWorkout.self as! T.Type
         case .workoutRoutine:
             return FSWorkoutRoutine.self as! T.Type
         case .workoutRecord:
+            return FSWorkoutRecord.self as! T.Type
+        case .mockWorkoutRoutine:
+            return FSWorkoutRoutine.self as! T.Type
+        case .mockWorkoutRecord:
             return FSWorkoutRecord.self as! T.Type
         }
     }
@@ -48,14 +46,14 @@ enum FirestoreDataType<T: Codable>: FirestoreDataTypeProtocol {
     /// 각 케이스에 해당하는 Firestore 컬렉션 이름
     var collectionName: String {
         switch self {
-        case .workoutSet:
-            return "workout_sets"
-        case .workout:
-            return "workouts"
         case .workoutRoutine:
             return "workout_routines"
         case .workoutRecord:
             return "workout_records"
+        case .mockWorkoutRoutine:
+            return "mock_workout_routines"
+        case .mockWorkoutRecord:
+            return "mock_workout_records"
         }
     }
 }
