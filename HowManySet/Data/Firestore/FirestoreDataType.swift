@@ -24,6 +24,10 @@ enum FirestoreDataType<T: Codable>: FirestoreDataTypeProtocol {
     case workoutRoutine
     /// WorkoutRecordDTO 타입
     case workoutRecord
+    /// For Test
+    case mockWorkoutRoutine
+    /// For Test
+    case mockWorkoutRecord
 
     /// 각 케이스에 해당하는 Firestore 문서 타입 반환
     var type: T.Type {
@@ -31,6 +35,10 @@ enum FirestoreDataType<T: Codable>: FirestoreDataTypeProtocol {
         case .workoutRoutine:
             return FSWorkoutRoutine.self as! T.Type
         case .workoutRecord:
+            return FSWorkoutRecord.self as! T.Type
+        case .mockWorkoutRoutine:
+            return FSWorkoutRoutine.self as! T.Type
+        case .mockWorkoutRecord:
             return FSWorkoutRecord.self as! T.Type
         }
     }
@@ -42,6 +50,10 @@ enum FirestoreDataType<T: Codable>: FirestoreDataTypeProtocol {
             return "workout_routines"
         case .workoutRecord:
             return "workout_records"
+        case .mockWorkoutRoutine:
+            return "mock_workout_routines"
+        case .mockWorkoutRecord:
+            return "mock_workout_records"
         }
     }
 }
