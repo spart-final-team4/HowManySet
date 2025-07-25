@@ -125,6 +125,7 @@ private extension EditExerciseHorizontalContentStackView {
         setConstraints()
         setAppearance()
         bind()
+        setDelegates()
     }
     
     func bind() {
@@ -171,6 +172,12 @@ private extension EditExerciseHorizontalContentStackView {
     func setConstraints() {
         self.configureContentLayoutArrangeSubViews()  // 이 함수는 외부에서 정의된 커스텀 메서드로 추정됩니다.
     }
+
+    /// weightTextField, repsTextField의 delegate 설정
+    func setDelegates() {
+        weightTextField.delegate = self
+        repsTextField.delegate = self
+    }
 }
 
 // MARK: - Internal Methods
@@ -181,5 +188,29 @@ extension EditExerciseHorizontalContentStackView {
         self.repsTextField.text = "\(reps)"
         weightRelay.accept(weightTextField.text ?? "")
         repsRelay.accept(repsTextField.text ?? "")
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension EditExerciseHorizontalContentStackView: UITextFieldDelegate {
+    /// textField의 입력값 글자 수를 제한하는 메서드
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
+        // 새로 입력될 텍스트 계산
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+
+        if textField == weightTextField {
+            // 최대 5자리까지 허용(소수점 포함 첫번째 자리까지만 입력할 수 있도록)
+            return updatedText.count <= 5
+        } else if textField == repsTextField {
+            // 최대 4자리까지 허용(소수점이 필요 없음)
+            return updatedText.count <= 4
+        }
+        return true
     }
 }

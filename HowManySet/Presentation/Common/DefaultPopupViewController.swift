@@ -97,13 +97,19 @@ final class DefaultPopupViewController: UIViewController {
     
     /// 확인 버튼 클릭 시 호출되는 메서드
     @objc private func didTapOkButton() {
-        okAction?()
-        self.dismiss(animated: true)
+        okButton.animateTap { [weak self] in
+            guard let self else { return }
+            self.okAction?()
+            self.dismiss(animated: true)
+        }
     }
     
     /// 취소 버튼 클릭 시 팝업 닫기
     @objc private func didTapCancelButton() {
-        self.dismiss(animated: true)
+        cancelButton.animateTap { [weak self] in
+            guard let self else { return }
+            self.dismiss(animated: true)
+        }
     }
 }
 

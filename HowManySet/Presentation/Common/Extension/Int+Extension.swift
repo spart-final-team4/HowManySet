@@ -35,7 +35,7 @@ extension Int {
     /// Int 값을 "00분" 형태의 String으로 반환하는 메서드 
     func toMinutesLabel() -> String {
         let minutes = self / 60
-        let format = String(localized: "분")
+        let format = String(localized: "%d분")
         return String(format: format, minutes)
     }
 }
