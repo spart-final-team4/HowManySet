@@ -159,7 +159,7 @@ extension RecordDetailViewController {
             .filter { $0 }
             .observe(on: MainScheduler.asyncInstance)
             .bind(with: self) { owner, _ in
-                owner.showToast(x: 0, y: -20, message: String(localized: "메모가 수정되었어요!"))
+                owner.showToast(x: 0, y: -30, message: String(localized: "메모가 수정되었어요!"))
                 // tapSave가 되었을 때만(한 번만) 반응하기 위해 false로 다시 설정
                 owner.reactor?.action.onNext(.resetDidUpdateMemo)
             }

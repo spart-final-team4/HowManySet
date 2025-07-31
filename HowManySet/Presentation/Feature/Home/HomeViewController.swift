@@ -211,15 +211,15 @@ private extension HomeViewController {
             // 세트 완료 버튼
             cardView.setCompleteButton.rx.tap
                 .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-                .do(onNext: {
-                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                        cardView.setCompleteButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                    }, completion: { _ in
-                        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                            cardView.setCompleteButton.transform = .identity
-                        })
-                    })
-                })
+                .flatMapLatest { _ in // 애니메이션 완료 후, 액션을 전달
+                    Observable<Void>.create { observer in
+                        cardView.setCompleteButton.animateTap {
+                            observer.onNext(())
+                            observer.onCompleted()
+                        }
+                        return Disposables.create()
+                    }
+                }
                 .map { Reactor.Action.setCompleteButtonClicked(at: cardView.index) }
                 .bind(to: reactor.action)
                 .disposed(by: cardView.disposeBag)
@@ -241,13 +241,7 @@ private extension HomeViewController {
                 .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
                 .do(onNext: {
                     // 클릭 애니메이션
-                    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                        cardView.weightRepsButton.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                    }, completion: { _ in
-                        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseInOut], animations: {
-                            cardView.weightRepsButton.transform = .identity
-                        })
-                    })
+                    cardView.weightRepsButton.animateTap()
                 })
                 .bind(onNext: { [weak self] _ in
                     guard let self else { return }
