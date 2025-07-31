@@ -110,14 +110,20 @@ final class ExercisePopupViewController: UIViewController {
     
     /// 계속 하기 클릭 시
     @objc private func didTapLeftButton() {
-        cancelAction?()
-        self.dismiss(animated: true)
+        leftButton.animateTap { [weak self] in
+            guard let self else { return }
+            self.cancelAction?()
+            self.dismiss(animated: true)
+        }
     }
     
     /// 왼쪽 운동 종료 버튼 클릭 시
     @objc private func didTapRightButton() {
-        nextAction?()
-        self.dismiss(animated: true)
+        rightButton.animateTap { [weak self] in
+            guard let self else { return }
+            self.nextAction?()
+            self.dismiss(animated: true)
+        }
     }
 }
 

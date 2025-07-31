@@ -83,6 +83,8 @@ private extension RecordDetailHeaderView {
         }
 
         routineNameLabel.snp.makeConstraints {
+            $0.leading.greaterThanOrEqualTo(saveButton.snp.trailing).offset(12)
+            $0.trailing.lessThanOrEqualTo(confirmButton.snp.leading).offset(-12)
             $0.center.equalToSuperview()
         }
     }

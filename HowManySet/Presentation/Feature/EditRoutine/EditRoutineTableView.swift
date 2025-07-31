@@ -101,7 +101,7 @@ final class EditRoutineTableView: UITableView {
         return EditRoutioneCellModel(
             name: workout.name,
             setText: String(format: String(localized: "총 %d세트"), workout.sets.count),
-            weightText: "\(workout.sets.map { $0.weight }.max()!)\(workout.sets[0].unit)",
+            weightText: "\(workout.sets.map { $0.weight }.max()!.clean)\(workout.sets[0].unit)",
             repsText: String(format: String(localized: "%d회"), workout.sets.map { $0.reps }.max()!)
         )
     }
@@ -131,7 +131,11 @@ extension EditRoutineTableView: UITableViewDelegate {
         }
         footerView.configure(viewCaller: self.caller)
         footerView.plusExcerciseButtonTapped
-            .bind(to: footerViewTapped)
+            .subscribe(onNext: { [weak self] in // UI가 변하는 애니메이션을 처리하기 위해 .subscribe(onNext: 사용
+                footerView.animateTap { // 애니메이션 후에 바인딩 이벤트 전달
+                    self?.footerViewTapped.accept(())
+                }
+            })
             .disposed(by: footerView.disposeBag)
         
         return footerView
