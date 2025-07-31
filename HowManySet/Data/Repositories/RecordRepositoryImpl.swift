@@ -68,15 +68,13 @@ private extension RecordRepositoryImpl {
     
     // MARK: - Record Create
     func createRecordToFirebase(uid: String, item: WorkoutRecord) {
-        Task {
-            do {
-                let dto = WorkoutRecordDTO(entity: item)
-                let fsRecord = dto.toFSModel(userId: uid)
-                _ = try await firestoreService.create(item: fsRecord, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
-                print("Firestore 기록 저장 성공")
-            } catch {
-                print("Firestore 기록 저장 실패: \(error)")
-            }
+        do {
+            let dto = WorkoutRecordDTO(entity: item)
+            let fsRecord = dto.toFSModel(userId: uid)
+            try firestoreService.create(item: fsRecord, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
+            print("Firestore 기록 저장 성공")
+        } catch {
+            print("Firestore 기록 저장 실패: \(error)")
         }
     }
     
@@ -130,11 +128,8 @@ private extension RecordRepositoryImpl {
             do {
                 let dto = WorkoutRecordDTO(entity: item)
                 let fsRecord = dto.toFSModel(userId: uid)
-                try await firestoreService.update(
-                    id: item.documentID,
-                    item: fsRecord,
-                    type: FirestoreDataType<FSWorkoutRecord>.workoutRecord
-                )
+                try await firestoreService.updateRecord(id: item.documentID,
+                                                        item: fsRecord)
                 print("Firestore 기록 업데이트 성공")
             } catch {
                 print("Firestore 기록 업데이트 실패: \(error)")
