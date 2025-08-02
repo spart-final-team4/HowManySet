@@ -229,18 +229,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+1 min"
+            "value" : "+1m"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "+1分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "+1분"
           }
         }
@@ -251,18 +251,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+10 sec"
+            "value" : "+10s"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "+10秒"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "+10초"
           }
         }
@@ -273,18 +273,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+30 sec"
+            "value" : "+30s"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "+30秒"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "+30초"
           }
         }
@@ -2483,18 +2483,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ending a workout"
+            "value" : "End"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "運動終了"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "운동종료"
           }
         }
