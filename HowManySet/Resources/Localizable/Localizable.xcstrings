@@ -9,6 +9,18 @@
             "value" : "%@ ~ %@, Total %@, Workout %@ "
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ~ %@, Total %@, Entrenamiento %@ "
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ ~ %@, Total %@, Entrenamiento %@ "
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29,6 +41,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@%@ * %d reps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@%@ * %d repes"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@%@ * %d repeticiones"
           }
         },
         "ja" : {
@@ -53,6 +77,18 @@
             "value" : "%d exercises, %d sets"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d ejercicios, %d series"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d ejercicios, %d series"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -75,6 +111,18 @@
             "value" : "%d exercises"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d ejercicios"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d ejercicios"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -90,7 +138,38 @@
       }
     },
     "%d분" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d minutes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d minutos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d minutos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d分"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d분"
+          }
+        }
+      }
     },
     "%d세트" : {
       "localizations" : {
@@ -98,6 +177,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%d sets"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d series"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d series"
           }
         },
         "ja" : {
@@ -122,6 +213,18 @@
             "value" : "%d sets * %@%@ * total %d reps"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d series * %@%@ * total %d reps"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d series * %@%@ * total %d repeticiones"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -142,6 +245,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%d exercises"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d ejercicios"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d ejercicios"
           }
         },
         "ja" : {
@@ -166,6 +281,18 @@
             "value" : "%d reps"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d reps"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%d repeticiones"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -183,6 +310,18 @@
     "%lld/%lld" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld/%2$lld"
+          }
+        },
+        "es-419" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$lld/%2$lld"
@@ -210,6 +349,18 @@
             "value" : "+ Add Set"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ Añadir Serie"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "+ Añadir serie"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -227,6 +378,18 @@
     "+1분" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+1m"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+1m"
+          }
+        },
+        "es-419" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "+1m"
@@ -254,6 +417,18 @@
             "value" : "+10s"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+10s"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+10s"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -271,6 +446,18 @@
     "+30초" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+30s"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+30s"
+          }
+        },
+        "es-419" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "+30s"
@@ -298,6 +485,18 @@
             "value" : "0 cannot be entered."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No se puede introducir 0."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No se puede introducir 0."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -318,6 +517,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "0 cannot be entered."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No se puede introducir 0."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No se puede introducir 0."
           }
         },
         "ja" : {
@@ -343,6 +554,18 @@
             "value" : "Login with Google"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar sesión con Google"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar sesión con Google"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -363,6 +586,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report a problem to HowManySet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar un problema a HowManySet"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reportar un problema a HowManySet"
           }
         },
         "ja" : {
@@ -388,6 +623,18 @@
             "value" : "Login with Kakao"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar con Kakao"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar con Kakao"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -408,6 +655,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Repeticiones"
           }
         },
         "ja" : {
@@ -432,6 +691,18 @@
             "value" : "Privacy Policy"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidad"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Política de privacidad"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -452,6 +723,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "View Results"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver resultados"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ver resultados"
           }
         },
         "ja" : {
@@ -476,6 +759,18 @@
             "value" : "Account"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cuenta"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cuenta"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -496,6 +791,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete Account"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Eliminar cuenta"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Eliminar cuenta"
           }
         },
         "ja" : {
@@ -520,6 +827,18 @@
             "value" : "Record"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Registro"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -540,6 +859,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set it up to fit your own routine"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configúralo a tu medida"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configúralo a tu medida"
           }
         },
         "ja" : {
@@ -564,6 +895,18 @@
             "value" : "Please check your network connection."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, compruebe su conexión de red."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, comprueba tu conexión a la red."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -584,6 +927,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please enter your nickname"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, introduzca su apodo."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ingresa tu apodo"
           }
         },
         "ja" : {
@@ -608,6 +963,18 @@
             "value" : "Next"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Siguiente"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -630,6 +997,18 @@
             "value" : "Set your next break in advance"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configura tu próximo descanso con antelación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Establece tu próximo descanso con antelación"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -650,6 +1029,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Help & Information"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ayuda e información"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ayuda e información"
           }
         },
         "ja" : {
@@ -675,6 +1066,18 @@
             "value" : "License information"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Información de la licencia"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Información de la licencia"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -695,6 +1098,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Log Out"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cerrar sesión"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cerrar sesión"
           }
         },
         "ja" : {
@@ -719,6 +1134,18 @@
             "value" : "Do you want to log out?"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Quieres cerrar sesión?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¿Quieres cerrar sesión?"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -739,6 +1166,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Login failed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fallo al iniciar sesión"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fallo al iniciar sesión"
           }
         },
         "ja" : {
@@ -763,6 +1202,18 @@
             "value" : "Please check your login information."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, comprueba tu información de inicio de sesión."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, revisa tu información de inicio de sesión."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -783,6 +1234,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Routine List"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista de rutinas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Lista de rutinas"
           }
         },
         "ja" : {
@@ -807,6 +1270,18 @@
             "value" : "Save Routine"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar rutina"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Guardar rutina"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -827,6 +1302,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please enter the routine name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, introduce el nombre de la rutina"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, ingresa el nombre de la rutina"
           }
         },
         "ja" : {
@@ -851,6 +1338,18 @@
             "value" : "Routine deleted!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Rutina eliminada!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Rutina eliminada!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -873,6 +1372,18 @@
             "value" : "Memo"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Notas"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -893,6 +1404,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Memo updated!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Nota actualizadas!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Notas actualizadas!"
           }
         },
         "ja" : {
@@ -918,6 +1441,18 @@
             "value" : "Please enter a memo."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, introduzca una nota."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, ingresa una nota."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -939,6 +1474,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please enter a memo."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, introduzca una nota."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, ingresa una nota."
           }
         },
         "ja" : {
@@ -963,6 +1510,18 @@
             "value" : "Home"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Inicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Inicio"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -983,6 +1542,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mail app is not installed.\nPlease install it and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La aplicación de correo no está instalada.\nInstálela y vuelva a intentarlo."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "La app de correo no está instalada.\nPor favor, instálala e inténtalo de nuevo."
           }
         },
         "ja" : {
@@ -1007,6 +1578,18 @@
             "value" : "All exercises completed!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Ejercicios completados!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Todos los ejercicios completados!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1027,6 +1610,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Change List Order"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cambiar orden de la lista"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cambiar orden de la lista"
           }
         },
         "ja" : {
@@ -1051,6 +1646,18 @@
             "value" : "Weight"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peso"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Peso"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1071,6 +1678,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please write your issue or suggestion here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, escribe aquí tu problema o sugerencia."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, escribe aquí tu problema o sugerencia."
           }
         },
         "ja" : {
@@ -1095,6 +1714,18 @@
             "value" : "Report a Problem"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar un Problema"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reportar un problema"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1115,6 +1746,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Refresh with a glass of water!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Refréscate con un vaso de agua!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Refréscate con un vaso de agua!"
           }
         },
         "ja" : {
@@ -1139,6 +1782,18 @@
             "value" : "Click if you've had a glass of water!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si tienes un vaso de agua, ¡haz clic!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Haz clic si tomaste un vaso de agua!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1161,6 +1816,18 @@
             "value" : "Reps"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reps"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nº de repeticiones"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1181,6 +1848,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version Info"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Información de la versión"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Información de la versión"
           }
         },
         "ja" : {
@@ -1206,6 +1885,18 @@
             "value" : "min"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "min"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "min"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1226,6 +1917,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Guest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Invitado"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Invitado"
           }
         },
         "ja" : {
@@ -1251,6 +1954,18 @@
             "value" : "Start as Guest"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar como invitado"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar como invitado"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1271,6 +1986,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empty items cannot be saved."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No se pueden guardar elementos vacíos."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No se pueden guardar elementos vacíos."
           }
         },
         "ja" : {
@@ -1295,6 +2022,18 @@
             "value" : "Delete"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Eliminar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Eliminar"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1315,6 +2054,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Create New Routine"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Crear nueva rutina"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Crear nueva rutina"
           }
         },
         "ja" : {
@@ -1339,6 +2090,18 @@
             "value" : "Add New Exercise"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Añadir nuevo ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Añadir nuevo ejercicio"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1359,6 +2122,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete Selected Exercise"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Eliminar ejercicio seleccionado"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Eliminar ejercicio seleccionado"
           }
         },
         "ja" : {
@@ -1383,6 +2158,18 @@
             "value" : "The selected exercise has been deleted!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Ejercicio eliminado!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡El ejercicio seleccionado ha sido eliminado!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1403,6 +2190,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serie"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Serie"
           }
         },
         "ja" : {
@@ -1427,6 +2226,18 @@
             "value" : "Sets"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Series"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nº de series"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1447,6 +2258,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You can change set count and weight"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes cambiar el número de series y el peso"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Puedes cambiar el número de series y el peso"
           }
         },
         "ja" : {
@@ -1471,6 +2294,18 @@
             "value" : "Set Complete"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serie completada"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Serie completada"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1491,6 +2326,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set Complete Button"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botón de serie completada"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Botón de completar serie"
           }
         },
         "ja" : {
@@ -1515,6 +2362,18 @@
             "value" : "Great job! Your workout record will be saved."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Buen trabajo! Guardaré tu registro de ejercicio."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Buen trabajo! Guardaremos tu registro de entrenamiento."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1535,6 +2394,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Active Time"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo activo"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tiempo activo"
           }
         },
         "ja" : {
@@ -1559,6 +2430,18 @@
             "value" : "Skip"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Omitir"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1579,6 +2462,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comenzar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comenzar"
           }
         },
         "ja" : {
@@ -1603,6 +2498,18 @@
             "value" : "Start"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comenzar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Empezar"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1623,6 +2530,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No exercises added yet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no se han añadido ejercicios."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Todavía no se han agregado ejercicios."
           }
         },
         "ja" : {
@@ -1647,6 +2566,18 @@
             "value" : "Unknown"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Desconocido"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Desconocido"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1667,6 +2598,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notification Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configuración de notificaciones"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configuración de notificaciones"
           }
         },
         "ja" : {
@@ -1691,6 +2634,18 @@
             "value" : "You can change notifications in the Settings app.\nGo to app settings?"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes cambiar las notificaciones en los ajustes de la app.\n\"¿Quieres ir a la configuración de la app?\""
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Puedes cambiar las notificaciones en la app de configuración.\n¿Quieres ir a la configuración de la app?"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1711,6 +2666,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Version: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versión de la aplicación: %@"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Versión de la app: %@"
           }
         },
         "ja" : {
@@ -1735,6 +2702,18 @@
             "value" : "App Settings"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ajustes de la aplicación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configuración de la app"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1755,6 +2734,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valoración de la aplicación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Valoración de la app"
           }
         },
         "ja" : {
@@ -1779,6 +2770,18 @@
             "value" : "Language Setting"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configuración de idioma"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Configuración de idioma"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1801,6 +2804,18 @@
             "value" : "You can change the language in the Settings app.\nGo to app settings?"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes cambiar el idioma en la aplicación de ajustes.\n¿Quieres ir a los ajustes de la aplicación?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Puedes cambiar el idioma en la app de configuración.\n¿Quieres ir a la configuración de la app?"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1821,6 +2836,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Update"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualización"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Actualizar"
           }
         },
         "ja" : {
@@ -1846,6 +2873,18 @@
             "value" : "Coming Soon"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Próximamente"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Próximamente"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1866,6 +2905,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "e.g. Bench Press, Chest Press"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ej.: press de banca, press de pecho"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ej.: press de banca, press de pecho"
           }
         },
         "ja" : {
@@ -1890,6 +2941,18 @@
             "value" : "e.g. Upper Body Routine, 2-Split (Legs/Shoulders)"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ej.: rutina de tren superior, 2 divisiones (piernas/hombros)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ej.: rutina de tren superior, 2 divisiones (piernas/hombros)"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1910,6 +2973,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Let's get stronger today!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡A ganar músculo!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Hoy también a ganar músculo!"
           }
         },
         "ja" : {
@@ -1934,6 +3009,18 @@
             "value" : "What workout today?"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué ejercicio hacemos hoy?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¿Qué ejercicio hacemos hoy?"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1956,6 +3043,18 @@
             "value" : "Today's Routine Complete!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Rutina de hoy completada!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Rutina de hoy completada!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1975,6 +3074,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Error"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "Error"
           }
         },
@@ -2000,6 +3111,18 @@
             "value" : "Workout record saved"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro guardado"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Registro de entrenamiento guardado"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2020,6 +3143,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Workout record deleted!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Registro eliminado!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡El registro de entrenamiento ha sido eliminado!"
           }
         },
         "ja" : {
@@ -2044,6 +3179,18 @@
             "value" : "Edit Exercise List"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editar lista de ejercicios"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editar lista de ejercicios"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2064,6 +3211,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Workout Details"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Detalles del ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Detalles del ejercicio"
           }
         },
         "ja" : {
@@ -2088,6 +3247,18 @@
             "value" : "Please enter the workout sets and reps."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, introduce las series y reps del ejercicio."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, ingresa las series y repeticiones del ejercicio."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2108,6 +3279,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start Workout"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar entrenamiento"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comenzar entrenamiento"
           }
         },
         "ja" : {
@@ -2132,6 +3315,18 @@
             "value" : "Workout complete! Great job!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Entrenamiento completado!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Entrenamiento completado! ¡Buen trabajo!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2152,6 +3347,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercise Name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nombre del ejercicio"
           }
         },
         "ja" : {
@@ -2176,6 +3383,18 @@
             "value" : "From exercise name to set count"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De nombre de ejercicio a número de series."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Desde el nombre del ejercicio hasta el número de series"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2196,6 +3415,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please enter the workout name."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, introduzca el nombre del ejercicio."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, ingresa el nombre del ejercicio."
           }
         },
         "ja" : {
@@ -2220,6 +3451,18 @@
             "value" : "The workout name is too long."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "El nombre del ejercicio es demasiado largo."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "El nombre del ejercicio es demasiado largo."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2240,6 +3483,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The workout name is too short."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "El nombre del ejercicio es demasiado corto."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "El nombre del ejercicio es demasiado corto."
           }
         },
         "ja" : {
@@ -2264,6 +3519,18 @@
             "value" : "Edit Exercise Info"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editar información del ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editar información del ejercicio"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2284,6 +3551,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercises"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ejercicios"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ejercicios"
           }
         },
         "ja" : {
@@ -2308,6 +3587,18 @@
             "value" : "Tap weight or reps during your workout"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca el peso o las reps durante tu entrenamiento."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Al tocar el peso o las repeticiones en la pantalla de entrenamiento"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2328,6 +3619,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You can turn off the app during a workout!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Puedes desactivar la aplicación durante un entrenamiento!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Puedes cerrar la app durante el entrenamiento, ¡no hay problema!"
           }
         },
         "ja" : {
@@ -2352,6 +3655,18 @@
             "value" : "Add Exercise"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Añadir ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Añadir ejercicio"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2374,6 +3689,18 @@
             "value" : "Please enter the exercise name"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor, introduce el nombre del ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Por favor, ingresa el nombre del ejercicio"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2394,6 +3721,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "When you finish, tap Set Complete,"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando termines, pulsa en Serie completada"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cuando termines, pulsa en \"Serie completada\","
           }
         },
         "ja" : {
@@ -2419,6 +3758,18 @@
             "value" : "Want to end the workout?"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Quieres terminar el ejercicio?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¿Quieres terminar el entrenamiento?"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2441,6 +3792,18 @@
             "value" : "Workout added!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Entrenamiento añadido!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Ejercicio añadido!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2461,6 +3824,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter Workout Info"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir información de ejercicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ingresar información del entrenamiento"
           }
         },
         "ja" : {
@@ -2486,6 +3861,18 @@
             "value" : "End"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Terminar entrenamiento"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -2506,6 +3893,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pick only the routines you want and start"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Elige las rutinas que quieras y empieza"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Elige las rutinas que quieras y comienza"
           }
         },
         "ja" : {
@@ -2531,6 +3930,18 @@
             "value" : "Invalid nickname. Use 2–8 characters: English letters, or numbers"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Apodo no válido. (2-8 caracteres: coreano/inglés/números)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Apodo no válido. (2-8 caracteres: coreano/inglés/números)"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2551,6 +3962,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Go"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ir"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ir"
           }
         },
         "ja" : {
@@ -2575,6 +3998,18 @@
             "value" : "Start your next set now!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Empieza ahora la siguiente serie!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Empieza tu siguiente serie ahora!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2595,6 +4030,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A temporary error has occurred. Please try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ha ocurrido un error temporal. Por favor, inténtalo de nuevo más tarde."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ha ocurrido un error temporal. Por favor, inténtalo de nuevo más tarde."
           }
         },
         "ja" : {
@@ -2620,6 +4067,18 @@
             "value" : "A temporary error occurred.\nPlease try again later."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ha ocurrido un error temporal.\nPor favor, inténtalo de nuevo más tarde."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ha ocurrido un error temporal.\nPor favor, inténtalo de nuevo más tarde."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2640,6 +4099,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Input"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Entrada"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Entrada"
           }
         },
         "ja" : {
@@ -2664,6 +4135,18 @@
             "value" : "Finish workout & rest from lock screen"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finalizar y descansar desde la pantalla de bloqueo."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Completa el entrenamiento y descansa desde la pantalla de bloqueo"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2684,6 +4167,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Guardar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Guardar"
           }
         },
         "ja" : {
@@ -2708,6 +4203,18 @@
             "value" : "Saved!"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Guardado!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Guardado!"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2728,6 +4235,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Guardar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Guardar"
           }
         },
         "ja" : {
@@ -2752,6 +4271,18 @@
             "value" : "Are you sure you want to delete your account?"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Seguro que quieres eliminar tu cuenta?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¿Seguro que quieres eliminar tu cuenta?"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2772,6 +4303,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exercises: %d"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ejercicios: %d"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ejercicios: %d"
           }
         },
         "ja" : {
@@ -2797,6 +4340,18 @@
             "value" : "Only the history up to this point is saved."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se guardará el historial hasta este punto."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Solo se guardará el historial hasta este punto."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2817,6 +4372,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reset"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reinicio"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reiniciar"
           }
         },
         "ja" : {
@@ -2841,6 +4408,18 @@
             "value" : "Total %d sets"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total %d series"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Total %d series"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2861,6 +4440,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Total sets: %d"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Series totales: %d"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Series totales: %d"
           }
         },
         "ja" : {
@@ -2885,6 +4476,18 @@
             "value" : "Total Time"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo total"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tiempo total"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2905,6 +4508,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Would you like to update to the latest version?\n(Tap update to go to the App Store.)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Te gustaría actualizar a la última versión?\n(Pulsa en actualizar para ir a la App Store.)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¿Te gustaría actualizar a la última versión?\n(Pulsa en actualizar para ir a la App Store.)"
           }
         },
         "ja" : {
@@ -2929,6 +4544,18 @@
             "value" : "This is not the latest version."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Esta no es la última versión."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Esta no es la última versión."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2949,6 +4576,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancelar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cancelar"
           }
         },
         "ja" : {
@@ -2974,6 +4613,18 @@
             "value" : "Login with Kakao"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar sesión con Kakao"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Iniciar sesión con Kakao"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2994,6 +4645,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All workout records and data will be deleted and cannot be recovered."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Al darte de baja, todos los registros y datos de entrenamiento se eliminarán y no se podrán recuperar."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Al darte de baja, todos los registros y datos de entrenamiento se eliminarán y no se podrán recuperar."
           }
         },
         "ja" : {
@@ -3018,6 +4681,18 @@
             "value" : "Edit"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Editar"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3038,6 +4713,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "2–8 Korean or English characters"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2-8 caracteres en coreano, inglés o números"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2-8 caracteres en coreano, inglés o números"
           }
         },
         "ja" : {
@@ -3062,6 +4749,18 @@
             "value" : "Current Rest Time"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo de descanso actual"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tiempo de descanso actual"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3082,6 +4781,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Current Exercises"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejercicios actuales"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Lista de ejercicios actuales"
           }
         },
         "ja" : {
@@ -3106,6 +4817,18 @@
             "value" : "Current Exercise Index"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Índice de ejercicio actual"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Índice de ejercicio actual"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3126,6 +4849,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No saved workout items."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No hay ejercicios guardados."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No hay ejercicios guardados."
           }
         },
         "ja" : {
@@ -3150,6 +4885,18 @@
             "value" : "No saved workout items."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No hay ejercicios guardados."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "No hay ejercicios guardados."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3170,6 +4917,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Confirmar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Confirmar"
           }
         },
         "ja" : {
@@ -3194,6 +4953,18 @@
             "value" : "reps"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "reps"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "repeticiones"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3214,6 +4985,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Descanso"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Descanso"
           }
         },
         "ja" : {
@@ -3238,6 +5021,18 @@
             "value" : "Skip rest if there is rest time / Skip set if rest time is 0"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltar el descanso si hay tiempo de descanso / Saltar la serie si el tiempo de descanso es 0 "
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Saltar el descanso si hay tiempo de descanso / Saltar la serie si el tiempo de descanso es 0"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3258,6 +5053,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rest Finished!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Descanso terminado!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "¡Descanso terminado!"
           }
         },
         "ja" : {
@@ -3282,6 +5089,18 @@
             "value" : "Pause and resume rest button"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Botón de pausa y reanudar descanso"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Botón de pausa y reanudar descanso"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3304,6 +5123,18 @@
             "value" : "Pause/Resume Rest"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausar/Reanudar Descanso"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pausar/Reanudar descanso"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3324,6 +5155,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check your rest timer,"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisa tu temporizador de descanso,"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Revisa tu temporizador de descanso,"
           }
         },
         "ja" : {
