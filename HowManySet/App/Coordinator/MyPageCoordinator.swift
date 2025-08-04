@@ -61,6 +61,8 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             preferredStyle: .alert
         )
 
+        alert.addAction(UIAlertAction(title: String(localized: "취소"), style: .destructive, handler: nil))
+
         alert.addAction(UIAlertAction(title: String(localized: "이동"), style: .default) { _ in
             // 앱 설정 화면으로 이동
             if let url = URL(string: UIApplication.openSettingsURLString),
@@ -69,7 +71,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             }
         })
 
-        alert.addAction(UIAlertAction(title: String(localized: "취소"), style: .cancel, handler: nil))
         navigationController.present(alert, animated: true)
     }
     
@@ -80,6 +81,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             message: String(localized: "알림은 설정 앱에서 변경할 수 있어요.\n앱 설정으로 이동할까요?"),
             preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(title: String(localized: "취소"), style: .destructive, handler: nil))
 
         alert.addAction(UIAlertAction(title: String(localized: "이동"), style: .default) { _ in
             // 앱 설정 화면으로 이동
@@ -89,7 +91,6 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
             }
         })
 
-        alert.addAction(UIAlertAction(title: String(localized: "취소"), style: .cancel, handler: nil))
         navigationController.present(alert, animated: true)
     }
     
