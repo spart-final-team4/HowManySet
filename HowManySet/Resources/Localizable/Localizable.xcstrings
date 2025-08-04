@@ -141,20 +141,20 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%d minutes"
+            "state" : "translated",
+            "value" : "%dm"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d minutos"
+            "state" : "needs_review",
+            "value" : "%dm"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%d minutos"
+            "state" : "needs_review",
+            "value" : "%dm"
           }
         },
         "ja" : {
@@ -437,7 +437,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "+10초"
           }
         }
@@ -465,13 +465,13 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "+30秒"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "+30초"
           }
         }
@@ -1846,30 +1846,30 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "min"
+            "value" : "m"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "min"
+            "state" : "needs_review",
+            "value" : "m"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "min"
+            "state" : "needs_review",
+            "value" : "m"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "분"
           }
         }
@@ -2357,30 +2357,30 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Active Time"
+            "value" : "Active"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo activo"
+            "state" : "needs_review",
+            "value" : "Activo"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tiempo activo"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "運動時間"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "순 운동"
           }
         }
@@ -2936,30 +2936,30 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Let's get stronger today!"
+            "value" : "Let's get stronger!"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "¡A ganar músculo!"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "¡A ganar músculo!"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "今日も筋トレ頑張ろう！"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "오늘도 득근해요"
           }
         }
@@ -4311,8 +4311,8 @@
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reiniciar"
+            "state" : "translated",
+            "value" : "Reinicio"
           }
         },
         "ja" : {
@@ -4402,13 +4402,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Total Time"
+            "value" : "Total"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tiempo total"
+            "state" : "needs_review",
+            "value" : "Total"
           }
         },
         "es-419" : {
@@ -4419,13 +4419,13 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "総時間"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "총 시간"
           }
         }
