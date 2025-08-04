@@ -28,14 +28,60 @@ final class PrivacyWebViewController: UIViewController {
         return languageCode
     }
     
+    /// 현재 사용자의 지역 코드 리턴
+    /// ex) ko-Kore_KR  ->  KR
+    private func currentLocaleRegionIdentifier() -> String {
+        return Locale.current.region?.identifier ?? "KR"
+    }
+    
     private func localizedPrivacyFile() -> String {
-        switch currentLanguageCode() {
-        case "ko":
-            return "PrivacyPolicy_korean"
-        case "ja":
-            return "PrivacyPolicy_japanese"
+        let regionCode = currentLocaleRegionIdentifier()
+        print(regionCode)
+        switch regionCode {
+        case "KR":
+            return "PrivacyPolicy_Korea"
+        case "JP":
+            return "PrivacyPolicy_Japan"
+        case "AR":
+            return "PrivacyPolicy_Argentina"
+        case "BO":
+            return "PrivacyPolicy_Bolivia"
+        case "CL":
+            return "PrivacyPolicy_Chile"
+        case "CO":
+            return "PrivacyPolicy_Colombia"
+        case "CR":
+            return "PrivacyPolicy_CostaRica"
+        case "CU":
+            return "PrivacyPolicy_Cuba"
+        case "DO":
+            return "PrivacyPolicy_DominicanRepublic"
+        case "EC":
+            return "PrivacyPolicy_Ecuador"
+        case "SV":
+            return "PrivacyPolicy_ElSalvador"
+        case "GT":
+            return "PrivacyPolicy_Guatemala"
+        case "HN":
+            return "PrivacyPolicy_Honduras"
+        case "MX":
+            return "PrivacyPolicy_Mexico"
+        case "NI":
+            return "PrivacyPolicy_Nicaragua"
+        case "PA":
+            return "PrivacyPolicy_Panama"
+        case "PY":
+            return "PrivacyPolicy_Paraguay"
+        case "PE":
+            return "PrivacyPolicy_Peru"
+        case "PR":
+            return "PrivacyPolicy_PuertoRico"
+        case "UY":
+            return "PrivacyPolicy_Uruguay"
+        case "VE":
+            return "PrivacyPolicy_Venezuela"
         default:
-            return "PrivacyPolicy_english(california)"
+            return "PrivacyPolicy_US(California)"
         }
     }
     

@@ -531,6 +531,8 @@
 				ko,
 				ja,
 				Base,
+				es,
+				"es-419",
 			);
 			mainGroup = 669358B22DE9AA8C00956214;
 			minimizedProjectReferenceProxies = 1;

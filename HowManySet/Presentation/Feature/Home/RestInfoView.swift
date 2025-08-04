@@ -13,7 +13,7 @@ import RxCocoa
 import ReactorKit
 
 final class RestInfoView: UIView, View {
-    
+     
     // MARK: - Properties
     private let restButtonText60 = String(localized: "+1분")
     private let restButtonText30 = String(localized: "+30초")
