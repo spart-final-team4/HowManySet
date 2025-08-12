@@ -33,8 +33,10 @@ final class AddExerciseViewController: UIViewController, View {
     // MARK: - UI Components
     
     /// 전체 화면을 스크롤 가능하게 만드는 스크롤 뷰입니다.
-    private let scrollView = UIScrollView()
-    
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
+
     /// 운동명을 입력하는 헤더 뷰입니다.
     private let headerView = EditExerciseHeaderView()
     
