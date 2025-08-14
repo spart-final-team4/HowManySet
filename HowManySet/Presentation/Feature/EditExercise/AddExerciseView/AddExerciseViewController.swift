@@ -33,8 +33,10 @@ final class AddExerciseViewController: UIViewController, View {
     // MARK: - UI Components
     
     /// 전체 화면을 스크롤 가능하게 만드는 스크롤 뷰입니다.
-    private let scrollView = UIScrollView()
-    
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
+
     /// 운동명을 입력하는 헤더 뷰입니다.
     private let headerView = EditExerciseHeaderView()
     
@@ -79,6 +81,10 @@ final class AddExerciseViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+
+        // 초기화면 비활성화
+        footerView.setAddButtonEnabled(false)
+        footerView.setSaveButtonEnabled(false)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -91,7 +97,39 @@ final class AddExerciseViewController: UIViewController, View {
     ///
     /// 버튼 탭, 입력값 변경, 상태 변화에 따른 Alert 및 화면 dismiss 처리를 수행합니다.
     func bind(reactor: AddExerciseViewReactor) {
-        
+
+        // 운동명 입력 여부
+        let nameFilled = headerView.exerciseNameRelay
+            .map { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .distinctUntilChanged()
+
+        // 세트 입력(무게, 개수) 모두 채워졌는지 여부
+        let allSetsFilled = contentView.exerciseInfoRelay
+            .map { rows in
+                let valid = rows.filter { $0.count == 2 }
+                guard !valid.isEmpty else { return false }
+                return valid.allSatisfy { !$0[0].isEmpty && !$0[1].isEmpty }
+            }
+            .distinctUntilChanged()
+
+        // "운동 추가" 버튼 활성 조건
+        Observable.combineLatest(nameFilled, allSetsFilled) { $0 && $1 }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, add in
+                owner.footerView.setAddButtonEnabled(add)
+            }
+            .disposed(by: disposeBag)
+
+        // "루틴 추가" 버튼 활성 조건
+        reactor.state
+            .map { !$0.currentRoutine.workouts.isEmpty }
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, save in
+                owner.footerView.setSaveButtonEnabled(save)
+            }
+            .disposed(by: disposeBag)
+
         // 운동 추가 버튼 탭
         footerView.addExcerciseButtonTapped
             .do(onNext: { [weak self] _ in
