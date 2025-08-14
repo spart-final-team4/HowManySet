@@ -59,7 +59,7 @@ private extension RecordCell {
 
     func setAppearance() {
         contentView.do {
-            $0.backgroundColor = .grey5
+            $0.backgroundColor = #colorLiteral(red: 0.2697538137, green: 0.2697537839, blue: 0.2697538137, alpha: 1)
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
         }
