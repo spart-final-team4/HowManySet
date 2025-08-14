@@ -32,20 +32,16 @@ final class AddExerciseFooterView: UIStackView {
     private let addExcerciseButton = UIButton().then {
         $0.setTitle(String(localized: "운동 추가"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
-        $0.setTitleColor(.background, for: .normal)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.backgroundColor = .brand
     }
     
     /// 루틴 저장 버튼 - 흰색 스타일
     private let saveRoutineButton = UIButton().then {
         $0.setTitle(String(localized: "루틴 저장"), for: .normal)
         $0.titleLabel?.font = .pretendard(size: 18, weight: .medium)
-        $0.setTitleColor(.background, for: .normal)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
-        $0.backgroundColor = .white
     }
     
     /// 기본 생성자 - 수평 스택뷰로 구성 및 UI 초기화
@@ -105,5 +101,23 @@ private extension AddExerciseFooterView {
     /// 스택뷰 내 하위 버튼 추가
     func setViewHierarchy() {
         self.addArrangedSubviews(saveRoutineButton, addExcerciseButton)
+    }
+}
+
+// MARK: - addExcerciseButton,saveRoutineButton State Update
+extension AddExerciseFooterView {
+
+    /// addExcerciseButton 활성, 비활성하는 메서드
+    func setAddButtonEnabled(_ enabled: Bool) {
+        addExcerciseButton.isEnabled = enabled
+        addExcerciseButton.backgroundColor = enabled ? .brand : .disabledButton
+        addExcerciseButton.setTitleColor(enabled ? .background : .dbTypo, for: .normal)
+    }
+
+    /// saveRoutineButton 활성, 비활성하는 메서드
+    func setSaveButtonEnabled(_ enabled: Bool) {
+        saveRoutineButton.isEnabled = enabled
+        saveRoutineButton.backgroundColor = enabled ? .white : .disabledButton
+        saveRoutineButton.setTitleColor(enabled ? .background : .dbTypo, for: .normal)
     }
 }
