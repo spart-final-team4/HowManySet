@@ -47,6 +47,18 @@ final class HomeViewController: UIViewController, View {
         
         setupUI()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print(#function)
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        print(#function)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        print(#function)
+    }
 }
 
 // MARK: - UI Methods
