@@ -1,6 +1,0 @@
-framework module Pods_HowManySetTests {
-  umbrella header "Pods-HowManySetTests-umbrella.h"
-
-  export *
-  module * { export * }
-}
