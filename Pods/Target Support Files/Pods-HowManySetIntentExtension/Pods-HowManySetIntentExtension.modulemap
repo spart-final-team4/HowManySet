@@ -1,0 +1,6 @@
+framework module Pods_HowManySetIntentExtension {
+  umbrella header "Pods-HowManySetIntentExtension-umbrella.h"
+
+  export *
+  module * { export * }
+}
