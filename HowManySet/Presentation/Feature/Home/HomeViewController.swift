@@ -296,7 +296,6 @@ extension HomeViewController {
                 self.coordinator?.popUpEndWorkoutAlert(
                     onConfirm: {
                         Task {
-                            await FullScreenAdViewController().loadInterstitial()
                             reactor.action.onNext(.stopButtonClicked)
                             LiveActivityService.shared.stop() // 라이브 액티비티 종료
                         }
