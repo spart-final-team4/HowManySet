@@ -30,6 +30,9 @@ final class RoutineCompleteViewController: UIViewController, View {
     /// Google Mobile Ads SDK 시작 여부
     private var isMobileAdsStartCalled = false
     
+    var timer: Timer?
+    var timePassed = 0.0
+    
     private let exerciseCompletedText = String(localized: "운동 완료! 수고했어요")
     private let exerciseRecordSavedText = String(localized: "운동 기록 저장됨")
     private let memoPlaceHolderText = String(localized: "메모를 입력해주세요.")
@@ -176,6 +179,12 @@ final class RoutineCompleteViewController: UIViewController, View {
         self.navigationItem.hidesBackButton = true
         
         startGoogleMobileAdsSDK()
+        
+        // AdMob 딜레이 테스트용 타이머
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { Timer in
+            self.timePassed += Timer.timeInterval
+            print(self.timePassed)
+        })
 
 //        self.transitioningDelegate = self
     }
@@ -551,6 +560,7 @@ extension RoutineCompleteViewController: FullScreenContentDelegate {
                 with: testAdId, request: Request())
             interstitial?.fullScreenContentDelegate = self
             print("Interstitial ad loaded!")
+            timer?.invalidate()
         } catch {
             print("Failed to load interstitial ad with error: \(error.localizedDescription)")
         }
