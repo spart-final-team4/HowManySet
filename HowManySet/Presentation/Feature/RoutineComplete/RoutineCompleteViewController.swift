@@ -11,16 +11,24 @@ import Then
 import RxSwift
 import RxCocoa
 import ReactorKit
+import GoogleMobileAds
 
 final class RoutineCompleteViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: RoutineCompleteCoordinatorProtocol?
     
-    // UI에 보여질 운동 통계 요약 데이터
+    /// UI에 보여질 운동 통계 요약 데이터
     var workoutSummary: WorkoutSummary?
     
     var disposeBag = DisposeBag()
+    
+    /// 전면광고
+    var interstitial: InterstitialAd?
+    /// AdMob 테스트용 ID
+    private let testAdId = "ca-app-pub-3940256099942544/4411468910"
+    /// Google Mobile Ads SDK 시작 여부
+    private var isMobileAdsStartCalled = false
     
     private let exerciseCompletedText = String(localized: "운동 완료! 수고했어요")
     private let exerciseRecordSavedText = String(localized: "운동 기록 저장됨")
@@ -167,6 +175,8 @@ final class RoutineCompleteViewController: UIViewController, View {
         self.hidesBottomBarWhenPushed = true
         self.navigationItem.hidesBackButton = true
         
+        startGoogleMobileAdsSDK()
+
 //        self.transitioningDelegate = self
     }
     
@@ -179,8 +189,14 @@ final class RoutineCompleteViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        LoadingIndicator.showLoadingIndicator()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+            LoadingIndicator.hideLoadingIndicator()
+        }
+        
         memoTextView.delegate = self
-
+        
         setupUI()
         bindUIEvents()
         
@@ -399,6 +415,8 @@ extension RoutineCompleteViewController {
             .bind { [weak self] action in
                 guard let self else { return }
                 
+                self.presentInterstitial()
+                
                 let updatedMemo = self.memoTextView.text
 
                 reactor.action.onNext(.confirmButtonClickedForSavingMemo(newMemo: updatedMemo))
@@ -508,6 +526,45 @@ private extension RoutineCompleteViewController {
         return view.asImage()
     }
 }
+
+// MARK: - AdMob: Interstitial
+extension RoutineCompleteViewController: FullScreenContentDelegate {
+    
+    private func startGoogleMobileAdsSDK() {
+      DispatchQueue.main.async {
+        guard !self.isMobileAdsStartCalled else { return }
+
+        self.isMobileAdsStartCalled = true
+
+        // Initialize the Google Mobile Ads SDK.
+        MobileAds.shared.start()
+        // Request an ad.
+        Task {
+          await self.loadInterstitial()
+        }
+      }
+    }
+
+    private func loadInterstitial() async {
+        do {
+            interstitial = try await InterstitialAd.load(
+                with: testAdId, request: Request())
+            interstitial?.fullScreenContentDelegate = self
+            print("Interstitial ad loaded!")
+        } catch {
+            print("Failed to load interstitial ad with error: \(error.localizedDescription)")
+        }
+    }
+    
+    private func presentInterstitial() {
+        if let ad = self.interstitial {
+            ad.present(from: self)
+        } else {
+            print("Ad wasn't ready")
+        }
+    }
+}
+
 
 //extension RoutineCompleteViewController: UIViewControllerTransitioningDelegate {
 //    
