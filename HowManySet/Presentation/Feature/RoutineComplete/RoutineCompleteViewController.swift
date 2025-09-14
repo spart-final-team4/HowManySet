@@ -27,6 +27,8 @@ final class RoutineCompleteViewController: UIViewController, View {
     var interstitial: InterstitialAd?
     /// AdMob 테스트용 ID
     private let testAdId = "ca-app-pub-3940256099942544/4411468910"
+    /// AdMob ID
+    private let adId = "ca-app-pub-1393746060985917~9659867516"
     /// Google Mobile Ads SDK 시작 여부
     private var isMobileAdsStartCalled = false
 
@@ -566,7 +568,7 @@ extension RoutineCompleteViewController: FullScreenContentDelegate {
     private func loadInterstitial() async {
         do {
             interstitial = try await InterstitialAd.load(
-                with: testAdId, request: Request())
+                with: adId, request: Request())
             interstitial?.fullScreenContentDelegate = self
             print("Interstitial ad loaded!")
         } catch {
