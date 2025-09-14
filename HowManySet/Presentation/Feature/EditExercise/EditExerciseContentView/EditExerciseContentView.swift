@@ -11,22 +11,16 @@ import Then
 import RxSwift
 import RxCocoa
 
-/// 운동 정보(세트 단위)를 입력할 수 있는 콘텐츠 뷰입니다.
-///
-/// 구성 요소:
-/// - 상단 헤더 뷰 (`EditExcerciseContentHeaderView`)
-/// - "세트 / 무게 / 개수" 타이틀 스택뷰
-/// - 동적으로 추가되는 세트 입력 행들 (`EditExcerciseHorizontalContentStackView`)
-/// - "+ 세트 추가하기" 버튼
-///
-/// 기능:
-/// - 초기 3개의 세트를 자동으로 생성합니다.
-/// - 버튼을 눌러 세트를 추가할 수 있습니다.
-/// - 각 세트는 삭제 버튼을 포함하며 삭제 시 순서가 재정렬됩니다.
+protocol EditExerciseConetentViewDelegate: AnyObject {
+    func didChangedState()
+}
+
 final class EditExerciseContentView: UIView {
     
     /// Rx 자원 해제를 위한 DisposeBag입니다.
     private let disposeBag = DisposeBag()
+    
+    weak var contentViewDelegate: EditExerciseConetentViewDelegate?
     
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExerciseContentHeaderView()
@@ -34,7 +28,7 @@ final class EditExerciseContentView: UIView {
     private(set) var exerciseInfoRelay = BehaviorRelay<[[String]]>(value: [[]])
     
     /// 세트 정보와 추가 버튼을 포함하는 수직 스택뷰입니다.
-    private let verticalContentStackView = UIStackView().then {
+    let verticalContentStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 0
         $0.alignment = .center
@@ -111,6 +105,7 @@ final class EditExerciseContentView: UIView {
                 var newValue = owner.exerciseInfoRelay.value
                 newValue.remove(at: contentView.order)
                 owner.exerciseInfoRelay.accept(newValue)
+                owner.contentViewDelegate?.didChangedState()
             }.disposed(by: disposeBag)
         
         exerciseInfoRelay.accept(exerciseInfoRelay.value + [["", ""]])
@@ -135,6 +130,8 @@ final class EditExerciseContentView: UIView {
                     owner.exerciseInfoRelay.accept(newValue)
                 }
             }.disposed(by: disposeBag)
+        
+        contentViewDelegate?.didChangedState()
     }
     
     /// 현재 세트 목록을 기준으로 순서를 재설정합니다.
@@ -160,6 +157,12 @@ final class EditExerciseContentView: UIView {
         )
         exerciseInfoRelay.accept([[]])
         setInitialState()
+    }
+    
+    func allTextFields() -> [NumberTextField] {
+        return verticalContentStackView.arrangedSubviews
+            .compactMap{ $0 as? EditExerciseHorizontalContentStackView }
+            .flatMap{ [$0.weightTextField, $0.repsTextField] }
     }
 }
 
