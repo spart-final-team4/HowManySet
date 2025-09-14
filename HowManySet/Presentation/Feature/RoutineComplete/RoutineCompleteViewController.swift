@@ -187,6 +187,19 @@ final class RoutineCompleteViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Task {
+            LoadingIndicator.showLoadingIndicator()
+            // 광고 로딩 대기
+            await self.loadInterstitial()
+            LoadingIndicator.hideLoadingIndicator()
+            // 광고 로드 확인
+            if let ad = self.interstitial {
+                ad.present(from: self)
+            } else {
+                print("Ad wasn't ready")
+            }
+        }
+        
         memoTextView.delegate = self
         
         setupUI()
@@ -410,20 +423,22 @@ extension RoutineCompleteViewController {
                 let updatedMemo = self.memoTextView.text
                 reactor.action.onNext(.confirmButtonClickedForSavingMemo(newMemo: updatedMemo))
                 
-                // 전면 광고 표시
-                Task {
-                    LoadingIndicator.showLoadingIndicator()
-                    // 광고 로딩 대기
-                    await self.loadInterstitial()
-                    LoadingIndicator.hideLoadingIndicator()
-                    // 광고 로드 확인
-                    if let ad = self.interstitial {
-                        ad.present(from: self)
-                    } else {
-                        print("Ad wasn't ready")
-                    }
-                    self.navigationController?.popToRootViewController(animated: true)
-                }
+                self.navigationController?.popToRootViewController(animated: true)
+
+//                // 전면 광고 표시
+//                Task {
+//                    LoadingIndicator.showLoadingIndicator()
+//                    // 광고 로딩 대기
+//                    await self.loadInterstitial()
+//                    LoadingIndicator.hideLoadingIndicator()
+//                    // 광고 로드 확인
+//                    if let ad = self.interstitial {
+//                        ad.present(from: self)
+//                    } else {
+//                        print("Ad wasn't ready")
+//                    }
+//                    self.navigationController?.popToRootViewController(animated: true)
+//                }
             }
             .disposed(by: disposeBag)
     }
