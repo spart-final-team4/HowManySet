@@ -47,18 +47,6 @@ final class HomeViewController: UIViewController, View {
         
         setupUI()
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        print(#function)
-    }
-    
-    override func viewIsAppearing(_ animated: Bool) {
-        print(#function)
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        print(#function)
-    }
 }
 
 // MARK: - UI Methods
@@ -679,6 +667,7 @@ extension HomeViewController {
 
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .bind { _ in
+                print("WILLENTERFOREGROUND!")
                 reactor.action.onNext(.adjustWorkoutTimeOnForeground)
                 reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
@@ -687,6 +676,7 @@ extension HomeViewController {
         NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
             .observe(on: MainScheduler.instance)
             .bind { _ in
+                print("DIDENTERBACKGROUND!")
                 if reactor.currentState.isResting {
                     reactor.action.onNext(.didEnterBackgroundWhileResting)
                 }
