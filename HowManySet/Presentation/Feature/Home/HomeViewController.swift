@@ -25,6 +25,8 @@ final class HomeViewController: UIViewController, View {
     
     private var currentPage = 0
     private var previousPage = 0
+    
+    private var syncTimer: Timer?
   
     // MARK: - UI Components
     lazy var homeView = HomeView(frame: .zero, reactor: self.reactor!)
@@ -46,6 +48,16 @@ final class HomeViewController: UIViewController, View {
         super.viewDidLoad()
         
         setupUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        startSyncTimer()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        stopSyncTimer()
     }
 }
 
@@ -260,6 +272,39 @@ private extension HomeViewController {
         }
     }
 }
+
+// MARK: - Live Activity Sync
+private extension HomeViewController {
+    
+    func startSyncTimer() {
+        // 이미 타이머가 실행 중이면 중복 실행 방지
+        guard syncTimer == nil else { return }
+        
+        syncTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(syncWithLiveActivity), userInfo: nil, repeats: true)
+    }
+    
+    func stopSyncTimer() {
+        syncTimer?.invalidate()
+        syncTimer = nil
+    }
+    
+    @objc func syncWithLiveActivity() {
+        guard let reactor = self.reactor else { return }
+        
+        LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
+            reactor.action.onNext(.restPauseButtonClicked)
+        }
+        
+        LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+            reactor.action.onNext(.setCompleteButtonClicked(at: index))
+        }
+        
+        LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
+            reactor.action.onNext(.forwardButtonClicked(at: index))
+        }
+    }
+}
+
 
 // MARK: - Reactor Binding
 extension HomeViewController {
@@ -682,34 +727,6 @@ extension HomeViewController {
                 }
             }
             .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(.playAndPauseRestEvent)
-            .observe(on: MainScheduler.instance)
-            .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-                    reactor.action.onNext(.restPauseButtonClicked)
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(.setCompleteEvent)
-            .observe(on: MainScheduler.instance)
-            .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(.skipEvent)
-            .observe(on: MainScheduler.instance)
-            .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-                    reactor.action.onNext(.forwardButtonClicked(at: index))
-                }
-            }
-            .disposed(by: disposeBag)
-        
     }//bind
 }
 
