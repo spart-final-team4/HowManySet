@@ -106,10 +106,6 @@
 		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntent/PlayAndPauseRestIntent.swift,
-				AppIntent/SetCompleteIntent.swift,
-				AppIntent/SkipIntent.swift,
-				AppIntent/StopWorkoutIntent.swift,
 				HowManySetWidgetLiveActivity.swift,
 				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
@@ -127,10 +123,6 @@
 		666D1FCD2E03ACC70038F553 /* Exceptions for "HowManySetWidget" folder in "HowManySetIntentExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntent/PlayAndPauseRestIntent.swift,
-				AppIntent/SetCompleteIntent.swift,
-				AppIntent/SkipIntent.swift,
-				AppIntent/StopWorkoutIntent.swift,
 				HowManySetWidgetLiveActivity.swift,
 				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
@@ -177,12 +169,34 @@
 			);
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
+		66ECFBBE2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntent/PlayAndPauseRestIntent.swift,
+				AppIntent/SetCompleteIntent.swift,
+				AppIntent/SkipIntent.swift,
+				AppIntent/StopWorkoutIntent.swift,
+			);
+			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		66ECFBBF2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntent/PlayAndPauseRestIntent.swift,
+				AppIntent/SetCompleteIntent.swift,
+				AppIntent/SkipIntent.swift,
+				AppIntent/StopWorkoutIntent.swift,
+			);
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				66ECFBBE2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySet" target */,
+				66ECFBBF2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetWidgetExtension" target */,
 				666D1FC92E03AC540038F553 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetIntentExtension" target */,
 			);
 			path = HowManySetIntentExtension;
