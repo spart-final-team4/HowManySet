@@ -28,7 +28,6 @@
 		A53AD8582DEF154D003E1FE8 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD8572DEF154D003E1FE8 /* KakaoSDKAuth */; };
 		A53AD85A2DEF154D003E1FE8 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD8592DEF154D003E1FE8 /* KakaoSDKCommon */; };
 		A53AD85C2DEF154D003E1FE8 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD85B2DEF154D003E1FE8 /* KakaoSDKUser */; };
-		AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */; };
 		AA3106882E15EAF900FDF8BD /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = AA3106872E15EAF900FDF8BD /* AcknowList */; };
 		AAD440382DF690BB00B57C81 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; };
 		AAD4403A2DF690BB00B57C81 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -130,7 +129,6 @@
 		669358BB2DE9AA8C00956214 /* HowManySet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HowManySet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		669358D12DE9AA8E00956214 /* HowManySetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -145,14 +143,6 @@
 				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
 				View/SetProgressBarForLiveActivity.swift,
-			);
-			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
-		};
-		666D1FB72E03A95C0038F553 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				HowManySetUITests.swift,
-				HowManySetUITestsLaunchTests.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
@@ -208,14 +198,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		66329E042E014905003405F2 /* HowManySetUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				666D1FB72E03A95C0038F553 /* Exceptions for "HowManySetUITests" folder in "HowManySet" target */,
-			);
-			path = HowManySetUITests;
-			sourceTree = "<group>";
-		};
 		666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -240,11 +222,6 @@
 				667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */,
 			);
 			path = HowManySet;
-			sourceTree = "<group>";
-		};
-		669358D42DE9AA8E00956214 /* HowManySetTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = HowManySetTests;
 			sourceTree = "<group>";
 		};
 		66B4EE3B2E03263100A5F4C6 /* LiveActivity */ = {
@@ -330,13 +307,10 @@
 			isa = PBXGroup;
 			children = (
 				669358BD2DE9AA8C00956214 /* HowManySet */,
-				669358D42DE9AA8E00956214 /* HowManySetTests */,
 				668CB1202DE9BE7000924340 /* HowManySetWidget */,
 				666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */,
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
-				AA25388A2DEFF9AA00463BC6 /* TestPlan.xctestplan */,
-				66329E042E014905003405F2 /* HowManySetUITests */,
 				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
 			);
 			sourceTree = "<group>";
@@ -418,7 +392,6 @@
 				666D1FC42E03AC540038F553 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				66329E042E014905003405F2 /* HowManySetUITests */,
 				669358BD2DE9AA8C00956214 /* HowManySet */,
 				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
 			);
@@ -461,9 +434,6 @@
 			dependencies = (
 				669358D32DE9AA8E00956214 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				669358D42DE9AA8E00956214 /* HowManySetTests */,
-			);
 			name = HowManySetTests;
 			packageProductDependencies = (
 				AAD440372DF690BB00B57C81 /* RealmSwift */,
@@ -484,9 +454,6 @@
 			);
 			dependencies = (
 				669358DD2DE9AA8E00956214 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				66329E042E014905003405F2 /* HowManySetUITests */,
 			);
 			name = HowManySetUITests;
 			productName = HowManySetUITests;
@@ -582,7 +549,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA25388B2DEFF9AA00463BC6 /* TestPlan.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
