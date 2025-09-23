@@ -29,8 +29,6 @@
 		A53AD85A2DEF154D003E1FE8 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD8592DEF154D003E1FE8 /* KakaoSDKCommon */; };
 		A53AD85C2DEF154D003E1FE8 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = A53AD85B2DEF154D003E1FE8 /* KakaoSDKUser */; };
 		AA3106882E15EAF900FDF8BD /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = AA3106872E15EAF900FDF8BD /* AcknowList */; };
-		AAD440382DF690BB00B57C81 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; };
-		AAD4403A2DF690BB00B57C81 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AAD440372DF690BB00B57C81 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,20 +45,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 668CB1192DE9BE7000924340;
 			remoteInfo = HowManySetLiveActivityExtension;
-		};
-		669358D22DE9AA8E00956214 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 669358B32DE9AA8C00956214 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 669358BA2DE9AA8C00956214;
-			remoteInfo = HowManySet;
-		};
-		669358DC2DE9AA8E00956214 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 669358B32DE9AA8C00956214 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 669358BA2DE9AA8C00956214;
-			remoteInfo = HowManySet;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -108,17 +92,6 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AAD440392DF690BB00B57C81 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				AAD4403A2DF690BB00B57C81 /* RealmSwift in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -127,8 +100,6 @@
 		668CB11C2DE9BE7000924340 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		668CB11E2DE9BE7000924340 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		669358BB2DE9AA8C00956214 /* HowManySet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HowManySet.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		669358D12DE9AA8E00956214 /* HowManySetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HowManySetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -276,21 +247,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		669358CE2DE9AA8E00956214 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AAD440382DF690BB00B57C81 /* RealmSwift in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		669358D82DE9AA8E00956214 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -319,8 +275,6 @@
 			isa = PBXGroup;
 			children = (
 				669358BB2DE9AA8C00956214 /* HowManySet.app */,
-				669358D12DE9AA8E00956214 /* HowManySetTests.xctest */,
-				669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */,
 				668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */,
 				666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */,
 			);
@@ -420,46 +374,6 @@
 			productReference = 669358BB2DE9AA8C00956214 /* HowManySet.app */;
 			productType = "com.apple.product-type.application";
 		};
-		669358D02DE9AA8E00956214 /* HowManySetTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 669358E92DE9AA8E00956214 /* Build configuration list for PBXNativeTarget "HowManySetTests" */;
-			buildPhases = (
-				669358CD2DE9AA8E00956214 /* Sources */,
-				669358CE2DE9AA8E00956214 /* Frameworks */,
-				669358CF2DE9AA8E00956214 /* Resources */,
-				AAD440392DF690BB00B57C81 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				669358D32DE9AA8E00956214 /* PBXTargetDependency */,
-			);
-			name = HowManySetTests;
-			packageProductDependencies = (
-				AAD440372DF690BB00B57C81 /* RealmSwift */,
-			);
-			productName = HowManySetTests;
-			productReference = 669358D12DE9AA8E00956214 /* HowManySetTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		669358DA2DE9AA8E00956214 /* HowManySetUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 669358EC2DE9AA8E00956214 /* Build configuration list for PBXNativeTarget "HowManySetUITests" */;
-			buildPhases = (
-				669358D72DE9AA8E00956214 /* Sources */,
-				669358D82DE9AA8E00956214 /* Frameworks */,
-				669358D92DE9AA8E00956214 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				669358DD2DE9AA8E00956214 /* PBXTargetDependency */,
-			);
-			name = HowManySetUITests;
-			productName = HowManySetUITests;
-			productReference = 669358DB2DE9AA8E00956214 /* HowManySetUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -478,14 +392,6 @@
 					};
 					669358BA2DE9AA8C00956214 = {
 						CreatedOnToolsVersion = 16.4;
-					};
-					669358D02DE9AA8E00956214 = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 669358BA2DE9AA8C00956214;
-					};
-					669358DA2DE9AA8E00956214 = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 669358BA2DE9AA8C00956214;
 					};
 				};
 			};
@@ -522,8 +428,6 @@
 			projectRoot = "";
 			targets = (
 				669358BA2DE9AA8C00956214 /* HowManySet */,
-				669358D02DE9AA8E00956214 /* HowManySetTests */,
-				669358DA2DE9AA8E00956214 /* HowManySetUITests */,
 				668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */,
 				666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */,
 			);
@@ -546,20 +450,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		669358B92DE9AA8C00956214 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		669358CF2DE9AA8E00956214 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		669358D92DE9AA8E00956214 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -590,20 +480,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		669358CD2DE9AA8E00956214 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		669358D72DE9AA8E00956214 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -616,16 +492,6 @@
 			isa = PBXTargetDependency;
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 			targetProxy = 668CB12E2DE9BE7300924340 /* PBXContainerItemProxy */;
-		};
-		669358D32DE9AA8E00956214 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
-			targetProxy = 669358D22DE9AA8E00956214 /* PBXContainerItemProxy */;
-		};
-		669358DD2DE9AA8E00956214 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
-			targetProxy = 669358DC2DE9AA8E00956214 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -953,80 +819,6 @@
 			};
 			name = Release;
 		};
-		669358EA2DE9AA8E00956214 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U54KVZDT39;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HowManySet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HowManySet";
-			};
-			name = Debug;
-		};
-		669358EB2DE9AA8E00956214 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U54KVZDT39;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HowManySet.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HowManySet";
-			};
-			name = Release;
-		};
-		669358ED2DE9AA8E00956214 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U54KVZDT39;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = HowManySet;
-			};
-			name = Debug;
-		};
-		669358EE2DE9AA8E00956214 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = U54KVZDT39;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.eightroutes.HowManySetUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = HowManySet;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1062,24 +854,6 @@
 			buildConfigurations = (
 				669358E52DE9AA8E00956214 /* Debug */,
 				669358E62DE9AA8E00956214 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		669358E92DE9AA8E00956214 /* Build configuration list for PBXNativeTarget "HowManySetTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				669358EA2DE9AA8E00956214 /* Debug */,
-				669358EB2DE9AA8E00956214 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		669358EC2DE9AA8E00956214 /* Build configuration list for PBXNativeTarget "HowManySetUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				669358ED2DE9AA8E00956214 /* Debug */,
-				669358EE2DE9AA8E00956214 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1280,11 +1054,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AA3106862E15EAF900FDF8BD /* XCRemoteSwiftPackageReference "AcknowList" */;
 			productName = AcknowList;
-		};
-		AAD440372DF690BB00B57C81 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6615E9232DED443A00ECF8DB /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
