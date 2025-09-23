@@ -13,6 +13,8 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 import UserNotifications
 import RealmSwift
+import GoogleMobileAds
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -24,6 +26,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             // Firebase 초기화
             FirebaseApp.configure()
+            // Google AdMob 초기화
+            MobileAds.shared.start(completionHandler: nil)
+            
             // 앱 시작 시 LiveActivity에 쓰이는 기존 운동 진행정보 UserDefaults 제거
             LiveActivityAppGroupEventBridge.shared.removeAppGroupEventValuesIfNeeded()
             // UNUserNotificationCenterDelegate 설정
