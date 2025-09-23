@@ -30,7 +30,6 @@ public struct PlayAndPauseRestIntent: AppIntent, LiveActivityIntent {
         }
         
         var updatedState = activity.content.state
-        updatedState.isRestPaused.toggle()
     
         // 휴식 PlayAndPause
         if updatedState.isRestPaused { // Pause 클릭 시
