@@ -337,7 +337,7 @@ final class HomeViewReactor: Reactor {
                 ])
             }
             
-            // 백그라운드 시간도 포함한 운동 시간 설정
+            // 백그라운드 -> 포드라운드 시 운동 시간 업데이트
         case .adjustWorkoutTimeOnForeground:
             if let startDate = currentState.workoutStartDate {
                 let elapsedTime = Date().timeIntervalSince(startDate)
@@ -352,9 +352,9 @@ final class HomeViewReactor: Reactor {
         case .routineCompleted:
             return .just(.setCurrentRoutineCompleted)
             
-            // 백그라운드 시간도 포함한 휴식 시간 설정
+            // 백그라운드 -> 포그라운드 시 남은 휴식 시간 업데이트
         case .adjustRestRemainingTimeOnForeground:
-            if let startDate = currentState.restStartDate {
+            if let startDate = currentState.restStartDate, !currentState.isRestPaused {
                 let elapsedTime = Date().timeIntervalSince(startDate)
                 let newRestRemainingTime = max(0, currentState.accumulatedRestRemainingTime - elapsedTime)
                 return .just(.setRestTimeDataAtProgressBar(currentState.restTime, Float(newRestRemainingTime)))

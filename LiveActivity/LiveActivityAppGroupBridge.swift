@@ -47,8 +47,8 @@ final class LiveActivityAppGroupEventBridge {
         let index = defaults.integer(forKey: indexKey)
         let timestamp = defaults.double(forKey: timestampKey)
         let lastTimestamp = lastHandledTimestamps[indexKey] ?? 0
-        print("🎬 timeStamp: \(timestamp), lastTimeStamp: \(lastTimestamp)")
-        print("🎬 DEFAULTS: \(defaults)")
+//        print("🎬 timeStamp: \(timestamp), lastTimeStamp: \(lastTimestamp)")
+//        print("🎬 DEFAULTS: \(defaults)")
         // 중복 실행 방지
         guard timestamp > lastTimestamp else { return }
         lastHandledTimestamps[indexKey] = timestamp
