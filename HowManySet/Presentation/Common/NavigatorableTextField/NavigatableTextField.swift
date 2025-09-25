@@ -16,18 +16,18 @@ final class NavigatableTextField: UITextField {
         toolbar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
         
         let previousButton = UIButton(type: .system)
+        previousButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         previousButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        previousButton.sizeToFit()
         previousButton.addTarget(self, action: #selector(didTappedPreviousButton), for: .touchUpInside)
 
         let nextButton = UIButton(type: .system)
+        previousButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         nextButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-        nextButton.sizeToFit()
         nextButton.addTarget(self, action: #selector(didTappedNextButton), for: .touchUpInside)
 
         let completeButton = UIButton(type: .system)
+        completeButton.frame = CGRect(x: 0, y: 0, width: 80, height: 40)
         completeButton.setTitle("완료", for: .normal)
-        completeButton.sizeToFit()
         completeButton.addTarget(self, action: #selector(didTappedCompleteButton), for: .touchUpInside)
 
         let previousItem = UIBarButtonItem(customView: previousButton)
