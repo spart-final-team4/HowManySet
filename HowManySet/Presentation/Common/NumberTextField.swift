@@ -22,23 +22,28 @@ public class NumberTextField: UITextField {
         let toolbar = UIToolbar()
         toolbar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
         
-        let previousButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"),
-                                             style: .plain,
-                                             target: self,
-                                             action: #selector(didTappedPreviousButton))
-        let nextButton = UIBarButtonItem(image: UIImage(systemName: "chevron.right"),
-                                         style: .plain,
-                                         target: self,
-                                         action: #selector(didTappedNextButton))
-        let completeButton = UIBarButtonItem(title: "완료",
-                                             style: .plain,
-                                             target: self,
-                                             action: #selector(didTappedCompleteButton))
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                                            target: nil,
-                                            action: nil)
+        let previousButton = UIButton(type: .system)
+        previousButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        previousButton.sizeToFit()
+        previousButton.addTarget(self, action: #selector(didTappedPreviousButton), for: .touchUpInside)
+
+        let nextButton = UIButton(type: .system)
+        nextButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        nextButton.sizeToFit()
+        nextButton.addTarget(self, action: #selector(didTappedNextButton), for: .touchUpInside)
+
+        let completeButton = UIButton(type: .system)
+        completeButton.setTitle("완료", for: .normal)
+        completeButton.sizeToFit()
+        completeButton.addTarget(self, action: #selector(didTappedCompleteButton), for: .touchUpInside)
+
+        let previousItem = UIBarButtonItem(customView: previousButton)
+        let nextItem = UIBarButtonItem(customView: nextButton)
+        let completeItem = UIBarButtonItem(customView: completeButton)
+
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolbar.items = [previousItem, nextItem, flexSpace, completeItem]
         
-        toolbar.items = [previousButton, nextButton, flexSpace, completeButton]
         return toolbar
     }
     
