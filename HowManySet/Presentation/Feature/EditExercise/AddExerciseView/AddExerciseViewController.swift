@@ -39,6 +39,9 @@ final class AddExerciseViewController: UIViewController, View {
     /// 운동명을 입력하는 헤더 뷰입니다.
     private let headerView = EditExerciseHeaderView()
     
+    /// 텍스트필드간 이동가능하도록 돕는 객체
+    private let navigator = TextFieldNavigator()
+    
     /// 헤더 하단 구분선입니다.
     private let headerBorderLineView = UIView().then {
         $0.backgroundColor = .systemGray3
@@ -80,7 +83,7 @@ final class AddExerciseViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-
+        contentView.contentViewDelegate = self
         // 초기화면 비활성화
         footerView.setAddButtonEnabled(false)
         footerView.setSaveButtonEnabled(false)
@@ -304,6 +307,12 @@ final class AddExerciseViewController: UIViewController, View {
             }
             .disposed(by: disposeBag)
         
+    }
+}
+
+extension AddExerciseViewController: EditExerciseConetentViewDelegate {
+    func didChangedState() {
+        navigator.register([headerView.exerciseNameTextField] + contentView.allTextFields())
     }
 }
 // MARK: - UI Layout Methods
