@@ -81,6 +81,30 @@ final class NavigatableTextField: UITextField {
         return self
     }
     
+    func disabledPreviousButton() {
+        guard let view = self.inputAccessoryView as? UIToolbar,
+        let button = view.items?[0].customView as? UIButton else { return }
+        button.isEnabled = false
+    }
+    
+    func enabledPreviousButton() {
+        guard let view = self.inputAccessoryView as? UIToolbar,
+        let button = view.items?[0].customView as? UIButton else { return }
+        button.isEnabled = true
+    }
+    
+    func disabledNextButton() {
+        guard let view = self.inputAccessoryView as? UIToolbar,
+        let button = view.items?[1].customView as? UIButton else { return }
+        button.isEnabled = false
+    }
+    
+    func enabledNextButton() {
+        guard let view = self.inputAccessoryView as? UIToolbar,
+        let button = view.items?[1].customView as? UIButton else { return }
+        button.isEnabled = true
+    }
+    
     
     @objc func didTappedPreviousButton() {
         navigator?.didTappedPreviousButton(from: self)
