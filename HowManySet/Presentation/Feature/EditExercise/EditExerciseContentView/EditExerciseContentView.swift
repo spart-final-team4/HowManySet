@@ -20,7 +20,7 @@ final class EditExerciseContentView: UIView {
     /// Rx 자원 해제를 위한 DisposeBag입니다.
     private let disposeBag = DisposeBag()
     
-    private let navigator = TextFieldNavigator()
+    weak var contentViewDelegate: EditExerciseConetentViewDelegate?
     
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExerciseContentHeaderView()
@@ -105,6 +105,7 @@ final class EditExerciseContentView: UIView {
                 var newValue = owner.exerciseInfoRelay.value
                 newValue.remove(at: contentView.order)
                 owner.exerciseInfoRelay.accept(newValue)
+                owner.contentViewDelegate?.didChangedState()
             }.disposed(by: disposeBag)
         
         exerciseInfoRelay.accept(exerciseInfoRelay.value + [["", ""]])
@@ -130,7 +131,7 @@ final class EditExerciseContentView: UIView {
                 }
             }.disposed(by: disposeBag)
         
-        navigator.register(allTextFields())
+        contentViewDelegate?.didChangedState()
     }
     
     /// 현재 세트 목록을 기준으로 순서를 재설정합니다.
@@ -277,6 +278,7 @@ extension EditExerciseContentView {
                     var newValue = owner.exerciseInfoRelay.value
                     newValue.remove(at: contentView.order)
                     owner.exerciseInfoRelay.accept(newValue)
+                    owner.contentViewDelegate?.didChangedState()
                 }.disposed(by: disposeBag)
             
             contentView.weightRepsRelay
@@ -303,7 +305,7 @@ extension EditExerciseContentView {
             contentView.configure(weight: weight, reps: reps)
             exerciseInfoRelay.accept(exerciseInfoRelay.value + [[String(weight), String(reps)]])
         }
-        navigator.register(allTextFields())
+        contentViewDelegate?.didChangedState()
     }
     
     func configureUnitSegment(unit: String) {

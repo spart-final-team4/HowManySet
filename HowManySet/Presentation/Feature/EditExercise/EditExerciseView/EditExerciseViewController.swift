@@ -32,9 +32,12 @@ final class EditExerciseViewController: UIViewController, View {
     
     private(set) var saveResultRelay = PublishRelay<Bool>()
     
+    private let navigator = TextFieldNavigator()
+    
     init(reactor: EditExerciseViewReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
+        contentView.contentViewDelegate = self
         setupUI()
     }
     
@@ -171,6 +174,12 @@ final class EditExerciseViewController: UIViewController, View {
     }
     
 }
+
+extension EditExerciseViewController: EditExerciseConetentViewDelegate {
+    func didChangedState() {
+        navigator.register([headerView.exerciseNameTextField] + contentView.allTextFields())
+    }
+}
 // MARK: - UI Layout Methods
 
 private extension EditExerciseViewController {
@@ -180,6 +189,12 @@ private extension EditExerciseViewController {
         setViewHierarchy()
         setConstraints()
         setAppearance()
+        connectNavigator()
+    }
+    
+    /// 이동가능한 텍스트필드 연결
+    func connectNavigator() {
+        navigator.register([headerView.exerciseNameTextField] + contentView.allTextFields())
     }
     
     /// 기본 배경색 등 외형을 설정합니다.

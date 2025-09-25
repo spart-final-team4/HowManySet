@@ -36,7 +36,7 @@ final class EditExerciseHeaderView: UIView {
     /// 사용자로부터 운동명을 입력받는 텍스트 필드입니다.
     ///
     /// 왼쪽에 패딩이 있으며, 둥근 테두리 및 배경색이 적용되어 있습니다.
-    private let exerciseNameTextField = NavigatableTextField().configureDefaultTextField()
+    let exerciseNameTextField = NavigatableTextField().configureDefaultTextField()
     
     // MARK: - Initializers
     
