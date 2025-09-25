@@ -1,17 +1,10 @@
 import UIKit
 
-protocol NumberTextFieldNavigatorDelegate: AnyObject {
-    func didTappedPreviousButton(from textfield: NumberTextField)
-    func didTappedNextButton(from textfield: NumberTextField)
-}
-
-public class NumberTextField: UITextField {
-    
-    weak var navigatorDelegate: NumberTextFieldNavigatorDelegate?
+final class NavigatableTextField: UITextField {
+    weak var navigator: TextFieldNavigator?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -51,7 +44,7 @@ public class NumberTextField: UITextField {
         self.inputAccessoryView = setToolbar()
     }
     
-    private func configure() {
+    func configureNumberTextField() -> NavigatableTextField {
         placeholder = String(localized: "입력")
         backgroundColor = .bottomSheetBG
         clipsToBounds = true
@@ -64,17 +57,66 @@ public class NumberTextField: UITextField {
         leftViewMode = .always
         
         setAccessoryView()
+        return self
     }
     
+    func configureDefaultTextField() -> NavigatableTextField {
+        placeholder = String(localized: "예) 벤치프레스, 체스트 프레스")
+        backgroundColor = .bottomSheetBG
+        clipsToBounds = true
+        layer.cornerRadius = 12
+        font = .pretendard(size: 16, weight: .regular)
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: self.frame.height))
+        leftView = paddingView
+        leftViewMode = .always
+
+        // 키보드 관련
+        autocorrectionType = .no // 자동 수정 끔
+        spellCheckingType = .no // 맞춤법 검사 끔
+        smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
+        autocapitalizationType = .none // 영문으로 시작할 때 자동 대문자 끔
+        
+        setAccessoryView()
+        return self
+    }
+    
+    
     @objc func didTappedPreviousButton() {
-        navigatorDelegate?.didTappedPreviousButton(from: self)
+        navigator?.didTappedPreviousButton(from: self)
     }
     
     @objc func didTappedNextButton() {
-        navigatorDelegate?.didTappedNextButton(from: self)
+        navigator?.didTappedNextButton(from: self)
     }
     
     @objc func didTappedCompleteButton() {
         super.resignFirstResponder()
+    }
+    
+}
+
+final class TextFieldNavigator {
+    
+    private var textfields: [NavigatableTextField] = []
+    
+    func register(_ textfields: [NavigatableTextField]) {
+        self.textfields = textfields
+        self.textfields.forEach { $0.navigator = self }
+    }
+    
+    func didTappedPreviousButton(from textfield: NavigatableTextField) {
+        guard let index = textfields.firstIndex(of: textfield),
+              index > 0 else { return }
+        let previousTextField = textfields[index - 1]
+        
+        previousTextField.becomeFirstResponder()
+    }
+    
+    func didTappedNextButton(from textfield: NavigatableTextField) {
+        guard let index = textfields.firstIndex(of: textfield),
+              index < textfields.count - 1 else { return }
+        let nextTextField = textfields[index + 1]
+        nextTextField.becomeFirstResponder()
     }
 }

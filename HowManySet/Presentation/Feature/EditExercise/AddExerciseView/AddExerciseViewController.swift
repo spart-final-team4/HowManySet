@@ -24,12 +24,6 @@ final class AddExerciseViewController: UIViewController, View {
     typealias Reactor = AddExerciseViewReactor
     
     // MARK: - Properties
-    private var textfields: [UITextField] {
-        contentView.verticalContentStackView
-            .arrangedSubviews
-            .compactMap { $0 as? EditExerciseHorizontalContentStackView }
-            .flatMap { [$0.weightTextField, $0.repsTextField] }
-    }
     /// Rx 리소스 해제를 위한 DisposeBag입니다.
     var disposeBag = DisposeBag()
     
@@ -86,7 +80,6 @@ final class AddExerciseViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        contentView.contentViewDelegate = self
 
         // 초기화면 비활성화
         footerView.setAddButtonEnabled(false)
@@ -313,31 +306,6 @@ final class AddExerciseViewController: UIViewController, View {
         
     }
 }
-
-// MARK: ContentViewDelegate
-extension AddExerciseViewController: EditExerciseConetentViewDelegate {
-    func didChangedState() {
-        contentView.allTextFields().forEach { $0.navigatorDelegate = self }
-    }
-}
-
-// MARK: NumberTextFieldNavigatorDelegate
-extension AddExerciseViewController: NumberTextFieldNavigatorDelegate {
-    func didTappedPreviousButton(from textfield: NumberTextField) {
-        guard let index = textfields.firstIndex(of: textfield),
-              index > 0 else { return }
-        let previousTextField = textfields[index - 1]
-        previousTextField.becomeFirstResponder()
-    }
-    
-    func didTappedNextButton(from textfield: NumberTextField) {
-        guard let index = textfields.firstIndex(of: textfield),
-              index < textfields.count - 1 else { return }
-        let nextTextField = textfields[index + 1]
-        nextTextField.becomeFirstResponder()
-    }
-}
-
 // MARK: - UI Layout Methods
 
 private extension AddExerciseViewController {

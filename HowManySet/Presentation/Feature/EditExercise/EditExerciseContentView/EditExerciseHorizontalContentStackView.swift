@@ -44,10 +44,12 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
     }
     
     /// 무게를 입력받는 텍스트 필드입니다.
-    let weightTextField = NumberTextField()
+    let weightTextField = NavigatableTextField()
+        .configureNumberTextField()
     
     /// 반복 횟수를 입력받는 텍스트 필드입니다.
-    let repsTextField = NumberTextField()
+    let repsTextField = NavigatableTextField()
+        .configureNumberTextField()
     
     /// 해당 세트를 삭제할 수 있는 버튼입니다.
     private let removeButton = UIButton().then {

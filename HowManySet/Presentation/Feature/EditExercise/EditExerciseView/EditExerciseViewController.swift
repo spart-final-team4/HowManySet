@@ -16,13 +16,6 @@ final class EditExerciseViewController: UIViewController, View {
     
     typealias Reactor = EditExerciseViewReactor
     
-    private var textfields: [UITextField] {
-        contentView.verticalContentStackView
-            .arrangedSubviews
-            .compactMap { $0 as? EditExerciseHorizontalContentStackView }
-            .flatMap { [$0.weightTextField, $0.repsTextField] }
-    }
-    
     var disposeBag = DisposeBag()
     
     var onEditCompleted: (() -> Void)?
@@ -52,8 +45,6 @@ final class EditExerciseViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        contentView.contentViewDelegate = self
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow),
@@ -180,30 +171,6 @@ final class EditExerciseViewController: UIViewController, View {
     }
     
 }
-// MARK: ContentViewDelegate
-extension EditExerciseViewController: EditExerciseConetentViewDelegate {
-    func didChangedState() {
-        contentView.allTextFields().forEach { $0.navigatorDelegate = self }
-    }
-}
-
-// MARK: NumberTextFieldNavigatorDelegate
-extension EditExerciseViewController: NumberTextFieldNavigatorDelegate {
-    func didTappedPreviousButton(from textfield: NumberTextField) {
-        guard let index = textfields.firstIndex(of: textfield),
-              index > 0 else { return }
-        let previousTextField = textfields[index - 1]
-        previousTextField.becomeFirstResponder()
-    }
-    
-    func didTappedNextButton(from textfield: NumberTextField) {
-        guard let index = textfields.firstIndex(of: textfield),
-              index < textfields.count - 1 else { return }
-        let nextTextField = textfields[index + 1]
-        nextTextField.becomeFirstResponder()
-    }
-}
-
 // MARK: - UI Layout Methods
 
 private extension EditExerciseViewController {

@@ -20,7 +20,7 @@ final class EditExerciseContentView: UIView {
     /// Rx 자원 해제를 위한 DisposeBag입니다.
     private let disposeBag = DisposeBag()
     
-    weak var contentViewDelegate: EditExerciseConetentViewDelegate?
+    private let navigator = TextFieldNavigator()
     
     /// 상단 단위 선택 헤더 뷰입니다.
     private let headerView = EditExerciseContentHeaderView()
@@ -105,7 +105,6 @@ final class EditExerciseContentView: UIView {
                 var newValue = owner.exerciseInfoRelay.value
                 newValue.remove(at: contentView.order)
                 owner.exerciseInfoRelay.accept(newValue)
-                owner.contentViewDelegate?.didChangedState()
             }.disposed(by: disposeBag)
         
         exerciseInfoRelay.accept(exerciseInfoRelay.value + [["", ""]])
@@ -131,7 +130,7 @@ final class EditExerciseContentView: UIView {
                 }
             }.disposed(by: disposeBag)
         
-        contentViewDelegate?.didChangedState()
+        navigator.register(allTextFields())
     }
     
     /// 현재 세트 목록을 기준으로 순서를 재설정합니다.
@@ -158,8 +157,7 @@ final class EditExerciseContentView: UIView {
         exerciseInfoRelay.accept([[]])
         setInitialState()
     }
-    
-    func allTextFields() -> [NumberTextField] {
+    func allTextFields() -> [NavigatableTextField] {
         return verticalContentStackView.arrangedSubviews
             .compactMap{ $0 as? EditExerciseHorizontalContentStackView }
             .flatMap{ [$0.weightTextField, $0.repsTextField] }
@@ -304,8 +302,8 @@ extension EditExerciseContentView {
                 }.disposed(by: disposeBag)
             contentView.configure(weight: weight, reps: reps)
             exerciseInfoRelay.accept(exerciseInfoRelay.value + [[String(weight), String(reps)]])
-            contentViewDelegate?.didChangedState()
         }
+        navigator.register(allTextFields())
     }
     
     func configureUnitSegment(unit: String) {
