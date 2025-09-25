@@ -91,11 +91,36 @@ final class AddExerciseViewController: UIViewController, View {
         // 초기화면 비활성화
         footerView.setAddButtonEnabled(false)
         footerView.setSaveButtonEnabled(false)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         onDismiss?()
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        
+        let contentInset = UIEdgeInsets(top: 0,
+                                        left: 0,
+                                        bottom: keyboardFrame.height,
+                                        right: 0)
+        
+        scrollView.contentInset = contentInset
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.contentInset = .zero
     }
     // MARK: - Binding
     
@@ -301,13 +326,15 @@ extension AddExerciseViewController: NumberTextFieldNavigatorDelegate {
     func didTappedPreviousButton(from textfield: NumberTextField) {
         guard let index = textfields.firstIndex(of: textfield),
               index > 0 else { return }
-        textfields[index - 1].becomeFirstResponder()
+        let previousTextField = textfields[index - 1]
+        previousTextField.becomeFirstResponder()
     }
     
     func didTappedNextButton(from textfield: NumberTextField) {
         guard let index = textfields.firstIndex(of: textfield),
               index < textfields.count - 1 else { return }
-        textfields[index + 1].becomeFirstResponder()
+        let nextTextField = textfields[index + 1]
+        nextTextField.becomeFirstResponder()
     }
 }
 
