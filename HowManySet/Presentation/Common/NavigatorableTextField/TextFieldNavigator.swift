@@ -9,7 +9,17 @@ import UIKit
 
 final class TextFieldNavigator {
     
-    private var textfields: [NavigatableTextField] = []
+    private var textfields: [NavigatableTextField] = [] {
+        didSet {
+            textfields.forEach {
+                $0.enabledNextButton()
+                $0.enabledPreviousButton()
+            }
+            textfields.first?.disabledPreviousButton()
+            textfields.last?.disabledNextButton()
+        }
+    }
+    
     
     func register(_ textfields: [NavigatableTextField]) {
         self.textfields = textfields
@@ -20,7 +30,6 @@ final class TextFieldNavigator {
         guard let index = textfields.firstIndex(of: textfield),
               index > 0 else { return }
         let previousTextField = textfields[index - 1]
-        
         previousTextField.becomeFirstResponder()
     }
     
