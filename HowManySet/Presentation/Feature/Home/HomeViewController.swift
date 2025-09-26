@@ -704,7 +704,7 @@ extension HomeViewController {
             cachedContentState = updated
             return updated
         }
-        .debounce(.milliseconds(100), scheduler: MainScheduler.instance) 
+        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
         .bind(onNext: { contentState in
             LiveActivityService.shared.update(state: contentState)
         })
