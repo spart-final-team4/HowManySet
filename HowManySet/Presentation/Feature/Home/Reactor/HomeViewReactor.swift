@@ -461,7 +461,7 @@ final class HomeViewReactor: Reactor {
                 
                 print("restRemainingTime: \(newState.restRemainingTime)")
                 
-                if newState.restRemainingTime <= 0.05 {
+                if newState.restRemainingTime <= 0.1 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
