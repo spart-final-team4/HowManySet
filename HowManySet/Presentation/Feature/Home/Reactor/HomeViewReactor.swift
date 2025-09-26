@@ -293,7 +293,6 @@ final class HomeViewReactor: Reactor {
             ])
             
         case let .editAndMemoViewPresented(cardIndex):
-            let currentExercise = currentState.workoutCardStates[cardIndex]
             return .just(.setEditAndMemoViewPresented(true))
             
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
@@ -357,6 +356,7 @@ final class HomeViewReactor: Reactor {
             if let startDate = currentState.restStartDate, !currentState.isRestPaused {
                 let elapsedTime = Date().timeIntervalSince(startDate)
                 let newRestRemainingTime = max(0, currentState.accumulatedRestRemainingTime - elapsedTime)
+                print("newRestRemainingTime: \(newRestRemainingTime)")
                 return .just(.setRestTimeDataAtProgressBar(currentState.restTime, Float(newRestRemainingTime)))
             } else {
                 return .empty()
@@ -458,7 +458,9 @@ final class HomeViewReactor: Reactor {
                !newState.isRestTimerStopped {
                 // 0.01초씩 감소
                 newState.restRemainingTime = max(newState.restRemainingTime - 0.01, 0)
-
+                
+                print("restRemainingTime: \(newState.restRemainingTime)")
+                
                 if newState.restRemainingTime.rounded() == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
