@@ -28,16 +28,16 @@ extension HomeViewReactor {
         
         if isResting {
             let restTime = currentState.restTime
-            let tickCount = restTime * 100 // 0.01초 간격으로 진행
+            let tickCount = restTime * 20 // 0.05초 간격으로 진행
             // 휴식 타이머
-            restTimer = Observable<Int>.interval(.milliseconds(10), scheduler: MainScheduler.asyncInstance)
+            restTimer = Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
                 .take(Int(tickCount))
                 .take(until: self.state.map {
                     $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
                     .filter { $0 }
                 )
                 .map { _ in Mutation.restRemainingUpdating }
-                .observe(on: MainScheduler.asyncInstance)
+                .observe(on: MainScheduler.instance)
             if restTime > 0 {
                 NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
             }

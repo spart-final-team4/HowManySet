@@ -456,12 +456,12 @@ final class HomeViewReactor: Reactor {
                !newState.isWorkoutPaused,
                !newState.isRestPaused,
                !newState.isRestTimerStopped {
-                // 0.01초씩 감소
-                newState.restRemainingTime = max(newState.restRemainingTime - 0.01, 0)
+                // 0.05초씩 감소
+                newState.restRemainingTime = max(newState.restRemainingTime - 0.05, 0)
                 
                 print("restRemainingTime: \(newState.restRemainingTime)")
                 
-                if newState.restRemainingTime.rounded() == 0.0 {
+                if newState.restRemainingTime <= 0.05 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
