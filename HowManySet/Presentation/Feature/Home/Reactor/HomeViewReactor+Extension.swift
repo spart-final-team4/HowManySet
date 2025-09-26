@@ -18,7 +18,7 @@ extension HomeViewReactor {
         isResting: Bool,
         restTime: Float
     ) -> Observable<HomeViewReactor.Mutation> {
-            
+        
         let nextSetIndex = currentState.workoutCardStates[cardIndex].setIndex + 1
         let currentWorkout = currentState.workoutRoutine.workouts[cardIndex]
         var currentCardState = currentState.workoutCardStates[cardIndex]
@@ -77,7 +77,7 @@ extension HomeViewReactor {
                !currentState.workoutCardStates[cardIndex + 1].allSetsCompleted {
                 nextExerciseIndex += 1
             } else if currentState.workoutCardStates.indices.contains(cardIndex - 1),
-                       !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
+                      !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
                 nextExerciseIndex -= 1
             }
             
@@ -95,33 +95,17 @@ extension HomeViewReactor {
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
                 
-                // TODO: 현재 이부분 거치지 않음 (추후 수정)
-                // 현재 cardDeleteAnimationCompleted에서 종료 시 처리
-                let allCompleted = currentState.workoutCardStates
-                    .allSatisfy { $0.allSetsCompleted }
-                
-                if allCompleted { // 모든 운동 루틴 완료 시
-                    return .concat([
-                        .just(.manageWorkoutCount(isCurrentExerciseCompleted: true)),
-                        .just(.setCurrentRoutineCompleted),
-                        .just(.setResting(false)),
-                        .just(.setRestTime(0)),
-                        .just(.stopRestTimer(true)),
-                        .just(.saveWorkoutData)
-                    ])
-                    .observe(on: MainScheduler.instance)
-                } else { // 다음 운동 없을 때, 운동 끝나기 전 세트
-                    currentCardState.setProgressAmount += 1
-                    let updatedCardState = currentCardState
-                    return .concat([
-                        .just(.setResting(isResting)),
-                        // 카드 정보 업데이트
-                        .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
-                    ])
-                    .observe(on: MainScheduler.instance)
-                }
+                currentCardState.setProgressAmount += 1
+                let updatedCardState = currentCardState
+                return .concat([
+                    .just(.setResting(isResting)),
+                    // 카드 정보 업데이트
+                    .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
+                    .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
+                ])
+                .observe(on: MainScheduler.instance)
             }
+            
         }
     }
     
@@ -215,8 +199,7 @@ extension HomeViewReactor.State {
 // MARK: InitialState 관련
 extension HomeViewReactor {
     
-    //    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
-    //    /// 바로 시작 되도록 isWorkingout = true
+    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
     static func fetchedInitialState(routine: WorkoutRoutine) -> State {
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routine
