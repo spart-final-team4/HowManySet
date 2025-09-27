@@ -604,7 +604,6 @@ final class HomeViewReactor: Reactor {
             newState.restStartDate = date
             
         case let .setRestRemainingTimeWhenBackgrounded(time):
-            newState.accumulatedRestRemainingTime = time
             newState.restRemainingTime = Float(time)
             
             // MARK: - 변경된 운동 정보로 카드 업데이트
