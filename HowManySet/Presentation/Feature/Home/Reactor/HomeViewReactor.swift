@@ -231,14 +231,7 @@ final class HomeViewReactor: Reactor {
             if currentState.isRestPaused {
                 // 현재 일시정지 상태 → 재생으로 전환
                 // interval을 restSecondsRemaining에서 재시작
-                let restTimer = Observable<Int>.interval(.milliseconds(10), scheduler: MainScheduler.asyncInstance)
-                    .take(Int(currentState.restRemainingTime * 100))
-                    .take(until: self.state.map {
-                        $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
-                        .filter { $0 }
-                    )
-                    .map { _ in Mutation.restRemainingUpdating }
-                    .observe(on: MainScheduler.asyncInstance)
+                let restTimer = makeRestTimer(currentState.restRemainingTime)
                 
                 return .concat([
                     .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused)),
@@ -264,14 +257,7 @@ final class HomeViewReactor: Reactor {
             if currentState.isRestPaused {
                 // 현재 일시정지 상태 → 재생으로 전환
                 // interval을 restSecondsRemaining에서 재시작
-                let restTimer = Observable<Int>.interval(.milliseconds(10), scheduler: MainScheduler.asyncInstance)
-                    .take(Int(currentState.restRemainingTime * 100))
-                    .take(until: self.state.map {
-                        $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
-                        .filter { $0 }
-                    )
-                    .map { _ in Mutation.restRemainingUpdating }
-                    .observe(on: MainScheduler.asyncInstance)
+                let restTimer = makeRestTimer(currentState.restRemainingTime)
                 
                 return .concat([
                     .just(.pauseRest(false)),

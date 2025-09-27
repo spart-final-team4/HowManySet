@@ -11,6 +11,19 @@ import ReactorKit
 
 extension HomeViewReactor {
     
+    /// 휴식시간 타이머: 현재 0.05초 간격으로 진행
+    func makeRestTimer(_ restTime: Float) -> Observable<HomeViewReactor.Mutation> {
+        let tickCount = restTime * 20
+        return Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .take(Int(tickCount))
+            .take(until: self.state.map {
+                $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
+                .filter { $0 }
+            )
+            .map { _ in Mutation.restRemainingUpdating }
+            .observe(on: MainScheduler.instance)
+    }
+    
     // MARK: - handleWorkoutFlow
     /// 스킵(다음) 버튼 클릭 시 mutate내에서 실행되는 전반적인 기능 로직
     func handleWorkoutFlow(
@@ -30,14 +43,7 @@ extension HomeViewReactor {
             let restTime = currentState.restTime
             let tickCount = restTime * 20 // 0.05초 간격으로 진행
             // 휴식 타이머
-            restTimer = Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-                .take(Int(tickCount))
-                .take(until: self.state.map {
-                    $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
-                    .filter { $0 }
-                )
-                .map { _ in Mutation.restRemainingUpdating }
-                .observe(on: MainScheduler.instance)
+            restTimer = makeRestTimer(tickCount)
             if restTime > 0 {
                 NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
             }
