@@ -666,9 +666,10 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
-        // LiveActivity isResting, isRemaining 제외한 요소들 업데이트
+        // 운동/휴식시간 제외 업데이트
         reactor.state.map { $0.forLiveActivity }
-            .distinctUntilChanged { $0.isEqualExcludingRestStates(to: $1) }
+            .distinctUntilChanged { $0.isEqualExcludingTime(to: $1) }
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .map { data in
                 guard let cached = cachedContentState else {
                     let data = reactor.currentState.forLiveActivity
@@ -676,7 +677,7 @@ extension HomeViewController {
                     cachedContentState = newState
                     return newState
                 }
-                let updated = cached.updateOtherStates(from: data)
+                let updated = cached.updateWithoutTime(from: data)
                 cachedContentState = updated
                 return updated
             }
@@ -687,34 +688,34 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         
-        Observable.combineLatest(
-            reactor.state.map { $0.isResting },
-            reactor.state.map { $0.restRemainingTime }
-        )
-        .distinctUntilChanged { $0 == $1 }
-        .map { restInfo -> HowManySetWidgetAttributes.ContentState in
-            let (isResting, restRemaining) = restInfo
-            guard let cached = cachedContentState else {
-                let data = reactor.currentState.forLiveActivity
-                let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
-                cachedContentState = newState
-                return newState
-            }
-            let updated = cached.updateRestInfo(isResting, restRemaining)
-            cachedContentState = updated
-            return updated
-        }
-        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-        .bind(onNext: { contentState in
-            LiveActivityService.shared.update(state: contentState)
-        })
-        .disposed(by: disposeBag)
+//        Observable.combineLatest(
+//            reactor.state.map { $0.isResting },
+//            reactor.state.map { $0.restRemainingTime }
+//        )
+//        .distinctUntilChanged { $0 == $1 }
+//        .map { restInfo -> HowManySetWidgetAttributes.ContentState in
+//            let (isResting, restRemaining) = restInfo
+//            guard let cached = cachedContentState else {
+//                let data = reactor.currentState.forLiveActivity
+//                let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
+//                cachedContentState = newState
+//                return newState
+//            }
+//            let updated = cached.updateRestInfo(isResting, restRemaining)
+//            cachedContentState = updated
+//            return updated
+//        }
+//        .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+//        .bind(onNext: { contentState in
+//            LiveActivityService.shared.update(state: contentState)
+//        })
+//        .disposed(by: disposeBag)
 
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .bind { _ in
                 print("WILLENTERFOREGROUND!")
-                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
-                reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
+//                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
+//                reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
@@ -722,9 +723,9 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind { _ in
                 print("DIDENTERBACKGROUND!")
-                if reactor.currentState.isResting {
-                    reactor.action.onNext(.didEnterBackgroundWhileResting)
-                }
+//                if reactor.currentState.isResting {
+//                    reactor.action.onNext(.didEnterBackgroundWhileResting)
+//                }
             }
             .disposed(by: disposeBag)
     }//bind

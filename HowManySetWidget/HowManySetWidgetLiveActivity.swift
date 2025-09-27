@@ -131,11 +131,21 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     Text(restText)
                                         .font(.custom(pretendardBold, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
-                                    Text(context.state.restSecondsRemaining.toRestTimeLabel())
-                                        .font(.system(size: restSecondsRemainigLabelSize))
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.white)
-                                        .monospacedDigit()
+                                                                        
+                                    if !context.state.isRestPaused {
+                                        let restEndDate = Date().addingTimeInterval(TimeInterval(context.state.restSecondsRemaining))
+                                        Text(timerInterval: Date()...restEndDate)
+                                            .font(.system(size: restSecondsRemainigLabelSize))
+                                            .fontWeight(.semibold)
+                                            .foregroundStyle(.white)
+                                            .monospacedDigit()
+                                    } else {
+                                        Text(context.state.restSecondsRemaining.toRestTimeLabel())
+                                            .font(.system(size: restSecondsRemainigLabelSize))
+                                            .fontWeight(.semibold)
+                                            .foregroundStyle(.white)
+                                            .monospacedDigit()
+                                    }
                                 }
                                 
                                 Spacer()
@@ -380,32 +390,32 @@ extension HowManySetWidgetAttributes.ContentState {
         self.restStartDate = data.restStartDate
     }
     
-    func updateRestInfo(_ isResting: Bool, _ restRemaining: Float) -> Self {
+//    func updateRestInfo(_ isResting: Bool, _ restRemaining: Float) -> Self {
+//        return HowManySetWidgetAttributes.ContentState(
+//            workoutTime: self.workoutTime,
+//            isWorkingout: self.isWorkingout,
+//            exerciseName: self.exerciseName,
+//            exerciseInfo: self.exerciseInfo,
+//            currentRoutineCompleted: self.currentRoutineCompleted,
+//            workoutStartDate: self.workoutStartDate,
+//            isResting: isResting,
+//            restSecondsRemaining: Int(restRemaining),
+//            isRestPaused: self.isRestPaused,
+//            currentSet: self.currentSet,
+//            totalSet: self.totalSet,
+//            currentIndex: self.currentIndex,
+//        )
+//    }
+    
+    func updateWithoutTime(from data: WorkoutDataForLiveActivity) -> Self {
         return HowManySetWidgetAttributes.ContentState(
             workoutTime: self.workoutTime,
-            isWorkingout: self.isWorkingout,
-            exerciseName: self.exerciseName,
-            exerciseInfo: self.exerciseInfo,
-            currentRoutineCompleted: self.currentRoutineCompleted,
-            workoutStartDate: self.workoutStartDate,
-            isResting: isResting,
-            restSecondsRemaining: Int(restRemaining),
-            isRestPaused: self.isRestPaused,
-            currentSet: self.currentSet,
-            totalSet: self.totalSet,
-            currentIndex: self.currentIndex,
-        )
-    }
-    
-    func updateOtherStates(from data: WorkoutDataForLiveActivity) -> Self {
-        return HowManySetWidgetAttributes.ContentState(
-            workoutTime: data.workoutTime,
             isWorkingout: data.isWorkingout,
             exerciseName: data.exerciseName,
             exerciseInfo: data.exerciseInfo,
             currentRoutineCompleted: data.currentRoutineCompleted,
             workoutStartDate: data.workoutStartDate,
-            isResting: self.isResting,
+            isResting: data.isResting,
             restSecondsRemaining: self.restSecondsRemaining,
             isRestPaused: data.isRestPaused,
             currentSet: data.currentSet,
@@ -416,10 +426,9 @@ extension HowManySetWidgetAttributes.ContentState {
 }
 
 extension WorkoutDataForLiveActivity {
-    /// isResting, restSecondsRemaining을 제외한 값들만 비교
-    func isEqualExcludingRestStates(to other: WorkoutDataForLiveActivity) -> Bool {
-        return self.workoutTime == other.workoutTime &&
-               self.isWorkingout == other.isWorkingout &&
+    /// 운동/휴식시간 제외한 값들만 비교
+    func isEqualExcludingTime(to other: WorkoutDataForLiveActivity) -> Bool {
+        return self.isWorkingout == other.isWorkingout &&
                self.exerciseName == other.exerciseName &&
                self.exerciseInfo == other.exerciseInfo &&
                self.currentRoutineCompleted == other.currentRoutineCompleted &&
@@ -428,6 +437,7 @@ extension WorkoutDataForLiveActivity {
                self.totalSet == other.totalSet &&
                self.currentIndex == other.currentIndex &&
                self.workoutStartDate == other.workoutStartDate &&
-               self.restStartDate == other.restStartDate
+               self.restStartDate == other.restStartDate &&
+               self.isResting == other.isResting
     }
 }
