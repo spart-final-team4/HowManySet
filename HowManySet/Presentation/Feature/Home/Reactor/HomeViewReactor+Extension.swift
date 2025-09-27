@@ -160,8 +160,8 @@ extension HomeViewReactor.State {
                 currentSet: 0,
                 totalSet: 0,
                 currentIndex: 0,
-                accumulatedWorkoutTime: 0,
-                accumulatedRestRemaining: 0
+                restStartDate: nil,
+                workoutStartDate: Date()
             )
         }
         
@@ -189,8 +189,8 @@ extension HomeViewReactor.State {
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
             currentIndex: currentExerciseIndex,
-            accumulatedWorkoutTime: Int(accumulatedWorkoutTime),
-            accumulatedRestRemaining: Int(accumulatedRestRemainingTime)
+            restStartDate: restStartDate,
+            workoutStartDate: workoutStartDate
         )
     }
 }
@@ -278,6 +278,7 @@ extension HomeViewReactor {
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
             currentWorkoutData: initialRoutine.workouts[0],
+            workoutStartDate: Date(),
             accumulatedWorkoutTime: 0,
             accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
