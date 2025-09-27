@@ -22,11 +22,13 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var exerciseName: String
         var exerciseInfo: String
         var currentRoutineCompleted: Bool
+        var workoutStartDate: Date?
         
         // 휴식 중 관련
         var isResting: Bool
         var restSecondsRemaining: Int
         var isRestPaused: Bool
+        var restStartDate: Date?
         
         // 세트 관련
         var currentSet: Int
@@ -34,12 +36,6 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         
         // 현재 코드 인덱스
         var currentIndex: Int
-        
-        // 백그라운드 용
-        var accumulatedWorkoutTime: Int
-        var accumulatedRestRemaining: Int
-        var workoutStartDate: Date?
-        var restStartDate: Date?
     }
     
     // Fixed non-changing properties about your activity go here!
@@ -59,13 +55,6 @@ struct HowManySetWidgetLiveActivity: Widget {
     
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: HowManySetWidgetAttributes.self) { context in
-            
-            let elapsedWorkoutTime = Date().timeIntervalSince(context.state.workoutStartDate ?? Date())
-            let updatedWorkoutTime = Int(elapsedWorkoutTime) + (context.state.workoutTime)
-            let elapsedRestRemaining = context.state.restStartDate != nil
-                ? Date().timeIntervalSince(context.state.restStartDate!)
-                : 0
-            let updatedRestRemaining = max(context.state.restSecondsRemaining - Int(elapsedRestRemaining), 0)
 
             // Lock screen/banner UI goes here
             VStack {
@@ -75,7 +64,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(updatedWorkoutTime.toWorkOutTimeLabel())
+                                Text(context.state.workoutTime.toWorkOutTimeLabel())
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
                                     .fontWeight(.semibold)
@@ -142,7 +131,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                     Text(restText)
                                         .font(.custom(pretendardBold, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
-                                    Text(updatedRestRemaining.toRestTimeLabel())
+                                    Text(context.state.restSecondsRemaining.toRestTimeLabel())
                                         .font(.system(size: restSecondsRemainigLabelSize))
                                         .fontWeight(.semibold)
                                         .foregroundStyle(.white)
@@ -387,8 +376,6 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
         self.currentIndex = data.currentIndex
-        self.accumulatedWorkoutTime = data.accumulatedWorkoutTime
-        self.accumulatedRestRemaining = data.accumulatedRestRemaining
         self.workoutStartDate = data.workoutStartDate
         self.restStartDate = data.restStartDate
     }
@@ -406,8 +393,6 @@ extension HowManySetWidgetAttributes.ContentState {
             currentSet: self.currentSet,
             totalSet: self.totalSet,
             currentIndex: self.currentIndex,
-            accumulatedWorkoutTime: self.accumulatedWorkoutTime,
-            accumulatedRestRemaining: self.accumulatedRestRemaining
         )
     }
     
@@ -423,9 +408,7 @@ extension HowManySetWidgetAttributes.ContentState {
             isRestPaused: data.isRestPaused,
             currentSet: data.currentSet,
             totalSet: data.totalSet,
-            currentIndex: data.currentIndex,
-            accumulatedWorkoutTime: data.accumulatedWorkoutTime,
-            accumulatedRestRemaining: data.accumulatedRestRemaining
+            currentIndex: data.currentIndex
         )
     }
 }
@@ -442,8 +425,6 @@ extension WorkoutDataForLiveActivity {
                self.currentSet == other.currentSet &&
                self.totalSet == other.totalSet &&
                self.currentIndex == other.currentIndex &&
-               self.accumulatedWorkoutTime == other.accumulatedWorkoutTime &&
-               self.accumulatedRestRemaining == other.accumulatedRestRemaining &&
                self.workoutStartDate == other.workoutStartDate &&
                self.restStartDate == other.restStartDate
     }
