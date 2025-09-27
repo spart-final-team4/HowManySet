@@ -22,7 +22,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var exerciseName: String
         var exerciseInfo: String
         var currentRoutineCompleted: Bool
-        var workoutStartDate: Date?
+        var workoutStartDate: Date
         
         // 휴식 중 관련
         var isResting: Bool
@@ -64,7 +64,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(context.state.workoutTime.toWorkOutTimeLabel())
+                                Text(context.state.workoutStartDate, style: .timer)
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
                                     .fontWeight(.semibold)
@@ -387,6 +387,7 @@ extension HowManySetWidgetAttributes.ContentState {
             exerciseName: self.exerciseName,
             exerciseInfo: self.exerciseInfo,
             currentRoutineCompleted: self.currentRoutineCompleted,
+            workoutStartDate: self.workoutStartDate,
             isResting: isResting,
             restSecondsRemaining: Int(restRemaining),
             isRestPaused: self.isRestPaused,
@@ -403,6 +404,7 @@ extension HowManySetWidgetAttributes.ContentState {
             exerciseName: data.exerciseName,
             exerciseInfo: data.exerciseInfo,
             currentRoutineCompleted: data.currentRoutineCompleted,
+            workoutStartDate: data.workoutStartDate,
             isResting: self.isResting,
             restSecondsRemaining: self.restSecondsRemaining,
             isRestPaused: data.isRestPaused,

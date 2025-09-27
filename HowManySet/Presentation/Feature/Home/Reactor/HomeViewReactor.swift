@@ -85,7 +85,7 @@ final class HomeViewReactor: Reactor {
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
         // 백그라운드 관련
-        case setWorkoutStartDate(Date?) /// 운동 시작 시각 설정
+        case setWorkoutStartDate(Date) /// 운동 시작 시각 설정
         case setWorkoutTimeWhenBackgrounded(TimeInterval) /// 총 누적된 운동 시간 (+background) 설정
         case setRestRemainingStartDate(Date?) /// 남은 휴식 시작 시각 설정
         case setRestRemainingTimeWhenBackgrounded(TimeInterval) /// 총 누적된 남은 휴식 시간 (+background) 설정
@@ -134,7 +134,7 @@ final class HomeViewReactor: Reactor {
         var didSetCount: Int
         var currentWorkoutData: Workout
         // 백그라운드 용
-        var workoutStartDate: Date? /// 운동 시작 시각
+        var workoutStartDate: Date /// 운동 시작 시각
         var accumulatedWorkoutTime: TimeInterval /// 총 누적된 운동 시간 (+background)
         var restStartDate: Date? /// 휴식 시작 시각
         var accumulatedRestRemainingTime: TimeInterval /// 총 누적된 휴식 시간 (+background)
@@ -338,15 +338,8 @@ final class HomeViewReactor: Reactor {
             
             // 백그라운드 -> 포드라운드 시 운동 시간 업데이트
         case .adjustWorkoutTimeOnForeground:
-            if let startDate = currentState.workoutStartDate {
-                let elapsedTime = Date().timeIntervalSince(startDate)
-                return .concat([
-                    .just(.setWorkoutTimeWhenBackgrounded(currentState.accumulatedWorkoutTime + elapsedTime)),
-                    .just(.setWorkoutStartDate(Date())) // 다시 시작 시각 기록 (초기화)
-                ])
-            } else {
-                return .empty()
-            }
+            let elapsedTime = Date().timeIntervalSince(currentState.workoutStartDate)
+            return .just(.setWorkoutTimeWhenBackgrounded(elapsedTime))
             
         case .routineCompleted:
             return .just(.setCurrentRoutineCompleted)
@@ -615,7 +608,6 @@ final class HomeViewReactor: Reactor {
             newState.workoutStartDate = date
             
         case let .setWorkoutTimeWhenBackgrounded(time):
-            newState.accumulatedWorkoutTime = time
             newState.workoutTime = Int(time)
             
         case .setCurrentRoutineCompleted:
