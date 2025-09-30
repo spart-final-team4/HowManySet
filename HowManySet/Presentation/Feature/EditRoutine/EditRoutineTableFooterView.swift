@@ -64,7 +64,8 @@ private extension EditRoutineTableFooterView {
     }
     
     func bind() {
-        plusExcerciseButton.rx.tap
+        Observable
+            .merge([plusImageButton.rx.tap.asObservable(), plusExcerciseTitleButton.rx.tap.asObservable()])
             .bind(to: plusExcerciseButtonTapped)
             .disposed(by: disposeBag)
     }
