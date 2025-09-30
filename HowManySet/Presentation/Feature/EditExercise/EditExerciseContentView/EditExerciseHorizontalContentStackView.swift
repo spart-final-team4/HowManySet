@@ -150,7 +150,7 @@ private extension EditExerciseHorizontalContentStackView {
     
     /// 스택뷰 내부 컴포넌트에 대한 오토레이아웃을 설정합니다.
     func setConstraints() {
-        self.configureContentLayoutArrangeSubViews()  // 이 함수는 외부에서 정의된 커스텀 메서드로 추정됩니다.
+        self.configureContentLayoutArrangeSubViews()
     }
 
     /// weightTextField, repsTextField의 delegate 설정
