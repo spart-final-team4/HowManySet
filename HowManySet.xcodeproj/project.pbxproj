@@ -110,7 +110,6 @@
 				Model/LiveActivityModel.swift,
 				View/HowManySetWidgetLiveActivity.swift,
 				View/SetProgressBarForLiveActivity.swift,
-				ViewModel/LiveActivityTimerViewModel.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
@@ -129,7 +128,6 @@
 				Resources/Assets.xcassets,
 				View/HowManySetWidgetLiveActivity.swift,
 				View/SetProgressBarForLiveActivity.swift,
-				ViewModel/LiveActivityTimerViewModel.swift,
 			);
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
