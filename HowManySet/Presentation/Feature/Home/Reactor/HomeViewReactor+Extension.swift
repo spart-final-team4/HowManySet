@@ -153,51 +153,57 @@ extension HomeViewReactor {
 extension HomeViewReactor.State {
     var forLiveActivity: WorkoutDataForLiveActivity {
         guard workoutCardStates.indices.contains(currentExerciseIndex) else {
-            // 기본 데이터
-            return WorkoutDataForLiveActivity(
-                workoutTime: 0,
-                isWorkingout: true,
-                exerciseName: "",
-                exerciseInfo: "",
-                currentRoutineCompleted: false,
-                isResting: false,
-                restSecondsRemaining: 0,
-                isRestPaused: false,
-                currentSet: 0,
-                totalSet: 0,
-                currentIndex: 0,
-                restStartDate: nil,
-                workoutStartDate: Date()
-            )
+            return createDefaultLiveActivityData()
         }
-        
+
         let exercise = workoutCardStates[currentExerciseIndex]
-        let reps = exercise.currentRepsForSave
-        let weight: String
-        if exercise.currentWeightForSave.truncatingRemainder(dividingBy: 1) == 0 {
-            weight = String(Int(exercise.currentWeightForSave))
-        } else {
-            weight = String(exercise.currentWeightForSave)
-        }
-        let unit = exercise.currentUnitForSave
-        let repsText = String(localized: "회")
-        let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
-        
+
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,
             isWorkingout: isWorkingout,
+            isWorkoutPaused: isWorkoutPaused,
             exerciseName: exercise.currentExerciseName,
-            exerciseInfo: exerciseInfo,
+            exerciseInfo: formatExerciseInfo(exercise),
             currentRoutineCompleted: currentRoutineCompleted,
+            restStartDate: restStartDate,
+            restTime: Int(restTime),
             isResting: isResting,
-            restSecondsRemaining: restRemainingTime,
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
-            currentIndex: currentExerciseIndex,
-            restStartDate: restStartDate,
-            workoutStartDate: workoutStartDate
+            currentIndex: currentExerciseIndex
         )
+    }
+
+    private func createDefaultLiveActivityData() -> WorkoutDataForLiveActivity {
+        WorkoutDataForLiveActivity(
+            workoutTime: 0,
+            isWorkingout: true,
+            isWorkoutPaused: false,
+            exerciseName: "",
+            exerciseInfo: "",
+            currentRoutineCompleted: false,
+            restStartDate: nil,
+            restTime: 0,
+            isResting: false,
+            isRestPaused: false,
+            currentSet: 0,
+            totalSet: 0,
+            currentIndex: 0
+        )
+    }
+
+    private func formatExerciseInfo(_ exercise: WorkoutCardState) -> String {
+        let reps = exercise.currentRepsForSave
+        let weight = formatWeight(Float(exercise.currentRepsForSave))
+        let unit = exercise.currentUnitForSave
+        let repsText = String(localized: "회")
+
+        return "\(weight)\(unit) X \(reps)\(repsText)"
+    }
+
+    private func formatWeight(_ weight: Float) -> String {
+        weight.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(weight)) : String(weight)
     }
 }
 
