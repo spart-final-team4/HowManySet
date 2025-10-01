@@ -677,7 +677,7 @@ extension HomeViewController {
                     cachedContentState = newState
                     return newState
                 }
-                let updated = cached.updateWithoutTime(from: data)
+                let updated = cached.updateLiveActivityContentStates(from: data)
                 cachedContentState = updated
                 return updated
             }
