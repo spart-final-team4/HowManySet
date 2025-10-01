@@ -71,7 +71,7 @@ struct HowManySetWidgetLiveActivity: Widget {
             VStack {
                 if !context.state.currentRoutineCompleted {
                     VStack(alignment: .leading, spacing: 10) {
-                        if !context.state.isResting {
+                        if !context.state.isResting { // 운동 중 상단
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
@@ -91,7 +91,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                         .monospacedDigit()
                                 }
                             }
-                        } else {
+                        } else { // 휴식 중 상단
                             HStack {
                                 Image(systemName: "dumbbell")
                                     .foregroundStyle(.brand)
@@ -101,7 +101,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                             }
                         }
                         // MARK: - 운동 중 contents
-                        if !context.state.isResting {
+                        if !context.state.isResting { // 운동 중 가운데 (운동정보)
                             HStack {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(context.state.exerciseName)
@@ -114,7 +114,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                 
                                 Spacer()
                                 
-                                HStack(spacing: 10) {
+                                HStack(spacing: 10) { // 운동 중 버튼
                                     if #available(iOS 17.0, *) {
                                         Button(intent: SetCompleteIntent(index: context.state.currentIndex)) {
                                             Image(systemName: "checkmark")
@@ -153,7 +153,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                         .font(.custom(pretendardBold, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
                                                
-                                    if let restEndDate = context.state.restEndDate {
+                                    if let restEndDate = context.state.restEndDate { // 휴식 타이머
                                         if !context.state.isRestPaused {
                                             Text(timerInterval: Date.now...restEndDate, countsDown: true)
                                                 .font(.system(size: restSecondsRemainigLabelSize))
@@ -412,26 +412,9 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentIndex = data.currentIndex
     }
     
-//    func updateRestInfo(_ isResting: Bool, _ restRemaining: Float) -> Self {
-//        return HowManySetWidgetAttributes.ContentState(
-//            workoutTime: self.workoutTime,
-//            isWorkingout: self.isWorkingout,
-//            exerciseName: self.exerciseName,
-//            exerciseInfo: self.exerciseInfo,
-//            currentRoutineCompleted: self.currentRoutineCompleted,
-//            workoutStartDate: self.workoutStartDate,
-//            isResting: isResting,
-//            restSecondsRemaining: Int(restRemaining),
-//            isRestPaused: self.isRestPaused,
-//            currentSet: self.currentSet,
-//            totalSet: self.totalSet,
-//            currentIndex: self.currentIndex,
-//        )
-//    }
-    
-    func updateWithoutTime(from data: WorkoutDataForLiveActivity) -> Self {
+    func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
         return HowManySetWidgetAttributes.ContentState(
-            workoutTime: self.workoutTime,
+            workoutTime: data.workoutTime,
             isWorkingout: data.isWorkingout,
             isWorkoutPaused: data.isWorkoutPaused,
             exerciseName: data.exerciseName,
