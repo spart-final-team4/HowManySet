@@ -84,7 +84,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                         .fontWeight(.semibold)
                                         .monospacedDigit()
                                 } else {
-                                    Text(context.state.workoutTime.toWorkOutTimeLabel())
+                                    Text(context.state.workoutTime.toWorkOutTimeLabelInLive())
                                         .foregroundStyle(.white)
                                         .font(.system(size: 14))
                                         .fontWeight(.semibold)
