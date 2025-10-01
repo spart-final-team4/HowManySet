@@ -195,7 +195,7 @@ extension HomeViewReactor.State {
 
     private func formatExerciseInfo(_ exercise: WorkoutCardState) -> String {
         let reps = exercise.currentRepsForSave
-        let weight = formatWeight(Float(exercise.currentRepsForSave))
+        let weight = formatWeight(Float(exercise.currentWeightForSave))
         let unit = exercise.currentUnitForSave
         let repsText = String(localized: "회")
 
