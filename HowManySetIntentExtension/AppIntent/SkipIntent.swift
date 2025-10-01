@@ -34,7 +34,6 @@ public struct SkipIntent: AppIntent, LiveActivityIntent {
         // Skip 로직 처리
         updatedState.isResting = false
         updatedState.restStartDate = nil
-        updatedState.workoutStartDate = Date()
         
         // 변경된 content로 업데이트
         let updatedContent = ActivityContent(state: updatedState, staleDate: nil)
