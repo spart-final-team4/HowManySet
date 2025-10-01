@@ -106,10 +106,11 @@
 		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HowManySetWidgetLiveActivity.swift,
 				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
+				View/HowManySetWidgetLiveActivity.swift,
 				View/SetProgressBarForLiveActivity.swift,
+				ViewModel/LiveActivityTimerViewModel.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
@@ -123,11 +124,12 @@
 		666D1FCD2E03ACC70038F553 /* Exceptions for "HowManySetWidget" folder in "HowManySetIntentExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				HowManySetWidgetLiveActivity.swift,
 				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
 				Resources/Assets.xcassets,
+				View/HowManySetWidgetLiveActivity.swift,
 				View/SetProgressBarForLiveActivity.swift,
+				ViewModel/LiveActivityTimerViewModel.swift,
 			);
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
