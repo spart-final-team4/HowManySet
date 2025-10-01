@@ -9,7 +9,7 @@ import Foundation
 
 /// LiveActivity에 필요한 데이터
 public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
-    
+
     var workoutTime: Int
     var isWorkingout: Bool
     var isWorkoutPaused: Bool
@@ -17,12 +17,13 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var exerciseName: String
     var exerciseInfo: String
     var currentRoutineCompleted: Bool
-    
+
     var restStartDate: Date?
-    var restTime: Int
+    var restTime: Int /// 기본 휴식 시간
+    var restRemainingTime: Float /// 남은 휴식 시간
     var isResting: Bool
     var isRestPaused: Bool
-    
+
     var currentSet: Int
     var totalSet: Int
     var currentIndex: Int

@@ -14,19 +14,20 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         // state
-        
+
         // 운동 중 관련
         var workoutTime: Int /// 운동 정지/재생 시 업데이트
         var isWorkingout: Bool
         var isWorkoutPaused: Bool
-        
+
         var exerciseName: String
         var exerciseInfo: String
         var currentRoutineCompleted: Bool
-        
+
         // 휴식 중 관련
         var restStartDate: Date?
         var restTime: Int
+        var restRemainingTime: Float
         var isResting: Bool
         var isRestPaused: Bool
 
@@ -34,18 +35,27 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var currentSet: Int
         var totalSet: Int
         var currentIndex: Int
-        
+
         /// 운동 타이머 표시용 시작 시간
         var workoutStartDate: Date {
             return Date.now.addingTimeInterval(-TimeInterval(workoutTime))
         }
-        
+
         /// 휴식 종료 시간
         var restEndDate: Date? {
-            guard let restStartDate, isResting, !isRestPaused else {
+            guard isResting else {
                 return nil
             }
-            return restStartDate.addingTimeInterval(TimeInterval(restTime))
+
+            if isRestPaused {
+                // 정지 상태: 현재 시간 + 남은 시간
+                return Date.now.addingTimeInterval(TimeInterval(restRemainingTime))
+            } else if let restStartDate {
+                // 재생 상태: 시작 시간 + 전체 휴식 시간
+                return restStartDate.addingTimeInterval(TimeInterval(restRemainingTime))
+            } else {
+                return nil
+            }
         }
     }
     
@@ -161,8 +171,10 @@ struct HowManySetWidgetLiveActivity: Widget {
                                                 .foregroundStyle(.white)
                                                 .monospacedDigit()
                                         } else {
-                                            Text(restEndDate.timeIntervalSinceNow.formatted())
-                                                .font(.system(size: restSecondsRemainigLabelSize))
+                                            let timeRemaining = restEndDate.timeIntervalSince(Date.now)
+                                            let minutes = Int(timeRemaining) / 60
+                                            let seconds = Int(timeRemaining) % 60
+                                            Text(String(format: "%d:%02d", minutes, seconds))                             .font(.system(size: restSecondsRemainigLabelSize))
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(.white)
                                                 .monospacedDigit()
@@ -405,13 +417,14 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentRoutineCompleted = data.currentRoutineCompleted
         self.restStartDate = data.restStartDate
         self.restTime = data.restTime
+        self.restRemainingTime = data.restRemainingTime
         self.isResting = data.isResting
         self.isRestPaused = data.isRestPaused
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
         self.currentIndex = data.currentIndex
     }
-    
+
     func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
         return HowManySetWidgetAttributes.ContentState(
             workoutTime: data.workoutTime,
@@ -422,6 +435,7 @@ extension HowManySetWidgetAttributes.ContentState {
             currentRoutineCompleted: data.currentRoutineCompleted,
             restStartDate: data.restStartDate,
             restTime: data.restTime,
+            restRemainingTime: data.restRemainingTime,
             isResting: data.isResting,
             isRestPaused: data.isRestPaused,
             currentSet: data.currentSet,
@@ -435,14 +449,13 @@ extension WorkoutDataForLiveActivity {
     /// 운동/휴식시간 제외한 값들만 비교
     func isEqualExcludingTime(to other: WorkoutDataForLiveActivity) -> Bool {
         return self.isWorkingout == other.isWorkingout &&
+               self.isWorkoutPaused == other.isWorkoutPaused &&
                self.exerciseName == other.exerciseName &&
                self.exerciseInfo == other.exerciseInfo &&
                self.currentRoutineCompleted == other.currentRoutineCompleted &&
                self.isRestPaused == other.isRestPaused &&
                self.currentSet == other.currentSet &&
                self.totalSet == other.totalSet &&
-               self.currentIndex == other.currentIndex &&
-               self.restStartDate == other.restStartDate &&
-               self.isResting == other.isResting
+               self.currentIndex == other.currentIndex
     }
 }

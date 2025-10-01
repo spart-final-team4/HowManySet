@@ -30,18 +30,18 @@ public struct PlayAndPauseRestIntent: AppIntent, LiveActivityIntent {
         }
         
         var updatedState = activity.content.state
-    
-//        // 휴식 PlayAndPause
-//        if updatedState.isRestPaused { // Pause 클릭 시
-//            // 남은 휴식 시간 처리
-//            let elapsed = Date().timeIntervalSince(updatedState.restStartDate ?? Date())
-//            updatedState.restSecondsRemaining -= Int(elapsed)
-//            updatedState.restStartDate = nil
-//        } else { // Play 클릭 시
-//            // 휴식 시작 시간 초기화
-//            updatedState.restStartDate = Date()
-//        }
+        
+        print("restTime: " + "\(updatedState.restTime)", "restStartDate: " + "\(String(describing: updatedState.restStartDate))")
+        
         updatedState.isRestPaused.toggle()
+    
+        // 휴식 PlayAndPause
+        if updatedState.isRestPaused { // Pause 클릭 시
+            // 남은 휴식 시간 처리
+            let elapsed = Date().timeIntervalSince(updatedState.restStartDate ?? Date())
+            updatedState.restTime -= Int(elapsed)
+            updatedState.restStartDate = Date(timeIntervalSinceNow: elapsed)
+        }
                 
         // 변경된 content로 업데이트
         let updatedContent = ActivityContent(state: updatedState, staleDate: nil)

@@ -449,7 +449,7 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseRest(isPaused):
             if isPaused {
-                newState.restStartDate = nil
+//                newState.restStartDate = nil
                 newState.isRestPaused = true
                 NotificationService.shared.removeRestNotification()
             } else {
