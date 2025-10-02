@@ -146,6 +146,9 @@ final class HomeViewReactor: Reactor {
         var documentID: String
         /// 현재  WorkoutRecordID
         var recordID: String
+        // LiveActivity RestTimer 용
+        var liveRestStartDate: Date?
+        var liveRestTime: Int
     }
     
     // initialState 주입으로 변경
@@ -370,9 +373,11 @@ final class HomeViewReactor: Reactor {
             
         case let .setResting(isResting):
             newState.isResting = isResting
+            newState.liveRestStartDate = Date.now
             if !newState.isResting {
                 newState.restRemainingTime = 0.0
                 newState.restStartTime = nil
+                newState.liveRestStartDate = nil
             }
             
             // 휴식 버튼으로 휴식 시간 설정 시
@@ -380,8 +385,10 @@ final class HomeViewReactor: Reactor {
             // 초기화 버튼 클릭 시 0으로 설정
             if restTime == 0 {
                 newState.restTime = restTime
+                newState.liveRestTime = Int(restTime)
             } else {
                 newState.restTime += restTime
+                newState.liveRestTime += Int(restTime)
             }
             
         case let .setRestTimeDataAtProgressBar(restTime, restRemaining):
@@ -449,7 +456,7 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseRest(isPaused):
             if isPaused {
-//                newState.restStartDate = nil
+                newState.restStartDate = nil
                 newState.isRestPaused = true
                 NotificationService.shared.removeRestNotification()
             } else {

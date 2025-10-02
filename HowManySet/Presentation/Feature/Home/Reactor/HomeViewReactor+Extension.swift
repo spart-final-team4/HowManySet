@@ -165,9 +165,8 @@ extension HomeViewReactor.State {
             exerciseName: exercise.currentExerciseName,
             exerciseInfo: formatExerciseInfo(exercise),
             currentRoutineCompleted: currentRoutineCompleted,
-            restStartDate: restStartDate,
-            restTime: Int(restTime),
-            restRemainingTime: restRemainingTime,
+            restStartDate: liveRestStartDate,
+            restTime: liveRestTime,
             isResting: isResting,
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
@@ -186,7 +185,6 @@ extension HomeViewReactor.State {
             currentRoutineCompleted: false,
             restStartDate: nil,
             restTime: 0,
-            restRemainingTime: 0,
             isResting: false,
             isRestPaused: false,
             currentSet: 0,
@@ -298,7 +296,9 @@ extension HomeViewReactor {
             currentRoutineCompleted: false,
             uid: uid,
             documentID: initialRoutine.documentID,
-            recordID: ""
+            recordID: "",
+            liveRestStartDate: nil,
+            liveRestTime: 60,
         )
     }
     
