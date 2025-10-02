@@ -27,7 +27,6 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         // 휴식 중 관련
         var restStartDate: Date?
         var restTime: Int
-        var restRemainingTime: Float
         var isResting: Bool
         var isRestPaused: Bool
 
@@ -43,19 +42,8 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 
         /// 휴식 종료 시간
         var restEndDate: Date? {
-            guard isResting else {
-                return nil
-            }
-
-            if isRestPaused {
-                // 정지 상태: 현재 시간 + 남은 시간
-                return Date.now.addingTimeInterval(TimeInterval(restRemainingTime))
-            } else if let restStartDate {
-                // 재생 상태: 시작 시간 + 전체 휴식 시간
-                return restStartDate.addingTimeInterval(TimeInterval(restRemainingTime))
-            } else {
-                return nil
-            }
+            guard let restStartDate else { return nil }
+            return restStartDate.addingTimeInterval(TimeInterval(restTime))
         }
     }
     
@@ -171,10 +159,8 @@ struct HowManySetWidgetLiveActivity: Widget {
                                                 .foregroundStyle(.white)
                                                 .monospacedDigit()
                                         } else {
-                                            let timeRemaining = restEndDate.timeIntervalSince(Date.now)
-                                            let minutes = Int(timeRemaining) / 60
-                                            let seconds = Int(timeRemaining) % 60
-                                            Text(String(format: "%d:%02d", minutes, seconds))                             .font(.system(size: restSecondsRemainigLabelSize))
+                                            Text(context.state.restTime.toRestTimeLabelInLive())
+                                                .font(.system(size: restSecondsRemainigLabelSize))
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(.white)
                                                 .monospacedDigit()
@@ -417,7 +403,6 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentRoutineCompleted = data.currentRoutineCompleted
         self.restStartDate = data.restStartDate
         self.restTime = data.restTime
-        self.restRemainingTime = data.restRemainingTime
         self.isResting = data.isResting
         self.isRestPaused = data.isRestPaused
         self.currentSet = data.currentSet
