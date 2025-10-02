@@ -131,7 +131,7 @@ final class HomeViewReactor: Reactor {
         var recordID: String
         // LiveActivity RestTimer 용
         var liveRestStartDate: Date?
-        var liveRestTime: Int
+        var liveRestTime: Float
     }
     
     // initialState 주입으로 변경
@@ -336,10 +336,10 @@ final class HomeViewReactor: Reactor {
             // 초기화 버튼 클릭 시 0으로 설정
             if restTime == 0 {
                 newState.restTime = restTime
-                newState.liveRestTime = Int(restTime)
+                newState.liveRestTime = restTime
             } else {
                 newState.restTime += restTime
-                newState.liveRestTime += Int(restTime)
+                newState.liveRestTime += restTime
             }
             
         case let .setRestTimeDataAtProgressBar(restTime, restRemaining):
@@ -397,7 +397,7 @@ final class HomeViewReactor: Reactor {
                 // 0.05초씩 감소
                 newState.restRemainingTime = max(newState.restRemainingTime - 0.05, 0)
                 
-                print(newState.restRemainingTime)
+//                print(newState.restRemainingTime)
                                 
                 if newState.restRemainingTime <= 0.1 {
                     newState.isResting = false

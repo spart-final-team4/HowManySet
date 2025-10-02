@@ -475,10 +475,10 @@ extension HomeViewController {
                 if isResting && restTime >= 0 && restSecondsRemaining >= 0 {
                     let elapsed = totalRestTime - restSecondsRemaining
                     let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
-                    let timeText = Int(restSecondsRemaining).toRestTimeLabel()
+                    let timeText = Int(round(restSecondsRemaining)).toRestTimeLabel()
                     return (cardView.index, progress, timeText, true, false)
                 } else {
-                    let timeText = Int(restStartTime ?? 0).toRestTimeLabel()
+                    let timeText = Int(round(restStartTime ?? 0)).toRestTimeLabel()
                     return (cardView.index, 0.0, timeText, false, true)
                 }
             }

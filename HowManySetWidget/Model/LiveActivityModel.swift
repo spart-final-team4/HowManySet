@@ -19,7 +19,7 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var currentRoutineCompleted: Bool
 
     var restStartDate: Date?
-    var restTime: Int 
+    var restTime: Float
     var isResting: Bool
     var isRestPaused: Bool
 
