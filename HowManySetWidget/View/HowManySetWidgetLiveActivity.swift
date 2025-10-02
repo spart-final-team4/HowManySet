@@ -26,7 +26,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 
         // 휴식 중 관련
         var restStartDate: Date?
-        var restTime: Int
+        var restTime: Float
         var isResting: Bool
         var isRestPaused: Bool
 
@@ -159,7 +159,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                                 .foregroundStyle(.white)
                                                 .monospacedDigit()
                                         } else {
-                                            Text(context.state.restTime.toRestTimeLabelInLive())
+                                            Text(Int(round(context.state.restTime)).toRestTimeLabelInLive())
                                                 .font(.system(size: restSecondsRemainigLabelSize))
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(.white)

@@ -37,7 +37,8 @@ public struct PlayAndPauseRestIntent: AppIntent, LiveActivityIntent {
         if updatedState.isRestPaused { // Pause 클릭 시
             // 남은 휴식 시간을 restTime에 저장
             let remaining = updatedState.restEndDate?.timeIntervalSince(Date.now) ?? 0
-            updatedState.restTime = max(0, Int(remaining))
+            updatedState.restTime = Float(max(0, remaining))
+//            print("[PAUSED] restTime: \(updatedState.restTime)")
         } else { // Play 클릭 시
             // 현재 시각을 시작 시각으로 설정
             updatedState.restStartDate = Date.now
