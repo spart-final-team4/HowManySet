@@ -415,8 +415,6 @@ extension HowManySetWidgetAttributes.ContentState {
         // (Intent에서 이미 업데이트했으므로)
         let shouldPreserveRestData = self.isResting && (self.isRestPaused != data.isRestPaused)
 
-        print("🟣 [UPDATE] shouldPreserve: \(shouldPreserveRestData), old restTime: \(self.restTime), new restTime: \(data.restTime), old isRestPaused: \(self.isRestPaused), new isRestPaused: \(data.isRestPaused)")
-
         return HowManySetWidgetAttributes.ContentState(
             workoutTime: data.workoutTime,
             isWorkingout: data.isWorkingout,

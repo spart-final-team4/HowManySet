@@ -690,8 +690,8 @@ extension HomeViewController {
         NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
             .bind { _ in
                 print("WILLENTERFOREGROUND!")
-//                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
-//                reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
+                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
+                reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
             }
             .disposed(by: disposeBag)
         
@@ -699,9 +699,9 @@ extension HomeViewController {
             .observe(on: MainScheduler.instance)
             .bind { _ in
                 print("DIDENTERBACKGROUND!")
-//                if reactor.currentState.isResting {
-//                    reactor.action.onNext(.didEnterBackgroundWhileResting)
-//                }
+                if reactor.currentState.isResting {
+                    reactor.action.onNext(.didEnterBackgroundWhileResting)
+                }
             }
             .disposed(by: disposeBag)
     }//bind

@@ -445,9 +445,7 @@ final class HomeViewReactor: Reactor {
                !newState.isRestTimerStopped {
                 // 0.05초씩 감소
                 newState.restRemainingTime = max(newState.restRemainingTime - 0.05, 0)
-                
-                print("restRemainingTime: \(newState.restRemainingTime)")
-                
+                                
                 if newState.restRemainingTime <= 0.1 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
