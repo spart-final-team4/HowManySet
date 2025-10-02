@@ -19,8 +19,7 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var currentRoutineCompleted: Bool
 
     var restStartDate: Date?
-    var restTime: Int /// 기본 휴식 시간
-    var restRemainingTime: Float /// 남은 휴식 시간
+    var restTime: Int 
     var isResting: Bool
     var isRestPaused: Bool
 
