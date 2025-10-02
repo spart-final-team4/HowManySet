@@ -151,9 +151,9 @@ struct HowManySetWidgetLiveActivity: Widget {
                                         .font(.custom(pretendardBold, size: 16).weight(.bold))
                                         .foregroundStyle(.brand)
                                                
-                                    if let restEndDate = context.state.restEndDate { // 휴식 타이머
+                                    if let restStartDate = context.state.restStartDate, let restEndDate = context.state.restEndDate { // 휴식 타이머
                                         if !context.state.isRestPaused {
-                                            Text(timerInterval: Date.now...restEndDate, countsDown: true)
+                                            Text(timerInterval: restStartDate...restEndDate, countsDown: true)
                                                 .font(.system(size: restSecondsRemainigLabelSize))
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(.white)
