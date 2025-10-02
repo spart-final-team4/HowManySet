@@ -45,7 +45,6 @@ final class HomeViewReactor: Reactor {
     // MARK: - Mutate is a state manipulator which is not exposed to a view
     enum Mutation {
         case setWorkingout(Bool)
-        case setWorkoutTime(Int)
         case setResting(Bool)
         /// 하단 휴식 버튼 누를 시 동작
         case setRestTime(Float)
@@ -170,13 +169,7 @@ final class HomeViewReactor: Reactor {
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
         case .routineSelected:
             // 운동 타이머
-            let workoutTimer =
-            Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-                .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
-                .withLatestFrom(self.state.map { $0.isWorkoutPaused }) { _, isPaused in return isPaused }
-                .filter { !$0 }
-                .map { _ in Mutation.workoutTimeUpdating }
-                .observe(on: MainScheduler.instance)
+            let workoutTimer = makeWorkoutTimer()
             
             return .concat([
                 .just(.setWorkingout(true)),
@@ -325,10 +318,7 @@ final class HomeViewReactor: Reactor {
             
         case let .setWorkingout(isWorkingout):
             newState.isWorkingout = isWorkingout
-            
-        case let .setWorkoutTime(time):
-            newState.workoutTime = time
-            
+                        
         case let .pauseAndPlayWorkout(isPaused):
             newState.isWorkoutPaused = isPaused
             
