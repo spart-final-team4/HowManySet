@@ -166,7 +166,7 @@ extension HomeViewReactor.State {
             exerciseInfo: formatExerciseInfo(exercise),
             currentRoutineCompleted: currentRoutineCompleted,
             restStartDate: liveRestStartDate,
-            restTime: liveRestTime,
+            restTime: liveRestTime - 1,
             isResting: isResting,
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
