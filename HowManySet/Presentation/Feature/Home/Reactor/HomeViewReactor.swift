@@ -39,12 +39,6 @@ final class HomeViewReactor: Reactor {
         case confirmButtonClickedForSavingMemo(newMemo: String?)
         /// 운동 완료 후 카드 삭제 완료
         case cardDeleteAnimationCompleted(oldIndex: Int, nextIndex: Int)
-        /// background -> foreground로 올때 운동 시간 조정
-        case adjustWorkoutTimeOnForeground
-        /// background -> foreground로 올때 남은 휴식 시간 조정
-        case adjustRestRemainingTimeOnForeground
-        /// background로 진입 시 휴식 restStartDate 설정 위함
-        case didEnterBackgroundWhileResting
         case routineCompleted
     }
     
@@ -84,11 +78,6 @@ final class HomeViewReactor: Reactor {
         case updateRoutineMemo(with: String?)
         /// updatingIndex 설정
         case setUpdatingIndex(Int)
-        // 백그라운드 관련
-        case setWorkoutStartDate(Date) /// 운동 시작 시각 설정
-        case setWorkoutTimeWhenBackgrounded(TimeInterval) /// 총 누적된 운동 시간 (+background) 설정
-        case setRestRemainingStartDate(Date?) /// 남은 휴식 시작 시각 설정
-        case setRestRemainingTimeWhenBackgrounded(TimeInterval) /// 총 누적된 남은 휴식 시간 (+background) 설정
         /// 현재 루틴 완료 설정
         case setCurrentRoutineCompleted
         /// 운동 편집 시 최신 Routine 로드
@@ -133,9 +122,6 @@ final class HomeViewReactor: Reactor {
         var totalSetCountInRoutine: Int
         var didSetCount: Int
         var currentWorkoutData: Workout
-        // 백그라운드 용
-        var workoutStartDate: Date /// 운동 시작 시각
-        var restStartDate: Date? /// 휴식 시작 시각
         /// 현재 루틴의 모든 운동 완료
         var currentRoutineCompleted: Bool
         /// 현재 사용자 uid
@@ -194,7 +180,6 @@ final class HomeViewReactor: Reactor {
             
             return .concat([
                 .just(.setWorkingout(true)),
-                .just(.setWorkoutStartDate(Date())),
                 workoutTimer
             ])
             
@@ -323,32 +308,10 @@ final class HomeViewReactor: Reactor {
                     .just(.setWorkingout(false))
                 ])
             }
-            
-            // 백그라운드 -> 포드라운드 시 운동 시간 업데이트
-        case .adjustWorkoutTimeOnForeground:
-            let elapsedTime = Date().timeIntervalSince(currentState.workoutStartDate)
-            return .just(.setWorkoutTimeWhenBackgrounded(elapsedTime))
-            
+
         case .routineCompleted:
             return .just(.setCurrentRoutineCompleted)
-            
-            // 백그라운드 -> 포그라운드 시 남은 휴식 시간 업데이트
-        case .adjustRestRemainingTimeOnForeground:
-            if let startDate = currentState.restStartDate, !currentState.isRestPaused {
-                let elapsedTime = Date().timeIntervalSince(startDate)
-                let newRestRemainingTime = max(0, currentState.restRemainingTime - Float(elapsedTime))
-                print("newRestRemainingTime: \(newRestRemainingTime)")
-                return .just(.setRestTimeDataAtProgressBar(currentState.restTime, Float(newRestRemainingTime)))
-            } else {
-                return .empty()
-            }
-            
-        case .didEnterBackgroundWhileResting:
-            return .concat([
-                .just(.setRestRemainingStartDate(Date())),
-                // 휴식 중 백그라운드 진입 시 restRemainingTime 설정
-                .just(.setRestRemainingTimeWhenBackgrounded(Double(currentState.restRemainingTime)))
-            ])
+
         }//action
     }//mutate
     
@@ -443,6 +406,8 @@ final class HomeViewReactor: Reactor {
                !newState.isRestTimerStopped {
                 // 0.05초씩 감소
                 newState.restRemainingTime = max(newState.restRemainingTime - 0.05, 0)
+                
+                print(newState.restRemainingTime)
                                 
                 if newState.restRemainingTime <= 0.1 {
                     newState.isResting = false
@@ -452,7 +417,6 @@ final class HomeViewReactor: Reactor {
             
         case let .pauseRest(isPaused):
             if isPaused {
-                newState.restStartDate = nil
                 newState.isRestPaused = true
                 NotificationService.shared.removeRestNotification()
             } else {
@@ -460,7 +424,6 @@ final class HomeViewReactor: Reactor {
                     NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
                 }
                 // 현재 시각부터 타이머 재시작
-                newState.restStartDate = Date()
                 newState.isRestPaused = false
             }
             
@@ -557,13 +520,11 @@ final class HomeViewReactor: Reactor {
                 newState.isRestTimerStopped = true
                 newState.restRemainingTime = 0.0
                 newState.restStartTime = nil
-                newState.restStartDate = nil
             } else {
                 newState.isResting = true
                 newState.isRestTimerStopped = false
                 newState.restRemainingTime = Float(newState.restTime)
                 newState.restStartTime = nil
-                newState.restStartDate = Date()
             }
             
             // MARK: - 루틴 메모 업데이트
@@ -593,22 +554,10 @@ final class HomeViewReactor: Reactor {
             
         case let .setUpdatingIndex(cardIndex):
             newState.updatingIndex = cardIndex
-            
-        case let .setWorkoutStartDate(date):
-            newState.workoutStartDate = date
-            
-        case let .setWorkoutTimeWhenBackgrounded(time):
-            newState.workoutTime = Int(time)
-            
+
         case .setCurrentRoutineCompleted:
             newState.currentRoutineCompleted = true
-            
-        case let .setRestRemainingStartDate(date):
-            newState.restStartDate = date
-            
-        case let .setRestRemainingTimeWhenBackgrounded(time):
-            newState.restRemainingTime = Float(time)
-            
+                        
             // MARK: - 변경된 운동 정보로 카드 업데이트
         case let .loadUpdatedRoutine(routines):
             if uid != nil {
