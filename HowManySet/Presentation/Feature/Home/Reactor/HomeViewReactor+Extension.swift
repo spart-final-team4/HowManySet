@@ -291,8 +291,6 @@ extension HomeViewReactor {
             didSetCount: 0,
             currentWorkoutData: initialRoutine.workouts[0],
             workoutStartDate: Date(),
-            accumulatedWorkoutTime: 0,
-            accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
             uid: uid,
             documentID: initialRoutine.documentID,

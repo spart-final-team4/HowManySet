@@ -135,9 +135,7 @@ final class HomeViewReactor: Reactor {
         var currentWorkoutData: Workout
         // 백그라운드 용
         var workoutStartDate: Date /// 운동 시작 시각
-        var accumulatedWorkoutTime: TimeInterval /// 총 누적된 운동 시간 (+background)
         var restStartDate: Date? /// 휴식 시작 시각
-        var accumulatedRestRemainingTime: TimeInterval /// 총 누적된 휴식 시간 (+background)
         /// 현재 루틴의 모든 운동 완료
         var currentRoutineCompleted: Bool
         /// 현재 사용자 uid
@@ -282,7 +280,7 @@ final class HomeViewReactor: Reactor {
                 .just(.saveWorkoutData)
             ])
             
-        case let .editAndMemoViewPresented(cardIndex):
+        case .editAndMemoViewPresented(_):
             return .just(.setEditAndMemoViewPresented(true))
             
         case .updateCurrentExerciseMemoWhenDismissed(let newMemo):
@@ -338,7 +336,7 @@ final class HomeViewReactor: Reactor {
         case .adjustRestRemainingTimeOnForeground:
             if let startDate = currentState.restStartDate, !currentState.isRestPaused {
                 let elapsedTime = Date().timeIntervalSince(startDate)
-                let newRestRemainingTime = max(0, currentState.accumulatedRestRemainingTime - elapsedTime)
+                let newRestRemainingTime = max(0, currentState.restRemainingTime - Float(elapsedTime))
                 print("newRestRemainingTime: \(newRestRemainingTime)")
                 return .just(.setRestTimeDataAtProgressBar(currentState.restTime, Float(newRestRemainingTime)))
             } else {
