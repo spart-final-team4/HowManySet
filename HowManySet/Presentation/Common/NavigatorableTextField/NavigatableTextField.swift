@@ -21,7 +21,7 @@ final class NavigatableTextField: UITextField {
         previousButton.addTarget(self, action: #selector(didTappedPreviousButton), for: .touchUpInside)
 
         let nextButton = UIButton(type: .system)
-        previousButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        nextButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         nextButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         nextButton.addTarget(self, action: #selector(didTappedNextButton), for: .touchUpInside)
 
