@@ -288,6 +288,7 @@ private extension HomeViewController {
         syncTimer = nil
     }
     
+    /// LiveActivity 버튼 클릭 이벤트 감지하여 reactor 동작
     @objc func syncWithLiveActivity() {
         guard let reactor = self.reactor else { return }
         
@@ -666,7 +667,7 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
-        // 운동/휴식시간, Pause 상태 제외 업데이트
+        // 운동/휴식시간, Pause 상태 제외 업데이트 (LiveActivity에서의 운동/휴식시간은 독립적으로 구현)
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged { $0.isEqualExcludingTimer(to: $1) }
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
@@ -681,6 +682,33 @@ extension HomeViewController {
                 cachedContentState = updated
                 return updated
             }
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { contentState in
+                LiveActivityService.shared.update(state: contentState)
+            })
+            .disposed(by: disposeBag)
+        
+        // Pause 상태 변경 시 restStartDate/restEndDate 재계산하여 업데이트
+        reactor.state.map { $0.forLiveActivity.isRestPaused }
+            .distinctUntilChanged()
+            .skip(1)
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+            .map { isRestPaused -> HowManySetWidgetAttributes.ContentState? in
+                guard var cached = cachedContentState else { return nil }
+
+                cached.isRestPaused = isRestPaused
+                
+                // 휴식 PlayAndPause (PlayAndPauseRestIntent와 동일한 로직)
+                if isRestPaused {
+                    let remaining = cached.restEndDate?.timeIntervalSince(Date.now) ?? 0
+                    cached.restTime = Float(max(0, remaining))
+                } else {
+                    cached.restStartDate = Date.now
+                }
+                cachedContentState = cached
+                return cached
+            }
+            .compactMap { $0 }
             .observe(on: MainScheduler.instance)
             .bind(onNext: { contentState in
                 LiveActivityService.shared.update(state: contentState)
