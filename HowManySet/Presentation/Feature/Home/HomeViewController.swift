@@ -541,13 +541,20 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // 운동 중지 시
-        reactor.state.map { $0.isWorkoutPaused }
-            .distinctUntilChanged()
+        reactor.state.map { ($0.isWorkoutPaused, $0.forLiveActivity) }
+            .distinctUntilChanged { $0.0 == $1.0 }
             .observe(on: MainScheduler.instance)
-            .bind{ [weak self] isWorkoutPaused in
+            .bind{ [weak self] isWorkoutPaused, liveActivityData in
                 guard let self else { return }
                 let workoutButtonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 self.homeView.pauseButton.setImage(UIImage(systemName: workoutButtonImageName), for: .normal)
+
+                // 운동 일시정지 시 LiveActivity 제거, 재생 시 다시 시작
+                if isWorkoutPaused {
+                    LiveActivityService.shared.stop()
+                } else {
+                    LiveActivityService.shared.start(with: liveActivityData)
+                }
             }.disposed(by: disposeBag)
         
         // MARK: - 모든 세트 완료 시 카드 삭제 및 레이아웃 재설정
