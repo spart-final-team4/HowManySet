@@ -7,10 +7,6 @@
 
 import AppIntents
 
-struct HowManySetIntentExtension: AppIntent {
-    static var title: LocalizedStringResource { "HowManySetIntentExtension" }
-    
-    func perform() async throws -> some IntentResult {
-        return .result()
-    }
+@main
+struct HowManySetIntentExtension: AppIntentsExtension {
 }

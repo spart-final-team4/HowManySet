@@ -106,13 +106,9 @@
 		6615E9F82DEDAE3500ECF8DB /* Exceptions for "HowManySetWidget" folder in "HowManySet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntent/PlayAndPauseRestIntent.swift,
-				AppIntent/SetCompleteIntent.swift,
-				AppIntent/SkipIntent.swift,
-				AppIntent/StopWorkoutIntent.swift,
-				HowManySetWidgetLiveActivity.swift,
 				Model/LiveActivityDefaultsName.swift,
 				Model/LiveActivityModel.swift,
+				View/HowManySetWidgetLiveActivity.swift,
 				View/SetProgressBarForLiveActivity.swift,
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
@@ -127,11 +123,11 @@
 		666D1FCD2E03ACC70038F553 /* Exceptions for "HowManySetWidget" folder in "HowManySetIntentExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppIntent/PlayAndPauseRestIntent.swift,
-				AppIntent/SetCompleteIntent.swift,
-				AppIntent/SkipIntent.swift,
-				AppIntent/StopWorkoutIntent.swift,
 				Model/LiveActivityDefaultsName.swift,
+				Model/LiveActivityModel.swift,
+				Resources/Assets.xcassets,
+				View/HowManySetWidgetLiveActivity.swift,
+				View/SetProgressBarForLiveActivity.swift,
 			);
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
 		};
@@ -166,12 +162,41 @@
 			);
 			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
 		};
+		66CA11C62E7D45970004CA80 /* Exceptions for "HowManySet" folder in "HowManySetIntentExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Presentation/Common/Extension/Int+Extension.swift",
+			);
+			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
+		};
+		66ECFBBE2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntent/PlayAndPauseRestIntent.swift,
+				AppIntent/SetCompleteIntent.swift,
+				AppIntent/SkipIntent.swift,
+				AppIntent/StopWorkoutIntent.swift,
+			);
+			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
+		};
+		66ECFBBF2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIntent/PlayAndPauseRestIntent.swift,
+				AppIntent/SetCompleteIntent.swift,
+				AppIntent/SkipIntent.swift,
+				AppIntent/StopWorkoutIntent.swift,
+			);
+			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				66ECFBBE2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySet" target */,
+				66ECFBBF2E813DF9006BA504 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetWidgetExtension" target */,
 				666D1FC92E03AC540038F553 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetIntentExtension" target */,
 			);
 			path = HowManySetIntentExtension;
@@ -191,6 +216,7 @@
 			exceptions = (
 				669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */,
 				667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */,
+				66CA11C62E7D45970004CA80 /* Exceptions for "HowManySet" folder in "HowManySetIntentExtension" target */,
 			);
 			path = HowManySet;
 			sourceTree = "<group>";
@@ -508,6 +534,7 @@
 				INFOPLIST_FILE = HowManySetIntentExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetIntentExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -517,6 +544,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.HowManySetIntentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -535,6 +566,7 @@
 				INFOPLIST_FILE = HowManySetIntentExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HowManySetIntentExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -544,6 +576,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.HowManySetIntentExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -653,7 +689,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -692,7 +728,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
