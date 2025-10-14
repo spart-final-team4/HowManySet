@@ -274,25 +274,23 @@ final class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
     }
     
-    /// 닉네임 입력만 하는 플로우
     private func showNicknameFlow() {
         guard !isSwitchingRoot else { return }
         isSwitchingRoot = true
         defer { isSwitchingRoot = false }
-        
+
         print("✏️ 닉네임 입력 화면 표시")
-        let coord = OnBoardingCoordinator(navigationController: UINavigationController(), container: container)
+        let coord = NicknameInputCoordinator(navigationController: UINavigationController(), container: container)
         childCoordinators.append(coord)
-        
+
         coord.finishFlow = { [weak self, weak coord] in
             guard let self, let coord else { return }
             self.childDidFinish(coord)
-            // 닉네임 완료 후 바로 메인으로 이동 (온보딩은 ViewController 내부에서 처리)
-            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-            self.showTabBarFlow()
+            // 닉네임 완료 후 온보딩 화면으로 이동
+            self.showOnboardingFlow()
         }
-        
-        coord.startWithNicknameOnly()
+
+        coord.start()
         window.rootViewController = coord.navigationController
         window.makeKeyAndVisible()
     }
