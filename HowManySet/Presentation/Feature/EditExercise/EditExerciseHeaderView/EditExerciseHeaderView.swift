@@ -36,23 +36,7 @@ final class EditExerciseHeaderView: UIView {
     /// 사용자로부터 운동명을 입력받는 텍스트 필드입니다.
     ///
     /// 왼쪽에 패딩이 있으며, 둥근 테두리 및 배경색이 적용되어 있습니다.
-    private let exerciseNameTextField = UITextField().then {
-        $0.placeholder = String(localized: "예) 벤치프레스, 체스트 프레스")
-        $0.backgroundColor = .bottomSheetBG
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 12
-        $0.font = .pretendard(size: 16, weight: .regular)
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
-        $0.leftView = paddingView
-        $0.leftViewMode = .always
-
-        // 키보드 관련
-        $0.autocorrectionType = .no // 자동 수정 끔
-        $0.spellCheckingType = .no // 맞춤법 검사 끔
-        $0.smartInsertDeleteType = .no // 스마트 삽입/삭제 끔
-        $0.autocapitalizationType = .none // 영문으로 시작할 때 자동 대문자 끔
-    }
+    let exerciseNameTextField = NavigatableTextField().configureDefaultTextField()
     
     // MARK: - Initializers
     

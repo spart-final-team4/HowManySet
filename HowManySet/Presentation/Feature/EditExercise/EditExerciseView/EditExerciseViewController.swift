@@ -32,9 +32,12 @@ final class EditExerciseViewController: UIViewController, View {
     
     private(set) var saveResultRelay = PublishRelay<Bool>()
     
+    private let navigator = TextFieldNavigator()
+    
     init(reactor: EditExerciseViewReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
+        contentView.contentViewDelegate = self
         setupUI()
     }
     
@@ -45,6 +48,31 @@ final class EditExerciseViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        
+        let contentInset = UIEdgeInsets(top: 0,
+                                        left: 0,
+                                        bottom: keyboardFrame.height,
+                                        right: 0)
+        
+        scrollView.contentInset = contentInset
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.contentInset = .zero
     }
     
     func bind(reactor: EditExerciseViewReactor) {
@@ -147,6 +175,11 @@ final class EditExerciseViewController: UIViewController, View {
     
 }
 
+extension EditExerciseViewController: EditExerciseConetentViewDelegate {
+    func didChangedState() {
+        navigator.register([headerView.exerciseNameTextField] + contentView.allTextFields())
+    }
+}
 // MARK: - UI Layout Methods
 
 private extension EditExerciseViewController {
@@ -156,6 +189,12 @@ private extension EditExerciseViewController {
         setViewHierarchy()
         setConstraints()
         setAppearance()
+        connectNavigator()
+    }
+    
+    /// 이동가능한 텍스트필드 연결
+    func connectNavigator() {
+        navigator.register([headerView.exerciseNameTextField] + contentView.allTextFields())
     }
     
     /// 기본 배경색 등 외형을 설정합니다.
