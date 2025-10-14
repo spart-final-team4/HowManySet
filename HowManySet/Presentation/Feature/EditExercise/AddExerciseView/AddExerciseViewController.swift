@@ -24,7 +24,6 @@ final class AddExerciseViewController: UIViewController, View {
     typealias Reactor = AddExerciseViewReactor
     
     // MARK: - Properties
-    
     /// Rx 리소스 해제를 위한 DisposeBag입니다.
     var disposeBag = DisposeBag()
     
@@ -39,6 +38,9 @@ final class AddExerciseViewController: UIViewController, View {
 
     /// 운동명을 입력하는 헤더 뷰입니다.
     private let headerView = EditExerciseHeaderView()
+    
+    /// 텍스트필드간 이동가능하도록 돕는 객체
+    private let navigator = TextFieldNavigator()
     
     /// 헤더 하단 구분선입니다.
     private let headerBorderLineView = UIView().then {
@@ -81,15 +83,40 @@ final class AddExerciseViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-
+        contentView.contentViewDelegate = self
         // 초기화면 비활성화
         footerView.setAddButtonEnabled(false)
         footerView.setSaveButtonEnabled(false)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         onDismiss?()
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        
+        let contentInset = UIEdgeInsets(top: 0,
+                                        left: 0,
+                                        bottom: keyboardFrame.height,
+                                        right: 0)
+        
+        scrollView.contentInset = contentInset
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.contentInset = .zero
     }
     // MARK: - Binding
     
@@ -283,6 +310,11 @@ final class AddExerciseViewController: UIViewController, View {
     }
 }
 
+extension AddExerciseViewController: EditExerciseConetentViewDelegate {
+    func didChangedState() {
+        navigator.register([headerView.exerciseNameTextField] + contentView.allTextFields())
+    }
+}
 // MARK: - UI Layout Methods
 
 private extension AddExerciseViewController {

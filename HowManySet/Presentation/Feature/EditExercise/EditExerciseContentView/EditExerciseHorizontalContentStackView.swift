@@ -44,32 +44,12 @@ final class EditExerciseHorizontalContentStackView: UIStackView {
     }
     
     /// 무게를 입력받는 텍스트 필드입니다.
-    private let weightTextField = UITextField().then {
-        $0.placeholder = String(localized: "입력")
-        $0.backgroundColor = .bottomSheetBG
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 12
-        $0.textColor = .white
-        $0.font = .pretendard(size: 16, weight: .regular)
-        $0.keyboardType = .decimalPad
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
-        $0.leftView = paddingView
-        $0.leftViewMode = .always
-    }
+    let weightTextField = NavigatableTextField()
+        .configureNumberTextField()
     
     /// 반복 횟수를 입력받는 텍스트 필드입니다.
-    private let repsTextField = UITextField().then {
-        $0.placeholder = String(localized: "입력")
-        $0.backgroundColor = .bottomSheetBG
-        $0.clipsToBounds = true
-        $0.textColor = .white
-        $0.font = .pretendard(size: 16, weight: .regular)
-        $0.layer.cornerRadius = 12
-        $0.keyboardType = .numberPad
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
-        $0.leftView = paddingView
-        $0.leftViewMode = .always
-    }
+    let repsTextField = NavigatableTextField()
+        .configureNumberTextField()
     
     /// 해당 세트를 삭제할 수 있는 버튼입니다.
     private let removeButton = UIButton().then {
