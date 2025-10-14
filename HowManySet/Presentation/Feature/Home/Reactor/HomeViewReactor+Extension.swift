@@ -11,6 +11,30 @@ import ReactorKit
 
 extension HomeViewReactor {
     
+    // MARK: - 타이머
+    /// 운동시간 타이머
+    func makeWorkoutTimer() -> Observable<HomeViewReactor.Mutation> {
+        return Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
+            .withLatestFrom(self.state.map { $0.isWorkoutPaused }) { _, isPaused in return isPaused }
+            .filter { !$0 }
+            .map { _ in Mutation.workoutTimeUpdating }
+            .observe(on: MainScheduler.instance)
+    }
+    
+    /// 휴식시간 타이머: 현재 0.05초 간격으로 진행
+    func makeRestTimer(_ restTime: Float) -> Observable<HomeViewReactor.Mutation> {
+        let tickCount = restTime * 20
+        return Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .take(Int(tickCount))
+            .take(until: self.state.map {
+                $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
+                .filter { $0 }
+            )
+            .map { _ in Mutation.restRemainingUpdating }
+            .observe(on: MainScheduler.instance)
+    }
+    
     // MARK: - handleWorkoutFlow
     /// 스킵(다음) 버튼 클릭 시 mutate내에서 실행되는 전반적인 기능 로직
     func handleWorkoutFlow(
@@ -18,7 +42,7 @@ extension HomeViewReactor {
         isResting: Bool,
         restTime: Float
     ) -> Observable<HomeViewReactor.Mutation> {
-            
+        
         let nextSetIndex = currentState.workoutCardStates[cardIndex].setIndex + 1
         let currentWorkout = currentState.workoutRoutine.workouts[cardIndex]
         var currentCardState = currentState.workoutCardStates[cardIndex]
@@ -28,16 +52,9 @@ extension HomeViewReactor {
         
         if isResting {
             let restTime = currentState.restTime
-            let tickCount = restTime * 100 // 0.01초 간격으로 진행
+            let tickCount = restTime * 20 // 0.05초 간격으로 진행
             // 휴식 타이머
-            restTimer = Observable<Int>.interval(.milliseconds(10), scheduler: MainScheduler.asyncInstance)
-                .take(Int(tickCount))
-                .take(until: self.state.map {
-                    $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
-                    .filter { $0 }
-                )
-                .map { _ in Mutation.restRemainingUpdating }
-                .observe(on: MainScheduler.asyncInstance)
+            restTimer = makeRestTimer(tickCount)
             if restTime > 0 {
                 NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
             }
@@ -77,7 +94,7 @@ extension HomeViewReactor {
                !currentState.workoutCardStates[cardIndex + 1].allSetsCompleted {
                 nextExerciseIndex += 1
             } else if currentState.workoutCardStates.indices.contains(cardIndex - 1),
-                       !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
+                      !currentState.workoutCardStates[cardIndex - 1].allSetsCompleted {
                 nextExerciseIndex -= 1
             }
             
@@ -95,33 +112,17 @@ extension HomeViewReactor {
                 .observe(on: MainScheduler.instance)
             } else { // nextExerciseIndex == cardIndex일때
                 
-                // TODO: 현재 이부분 거치지 않음 (추후 수정)
-                // 현재 cardDeleteAnimationCompleted에서 종료 시 처리
-                let allCompleted = currentState.workoutCardStates
-                    .allSatisfy { $0.allSetsCompleted }
-                
-                if allCompleted { // 모든 운동 루틴 완료 시
-                    return .concat([
-                        .just(.manageWorkoutCount(isCurrentExerciseCompleted: true)),
-                        .just(.setCurrentRoutineCompleted),
-                        .just(.setResting(false)),
-                        .just(.setRestTime(0)),
-                        .just(.stopRestTimer(true)),
-                        .just(.saveWorkoutData)
-                    ])
-                    .observe(on: MainScheduler.instance)
-                } else { // 다음 운동 없을 때, 운동 끝나기 전 세트
-                    currentCardState.setProgressAmount += 1
-                    let updatedCardState = currentCardState
-                    return .concat([
-                        .just(.setResting(isResting)),
-                        // 카드 정보 업데이트
-                        .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
-                        .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
-                    ])
-                    .observe(on: MainScheduler.instance)
-                }
+                currentCardState.setProgressAmount += 1
+                let updatedCardState = currentCardState
+                return .concat([
+                    .just(.setResting(isResting)),
+                    // 카드 정보 업데이트
+                    .just(.updateWorkoutCardState(updatedCardState: updatedCardState)),
+                    .just(.setTrueCurrentCardViewCompleted(at: cardIndex))
+                ])
+                .observe(on: MainScheduler.instance)
             }
+            
         }
     }
     
@@ -163,51 +164,59 @@ extension HomeViewReactor {
 extension HomeViewReactor.State {
     var forLiveActivity: WorkoutDataForLiveActivity {
         guard workoutCardStates.indices.contains(currentExerciseIndex) else {
-            // 기본 데이터
-            return WorkoutDataForLiveActivity(
-                workoutTime: 0,
-                isWorkingout: true,
-                exerciseName: "",
-                exerciseInfo: "",
-                currentRoutineCompleted: false,
-                isResting: false,
-                restSecondsRemaining: 0,
-                isRestPaused: false,
-                currentSet: 0,
-                totalSet: 0,
-                currentIndex: 0,
-                accumulatedWorkoutTime: 0,
-                accumulatedRestRemaining: 0
-            )
+            return createDefaultLiveActivityData()
         }
-        
+
         let exercise = workoutCardStates[currentExerciseIndex]
-        let reps = exercise.currentRepsForSave
-        let weight: String
-        if exercise.currentWeightForSave.truncatingRemainder(dividingBy: 1) == 0 {
-            weight = String(Int(exercise.currentWeightForSave))
-        } else {
-            weight = String(exercise.currentWeightForSave)
-        }
-        let unit = exercise.currentUnitForSave
-        let repsText = String(localized: "회")
-        let exerciseInfo = "\(weight)\(unit) X \(reps)\(repsText)"
-        
+
         return WorkoutDataForLiveActivity(
             workoutTime: workoutTime,
             isWorkingout: isWorkingout,
+            isWorkoutPaused: isWorkoutPaused,
             exerciseName: exercise.currentExerciseName,
-            exerciseInfo: exerciseInfo,
+            exerciseInfo: formatExerciseInfo(exercise),
             currentRoutineCompleted: currentRoutineCompleted,
+            restStartDate: liveRestStartDate,
+            liveRestTime: liveRestTime,
+            restRemainingTimeInHome: restRemainingTime,
             isResting: isResting,
-            restSecondsRemaining: restRemainingTime,
             isRestPaused: isRestPaused,
             currentSet: exercise.setProgressAmount,
             totalSet: exercise.totalSetCount,
-            currentIndex: currentExerciseIndex,
-            accumulatedWorkoutTime: Int(accumulatedWorkoutTime),
-            accumulatedRestRemaining: Int(accumulatedRestRemainingTime)
+            currentIndex: currentExerciseIndex
         )
+    }
+
+    private func createDefaultLiveActivityData() -> WorkoutDataForLiveActivity {
+        WorkoutDataForLiveActivity(
+            workoutTime: 0,
+            isWorkingout: true,
+            isWorkoutPaused: false,
+            exerciseName: "",
+            exerciseInfo: "",
+            currentRoutineCompleted: false,
+            restStartDate: nil,
+            liveRestTime: 0,
+            restRemainingTimeInHome: 0,
+            isResting: false,
+            isRestPaused: false,
+            currentSet: 0,
+            totalSet: 0,
+            currentIndex: 0
+        )
+    }
+
+    private func formatExerciseInfo(_ exercise: WorkoutCardState) -> String {
+        let reps = exercise.currentRepsForSave
+        let weight = formatWeight(Float(exercise.currentWeightForSave))
+        let unit = exercise.currentUnitForSave
+        let repsText = String(localized: "회")
+
+        return "\(weight)\(unit) X \(reps)\(repsText)"
+    }
+
+    private func formatWeight(_ weight: Float) -> String {
+        weight.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(weight)) : String(weight)
     }
 }
 
@@ -215,8 +224,7 @@ extension HomeViewReactor.State {
 // MARK: InitialState 관련
 extension HomeViewReactor {
     
-    //    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
-    //    /// 바로 시작 되도록 isWorkingout = true
+    /// 운동 편집 뷰에서 받아온 WorkoutRoutine을 가지고 있는 InitialState
     static func fetchedInitialState(routine: WorkoutRoutine) -> State {
         // 루틴 선택 시 초기 값 설정
         let initialRoutine = routine
@@ -295,12 +303,12 @@ extension HomeViewReactor {
             totalSetCountInRoutine: initialTotalSetCountInRoutine,
             didSetCount: 0,
             currentWorkoutData: initialRoutine.workouts[0],
-            accumulatedWorkoutTime: 0,
-            accumulatedRestRemainingTime: 0,
             currentRoutineCompleted: false,
             uid: uid,
             documentID: initialRoutine.documentID,
-            recordID: ""
+            recordID: "",
+            liveRestStartDate: nil,
+            liveRestTime: 60
         )
     }
     

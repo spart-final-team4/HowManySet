@@ -9,20 +9,22 @@ import Foundation
 
 /// LiveActivity에 필요한 데이터
 public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
-    let workoutTime: Int
+
+    var workoutTime: Int
     var isWorkingout: Bool
+    var isWorkoutPaused: Bool
+
     var exerciseName: String
     var exerciseInfo: String
     var currentRoutineCompleted: Bool
+
+    var restStartDate: Date?
+    var liveRestTime: Float
+    var restRemainingTimeInHome: Float
     var isResting: Bool
-    var restSecondsRemaining: Float
     var isRestPaused: Bool
+
     var currentSet: Int
     var totalSet: Int
     var currentIndex: Int
-    var accumulatedWorkoutTime: Int
-    var accumulatedRestRemaining: Int
-    var restStartDate: Date?
-    var workoutStartDate: Date?
 }
-

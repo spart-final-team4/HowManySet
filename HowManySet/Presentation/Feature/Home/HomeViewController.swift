@@ -25,6 +25,8 @@ final class HomeViewController: UIViewController, View {
     
     private var currentPage = 0
     private var previousPage = 0
+    
+    private var syncTimer: Timer?
   
     // MARK: - UI Components
     lazy var homeView = HomeView(frame: .zero, reactor: self.reactor!)
@@ -46,6 +48,16 @@ final class HomeViewController: UIViewController, View {
         super.viewDidLoad()
         
         setupUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        startSyncTimer()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        stopSyncTimer()
     }
 }
 
@@ -261,6 +273,40 @@ private extension HomeViewController {
     }
 }
 
+// MARK: - Live Activity Sync
+private extension HomeViewController {
+    
+    func startSyncTimer() {
+        // 이미 타이머가 실행 중이면 중복 실행 방지
+        guard syncTimer == nil else { return }
+        
+        syncTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(syncWithLiveActivity), userInfo: nil, repeats: true)
+    }
+    
+    func stopSyncTimer() {
+        syncTimer?.invalidate()
+        syncTimer = nil
+    }
+    
+    /// LiveActivity 버튼 클릭 이벤트 감지하여 reactor 동작
+    @objc func syncWithLiveActivity() {
+        guard let reactor = self.reactor else { return }
+        
+        LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
+            reactor.action.onNext(.restPauseButtonClicked)
+        }
+        
+        LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
+            reactor.action.onNext(.setCompleteButtonClicked(at: index))
+        }
+        
+        LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
+            reactor.action.onNext(.forwardButtonClicked(at: index))
+        }
+    }
+}
+
+
 // MARK: - Reactor Binding
 extension HomeViewController {
     func bind(reactor: HomeViewReactor) {
@@ -430,10 +476,10 @@ extension HomeViewController {
                 if isResting && restTime >= 0 && restSecondsRemaining >= 0 {
                     let elapsed = totalRestTime - restSecondsRemaining
                     let progress = max(min(elapsed / Float(totalRestTime), 1), 0)
-                    let timeText = Int(restSecondsRemaining).toRestTimeLabel()
+                    let timeText = Int(round(restSecondsRemaining)).toRestTimeLabel()
                     return (cardView.index, progress, timeText, true, false)
                 } else {
-                    let timeText = Int(restStartTime ?? 0).toRestTimeLabel()
+                    let timeText = Int(round(restStartTime ?? 0)).toRestTimeLabel()
                     return (cardView.index, 0.0, timeText, false, true)
                 }
             }
@@ -495,13 +541,20 @@ extension HomeViewController {
             }.disposed(by: disposeBag)
         
         // 운동 중지 시
-        reactor.state.map { $0.isWorkoutPaused }
-            .distinctUntilChanged()
+        reactor.state.map { ($0.isWorkoutPaused, $0.forLiveActivity) }
+            .distinctUntilChanged { $0.0 == $1.0 }
             .observe(on: MainScheduler.instance)
-            .bind{ [weak self] isWorkoutPaused in
+            .bind{ [weak self] isWorkoutPaused, liveActivityData in
                 guard let self else { return }
                 let workoutButtonImageName: String = isWorkoutPaused ? "play.fill" : "pause.fill"
                 self.homeView.pauseButton.setImage(UIImage(systemName: workoutButtonImageName), for: .normal)
+
+                // 운동 일시정지 시 LiveActivity 제거, 재생 시 다시 시작
+                if isWorkoutPaused {
+                    LiveActivityService.shared.stop()
+                } else {
+                    LiveActivityService.shared.start(with: liveActivityData)
+                }
             }.disposed(by: disposeBag)
         
         // MARK: - 모든 세트 완료 시 카드 삭제 및 레이아웃 재설정
@@ -621,9 +674,10 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
-        // LiveActivity isResting, isRemaining 제외한 요소들 업데이트
+        // 운동/휴식시간, Pause 상태 제외 업데이트 (LiveActivity에서의 운동/휴식시간은 독립적으로 구현)
         reactor.state.map { $0.forLiveActivity }
-            .distinctUntilChanged { $0.isEqualExcludingRestStates(to: $1) }
+            .distinctUntilChanged { $0.isEqualExcludingTimer(to: $1) }
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
             .map { data in
                 guard let cached = cachedContentState else {
                     let data = reactor.currentState.forLiveActivity
@@ -631,7 +685,7 @@ extension HomeViewController {
                     cachedContentState = newState
                     return newState
                 }
-                let updated = cached.updateOtherStates(from: data)
+                let updated = cached.updateLiveActivityContentStates(from: data)
                 cachedContentState = updated
                 return updated
             }
@@ -641,73 +695,33 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
         
-        
-        Observable.combineLatest(
-            reactor.state.map { $0.isResting },
-            reactor.state.map { $0.restRemainingTime }
-        )
-        .distinctUntilChanged { $0 == $1 }
-        .map { restInfo -> HowManySetWidgetAttributes.ContentState in
-            let (isResting, restRemaining) = restInfo
-            guard let cached = cachedContentState else {
-                let data = reactor.currentState.forLiveActivity
-                let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
-                cachedContentState = newState
-                return newState
-            }
-            let updated = cached.updateRestInfo(isResting, restRemaining)
-            cachedContentState = updated
-            return updated
-        }
-        .debounce(.milliseconds(100), scheduler: MainScheduler.instance) 
-        .bind(onNext: { contentState in
-            LiveActivityService.shared.update(state: contentState)
-        })
-        .disposed(by: disposeBag)
+        // Pause 상태 변경 시 restStartDate/restEndDate 재계산하여 업데이트
+        reactor.state.map { $0.forLiveActivity.isRestPaused }
+            .distinctUntilChanged()
+            .skip(1)
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+            .map { isRestPaused -> HowManySetWidgetAttributes.ContentState? in
+                guard var cached = cachedContentState else { return nil }
 
-        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
-            .bind { _ in
-                reactor.action.onNext(.adjustWorkoutTimeOnForeground)
-                reactor.action.onNext(.adjustRestRemainingTimeOnForeground)
-            }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
-            .observe(on: MainScheduler.instance)
-            .bind { _ in
-                if reactor.currentState.isResting {
-                    reactor.action.onNext(.didEnterBackgroundWhileResting)
+                cached.isRestPaused = isRestPaused
+                
+                // 휴식 PlayAndPause (PlayAndPauseRestIntent와 동일한 로직)
+                if isRestPaused {
+                    let remaining = cached.restEndDate?.timeIntervalSince(Date.now) ?? 0
+                    cached.liveRestTime = Float(max(0, remaining))
+                } else {
+                    cached.restStartDate = Date.now
                 }
+                cachedContentState = cached
+                return cached
             }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(.playAndPauseRestEvent)
+            .compactMap { $0 }
             .observe(on: MainScheduler.instance)
-            .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-                    reactor.action.onNext(.restPauseButtonClicked)
-                }
-            }
+            .bind(onNext: { contentState in
+                LiveActivityService.shared.update(state: contentState)
+            })
             .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(.setCompleteEvent)
-            .observe(on: MainScheduler.instance)
-            .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-                    reactor.action.onNext(.setCompleteButtonClicked(at: index))
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx.notification(.skipEvent)
-            .observe(on: MainScheduler.instance)
-            .bind { notification in
-                LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-                    reactor.action.onNext(.forwardButtonClicked(at: index))
-                }
-            }
-            .disposed(by: disposeBag)
-        
+
     }//bind
 }
 
