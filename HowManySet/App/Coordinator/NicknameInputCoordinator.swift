@@ -18,7 +18,7 @@ final class NicknameInputCoordinator: Coordinator {
 
     func start() {
         let authUseCase = AuthUseCase(repository: AuthRepositoryImpl(firebaseAuthService: FirebaseAuthService()))
-        let reactor = NicknameInputReactor(authUseCase: authUseCase, coordinator: self)
+        let reactor = NicknameInputViewReactor(authUseCase: authUseCase, coordinator: self)
         let vc = NicknameInputViewController(reactor: reactor, coordinator: self)
         navigationController.setViewControllers([vc], animated: false)
     }
