@@ -6,12 +6,12 @@ import SnapKit
 final class NicknameInputViewController: UIViewController, View {
 
     var disposeBag = DisposeBag()
-    var reactor: NicknameInputReactor!
+    var reactor: NicknameInputViewReactor!
 
     private let nicknameInputView = NicknameInputView()
     private weak var coordinator: NicknameInputCoordinatorProtocol?
 
-    init(reactor: NicknameInputReactor, coordinator: NicknameInputCoordinatorProtocol) {
+    init(reactor: NicknameInputViewReactor, coordinator: NicknameInputCoordinatorProtocol) {
         self.reactor = reactor
         self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
@@ -36,9 +36,9 @@ final class NicknameInputViewController: UIViewController, View {
         bindUIEvents()
     }
 
-    func bind(reactor: NicknameInputReactor) {
+    func bind(reactor: NicknameInputViewReactor) {
         nicknameInputView.nicknameTextField.rx.text.orEmpty
-            .map(NicknameInputReactor.Action.inputNickname)
+            .map(NicknameInputViewReactor.Action.inputNickname)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 

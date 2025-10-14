@@ -2,7 +2,7 @@ import Foundation
 import ReactorKit
 import RxSwift
 
-final class NicknameInputReactor: Reactor {
+final class NicknameInputViewReactor: Reactor {
 
     enum Action {
         case inputNickname(String)
