@@ -83,14 +83,15 @@ final class EditExerciseViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(
-            footerView.saveExcerciseButtonRelay,
-            headerView.exerciseNameRelay,
-            contentView.exerciseInfoRelay
-        )
-        .map { (_, name, sets) in
-            Reactor.Action.saveExcerciseButtonTapped((name, sets))
-        }
+        footerView.saveExcerciseButtonRelay
+            .map {[weak self] in
+                guard let exerciseName = self?.headerView.exerciseNameRelay.value,
+                      let weightSet = self?.contentView.exerciseInfoRelay.value
+                else {
+                    return Reactor.Action.saveExcerciseButtonTapped((name: "", weightSet: [[]]))
+                }
+                return Reactor.Action.saveExcerciseButtonTapped((name: exerciseName, weightSet: weightSet))
+            }
         .observe(on: MainScheduler.instance)
         .bind(onNext: { [weak self] action in
             guard let self else { return }
