@@ -26,7 +26,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
 
         // 휴식 중 관련
         var restStartDate: Date?
-        var restTime: Float
+        var liveRestTime: Float
         var isResting: Bool
         var isRestPaused: Bool
 
@@ -43,7 +43,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         /// 휴식 종료 시간
         var restEndDate: Date? {
             guard let restStartDate else { return nil }
-            return restStartDate.addingTimeInterval(TimeInterval(restTime))
+            return restStartDate.addingTimeInterval(TimeInterval(liveRestTime))
         }
     }
     
@@ -159,7 +159,7 @@ struct HowManySetWidgetLiveActivity: Widget {
                                                 .foregroundStyle(.white)
                                                 .monospacedDigit()
                                         } else {
-                                            Text(Int(round(context.state.restTime)).toRestTimeLabelInLive())
+                                            Text(Int(round(context.state.liveRestTime)).toRestTimeLabelInLive())
                                                 .font(.system(size: restSecondsRemainigLabelSize))
                                                 .fontWeight(.semibold)
                                                 .foregroundStyle(.white)
@@ -402,7 +402,8 @@ extension HowManySetWidgetAttributes.ContentState {
         self.exerciseInfo = data.exerciseInfo
         self.currentRoutineCompleted = data.currentRoutineCompleted
         self.restStartDate = data.restStartDate
-        self.restTime = data.restTime
+        // LiveActivity start 시에는 현재 홈의 휴식시간을 사용
+        self.liveRestTime = data.restRemainingTimeInHome
         self.isResting = data.isResting
         self.isRestPaused = data.isRestPaused
         self.currentSet = data.currentSet
@@ -411,9 +412,28 @@ extension HowManySetWidgetAttributes.ContentState {
     }
 
     func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
-        // 휴식 중이고 isRestPaused가 변경된 경우 기존 restTime, restStartDate 유지
+        // 휴식 중이고 isRestPaused가 변경된 경우 기존 liveRestTime, restStartDate 유지
         // (Intent에서 이미 업데이트했으므로)
         let shouldPreserveRestData = self.isResting && (self.isRestPaused != data.isRestPaused)
+
+        // 휴식이 새로 시작된 경우인지 확인 (이전에는 휴식 중이 아니었는데 지금 휴식 중인 경우)
+        let isRestJustStarted = !self.isResting && data.isResting
+
+        // liveRestTime 결정:
+        // 1. Pause/Play 토글 시 -> 기존 값 유지
+        // 2. 휴식이 새로 시작된 경우 -> restRemainingTimeInHome 사용
+        // 3. 휴식 중인 경우 -> 기존 값 유지 (LiveActivity가 독립적으로 타이머 운영)
+        // 4. 휴식 중이 아닌 경우 -> liveRestTime 사용 (다음 휴식을 위한 기본값)
+        let newLiveRestTime: Float
+        if shouldPreserveRestData {
+            newLiveRestTime = self.liveRestTime
+        } else if isRestJustStarted {
+            newLiveRestTime = data.restRemainingTimeInHome
+        } else if self.isResting && data.isResting {
+            newLiveRestTime = self.liveRestTime
+        } else {
+            newLiveRestTime = data.liveRestTime
+        }
 
         return HowManySetWidgetAttributes.ContentState(
             workoutTime: data.workoutTime,
@@ -423,7 +443,7 @@ extension HowManySetWidgetAttributes.ContentState {
             exerciseInfo: data.exerciseInfo,
             currentRoutineCompleted: data.currentRoutineCompleted,
             restStartDate: shouldPreserveRestData ? self.restStartDate : data.restStartDate,
-            restTime: shouldPreserveRestData ? self.restTime : data.restTime,
+            liveRestTime: newLiveRestTime,
             isResting: data.isResting,
             isRestPaused: data.isRestPaused,
             currentSet: data.currentSet,
