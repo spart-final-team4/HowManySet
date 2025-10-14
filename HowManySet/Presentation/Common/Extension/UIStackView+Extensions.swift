@@ -16,7 +16,7 @@ extension UIStackView {
         }
     }
     
-    /// 스택뷰 내 하위 뷰들의 크기를 일괄적으로 설정합니다.
+    /// 스택뷰 내 하위 뷰들의 크기를 일괄적으로 설정합니다. 
     ///
     /// - 첫 번째와 마지막 뷰는 너비와 높이를 40으로 고정합니다.
     /// - 그 외의 뷰들은 너비를 90, 높이를 40으로 설정합니다.
@@ -32,7 +32,7 @@ extension UIStackView {
                 }
             } else {
                 subviews[i].snp.makeConstraints {
-                    $0.width.equalTo(90)
+                    $0.width.equalTo(80)
                     $0.height.equalTo(40)
                 }
             }
