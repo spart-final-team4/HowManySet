@@ -708,7 +708,7 @@ extension HomeViewController {
                 // 휴식 PlayAndPause (PlayAndPauseRestIntent와 동일한 로직)
                 if isRestPaused {
                     let remaining = cached.restEndDate?.timeIntervalSince(Date.now) ?? 0
-                    cached.restTime = Float(max(0, remaining))
+                    cached.liveRestTime = Float(max(0, remaining))
                 } else {
                     cached.restStartDate = Date.now
                 }
