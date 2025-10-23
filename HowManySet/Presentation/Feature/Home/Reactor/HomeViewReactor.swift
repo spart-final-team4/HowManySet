@@ -54,6 +54,8 @@ final class HomeViewReactor: Reactor {
         case restRemainingUpdating
         case pauseAndPlayWorkout(Bool)
         case pauseRest(Bool)
+        /// 휴식 중 운동 정지 시 -> 중복으로 인해 따로 구현
+        case pauseAndPlayBoth(workout: Bool, rest: Bool)
         /// 운동 완료 시 usecase이용해서 데이터 저장
         case saveWorkoutData
         /// 스킵(다음) 버튼 클릭 시 세트/운동 카운팅
@@ -208,21 +210,24 @@ final class HomeViewReactor: Reactor {
             }
             
         case .workoutPauseButtonClicked:
-            if currentState.isRestPaused {
-                // 현재 일시정지 상태 → 재생으로 전환
-                // interval을 restSecondsRemaining에서 재시작
-                let restTimer = makeRestTimer(currentState.restRemainingTime)
-                
-                return .concat([
-                    .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused)),
-                    .just(.pauseRest(!currentState.isRestPaused)),
-                    restTimer
-                ])
-            } else {
-                return .concat([
-                    .just(.pauseAndPlayWorkout(!currentState.isWorkoutPaused)),
-                    .just(.pauseRest(!currentState.isRestPaused))
-                ])
+            if currentState.isWorkoutPaused { // 운동 정지 -> 재생
+                if currentState.isRestPaused && currentState.isResting {
+                    // interval을 restSecondsRemaining에서 재시작
+                    let restTimer = makeRestTimer(currentState.restRemainingTime)
+
+                    return .concat([
+                        .just(.pauseAndPlayBoth(workout: false, rest: false)),
+                        restTimer
+                    ])
+                } else {
+                    return .just(.pauseAndPlayWorkout(false))
+                }
+            } else { // 운동 재생 -> 정지
+                if currentState.isResting {
+                    return .just(.pauseAndPlayBoth(workout: true, rest: true))
+                } else {
+                    return .just(.pauseAndPlayWorkout(true))
+                }
             }
             
             // 하단 휴식 버튼 누를 시 동작
@@ -416,7 +421,19 @@ final class HomeViewReactor: Reactor {
                 // 현재 시각부터 타이머 재시작
                 newState.isRestPaused = false
             }
-            
+
+        case let .pauseAndPlayBoth(workout, rest):
+            newState.isWorkoutPaused = workout
+            if rest {
+                newState.isRestPaused = true
+                NotificationService.shared.removeRestNotification()
+            } else {
+                if currentState.isResting, currentState.restRemainingTime > 0 {
+                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                }
+                newState.isRestPaused = false
+            }
+
             // MARK: - 현재 운동 데이터 저장
             // 운동 완료 시 모든 정보(Record, Summary) 저장
         case .saveWorkoutData:
