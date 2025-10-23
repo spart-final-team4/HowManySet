@@ -414,7 +414,9 @@ extension HowManySetWidgetAttributes.ContentState {
     func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
         // 휴식 중이고 isRestPaused가 변경된 경우 기존 liveRestTime, restStartDate 유지
         // (Intent에서 이미 업데이트했으므로)
-        let shouldPreserveRestData = self.isResting && (self.isRestPaused != data.isRestPaused)
+        let shouldPreserveRestData = self.isResting &&
+        ((self.isRestPaused != data.isRestPaused)
+         || (self.isWorkoutPaused != data.isWorkoutPaused))
 
         // 휴식이 새로 시작된 경우인지 확인 (이전에는 휴식 중이 아니었는데 지금 휴식 중인 경우)
         let isRestJustStarted = !self.isResting && data.isResting
@@ -457,12 +459,10 @@ extension WorkoutDataForLiveActivity {
     /// 운동/휴식시간, Pause 상태 제외한 값들만 비교
     func isEqualExcludingTimer(to other: WorkoutDataForLiveActivity) -> Bool {
         return self.isWorkingout == other.isWorkingout &&
-        self.isWorkoutPaused == other.isWorkoutPaused &&
         self.exerciseName == other.exerciseName &&
         self.exerciseInfo == other.exerciseInfo &&
         self.currentRoutineCompleted == other.currentRoutineCompleted &&
         self.isResting == other.isResting &&
-        // isRestPaused는 Intent에서 처리하므로 비교 제외
         self.currentSet == other.currentSet &&
         self.totalSet == other.totalSet &&
         self.currentIndex == other.currentIndex

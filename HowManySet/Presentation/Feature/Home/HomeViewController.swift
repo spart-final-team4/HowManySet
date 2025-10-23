@@ -678,14 +678,21 @@ extension HomeViewController {
         // 운동/휴식시간, Pause 상태 제외 업데이트 (LiveActivity에서의 운동/휴식시간은 독립적으로 구현)
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged { $0.isEqualExcludingTimer(to: $1) }
+            .skip(1)
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-            .map { data in
+            .compactMap { data -> HowManySetWidgetAttributes.ContentState? in
                 guard let cached = cachedContentState else {
                     let data = reactor.currentState.forLiveActivity
                     let newState = HowManySetWidgetAttributes.ContentState.init(from: data)
                     cachedContentState = newState
                     return newState
                 }
+
+                // Pause 상태가 변경된 경우 nil 반환 (별도 구독에서 처리)
+                if cached.isRestPaused != data.isRestPaused || cached.isWorkoutPaused != data.isWorkoutPaused {
+                    return nil
+                }
+
                 let updated = cached.updateLiveActivityContentStates(from: data)
                 cachedContentState = updated
                 return updated
@@ -696,20 +703,27 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
         
-        // Pause 상태 변경 시 restStartDate/restEndDate 재계산하여 업데이트
-        reactor.state.map { $0.forLiveActivity.isRestPaused }
-            .distinctUntilChanged()
+        // 홈에서 Pause 상태 변경 시 restStartDate/restEndDate 재계산하여 업데이트
+        reactor.state.map { (
+            $0.forLiveActivity.isRestPaused,
+            $0.forLiveActivity.isWorkoutPaused,
+            $0.forLiveActivity.isResting
+        ) }
+            .distinctUntilChanged { $0 == $1 }
             .skip(1)
+            .filter { _, _, isResting in isResting } // 휴식 중일 때만 처리
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-            .map { isRestPaused -> HowManySetWidgetAttributes.ContentState? in
+            .map { (isRestPaused: Bool, isWorkoutPaused: Bool, _) -> HowManySetWidgetAttributes.ContentState? in
                 guard var cached = cachedContentState else { return nil }
 
                 cached.isRestPaused = isRestPaused
-                
+                cached.isWorkoutPaused = isWorkoutPaused
+
                 // 휴식 PlayAndPause (PlayAndPauseRestIntent와 동일한 로직)
-                if isRestPaused {
+                if isRestPaused || isWorkoutPaused {
                     let remaining = cached.restEndDate?.timeIntervalSince(Date.now) ?? 0
                     cached.liveRestTime = Float(max(0, remaining))
+                    print("[Rest Play/Pause] remainingRest: \(remaining)")
                 } else {
                     cached.restStartDate = Date.now
                 }
@@ -722,7 +736,6 @@ extension HomeViewController {
                 LiveActivityService.shared.update(state: contentState)
             })
             .disposed(by: disposeBag)
-
     }//bind
 }
 
