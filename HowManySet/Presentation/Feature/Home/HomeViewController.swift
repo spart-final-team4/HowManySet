@@ -543,6 +543,7 @@ extension HomeViewController {
         // 운동 중지 시
         reactor.state.map { ($0.isWorkoutPaused, $0.forLiveActivity) }
             .distinctUntilChanged { $0.0 == $1.0 }
+            .skip(1)
             .observe(on: MainScheduler.instance)
             .bind{ [weak self] isWorkoutPaused, liveActivityData in
                 guard let self else { return }
