@@ -27,8 +27,16 @@ final class RoutineCompleteViewController: UIViewController, View {
     var interstitial: InterstitialAd?
     /// AdMob 테스트용 ID
     private let testAdId = "ca-app-pub-3940256099942544/4411468910"
-    /// AdMob ID
-    private let adId = "***REMOVED***"
+    
+    /// AdMob 광고 단위 ID (Info.plist에서 읽어옴)
+    private lazy var adId: String = {
+        guard let adUnitId = Bundle.main.object(forInfoDictionaryKey: "GADInterstitialAdUnitID") as? String else {
+            print("테스트 ID 사용")
+            return testAdId
+        }
+        return adUnitId
+    }()
+    
     /// Google Mobile Ads SDK 시작 여부
     private var isMobileAdsStartCalled = false
 
@@ -426,21 +434,6 @@ extension RoutineCompleteViewController {
                 reactor.action.onNext(.confirmButtonClickedForSavingMemo(newMemo: updatedMemo))
                 
                 self.navigationController?.popToRootViewController(animated: true)
-
-//                // 전면 광고 표시
-//                Task {
-//                    LoadingIndicator.showLoadingIndicator()
-//                    // 광고 로딩 대기
-//                    await self.loadInterstitial()
-//                    LoadingIndicator.hideLoadingIndicator()
-//                    // 광고 로드 확인
-//                    if let ad = self.interstitial {
-//                        ad.present(from: self)
-//                    } else {
-//                        print("Ad wasn't ready")
-//                    }
-//                    self.navigationController?.popToRootViewController(animated: true)
-//                }
             }
             .disposed(by: disposeBag)
     }
