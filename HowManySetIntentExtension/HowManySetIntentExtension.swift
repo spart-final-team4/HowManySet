@@ -5,7 +5,6 @@
 //  Created by 정근호 on 10/27/25.
 //
 
-import Foundation
 import AppIntents
 
 // Intent Entry Point (삭제하면 안됨!)
