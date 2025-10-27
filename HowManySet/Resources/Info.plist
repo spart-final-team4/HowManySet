@@ -64,5 +64,7 @@
 	</array>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-1393746060985917~9659867516</string>
+	<key>GADInterstitialAdUnitID</key>
+	<string>ca-app-pub-1393746060985917/5828117761</string>
 </dict>
 </plist>

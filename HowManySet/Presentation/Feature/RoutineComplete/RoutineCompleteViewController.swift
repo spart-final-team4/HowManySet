@@ -27,8 +27,16 @@ final class RoutineCompleteViewController: UIViewController, View {
     var interstitial: InterstitialAd?
     /// AdMob 테스트용 ID
     private let testAdId = "ca-app-pub-3940256099942544/4411468910"
-    /// AdMob ID
-    private let adId = "ca-app-pub-1393746060985917~9659867516"
+    
+    /// AdMob 광고 단위 ID (Info.plist에서 읽어옴)
+    private lazy var adId: String = {
+        guard let adUnitId = Bundle.main.object(forInfoDictionaryKey: "GADInterstitialAdUnitID") as? String else {
+            print("테스트 ID 사용")
+            return testAdId
+        }
+        return adUnitId
+    }()
+    
     /// Google Mobile Ads SDK 시작 여부
     private var isMobileAdsStartCalled = false
 
