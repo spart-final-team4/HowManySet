@@ -11,10 +11,10 @@ import ReactorKit
 
 extension HomeViewReactor {
     
-    // MARK: - 타이머
-    /// 운동시간 타이머
+    // MARK: - 타이머 UI 업데이트
+    /// 운동시간 UI 업데이트
     func makeWorkoutTimer() -> Observable<HomeViewReactor.Mutation> {
-        return Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+        return Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.asyncInstance)
             .take(until: self.state.map { !$0.isWorkingout }
                 .filter { $0 })
             .withLatestFrom(self.state.map { $0.isWorkoutPaused })
@@ -22,11 +22,9 @@ extension HomeViewReactor {
             .map { _ in Mutation.workoutTimeUpdating }
     }
     
-    /// 휴식시간 타이머: 현재 0.05초 간격으로 진행
+    /// 휴식시간 UI 업데이트
     func makeRestTimer(_ restTime: Float) -> Observable<HomeViewReactor.Mutation> {
-        let tickCount = restTime * 20
-        return Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .take(Int(tickCount))
+        return Observable<Int>.interval(.milliseconds(50), scheduler: MainScheduler.asyncInstance)
             .take(until: self.state.map {
                 $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
                 .filter { $0 }
