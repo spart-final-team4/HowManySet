@@ -431,15 +431,14 @@ final class HomeViewReactor: Reactor {
                 let elapsed = Date.now.timeIntervalSince(restStartDate)
                 let paused = newState.restPausedDuration
                 let totalRestTime = newState.restTime
-                print("휴식정지시간", paused)
+//                print("휴식정지시간", paused)
                 newState.restRemainingTime = Float(max(Double(totalRestTime)-(elapsed-paused), 0))
                                 
                 if newState.restRemainingTime == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
-                
-                print("남은 휴식시간", newState.restRemainingTime)
+//                print("남은 휴식시간", newState.restRemainingTime)
             }
             
         case let .pauseAndPlayWorkout(isPaused):
@@ -466,7 +465,6 @@ final class HomeViewReactor: Reactor {
                 if let restPauseStartDate = newState.restPauseStartDate {
                     newState.restPausedDuration += Date.now.timeIntervalSince(restPauseStartDate)
                     newState.restPauseStartDate = nil
-                    print("휴식정지시Interval: \(newState.restPausedDuration)")
                 }
                 // 현재 시각부터 타이머 재시작
                 newState.isRestPaused = false
@@ -478,10 +476,27 @@ final class HomeViewReactor: Reactor {
 
         case let .pauseAndPlayBoth(workout, rest):
             newState.isWorkoutPaused = workout
+            
+            if workout {
+                newState.workoutPauseStartDate = Date.now
+            } else {
+                if let workoutPauseStartDate = newState.workoutPauseStartDate {
+                    newState.workoutPausedDuration += Date.now.timeIntervalSince(workoutPauseStartDate)
+                    newState.workoutPauseStartDate = nil
+                }
+            }
+            
             if rest {
                 newState.isRestPaused = true
+                newState.restPauseStartDate = Date.now
                 NotificationService.shared.removeRestNotification()
             } else {
+                if let restPauseStartDate = newState.restPauseStartDate {
+                    newState.restPausedDuration += Date.now.timeIntervalSince(restPauseStartDate)
+                    newState.restPauseStartDate = nil
+                }
+                newState.isRestPaused = false
+                
                 if currentState.isResting, currentState.restRemainingTime > 0 {
                     NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
                 }
