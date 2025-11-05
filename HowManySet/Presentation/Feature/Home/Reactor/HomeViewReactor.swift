@@ -53,7 +53,7 @@ final class HomeViewReactor: Reactor {
         case workoutTimeUpdating
         case restRemainingUpdating
         case pauseAndPlayWorkout(Bool)
-        case pauseRest(Bool)
+        case pauseAndPlayRest(Bool)
         /// 휴식 중 운동 정지 시 -> 중복으로 인해 따로 구현
         case pauseAndPlayBoth(workout: Bool, rest: Bool)
         /// 운동 완료 시 usecase이용해서 데이터 저장
@@ -200,7 +200,7 @@ final class HomeViewReactor: Reactor {
                 return .empty()
             } else {
                 return .concat([
-                    .just(.pauseRest(false)),
+                    .just(.pauseAndPlayRest(false)),
                     .just(.stopRestTimer(false)),
                     .just(.setUpdatingIndex(cardIndex)),
                     handleWorkoutFlow(cardIndex, isResting: true, restTime: currentState.restTime)
@@ -213,13 +213,13 @@ final class HomeViewReactor: Reactor {
             if currentState.isResting {
                 // 휴식 중일 때 휴식만 종료
                 return .concat([
-                    .just(.pauseRest(false)),
+                    .just(.pauseAndPlayRest(false)),
                     .just(.stopRestTimer(true))
                 ])
             } else {
                 // 그 외엔 휴식 없이 바로 진행
                 return .concat([
-                    .just(.pauseRest(false)),
+                    .just(.pauseAndPlayRest(false)),
                     handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
                 ])
             }
@@ -260,13 +260,13 @@ final class HomeViewReactor: Reactor {
                 let restTimer = makeRestTimer(currentState.restRemainingTime)
                 
                 return .concat([
-                    .just(.pauseRest(false)),
+                    .just(.pauseAndPlayRest(false)),
                     restTimer
                 ])
             } else {
                 // 재생 상태 → 일시정지로 전환
                 // interval 종료, 남은 시간만 보존
-                return .just(.pauseRest(true))
+                return .just(.pauseAndPlayRest(true))
             }
             
         case .stopButtonClicked:
@@ -340,27 +340,21 @@ final class HomeViewReactor: Reactor {
             newState.isWorkingout = isWorkingout
             // 운동 시작 시각 현재로 설정
             newState.workoutStartDate = Date.now
-                        
-        case let .pauseAndPlayWorkout(isPaused):
-            newState.isWorkoutPaused = isPaused
-            if isPaused {
-                // 일시정지 시작 시각 저장
-                newState.workoutPauseStartDate = Date.now
-            } else {
-                // 일시정지 해제: 누적 시간 계산
-                if let workoutPauseStartDate = newState.workoutPauseStartDate {
-                    newState.workoutPausedDuration += Date.now.timeIntervalSince(workoutPauseStartDate)
-                    newState.workoutPauseStartDate = nil
-                }
-            }
             
         case let .setResting(isResting):
             newState.isResting = isResting
-            newState.liveRestStartDate = Date.now
-            if !newState.isResting {
+            if isResting {
+                newState.restStartDate = Date.now
+                newState.restPausedDuration = 0.0
+                newState.restPauseStartDate = nil
+                newState.liveRestStartDate = Date.now
+            } else {
                 newState.restRemainingTime = 0.0
                 newState.restStartTime = nil
                 newState.liveRestStartDate = nil
+                newState.restStartDate = nil
+                newState.restPausedDuration = 0.0
+                newState.restPauseStartDate = nil
             }
             
             // 휴식 버튼으로 휴식 시간 설정 시
@@ -419,40 +413,67 @@ final class HomeViewReactor: Reactor {
             newState.currentExerciseIndex = 0 // 첫 운동으로 초기화
             
         case .workoutTimeUpdating:
-            // 기존 단순 카운팅(workoutTime += 1) 방식에서 Date로 변경
+            // 기존 단순 카운팅(workoutTime += 1) 방식에서 Date 계산으로 변경
             if let workoutStartDate = newState.workoutStartDate {
                 let elapsed = Date.now.timeIntervalSince(workoutStartDate)
                 let paused = newState.workoutPausedDuration
                 newState.workoutTime = Int(elapsed - paused)
-                print(newState.workoutTime)
             }
             
         case .restRemainingUpdating:
             if newState.isResting,
                !newState.isWorkoutPaused,
                !newState.isRestPaused,
-               !newState.isRestTimerStopped {
-                // 0.05초씩 감소
-                newState.restRemainingTime = max(newState.restRemainingTime - 0.05, 0)
+               !newState.isRestTimerStopped,
+               let restStartDate = newState.restStartDate {
                 
-//                print(newState.restRemainingTime)
+                // 기존 단순 카운팅(0.05씩 감소) 방식에서 Date 계산으로 변경
+                let elapsed = Date.now.timeIntervalSince(restStartDate)
+                let paused = newState.restPausedDuration
+                let totalRestTime = newState.restTime
+                print("휴식정지시간", paused)
+                newState.restRemainingTime = Float(max(Double(totalRestTime)-(elapsed-paused), 0))
                                 
-                if newState.restRemainingTime <= 0.1 {
+                if newState.restRemainingTime == 0.0 {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
+                
+                print("남은 휴식시간", newState.restRemainingTime)
             }
             
-        case let .pauseRest(isPaused):
+        case let .pauseAndPlayWorkout(isPaused):
+            newState.isWorkoutPaused = isPaused
+            if isPaused {
+                // 일시정지 시작 시각 저장
+                newState.workoutPauseStartDate = Date.now
+            } else {
+                // 일시정지 해제: 누적 시간 계산
+                if let workoutPauseStartDate = newState.workoutPauseStartDate {
+                    newState.workoutPausedDuration += Date.now.timeIntervalSince(workoutPauseStartDate)
+                    newState.workoutPauseStartDate = nil
+                }
+            }
+            
+        case let .pauseAndPlayRest(isPaused):
             if isPaused {
                 newState.isRestPaused = true
+                // 휴식 일시정지 시각 저장
+                newState.restPauseStartDate = Date.now
                 NotificationService.shared.removeRestNotification()
             } else {
-                if currentState.isResting, currentState.restRemainingTime > 0 {
-                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                // 일시정지 해제: 누적 시간 계산
+                if let restPauseStartDate = newState.restPauseStartDate {
+                    newState.restPausedDuration += Date.now.timeIntervalSince(restPauseStartDate)
+                    newState.restPauseStartDate = nil
+                    print("휴식정지시Interval: \(newState.restPausedDuration)")
                 }
                 // 현재 시각부터 타이머 재시작
                 newState.isRestPaused = false
+                
+                if currentState.isResting, currentState.restRemainingTime > 0 {
+                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                }
             }
 
         case let .pauseAndPlayBoth(workout, rest):
