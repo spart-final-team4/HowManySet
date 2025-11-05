@@ -73,21 +73,12 @@ struct HowManySetWidgetLiveActivity: Widget {
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-
-                                if !context.state.isWorkoutPaused {
-                                    Text(timerInterval: context.state.workoutStartDate...Date.distantFuture,
-                                         countsDown: false)
-                                        .foregroundStyle(.white)
-                                        .font(.system(size: 14))
-                                        .fontWeight(.semibold)
-                                        .monospacedDigit()
-                                } else {
-                                    Text(context.state.workoutTime.toWorkOutTimeLabelInLive())
-                                        .foregroundStyle(.white)
-                                        .font(.system(size: 14))
-                                        .fontWeight(.semibold)
-                                        .monospacedDigit()
-                                }
+                                Text(timerInterval: context.state.workoutStartDate...Date.distantFuture,
+                                     countsDown: false)
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 14))
+                                    .fontWeight(.semibold)
+                                    .monospacedDigit()
                             }
                         } else { // 휴식 중 상단
                             HStack {

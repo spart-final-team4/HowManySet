@@ -14,12 +14,12 @@ extension HomeViewReactor {
     // MARK: - 타이머
     /// 운동시간 타이머
     func makeWorkoutTimer() -> Observable<HomeViewReactor.Mutation> {
-        return Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .take(until: self.state.map { !$0.isWorkingout }.filter { $0 }) // 운동 끝나면 중단
-            .withLatestFrom(self.state.map { $0.isWorkoutPaused }) { _, isPaused in return isPaused }
+        return Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+            .take(until: self.state.map { !$0.isWorkingout }
+                .filter { $0 })
+            .withLatestFrom(self.state.map { $0.isWorkoutPaused })
             .filter { !$0 }
             .map { _ in Mutation.workoutTimeUpdating }
-            .observe(on: MainScheduler.instance)
     }
     
     /// 휴식시간 타이머: 현재 0.05초 간격으로 진행
@@ -291,7 +291,7 @@ extension HomeViewReactor {
             restRemainingTime: 60.0,
             restTime: 60.0, // 기본 60초로 설정
             restStartTime: nil,
-            date: Date(),
+            date: Date.now,
             memoInRoutine: initialWorkoutRecord.comment,
             currentExerciseAllSetsCompleted: false,
             isEditAndMemoViewPresented: false,
@@ -308,7 +308,13 @@ extension HomeViewReactor {
             documentID: initialRoutine.documentID,
             recordID: "",
             liveRestStartDate: nil,
-            liveRestTime: 60
+            liveRestTime: 60,
+            workoutStartDate: nil, // Live와의 딜레이로 인해 초기 nil, reactor에서 현재 시각 설정
+            workoutPausedDuration: 0,
+            workoutPauseStartDate: nil,
+            restStartDate: nil,
+            restPausedDuration: 0,
+            restPauseStartDate: nil
         )
     }
     

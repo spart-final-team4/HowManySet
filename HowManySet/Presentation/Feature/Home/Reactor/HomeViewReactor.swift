@@ -99,12 +99,13 @@ final class HomeViewReactor: Reactor {
         var isWorkingout: Bool
         /// 운동 중지 시
         var isWorkoutPaused: Bool
+        /// UI용 운동시간
         var workoutTime: Int
         var isResting: Bool
         var isRestPaused: Bool
-        /// 현재 남은 휴식 시간
+        /// UI용 현재 남은 휴식 시간
         var restRemainingTime: Float
-        /// 기본 휴식 시간
+        /// 기본 휴식 시간 (사용자 설정, UI)
         var restTime: Float
         /// 휴식이 시작될 때의 값 (프로그레스바 용)
         var restStartTime: Float?
@@ -134,6 +135,20 @@ final class HomeViewReactor: Reactor {
         // LiveActivity RestTimer 용
         var liveRestStartDate: Date?
         var liveRestTime: Float
+        
+        // MARK: - 시간 기반 타이머 계산용
+        /// 운동 시작 시각
+        var workoutStartDate: Date?
+        /// 운동 일시정지 누적 시간
+        var workoutPausedDuration: TimeInterval
+        /// 운동 일시정지 시작 시각
+        var workoutPauseStartDate: Date?
+        /// 휴식 시작 시각
+        var restStartDate: Date?
+        /// 휴식 일시정지 누적 시간
+        var restPausedDuration: TimeInterval
+        /// 휴식 일시정지 시작 시각
+        var restPauseStartDate: Date?
     }
     
     // initialState 주입으로 변경
@@ -323,9 +338,21 @@ final class HomeViewReactor: Reactor {
             
         case let .setWorkingout(isWorkingout):
             newState.isWorkingout = isWorkingout
+            // 운동 시작 시각 현재로 설정
+            newState.workoutStartDate = Date.now
                         
         case let .pauseAndPlayWorkout(isPaused):
             newState.isWorkoutPaused = isPaused
+            if isPaused {
+                // 일시정지 시작 시각 저장
+                newState.workoutPauseStartDate = Date.now
+            } else {
+                // 일시정지 해제: 누적 시간 계산
+                if let workoutPauseStartDate = newState.workoutPauseStartDate {
+                    newState.workoutPausedDuration += Date.now.timeIntervalSince(workoutPauseStartDate)
+                    newState.workoutPauseStartDate = nil
+                }
+            }
             
         case let .setResting(isResting):
             newState.isResting = isResting
@@ -392,7 +419,13 @@ final class HomeViewReactor: Reactor {
             newState.currentExerciseIndex = 0 // 첫 운동으로 초기화
             
         case .workoutTimeUpdating:
-            newState.workoutTime += 1
+            // 기존 단순 카운팅(workoutTime += 1) 방식에서 Date로 변경
+            if let workoutStartDate = newState.workoutStartDate {
+                let elapsed = Date.now.timeIntervalSince(workoutStartDate)
+                let paused = newState.workoutPausedDuration
+                newState.workoutTime = Int(elapsed - paused)
+                print(newState.workoutTime)
+            }
             
         case .restRemainingUpdating:
             if newState.isResting,
