@@ -652,7 +652,11 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
         
-        // MARK: - LiveActivity 관련
+        bindLiveActivity(reactor: reactor)
+    }//bind
+    
+    // MARK: - LiveActivity 관련
+    func bindLiveActivity(reactor: HomeViewReactor) {
         // contentState 캐싱
         var cachedContentState: HowManySetWidgetAttributes.ContentState?
         
@@ -734,7 +738,7 @@ extension HomeViewController {
                 LiveActivityService.shared.update(state: contentState)
             })
             .disposed(by: disposeBag)
-    }//bind
+    }
 }
 
 
