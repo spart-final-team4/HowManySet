@@ -23,7 +23,7 @@ extension HomeViewReactor {
     }
     
     /// 휴식시간 UI 업데이트
-    func makeRestTimer(_ restTime: Float) -> Observable<HomeViewReactor.Mutation> {
+    func makeRestTimer() -> Observable<HomeViewReactor.Mutation> {
         return Observable<Int>.interval(.milliseconds(50), scheduler: MainScheduler.asyncInstance)
             .take(until: self.state.map {
                 $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
@@ -50,9 +50,8 @@ extension HomeViewReactor {
         
         if isResting {
             let restTime = currentState.restTime
-            let tickCount = restTime * 20 // 0.05초 간격으로 진행
             // 휴식 타이머
-            restTimer = makeRestTimer(tickCount)
+            restTimer = makeRestTimer()
             if restTime > 0 {
                 NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
             }

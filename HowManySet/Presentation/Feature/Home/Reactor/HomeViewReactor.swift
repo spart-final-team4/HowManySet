@@ -228,7 +228,7 @@ final class HomeViewReactor: Reactor {
             if currentState.isWorkoutPaused { // 운동 정지 -> 재생
                 if currentState.isRestPaused && currentState.isResting {
                     // interval을 restSecondsRemaining에서 재시작
-                    let restTimer = makeRestTimer(currentState.restRemainingTime)
+                    let restTimer = makeRestTimer()
 
                     return .concat([
                         .just(.pauseAndPlayBoth(workout: false, rest: false)),
@@ -257,7 +257,7 @@ final class HomeViewReactor: Reactor {
             if currentState.isRestPaused {
                 // 현재 일시정지 상태 → 재생으로 전환
                 // interval을 restSecondsRemaining에서 재시작
-                let restTimer = makeRestTimer(currentState.restRemainingTime)
+                let restTimer = makeRestTimer()
                 
                 return .concat([
                     .just(.pauseAndPlayRest(false)),
