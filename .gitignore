@@ -135,4 +135,7 @@ iOSInjectionProject/
 
 HowManySet/Resources/GoogleService-Info.plist
 
+# API Keys - DO NOT COMMIT
+Secrets.xcconfig
+
 Package.resolved
