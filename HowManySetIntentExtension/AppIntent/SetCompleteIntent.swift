@@ -32,8 +32,8 @@ public struct SetCompleteIntent: AppIntent, LiveActivityIntent {
         var updatedState = activity.content.state
 
         // 운동시간 처리
-//        let elapsedTime = Date().timeIntervalSince(updatedState.workoutStartDate)
-//        updatedState.workoutTime += Int(elapsedTime)
+        let elapsedTime = Date().timeIntervalSince(updatedState.workoutStartDate)
+        updatedState.workoutTime += Int(elapsedTime)
         
         // 세트, 휴식 상태 처리
         updatedState.currentSet += 1

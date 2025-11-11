@@ -36,7 +36,9 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var currentIndex: Int
 
         /// 운동 타이머 표시용 시작 시간
-        var workoutStartDate: Date?
+        var workoutStartDate: Date {
+            return Date.now.addingTimeInterval(-TimeInterval(workoutTime))
+        }
 
         /// 휴식 종료 시간
         var restEndDate: Date? {
@@ -67,12 +69,11 @@ struct HowManySetWidgetLiveActivity: Widget {
             VStack {
                 if !context.state.currentRoutineCompleted {
                     VStack(alignment: .leading, spacing: 10) {
-                        if let workoutStartDate = context.state.workoutStartDate,
-                           !context.state.isResting { // 운동 중 상단
+                        if !context.state.isResting { // 운동 중 상단
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(timerInterval: workoutStartDate...Date.distantFuture,
+                                Text(timerInterval: context.state.workoutStartDate...Date.distantFuture,
                                      countsDown: false)
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
@@ -399,7 +400,6 @@ extension HowManySetWidgetAttributes.ContentState {
         self.currentSet = data.currentSet
         self.totalSet = data.totalSet
         self.currentIndex = data.currentIndex
-        self.workoutStartDate = data.workoutStartDate
     }
 
     func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
@@ -441,8 +441,7 @@ extension HowManySetWidgetAttributes.ContentState {
             isRestPaused: data.isRestPaused,
             currentSet: data.currentSet,
             totalSet: data.totalSet,
-            currentIndex: data.currentIndex,
-            workoutStartDate: data.workoutStartDate
+            currentIndex: data.currentIndex
         )
     }
 }
