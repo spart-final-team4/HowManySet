@@ -210,13 +210,14 @@ final class HomeViewReactor: Reactor {
             // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
             /// 세트 스킵, 휴식 스킵은 유저한테 보여지는 카드 기준으로 변경
         case let .forwardButtonClicked(cardIndex):
-            if currentState.isResting {
+            // LiveActivity에서 0으로 보여질 때 forward 클릭 시 세트 증가 안되도록 조건 추가
+            if currentState.isResting || currentState.restStartDate != nil {
                 // 휴식 중일 때 휴식만 종료
                 return .concat([
                     .just(.pauseAndPlayRest(false)),
                     .just(.stopRestTimer(true))
                 ])
-            } else {
+            } else { // restStartDate == nil -> 휴식 중 아님
                 // 그 외엔 휴식 없이 바로 진행
                 return .concat([
                     .just(.pauseAndPlayRest(false)),
@@ -438,7 +439,7 @@ final class HomeViewReactor: Reactor {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
-//                print("남은 휴식시간", newState.restRemainingTime)
+                print("남은 휴식시간", newState.restRemainingTime)
             }
             
         case let .pauseAndPlayWorkout(isPaused):

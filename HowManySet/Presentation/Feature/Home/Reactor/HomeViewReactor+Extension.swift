@@ -53,6 +53,7 @@ extension HomeViewReactor {
             // 휴식 타이머
             restTimer = makeRestTimer()
             if restTime > 0 {
+//                print("알림 휴식 시간: ", restTime)
                 NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
             }
         }
