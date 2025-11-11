@@ -13,6 +13,7 @@ public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
     var workoutTime: Int
     var isWorkingout: Bool
     var isWorkoutPaused: Bool
+    var workoutStartDate: Date?
 
     var exerciseName: String
     var exerciseInfo: String

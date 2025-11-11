@@ -166,6 +166,7 @@ extension HomeViewReactor.State {
             workoutTime: workoutTime,
             isWorkingout: isWorkingout,
             isWorkoutPaused: isWorkoutPaused,
+            workoutStartDate: workoutStartDate,
             exerciseName: exercise.currentExerciseName,
             exerciseInfo: formatExerciseInfo(exercise),
             currentRoutineCompleted: currentRoutineCompleted,
