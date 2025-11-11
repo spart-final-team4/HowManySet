@@ -185,7 +185,7 @@ final class HomeViewReactor: Reactor {
             /// 초기 루틴 선택 시
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
         case .routineSelected:
-            // 운동 타이머
+            // 운동 타이머 UI updating
             let workoutTimer = makeWorkoutTimer()
             
             return .concat([
@@ -349,6 +349,11 @@ final class HomeViewReactor: Reactor {
                 newState.restPausedDuration = 0.0
                 newState.restPauseStartDate = nil
                 newState.liveRestStartDate = Date.now
+
+                // restStartDate 설정과 동시에 알림 예약
+                if currentState.restTime > 0 {
+                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restTime))
+                }
             } else {
                 newState.restRemainingTime = 0.0
                 newState.restStartTime = nil
