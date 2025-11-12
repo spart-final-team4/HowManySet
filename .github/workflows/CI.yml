@@ -25,9 +25,9 @@ jobs:
           GOOGLESERVICE_INFO: ${{ secrets.GOOGLESERVICE_INFO }}
     - name: Decode Secrets.xcconfig
       run: |
-        echo "$Secrets" | base64 --decode > ./HowManySet/Resources/Secrets.xcconfig
+        echo "$SECRETS" | base64 --decode > ./HowManySet/Resources/Secrets.xcconfig
       env:
-          Secrets: ${{ secrets.Secrets }}
+          Secrets: ${{ secrets.SECRETS }}
     - name: 📱 List Available Simulators
       run: xcrun simctl list devices
 
