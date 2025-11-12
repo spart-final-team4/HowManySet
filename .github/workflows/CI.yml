@@ -23,6 +23,11 @@ jobs:
         echo "$GOOGLESERVICE_INFO" | base64 --decode > ./HowManySet/Resources/GoogleService-Info.plist
       env:
           GOOGLESERVICE_INFO: ${{ secrets.GOOGLESERVICE_INFO }}
+    - name: Decode Secrets.xcconfig
+      run: |
+        echo "$SECRETS" | base64 --decode > ./Secrets.xcconfig
+      env:
+          Secrets: ${{ secrets.SECRETS }}
     - name: 📱 List Available Simulators
       run: xcrun simctl list devices
 
