@@ -14,7 +14,7 @@ extension HomeViewReactor {
     // MARK: - 타이머 UI 업데이트
     /// 운동시간 UI 업데이트
     func makeWorkoutTimer() -> Observable<HomeViewReactor.Mutation> {
-        return Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+        return Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .take(until: self.state.map { !$0.isWorkingout }
                 .filter { $0 })
             .withLatestFrom(self.state.map { $0.isWorkoutPaused })
