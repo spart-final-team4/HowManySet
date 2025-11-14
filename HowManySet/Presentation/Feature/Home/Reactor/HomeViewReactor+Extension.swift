@@ -14,7 +14,7 @@ extension HomeViewReactor {
     // MARK: - 타이머 UI 업데이트
     /// 운동시간 UI 업데이트
     func makeWorkoutTimer() -> Observable<HomeViewReactor.Mutation> {
-        return Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.asyncInstance)
+        return Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .take(until: self.state.map { !$0.isWorkingout }
                 .filter { $0 })
             .withLatestFrom(self.state.map { $0.isWorkoutPaused })
@@ -24,7 +24,7 @@ extension HomeViewReactor {
     
     /// 휴식시간 UI 업데이트
     func makeRestTimer() -> Observable<HomeViewReactor.Mutation> {
-        return Observable<Int>.interval(.milliseconds(50), scheduler: MainScheduler.asyncInstance)
+        return Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .take(until: self.state.map {
                 $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
                 .filter { $0 }
@@ -49,12 +49,8 @@ extension HomeViewReactor {
         var restTimer: Observable<HomeViewReactor.Mutation> = .empty()
         
         if isResting {
-            let restTime = currentState.restTime
-            // 휴식 타이머
+            // 휴식 타이머 UI updating
             restTimer = makeRestTimer()
-            if restTime > 0 {
-                NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(restTime))
-            }
         }
         
         // 다음 세트가 있는 경우 (휴식 시작)

@@ -185,7 +185,7 @@ final class HomeViewReactor: Reactor {
             /// 초기 루틴 선택 시
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
         case .routineSelected:
-            // 운동 타이머
+            // 운동 타이머 UI updating
             let workoutTimer = makeWorkoutTimer()
             
             return .concat([
@@ -209,7 +209,8 @@ final class HomeViewReactor: Reactor {
             
             // MARK: - skip 버튼 클릭 시 - 휴식 스킵 and (다음 세트 or 다음 운동) 진행
             /// 세트 스킵, 휴식 스킵은 유저한테 보여지는 카드 기준으로 변경
-        case let .forwardButtonClicked(cardIndex):
+        case .forwardButtonClicked(_):
+            // 휴식중에만 forward 동작
             if currentState.isResting {
                 // 휴식 중일 때 휴식만 종료
                 return .concat([
@@ -217,12 +218,15 @@ final class HomeViewReactor: Reactor {
                     .just(.stopRestTimer(true))
                 ])
             } else {
-                // 그 외엔 휴식 없이 바로 진행
-                return .concat([
-                    .just(.pauseAndPlayRest(false)),
-                    handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
-                ])
+                return .empty()
             }
+//            } else { // restStartDate == nil -> 휴식 중 아님
+//                // 그 외엔 휴식 없이 바로 진행
+//                return .concat([
+//                    .just(.pauseAndPlayRest(false)),
+//                    handleWorkoutFlow(cardIndex, isResting: false, restTime: currentState.restTime)
+//                ])
+//            }
             
         case .workoutPauseButtonClicked:
             if currentState.isWorkoutPaused { // 운동 정지 -> 재생
@@ -348,6 +352,11 @@ final class HomeViewReactor: Reactor {
                 newState.restPausedDuration = 0.0
                 newState.restPauseStartDate = nil
                 newState.liveRestStartDate = Date.now
+
+                // restStartDate 설정과 동시에 알림 예약
+                if currentState.restTime > 0 {
+                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restTime))
+                }
             } else {
                 newState.restRemainingTime = 0.0
                 newState.restStartTime = nil
@@ -438,7 +447,7 @@ final class HomeViewReactor: Reactor {
                     newState.isResting = false
                     newState.isRestTimerStopped = true
                 }
-//                print("남은 휴식시간", newState.restRemainingTime)
+                print("남은 휴식시간", newState.restRemainingTime)
             }
             
         case let .pauseAndPlayWorkout(isPaused):
