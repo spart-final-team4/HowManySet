@@ -7,7 +7,7 @@
 
 import UserNotifications
 
-final class NotificationService {
+final class NotificationService: NotificationServiceProtocol {
     
     static let shared = NotificationService()
     

@@ -17,22 +17,27 @@ final class HomeViewController: UIViewController, View {
     
     // MARK: - Properties
     private weak var coordinator: HomeCoordinatorProtocol?
-    
+    private let liveActivityService: LiveActivityServiceProtocol
+
     var disposeBag = DisposeBag()
-    
+
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
-    
+
     private var currentPage = 0
     private var previousPage = 0
-    
     private var syncTimer: Timer?
-  
+
     // MARK: - UI Components
     lazy var homeView = HomeView(frame: .zero, reactor: self.reactor!)
-    
+
     // MARK: - Initializer
-    init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
+    init(
+        reactor: HomeViewReactor,
+        coordinator: HomeCoordinatorProtocol,
+        liveActivityService: LiveActivityServiceProtocol = LiveActivityService.shared
+    ) {
+        self.liveActivityService = liveActivityService
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
@@ -342,7 +347,7 @@ extension HomeViewController {
                 self.coordinator?.popUpEndWorkoutAlert(
                     onConfirm: {
                         reactor.action.onNext(.stopButtonClicked)
-                        LiveActivityService.shared.stop() // 라이브 액티비티 종료
+                        self.liveActivityService.stop() // 라이브 액티비티 종료
                         return reactor.currentState.workoutSummary
                     },
                     onCancel: {
@@ -550,9 +555,9 @@ extension HomeViewController {
 
                 // 운동 일시정지 시 LiveActivity 제거, 재생 시 다시 시작
                 if isWorkoutPaused {
-                    LiveActivityService.shared.stop()
+                    self.liveActivityService.stop()
                 } else {
-                    LiveActivityService.shared.start(with: liveActivityData)
+                    self.liveActivityService.start(with: liveActivityData)
                 }
             }.disposed(by: disposeBag)
         
@@ -619,7 +624,7 @@ extension HomeViewController {
                             if let reactor = self.reactor {
                                 self.coordinator?.popUpCompletedWorkoutAlert(onConfirm: {
                                     reactor.action.onNext(.stopButtonClicked)
-                                    LiveActivityService.shared.stop() // 라이브 액티비티 종료
+                                    self.liveActivityService.stop() // 라이브 액티비티 종료
                                     return reactor.currentState.workoutSummary
                                 }, onCancel: { [weak self] in
                                     guard let self else { return }
@@ -665,13 +670,14 @@ extension HomeViewController {
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
             .observe(on: MainScheduler.instance)
-            .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
+            .bind { [weak self] (state: (Bool, WorkoutDataForLiveActivity)) in
+                guard let self else { return }
                 let (isWorkingout, data) = state
                 if isWorkingout {
-                    LiveActivityService.shared.start(with: data)
+                    self.liveActivityService.start(with: data)
                     cachedContentState = .init(from: data)
                 } else {
-                    LiveActivityService.shared.stop()
+                    self.liveActivityService.stop()
                     cachedContentState = nil
                 }
             }
@@ -700,8 +706,9 @@ extension HomeViewController {
                 return updated
             }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { contentState in
-                LiveActivityService.shared.update(state: contentState)
+            .bind(onNext: { [weak self] contentState in
+                guard let self else { return }
+                self.liveActivityService.update(state: contentState)
             })
             .disposed(by: disposeBag)
         
@@ -734,8 +741,9 @@ extension HomeViewController {
             }
             .compactMap { $0 }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { contentState in
-                LiveActivityService.shared.update(state: contentState)
+            .bind(onNext: { [weak self] contentState in
+                guard let self else { return }
+                self.liveActivityService.update(state: contentState)
             })
             .disposed(by: disposeBag)
     }

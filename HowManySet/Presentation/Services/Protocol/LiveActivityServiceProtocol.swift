@@ -9,7 +9,6 @@ import Foundation
 import ActivityKit
 
 /// LiveActivity 관리 서비스 프로토콜
-/// DIP: 구체 클래스 대신 프로토콜에 의존하여 테스트 용이성 향상
 protocol LiveActivityServiceProtocol {
     /// LiveActivity 시작
     /// - Parameter data: 운동 데이터

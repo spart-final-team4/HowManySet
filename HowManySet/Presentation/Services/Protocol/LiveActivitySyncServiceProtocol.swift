@@ -8,7 +8,6 @@
 import Foundation
 
 /// LiveActivity 동기화 서비스 프로토콜
-/// SRP: LiveActivity와의 동기화 책임만 분리
 protocol LiveActivitySyncServiceProtocol {
     /// 동기화 시작 (0.5초마다 폴링)
     /// - Parameter actionHandler: LiveActivity 이벤트 핸들러
