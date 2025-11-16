@@ -15,10 +15,12 @@ import ActivityKit
 
 final class HomeViewController: UIViewController, View {
     
-    // MARK: - Properties
+    // MARK: - Dependencies
     private weak var coordinator: HomeCoordinatorProtocol?
     private let liveActivityService: LiveActivityServiceProtocol
+    private let liveActivitySyncService: LiveActivitySyncServiceProtocol
 
+    // MARK: - Properties
     var disposeBag = DisposeBag()
 
     /// HomePagingCardView들을 저장하는 List
@@ -26,7 +28,6 @@ final class HomeViewController: UIViewController, View {
 
     private var currentPage = 0
     private var previousPage = 0
-    private var syncTimer: Timer?
 
     // MARK: - UI Components
     lazy var homeView = HomeView(frame: .zero, reactor: self.reactor!)
@@ -35,9 +36,11 @@ final class HomeViewController: UIViewController, View {
     init(
         reactor: HomeViewReactor,
         coordinator: HomeCoordinatorProtocol,
-        liveActivityService: LiveActivityServiceProtocol = LiveActivityService.shared
+        liveActivityService: LiveActivityServiceProtocol = LiveActivityService.shared,
+        liveActivitySyncService: LiveActivitySyncServiceProtocol = LiveActivitySyncService()
     ) {
         self.liveActivityService = liveActivityService
+        self.liveActivitySyncService = liveActivitySyncService
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
@@ -57,12 +60,12 @@ final class HomeViewController: UIViewController, View {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        startSyncTimer()
+        startLiveActivitySync()
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        stopSyncTimer()
+        liveActivitySyncService.stopSync()
     }
 }
 
@@ -280,33 +283,23 @@ private extension HomeViewController {
 
 // MARK: - Live Activity Sync
 private extension HomeViewController {
-    
-    func startSyncTimer() {
-        // 이미 타이머가 실행 중이면 중복 실행 방지
-        guard syncTimer == nil else { return }
-        
-        syncTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(syncWithLiveActivity), userInfo: nil, repeats: true)
-    }
-    
-    func stopSyncTimer() {
-        syncTimer?.invalidate()
-        syncTimer = nil
-    }
-    
-    /// LiveActivity 버튼 클릭 이벤트 감지하여 reactor 동작
-    @objc func syncWithLiveActivity() {
-        guard let reactor = self.reactor else { return }
-        
-        LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-            reactor.action.onNext(.restPauseButtonClicked)
-        }
-        
-        LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-            reactor.action.onNext(.setCompleteButtonClicked(at: index))
-        }
-        
-        LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-            reactor.action.onNext(.forwardButtonClicked(at: index))
+
+    /// LiveActivity 동기화 시작
+    func startLiveActivitySync() {
+        // startSync 실행
+        liveActivitySyncService.startSync { [weak self] action in
+            guard let self, let reactor = self.reactor else { return }
+
+            switch action {
+            case .restPauseButtonClicked:
+                reactor.action.onNext(.restPauseButtonClicked)
+
+            case .setCompleteButtonClicked(let index):
+                reactor.action.onNext(.setCompleteButtonClicked(at: index))
+
+            case .skipRestButtonClicked(let index):
+                reactor.action.onNext(.forwardButtonClicked(at: index))
+            }
         }
     }
 }
