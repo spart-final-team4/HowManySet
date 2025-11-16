@@ -155,27 +155,31 @@ final class HomeViewReactor: Reactor {
     let initialState: State
     
     private let saveRecordUseCase: SaveRecordUseCase
+    /// 운동 종료/완료시 RecordUpdate (+ 루틴에 대한 메모)
+    private let updateRecordUseCase: UpdateRecordUseCase
     private let fetchRoutineUseCase: FetchRoutineUseCase
     /// 메모 dismiss, 운동 종료/완료 시 WorkoutUpdate (+ 각 운동에 대한 메모)
     private let updateWorkoutUseCase: UpdateWorkoutUseCase
     
     private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
-    /// 운동 종료/완료시 RecordUpdate (+ 루틴에 대한 메모)
-    private let updateRecordUseCase: UpdateRecordUseCase
+    private let notificationService: NotificationServiceProtocol
+
     
     init(
         saveRecordUseCase: SaveRecordUseCase,
         fetchRoutineUseCase: FetchRoutineUseCase,
         updateWorkoutUseCase: UpdateWorkoutUseCase,
         updateRecordUseCase: UpdateRecordUseCase,
-        initialState: State
+        initialState: State,
+        notificationService: NotificationServiceProtocol
     ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.updateWorkoutUseCase = updateWorkoutUseCase
         self.updateRecordUseCase = updateRecordUseCase
         self.initialState = initialState
+        self.notificationService = notificationService
     }//init
     
     // MARK: - Mutate(실제로 일어날 변화 구현) Action -> Mutation
@@ -355,7 +359,7 @@ final class HomeViewReactor: Reactor {
 
                 // restStartDate 설정과 동시에 알림 예약
                 if currentState.restTime > 0 {
-                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restTime))
+                    notificationService.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restTime))
                 }
             } else {
                 newState.restRemainingTime = 0.0
@@ -468,7 +472,7 @@ final class HomeViewReactor: Reactor {
                 newState.isRestPaused = true
                 // 휴식 일시정지 시각 저장
                 newState.restPauseStartDate = Date.now
-                NotificationService.shared.removeRestNotification()
+                notificationService.removeRestNotification()
             } else {
                 // 일시정지 해제: 누적 시간 계산
                 if let restPauseStartDate = newState.restPauseStartDate {
@@ -479,7 +483,7 @@ final class HomeViewReactor: Reactor {
                 newState.isRestPaused = false
                 
                 if currentState.isResting, currentState.restRemainingTime > 0 {
-                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                    notificationService.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
                 }
             }
 
@@ -498,7 +502,7 @@ final class HomeViewReactor: Reactor {
             if rest {
                 newState.isRestPaused = true
                 newState.restPauseStartDate = Date.now
-                NotificationService.shared.removeRestNotification()
+                notificationService.removeRestNotification()
             } else {
                 if let restPauseStartDate = newState.restPauseStartDate {
                     newState.restPausedDuration += Date.now.timeIntervalSince(restPauseStartDate)
@@ -507,7 +511,7 @@ final class HomeViewReactor: Reactor {
                 newState.isRestPaused = false
                 
                 if currentState.isResting, currentState.restRemainingTime > 0 {
-                    NotificationService.shared.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
+                    notificationService.scheduleRestFinishedNotification(seconds: TimeInterval(currentState.restRemainingTime))
                 }
                 newState.isRestPaused = false
             }
@@ -600,7 +604,7 @@ final class HomeViewReactor: Reactor {
             
         case let .stopRestTimer(isStopped):
             if isStopped {
-                NotificationService.shared.removeRestNotification()
+                notificationService.removeRestNotification()
                 newState.isResting = false
                 newState.isRestTimerStopped = true
                 newState.restRemainingTime = 0.0
