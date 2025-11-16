@@ -149,21 +149,6 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
-		66A0BC3F2E0E203300A44A79 /* Exceptions for "LiveActivity" folder in "HowManySetIntentExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				LiveActivityAppGroupBridge.swift,
-			);
-			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
-		};
-		66B4EE402E03263200A5F4C6 /* Exceptions for "LiveActivity" folder in "HowManySetWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				LiveActivityAppGroupBridge.swift,
-				LiveActivityService.swift,
-			);
-			target = 668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */;
-		};
 		66CA11C62E7D45970004CA80 /* Exceptions for "HowManySet" folder in "HowManySetIntentExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -221,15 +206,6 @@
 				66CA11C62E7D45970004CA80 /* Exceptions for "HowManySet" folder in "HowManySetIntentExtension" target */,
 			);
 			path = HowManySet;
-			sourceTree = "<group>";
-		};
-		66B4EE3B2E03263100A5F4C6 /* LiveActivity */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				66B4EE402E03263200A5F4C6 /* Exceptions for "LiveActivity" folder in "HowManySetWidgetExtension" target */,
-				66A0BC3F2E0E203300A44A79 /* Exceptions for "LiveActivity" folder in "HowManySetIntentExtension" target */,
-			);
-			path = LiveActivity;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -296,7 +272,6 @@
 				666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */,
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
-				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
 			);
 			sourceTree = "<group>";
 		};
@@ -376,7 +351,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				669358BD2DE9AA8C00956214 /* HowManySet */,
-				66B4EE3B2E03263100A5F4C6 /* LiveActivity */,
 			);
 			name = HowManySet;
 			packageProductDependencies = (
