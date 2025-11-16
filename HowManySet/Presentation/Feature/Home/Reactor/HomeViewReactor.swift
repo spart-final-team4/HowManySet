@@ -190,11 +190,11 @@ final class HomeViewReactor: Reactor {
             /// 현재 루틴 선택 후 운동 편집 창에서 시작 시 EditRoutineCoordinator에서 바로 실행됨!
         case .routineSelected:
             // 운동 타이머 UI updating
-            let workoutTimer = makeWorkoutTimer()
+            let workoutUpdating = makeWorkoutUIUpdateSignal()
             
             return .concat([
                 .just(.setWorkingout(true)),
-                workoutTimer
+                workoutUpdating
             ])
             
             // MARK: - 세트 완료 버튼 클릭 시 로직
@@ -236,11 +236,11 @@ final class HomeViewReactor: Reactor {
             if currentState.isWorkoutPaused { // 운동 정지 -> 재생
                 if currentState.isRestPaused && currentState.isResting {
                     // interval을 restSecondsRemaining에서 재시작
-                    let restTimer = makeRestTimer()
+                    let restUpdating = makeRestUIUpdateSignal()
 
                     return .concat([
                         .just(.pauseAndPlayBoth(workout: false, rest: false)),
-                        restTimer
+                        restUpdating
                     ])
                 } else {
                     return .just(.pauseAndPlayWorkout(false))
@@ -265,11 +265,11 @@ final class HomeViewReactor: Reactor {
             if currentState.isRestPaused {
                 // 현재 일시정지 상태 → 재생으로 전환
                 // interval을 restSecondsRemaining에서 재시작
-                let restTimer = makeRestTimer()
+                let restUpdating = makeRestUIUpdateSignal()
                 
                 return .concat([
                     .just(.pauseAndPlayRest(false)),
-                    restTimer
+                    restUpdating
                 ])
             } else {
                 // 재생 상태 → 일시정지로 전환
