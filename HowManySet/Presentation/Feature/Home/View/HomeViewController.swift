@@ -19,6 +19,7 @@ final class HomeViewController: UIViewController, View {
     private weak var coordinator: HomeCoordinatorProtocol?
     private let liveActivityService: LiveActivityServiceProtocol
     private let liveActivitySyncService: LiveActivitySyncServiceProtocol
+    private let animationService: WorkoutAnimationServiceProtocol
 
     // MARK: - Properties
     var disposeBag = DisposeBag()
@@ -37,10 +38,12 @@ final class HomeViewController: UIViewController, View {
         reactor: HomeViewReactor,
         coordinator: HomeCoordinatorProtocol,
         liveActivityService: LiveActivityServiceProtocol = LiveActivityService.shared,
-        liveActivitySyncService: LiveActivitySyncServiceProtocol = LiveActivitySyncService()
+        liveActivitySyncService: LiveActivitySyncServiceProtocol = LiveActivitySyncService(),
+        animationService: WorkoutAnimationServiceProtocol = WorkoutAnimationService()
     ) {
         self.liveActivityService = liveActivityService
         self.liveActivitySyncService = liveActivitySyncService
+        self.animationService = animationService
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
@@ -577,9 +580,9 @@ extension HomeViewController {
                 let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
                 let maxProgress = reactor.currentState.workoutCardStates[cardToHideIndex].setProgressAmount + 1
                 
-                self.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
+                self.animationService.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
                     guard let self else { return }
-                    self.animateCardDeletion(cardToHide) { [weak self] in
+                    self.animationService.animateCardDeletion(cardToHide) { [weak self] in
                         guard let self else { return }
                         // 현재 보이는 카드 중에서의 인덱스 찾기
                         guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
@@ -739,39 +742,5 @@ extension HomeViewController {
                 self.liveActivityService.update(state: contentState)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-
-// MARK: - 애니메이션 메서드들
-private extension HomeViewController {
-    
-    /// 프로그레스바 완료
-    func animateProgressBarCompletion(
-        _ cardView: HomePagingCardView,
-        with progress: Int,
-        completion: @escaping () -> Void
-    ) {
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
-            // 프로그레스바를 100%로
-            cardView.setProgressBar.updateProgress(currentSet: progress)
-        }, completion: { _ in
-            completion()
-        })
-    }
-    
-    /// 카드 삭제 애니메이션
-    func animateCardDeletion(_ cardView: HomePagingCardView, completion: @escaping () -> Void) {
-        // 카드가 위로 사라지면서 페이드아웃
-        UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: {
-            cardView.transform = CGAffineTransform(translationX: 0, y: -cardView.frame.height)
-                .scaledBy(x: 0.8, y: 0.8)
-            cardView.alpha = 0.1
-        }, completion: { _ in
-            cardView.isHidden = true
-            cardView.transform = .identity
-            cardView.alpha = 1
-            completion()
-        })
     }
 }
