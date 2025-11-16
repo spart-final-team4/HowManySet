@@ -679,7 +679,7 @@ extension HomeViewController {
             }
             .disposed(by: disposeBag)
         
-        // 운동/휴식시간, Pause 상태 제외 업데이트 (LiveActivity에서의 운동/휴식시간은 독립적으로 구현)
+        // 휴식시간, 휴식시간 Pause 상태 제외 업데이트 (LiveActivity에서의 휴식시간은 독립적으로 구현)
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged { $0.isEqualExcludingTimer(to: $1) }
             .skip(1)
@@ -692,8 +692,8 @@ extension HomeViewController {
                     return newState
                 }
 
-                // Pause 상태가 변경된 경우 nil 반환 (별도 구독에서 처리)
-                if cached.isRestPaused != data.isRestPaused || cached.isWorkoutPaused != data.isWorkoutPaused {
+                // Rest Pause 상태가 변경된 경우 nil 반환 (별도 구독에서 처리)
+                if cached.isRestPaused != data.isRestPaused {
                     return nil
                 }
 

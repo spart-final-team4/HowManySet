@@ -401,26 +401,24 @@ extension HowManySetWidgetAttributes.ContentState {
     func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
         // 휴식 중이고 isRestPaused가 변경된 경우 기존 liveRestTime, restStartDate 유지
         // (Intent에서 이미 업데이트했으므로)
-        let shouldPreserveRestData = self.isResting &&
-        ((self.isRestPaused != data.isRestPaused)
-         || (self.isWorkoutPaused != data.isWorkoutPaused))
-
+        let shouldPreserveRestData = self.isResting && (self.isRestPaused != data.isRestPaused)
+         
         // 휴식이 새로 시작된 경우인지 확인 (이전에는 휴식 중이 아니었는데 지금 휴식 중인 경우)
         let isRestJustStarted = !self.isResting && data.isResting
 
-        // liveRestTime 결정:
-        // 1. Pause/Play 토글 시 -> 기존 값 유지
-        // 2. 휴식이 새로 시작된 경우 -> restRemainingTimeInHome 사용
-        // 3. 휴식 중인 경우 -> 기존 값 유지 (LiveActivity가 독립적으로 타이머 운영)
-        // 4. 휴식 중이 아닌 경우 -> liveRestTime 사용 (다음 휴식을 위한 기본값)
+        // liveRestTime 결정
         let newLiveRestTime: Float
         if shouldPreserveRestData {
+            // 1. Pause/Play 토글 시 -> 기존 값 유지
             newLiveRestTime = self.liveRestTime
         } else if isRestJustStarted {
+            // 2. 휴식이 새로 시작된 경우 -> restRemainingTimeInHome 사용
             newLiveRestTime = data.restRemainingTimeInHome
         } else if self.isResting && data.isResting {
+            // 3. 휴식 중인 경우 -> 기존 값 유지 (LiveActivity가 독립적으로 타이머 운영)
             newLiveRestTime = self.liveRestTime
         } else {
+            // 4. 휴식 중이 아닌 경우 -> liveRestTime 사용 (다음 휴식을 위한 기본값)
             newLiveRestTime = data.liveRestTime
         }
 
@@ -443,9 +441,11 @@ extension HowManySetWidgetAttributes.ContentState {
 }
 
 extension WorkoutDataForLiveActivity {
-    /// 운동/휴식시간, Pause 상태 제외한 값들만 비교
+    /// 휴식시간, 휴식시간 Pause 상태 제외한 값들만 비교
     func isEqualExcludingTimer(to other: WorkoutDataForLiveActivity) -> Bool {
         return self.isWorkingout == other.isWorkingout &&
+        self.workoutStartDate == other.workoutStartDate &&
+        self.isWorkoutPaused == other.isWorkoutPaused &&
         self.exerciseName == other.exerciseName &&
         self.exerciseInfo == other.exerciseInfo &&
         self.currentRoutineCompleted == other.currentRoutineCompleted &&

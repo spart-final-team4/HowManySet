@@ -162,8 +162,14 @@ extension HomeViewReactor.State {
 
         let exercise = workoutCardStates[currentExerciseIndex]
 
+        /// LiveActivity용 workoutStartDate: pause된 시간만큼 workoutsStartDate
+        let adjustedWorkoutStartDate: Date? = {
+            guard let startDate = workoutStartDate else { return nil }
+            return startDate.addingTimeInterval(workoutPausedDuration)
+        }()
+
         return WorkoutDataForLiveActivity(
-            workoutStartDate: workoutStartDate,
+            workoutStartDate: adjustedWorkoutStartDate,
             isWorkingout: isWorkingout,
             isWorkoutPaused: isWorkoutPaused,
             exerciseName: exercise.currentExerciseName,
