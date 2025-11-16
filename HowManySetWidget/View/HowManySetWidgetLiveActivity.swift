@@ -16,7 +16,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         // state
 
         // 운동 중 관련
-        var workoutTime: Int /// 운동 정지/재생 시 업데이트
+        var workoutStartDate: Date?
         var isWorkingout: Bool
         var isWorkoutPaused: Bool
 
@@ -34,11 +34,6 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var currentSet: Int
         var totalSet: Int
         var currentIndex: Int
-
-        /// 운동 타이머 표시용 시작 시간
-        var workoutStartDate: Date {
-            return Date.now.addingTimeInterval(-TimeInterval(workoutTime))
-        }
 
         /// 휴식 종료 시간
         var restEndDate: Date? {
@@ -67,13 +62,14 @@ struct HowManySetWidgetLiveActivity: Widget {
 
             // Lock screen/banner UI goes here
             VStack {
-                if !context.state.currentRoutineCompleted {
+                if !context.state.currentRoutineCompleted,
+                    let workoutStartDate = context.state.workoutStartDate {
                     VStack(alignment: .leading, spacing: 10) {
                         if !context.state.isResting { // 운동 중 상단
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(timerInterval: context.state.workoutStartDate...Date.distantFuture,
+                                Text(timerInterval: workoutStartDate...Date.distantFuture,
                                      countsDown: false)
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
@@ -386,7 +382,7 @@ struct HowManySetWidgetLiveActivity: Widget {
 extension HowManySetWidgetAttributes.ContentState {
     /// WorkoutDataForLiveActivity를 HowManySetWidgetAttributes.ContentState로 변환
     init(from data: WorkoutDataForLiveActivity) {
-        self.workoutTime = data.workoutTime
+        self.workoutStartDate = data.workoutStartDate
         self.isWorkingout = data.isWorkingout
         self.isWorkoutPaused = data.isWorkoutPaused
         self.exerciseName = data.exerciseName
@@ -429,7 +425,7 @@ extension HowManySetWidgetAttributes.ContentState {
         }
 
         return HowManySetWidgetAttributes.ContentState(
-            workoutTime: data.workoutTime,
+            workoutStartDate: data.workoutStartDate,
             isWorkingout: data.isWorkingout,
             isWorkoutPaused: data.isWorkoutPaused,
             exerciseName: data.exerciseName,

@@ -163,7 +163,7 @@ extension HomeViewReactor.State {
         let exercise = workoutCardStates[currentExerciseIndex]
 
         return WorkoutDataForLiveActivity(
-            workoutTime: workoutTime,
+            workoutStartDate: workoutStartDate,
             isWorkingout: isWorkingout,
             isWorkoutPaused: isWorkoutPaused,
             exerciseName: exercise.currentExerciseName,
@@ -182,7 +182,6 @@ extension HomeViewReactor.State {
 
     private func createDefaultLiveActivityData() -> WorkoutDataForLiveActivity {
         WorkoutDataForLiveActivity(
-            workoutTime: 0,
             isWorkingout: true,
             isWorkoutPaused: false,
             exerciseName: "",
