@@ -24,6 +24,17 @@ final class EditRoutineTableHeaderView: UITableViewHeaderFooterView {
         $0.textColor = .white
     }
     
+    private let addExerciseTitleButton = UIButton().then {
+        $0.setTitle(String(localized: "새 운동 추가"), for: .normal)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
+        $0.setTitleColor(.white, for: .normal)
+    }
+    
+    private let addExerciseImageButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+        $0.tintColor = .white
+    }
+    
     // MARK: - Initializer
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -61,7 +72,7 @@ private extension EditRoutineTableHeaderView {
     
     /// 서브뷰 계층 구조 구성
     func setViewHierarchy() {
-        self.addSubviews(titleLabel)
+        self.addSubviews(titleLabel, addExerciseImageButton, addExerciseTitleButton)
     }
     
     /// 오토레이아웃 제약 설정
@@ -70,6 +81,15 @@ private extension EditRoutineTableHeaderView {
             $0.leading.equalToSuperview().offset(20)
             $0.trailing.equalToSuperview().inset(20)
             $0.top.equalToSuperview().offset(14)
+            $0.bottom.equalToSuperview().offset(-12)
+        }
+        addExerciseImageButton.snp.makeConstraints {
+            $0.trailing.equalTo(addExerciseTitleButton.snp.leading).offset(-4)
+            $0.width.height.equalTo(16)
+            $0.centerY.equalTo(addExerciseTitleButton)
+        }
+        addExerciseTitleButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().offset(-12)
         }
     }
