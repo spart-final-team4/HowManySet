@@ -72,14 +72,6 @@ final class EditRoutineViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        tableView.footerViewTapped
-            .observe(on: MainScheduler.instance)
-            .subscribe(with: self,
-                       onNext: { owner, _ in
-                owner.presentAddExerciseVC(routine: reactor.currentState.routine)
-            })
-            .disposed(by: disposeBag)
-        
         tableView.dragDropRelay
             .distinctUntilChanged { $0.source == $1.source && $0.destination == $1.destination }
             .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }

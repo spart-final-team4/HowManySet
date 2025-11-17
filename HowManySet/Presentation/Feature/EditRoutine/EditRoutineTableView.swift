@@ -16,7 +16,6 @@ final class EditRoutineTableView: UITableView {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private(set) var cellMoreButtonTapped = PublishRelay<IndexPath>()
-    private(set) var footerViewTapped = PublishRelay<Void>()
     private(set) var dragDropRelay = PublishRelay<(source: IndexPath, destination: IndexPath)>()
     
     private var caller: ViewCaller
@@ -54,8 +53,6 @@ final class EditRoutineTableView: UITableView {
                 // 셀, 헤더, 푸터 등록
                 tableView.register(EditRoutineTableHeaderView.self,
                                    forHeaderFooterViewReuseIdentifier: EditRoutineTableHeaderView.identifier)
-                tableView.register(EditRoutineTableFooterView.self,
-                                   forHeaderFooterViewReuseIdentifier: EditRoutineTableFooterView.identifier)
                 tableView.register(EditRoutineTableViewCell.self,
                                    forCellReuseIdentifier: EditRoutineTableViewCell.identifier)
                 
@@ -120,25 +117,6 @@ extension EditRoutineTableView: UITableViewDelegate {
         }
         headerView.configure(with: sectionModel.headerTitle)
         return headerView
-    }
-
-    /// 섹션 푸터 뷰 구성 (ex: + 운동 추가 버튼 등)
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard let footerView = tableView.dequeueReusableHeaderFooterView(
-            withIdentifier: EditRoutineTableFooterView.identifier
-        ) as? EditRoutineTableFooterView else {
-            return nil
-        }
-        footerView.configure(viewCaller: self.caller)
-        footerView.plusExcerciseButtonTapped
-            .subscribe(onNext: { [weak self] in // UI가 변하는 애니메이션을 처리하기 위해 .subscribe(onNext: 사용
-                footerView.animateTap { // 애니메이션 후에 바인딩 이벤트 전달
-                    self?.footerViewTapped.accept(())
-                }
-            })
-            .disposed(by: footerView.disposeBag)
-        
-        return footerView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
