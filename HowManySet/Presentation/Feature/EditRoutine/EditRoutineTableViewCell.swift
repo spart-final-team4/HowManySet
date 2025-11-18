@@ -47,8 +47,8 @@ final class EditRoutineTableViewCell: UITableViewCell {
     }
     
     /// 더보기 버튼 (ellipsis 아이콘)
-    private let moreButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    private(set) var editButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
         $0.tintColor = .systemGray3
     }
     
@@ -77,14 +77,6 @@ final class EditRoutineTableViewCell: UITableViewCell {
         self.setTextLabel.text = model.setText
         self.weightTextLabel.text = model.weightText
         self.repsTextLabel.text = model.repsText
-        
-        self.moreButton.isHidden = caller == .fromHome ? true : false
-    }
-    func bind(indexPath: IndexPath, relay: PublishRelay<IndexPath>) {
-        moreButton.rx.tap
-            .map{ indexPath }
-            .bind(to: relay)
-            .disposed(by: disposeBag)
     }
 }
 
@@ -105,7 +97,7 @@ private extension EditRoutineTableViewCell {
     
     /// 서브뷰 계층에 추가
     func setViewHierarchy() {
-        contentView.addSubviews(titleLabel, setTextLabel, weightTextLabel, repsTextLabel, moreButton)
+        contentView.addSubviews(titleLabel, setTextLabel, weightTextLabel, repsTextLabel, editButton)
     }
     
     /// SnapKit을 이용한 오토레이아웃 제약 설정
@@ -126,7 +118,7 @@ private extension EditRoutineTableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(8)
             $0.leading.equalTo(weightTextLabel.snp.trailing).offset(16)
         }
-        moreButton.snp.makeConstraints {
+        editButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(20)
         }

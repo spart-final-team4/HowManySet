@@ -69,9 +69,22 @@ final class EditRoutineTableView: UITableView {
                 cell.configure(indexPath: indexPath,
                                model: item,
                                caller: self.caller)
-                cell.bind(indexPath: indexPath,
-                          relay: self.cellMoreButtonTapped)
                 cell.selectionStyle = .none
+                
+                let longPressGesture = UILongPressGestureRecognizer()
+                longPressGesture.rx.event
+                    .compactMap{ $0 }
+                    .filter{ $0.state == .began }
+                    .filter{ gesture in
+                        let location = gesture.location(in: cell)
+                        if cell.editButton.frame.contains(location) { return false }
+                        return true
+                    }
+                    .subscribe(onNext: { [weak self] _ in
+                        self?.cellMoreButtonTapped.accept(indexPath)
+                    })
+                    .disposed(by: cell.disposeBag)
+                cell.addGestureRecognizer(longPressGesture)
                 return cell
             })
         rxDataSource?.canMoveRowAtIndexPath = { _, _ in return true }
