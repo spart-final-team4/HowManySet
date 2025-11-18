@@ -44,6 +44,17 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
         
         navigationController.present(editRoutineVC, animated: true)
     }
+    
+    func startOnTopVC() {
+        let editRoutineVC = container.makeEditRoutineViewController(coordinator: self, with: routine, caller: .fromHome)
+        
+        if let sheet = editRoutineVC.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+        }
+        
+        presentModal(editRoutineVC, animated: true)
+    }
 
     /// AddExercise를 present하는 메서드
     func presentAddExerciseView(routine: WorkoutRoutine,
@@ -71,8 +82,7 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
                 resultHandler(result)
             })
             .disposed(by: vc.disposeBag)
-        
-        navigationController.present(vc, animated: true)
+        presentModal(vc, animated: true)
     }
 
     /// EditExercise를 present하는 메서드
@@ -108,6 +118,7 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
     /// 메인 홈 화면 운동중 상태로 이동
     func navigateToHomeViewWithWorkoutStarted(updateRoutine: WorkoutRoutine) {
         homeCoordinator.startWorkout(with: updateRoutine)
+        popToRootViewController()
     }
     
     func moveToEditExcercise(with excercise: Workout) {

@@ -104,10 +104,10 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
     
     /// 루틴 리스트 화면에서 셀 클릭 시 루틴 내 운동 리스트 화면으로 present
     func presentEditRoutinView(with routine: WorkoutRoutine) {
-        self.navigationController.dismiss(animated: true)
         if let homeCoordinator {
             let editRoutineCoordinator = EditRoutineCoordinator(navigationController: navigationController, container: container, routine: routine, homeCoordinator: homeCoordinator)
-            editRoutineCoordinator.startModal()
+            editRoutineCoordinator.startOnTopVC()
+            
         }
     }
     
