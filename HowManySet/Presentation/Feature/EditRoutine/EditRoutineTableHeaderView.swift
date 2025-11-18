@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Then
+import RxCocoa
+import RxSwift
 
 /// 운동 루틴 편집 화면에서 섹션의 헤더로 사용되는 뷰
 /// - 기능: 루틴 이름을 섹션 헤더에 표시
@@ -35,6 +37,9 @@ final class EditRoutineTableHeaderView: UITableViewHeaderFooterView {
         $0.tintColor = .white
     }
     
+    private let disposeBag = DisposeBag()
+    private(set) var plusExerciseButtonTapped = PublishRelay<Void>()
+    
     // MARK: - Initializer
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -61,6 +66,7 @@ private extension EditRoutineTableHeaderView {
         setAppearance()
         setViewHierarchy()
         setConstraints()
+        bind()
     }
     
     /// 배경 설정
@@ -92,5 +98,13 @@ private extension EditRoutineTableHeaderView {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().offset(-12)
         }
+    }
+    
+    /// 새운동 추가 버튼 바인딩
+    func bind() {
+        Observable
+            .merge(addExerciseImageButton.rx.tap.asObservable(), addExerciseTitleButton.rx.tap.asObservable())
+            .bind(to: plusExerciseButtonTapped)
+            .disposed(by: disposeBag)
     }
 }

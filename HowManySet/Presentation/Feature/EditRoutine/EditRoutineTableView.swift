@@ -17,6 +17,7 @@ final class EditRoutineTableView: UITableView {
     private let disposeBag = DisposeBag()
     private(set) var cellMoreButtonTapped = PublishRelay<IndexPath>()
     private(set) var dragDropRelay = PublishRelay<(source: IndexPath, destination: IndexPath)>()
+    private(set) var addExerciseButtonTapped = PublishRelay<Void>()
     
     private var caller: ViewCaller
     
@@ -116,6 +117,12 @@ extension EditRoutineTableView: UITableViewDelegate {
             return nil
         }
         headerView.configure(with: sectionModel.headerTitle)
+        
+        headerView.plusExerciseButtonTapped
+            .subscribe(onNext: { [weak self] in
+                self?.addExerciseButtonTapped.accept(())
+            })
+            .disposed(by: disposeBag)
         return headerView
     }
 
