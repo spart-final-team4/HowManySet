@@ -158,7 +158,16 @@ private extension RoutineRepositoryImpl {
                 as? RMWorkoutRoutine {
                 try realmService.update(item: routine) { newRoutine in
                     newRoutine.name = item.name
-                    newRoutine.workoutArray = routine.workoutArray
+                    newRoutine.workoutArray.removeAll()
+                    
+                    for workout in item.workouts {
+                        if let rmWorkout = newRoutine.realm?.object(ofType: RMWorkout.self, forPrimaryKey: workout.id) {
+                            newRoutine.workoutArray.append(rmWorkout)
+                        } else {
+                            let newRM = RMWorkout(dto: WorkoutDTO(entity: workout))
+                            newRoutine.workoutArray.append(newRM)
+                        }
+                    }
                 }
             }
         } catch {
