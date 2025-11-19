@@ -127,12 +127,8 @@ extension EditRoutineTableView: UITableViewDelegate {
             return nil
         }
         headerView.configure(with: sectionModel.headerTitle)
+        headerView.bind(publishRelay: addExerciseButtonTapped)
         
-        headerView.plusExerciseButtonTapped
-            .subscribe(onNext: { [weak self] in
-                self?.addExerciseButtonTapped.accept(())
-            })
-            .disposed(by: disposeBag)
         return headerView
     }
 

@@ -37,8 +37,7 @@ final class EditRoutineTableHeaderView: UITableViewHeaderFooterView {
         $0.tintColor = .white
     }
     
-    private let disposeBag = DisposeBag()
-    private(set) var plusExerciseButtonTapped = PublishRelay<Void>()
+    private(set) var disposeBag = DisposeBag()
     
     // MARK: - Initializer
     override init(reuseIdentifier: String?) {
@@ -51,10 +50,25 @@ final class EditRoutineTableHeaderView: UITableViewHeaderFooterView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
+    
     /// 섹션 제목을 설정하는 메서드
     /// - Parameter titleText: 표시할 제목 문자열
     func configure(with titleText: String) {
         self.titleLabel.text = titleText
+    }
+    /// 새운동 추가 버튼 바인딩
+    func bind(publishRelay: PublishRelay<Void>) {
+        Observable
+            .merge(addExerciseImageButton.rx.tap.asObservable(), addExerciseTitleButton.rx.tap.asObservable())
+            .do(onNext: { _ in
+                print("Add Button Tapped")
+            })
+            .bind(to: publishRelay)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -66,7 +80,6 @@ private extension EditRoutineTableHeaderView {
         setAppearance()
         setViewHierarchy()
         setConstraints()
-        bind()
     }
     
     /// 배경 설정
@@ -98,13 +111,5 @@ private extension EditRoutineTableHeaderView {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().offset(-12)
         }
-    }
-    
-    /// 새운동 추가 버튼 바인딩
-    func bind() {
-        Observable
-            .merge(addExerciseImageButton.rx.tap.asObservable(), addExerciseTitleButton.rx.tap.asObservable())
-            .bind(to: plusExerciseButtonTapped)
-            .disposed(by: disposeBag)
     }
 }
