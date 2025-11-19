@@ -46,12 +46,6 @@ final class EditRoutineTableViewCell: UITableViewCell {
         $0.textColor = .systemGray2
     }
     
-    /// 더보기 버튼 (ellipsis 아이콘)
-    private(set) var editButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
-        $0.tintColor = .systemGray3
-    }
-    
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -93,11 +87,12 @@ private extension EditRoutineTableViewCell {
     /// 셀 배경색 및 기본 속성 설정
     func setAppearance() {
         contentView.backgroundColor = .background
+        self.backgroundColor = .background
     }
     
     /// 서브뷰 계층에 추가
     func setViewHierarchy() {
-        contentView.addSubviews(titleLabel, setTextLabel, weightTextLabel, repsTextLabel, editButton)
+        contentView.addSubviews(titleLabel, setTextLabel, weightTextLabel, repsTextLabel)
     }
     
     /// SnapKit을 이용한 오토레이아웃 제약 설정
@@ -118,9 +113,6 @@ private extension EditRoutineTableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(8)
             $0.leading.equalTo(weightTextLabel.snp.trailing).offset(16)
         }
-        editButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(20)
-        }
+
     }
 }
