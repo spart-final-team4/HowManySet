@@ -132,8 +132,9 @@ final class EditRoutineViewController: UIViewController, View {
         changeExcerciseTapped
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, _ in
-                owner.dismiss(animated: true)
-                owner.presentEditExcerciseVC()
+                owner.dismiss(animated: true) {
+                    owner.presentEditExcerciseVC()
+                }
             }.disposed(by: editRoutineBottomSheetViewController.disposeBag)
         
         editRoutineBottomSheetViewController.removeExcerciseButtonSubject
@@ -145,8 +146,7 @@ final class EditRoutineViewController: UIViewController, View {
                 owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
             }
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
-
-        navigationController?.present(editRoutineBottomSheetViewController, animated: true)
+        coordinator.presentModal(editRoutineBottomSheetViewController, animated: true)
     }
     
     func presentAddExerciseVC(routine: WorkoutRoutine) {

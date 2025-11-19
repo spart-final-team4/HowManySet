@@ -111,8 +111,7 @@ final class EditRoutineCoordinator: EditRoutineCoordinatorProtocol {
                 resultHandler(result)
             })
             .disposed(by: vc.disposeBag)
-
-        navigationController.present(vc, animated: true)
+        presentModal(vc, animated: true)
     }
 
     /// 메인 홈 화면 운동중 상태로 이동
