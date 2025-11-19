@@ -123,10 +123,8 @@ final class EditRoutineViewReactor: Reactor {
         case .reorderRoutine(let source, let destination):
             var newRoutine = state.routine
             let sourceItem = newRoutine.workouts[source.row]
-            let destinationItem = newRoutine.workouts[destination.row]
-            
-            newRoutine.workouts[source.row] = destinationItem
-            newRoutine.workouts[destination.row] = sourceItem
+            newRoutine.workouts.remove(at: source.row)
+            newRoutine.workouts.insert(sourceItem, at: destination.row)
             newState.routine = newRoutine
             updateRoutineUseCase.execute(uid: uid, item: newRoutine)
         }
