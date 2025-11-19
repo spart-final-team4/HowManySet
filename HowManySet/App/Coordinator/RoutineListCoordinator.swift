@@ -88,7 +88,6 @@ final class RoutineListCoordinator: RoutineListCoordinatorProtocol {
             caller: ViewCaller.fromTabBar // 탭바에서 push
         )
         let editExcerciseVC = AddExerciseViewController(reactor: reactor)
-        editExcerciseVC.setInitialUIState()
         editExcerciseVC.hidesBottomBarWhenPushed = true // tabBar 숨김
         navigationController.pushViewController(editExcerciseVC, animated: true)
     }
