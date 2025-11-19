@@ -10,7 +10,7 @@ import Foundation
 /// LiveActivity에 필요한 데이터
 public struct WorkoutDataForLiveActivity: Equatable, Codable, Hashable {
 
-    var workoutTime: Int
+    var workoutStartDate: Date?
     var isWorkingout: Bool
     var isWorkoutPaused: Bool
 

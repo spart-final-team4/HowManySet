@@ -132,12 +132,15 @@ final class DIContainer {
         
         let initialState = HomeViewReactor.fetchedInitialState(routine: routine)
         
+        let notificationService = NotificationService.shared
+        
         let reactor = HomeViewReactor(
             saveRecordUseCase: saveRecordUseCase,
             fetchRoutineUseCase: fetchRoutineUseCase,
             updateWorkoutUseCase: updateWorkoutUseCase,
             updateRecordUseCase: updateRecordUseCase,
-            initialState: initialState
+            initialState: initialState,
+            notificationService: notificationService
         )
         
         return (HomeViewController(reactor: reactor, coordinator: coordinator), reactor)

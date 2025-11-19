@@ -16,7 +16,7 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         // state
 
         // 운동 중 관련
-        var workoutTime: Int /// 운동 정지/재생 시 업데이트
+        var workoutStartDate: Date?
         var isWorkingout: Bool
         var isWorkoutPaused: Bool
 
@@ -34,11 +34,6 @@ struct HowManySetWidgetAttributes: ActivityAttributes {
         var currentSet: Int
         var totalSet: Int
         var currentIndex: Int
-
-        /// 운동 타이머 표시용 시작 시간
-        var workoutStartDate: Date {
-            return Date.now.addingTimeInterval(-TimeInterval(workoutTime))
-        }
 
         /// 휴식 종료 시간
         var restEndDate: Date? {
@@ -67,13 +62,14 @@ struct HowManySetWidgetLiveActivity: Widget {
 
             // Lock screen/banner UI goes here
             VStack {
-                if !context.state.currentRoutineCompleted {
+                if !context.state.currentRoutineCompleted,
+                    let workoutStartDate = context.state.workoutStartDate {
                     VStack(alignment: .leading, spacing: 10) {
                         if !context.state.isResting { // 운동 중 상단
                             HStack {
                                 Image(systemName: "timer")
                                     .foregroundStyle(.brand)
-                                Text(timerInterval: context.state.workoutStartDate...Date.distantFuture,
+                                Text(timerInterval: workoutStartDate...Date.distantFuture,
                                      countsDown: false)
                                     .foregroundStyle(.white)
                                     .font(.system(size: 14))
@@ -386,7 +382,7 @@ struct HowManySetWidgetLiveActivity: Widget {
 extension HowManySetWidgetAttributes.ContentState {
     /// WorkoutDataForLiveActivity를 HowManySetWidgetAttributes.ContentState로 변환
     init(from data: WorkoutDataForLiveActivity) {
-        self.workoutTime = data.workoutTime
+        self.workoutStartDate = data.workoutStartDate
         self.isWorkingout = data.isWorkingout
         self.isWorkoutPaused = data.isWorkoutPaused
         self.exerciseName = data.exerciseName
@@ -405,31 +401,29 @@ extension HowManySetWidgetAttributes.ContentState {
     func updateLiveActivityContentStates(from data: WorkoutDataForLiveActivity) -> Self {
         // 휴식 중이고 isRestPaused가 변경된 경우 기존 liveRestTime, restStartDate 유지
         // (Intent에서 이미 업데이트했으므로)
-        let shouldPreserveRestData = self.isResting &&
-        ((self.isRestPaused != data.isRestPaused)
-         || (self.isWorkoutPaused != data.isWorkoutPaused))
-
+        let shouldPreserveRestData = self.isResting && (self.isRestPaused != data.isRestPaused)
+         
         // 휴식이 새로 시작된 경우인지 확인 (이전에는 휴식 중이 아니었는데 지금 휴식 중인 경우)
         let isRestJustStarted = !self.isResting && data.isResting
 
-        // liveRestTime 결정:
-        // 1. Pause/Play 토글 시 -> 기존 값 유지
-        // 2. 휴식이 새로 시작된 경우 -> restRemainingTimeInHome 사용
-        // 3. 휴식 중인 경우 -> 기존 값 유지 (LiveActivity가 독립적으로 타이머 운영)
-        // 4. 휴식 중이 아닌 경우 -> liveRestTime 사용 (다음 휴식을 위한 기본값)
+        // liveRestTime 결정
         let newLiveRestTime: Float
         if shouldPreserveRestData {
+            // 1. Pause/Play 토글 시 -> 기존 값 유지
             newLiveRestTime = self.liveRestTime
         } else if isRestJustStarted {
+            // 2. 휴식이 새로 시작된 경우 -> restRemainingTimeInHome 사용
             newLiveRestTime = data.restRemainingTimeInHome
         } else if self.isResting && data.isResting {
+            // 3. 휴식 중인 경우 -> 기존 값 유지 (LiveActivity가 독립적으로 타이머 운영)
             newLiveRestTime = self.liveRestTime
         } else {
+            // 4. 휴식 중이 아닌 경우 -> liveRestTime 사용 (다음 휴식을 위한 기본값)
             newLiveRestTime = data.liveRestTime
         }
 
         return HowManySetWidgetAttributes.ContentState(
-            workoutTime: data.workoutTime,
+            workoutStartDate: data.workoutStartDate,
             isWorkingout: data.isWorkingout,
             isWorkoutPaused: data.isWorkoutPaused,
             exerciseName: data.exerciseName,
@@ -447,9 +441,11 @@ extension HowManySetWidgetAttributes.ContentState {
 }
 
 extension WorkoutDataForLiveActivity {
-    /// 운동/휴식시간, Pause 상태 제외한 값들만 비교
+    /// 휴식시간, 휴식시간 Pause 상태 제외한 값들만 비교
     func isEqualExcludingTimer(to other: WorkoutDataForLiveActivity) -> Bool {
         return self.isWorkingout == other.isWorkingout &&
+        self.workoutStartDate == other.workoutStartDate &&
+        self.isWorkoutPaused == other.isWorkoutPaused &&
         self.exerciseName == other.exerciseName &&
         self.exerciseInfo == other.exerciseInfo &&
         self.currentRoutineCompleted == other.currentRoutineCompleted &&

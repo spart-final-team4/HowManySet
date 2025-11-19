@@ -15,24 +15,35 @@ import ActivityKit
 
 final class HomeViewController: UIViewController, View {
     
-    // MARK: - Properties
+    // MARK: - Dependencies
     private weak var coordinator: HomeCoordinatorProtocol?
-    
+    private let liveActivityService: LiveActivityServiceProtocol
+    private let liveActivitySyncService: LiveActivitySyncServiceProtocol
+    private let animationService: WorkoutAnimationServiceProtocol
+
+    // MARK: - Properties
     var disposeBag = DisposeBag()
-    
+
     /// HomePagingCardView들을 저장하는 List
     private var pagingCardViewContainer = [HomePagingCardView]()
-    
+
     private var currentPage = 0
     private var previousPage = 0
-    
-    private var syncTimer: Timer?
-  
+
     // MARK: - UI Components
     lazy var homeView = HomeView(frame: .zero, reactor: self.reactor!)
-    
+
     // MARK: - Initializer
-    init(reactor: HomeViewReactor, coordinator: HomeCoordinatorProtocol) {
+    init(
+        reactor: HomeViewReactor,
+        coordinator: HomeCoordinatorProtocol,
+        liveActivityService: LiveActivityServiceProtocol = LiveActivityService.shared,
+        liveActivitySyncService: LiveActivitySyncServiceProtocol = LiveActivitySyncService(),
+        animationService: WorkoutAnimationServiceProtocol = WorkoutAnimationService()
+    ) {
+        self.liveActivityService = liveActivityService
+        self.liveActivitySyncService = liveActivitySyncService
+        self.animationService = animationService
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.coordinator = coordinator
@@ -52,12 +63,12 @@ final class HomeViewController: UIViewController, View {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        startSyncTimer()
+        startLiveActivitySync()
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        stopSyncTimer()
+        liveActivitySyncService.stopSync()
     }
 }
 
@@ -275,33 +286,23 @@ private extension HomeViewController {
 
 // MARK: - Live Activity Sync
 private extension HomeViewController {
-    
-    func startSyncTimer() {
-        // 이미 타이머가 실행 중이면 중복 실행 방지
-        guard syncTimer == nil else { return }
-        
-        syncTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(syncWithLiveActivity), userInfo: nil, repeats: true)
-    }
-    
-    func stopSyncTimer() {
-        syncTimer?.invalidate()
-        syncTimer = nil
-    }
-    
-    /// LiveActivity 버튼 클릭 이벤트 감지하여 reactor 동작
-    @objc func syncWithLiveActivity() {
-        guard let reactor = self.reactor else { return }
-        
-        LiveActivityAppGroupEventBridge.shared.checkPlayAndPauseRestEvent { index in
-            reactor.action.onNext(.restPauseButtonClicked)
-        }
-        
-        LiveActivityAppGroupEventBridge.shared.checkSetCompleteEvent { index in
-            reactor.action.onNext(.setCompleteButtonClicked(at: index))
-        }
-        
-        LiveActivityAppGroupEventBridge.shared.checkSkipRestEvent { index in
-            reactor.action.onNext(.forwardButtonClicked(at: index))
+
+    /// LiveActivity 동기화 시작
+    func startLiveActivitySync() {
+        // startSync 실행
+        liveActivitySyncService.startSync { [weak self] action in
+            guard let self, let reactor = self.reactor else { return }
+
+            switch action {
+            case .restPauseButtonClicked:
+                reactor.action.onNext(.restPauseButtonClicked)
+
+            case .setCompleteButtonClicked(let index):
+                reactor.action.onNext(.setCompleteButtonClicked(at: index))
+
+            case .skipRestButtonClicked(let index):
+                reactor.action.onNext(.forwardButtonClicked(at: index))
+            }
         }
     }
 }
@@ -342,7 +343,7 @@ extension HomeViewController {
                 self.coordinator?.popUpEndWorkoutAlert(
                     onConfirm: {
                         reactor.action.onNext(.stopButtonClicked)
-                        LiveActivityService.shared.stop() // 라이브 액티비티 종료
+                        self.liveActivityService.stop() // 라이브 액티비티 종료
                         return reactor.currentState.workoutSummary
                     },
                     onCancel: {
@@ -550,9 +551,9 @@ extension HomeViewController {
 
                 // 운동 일시정지 시 LiveActivity 제거, 재생 시 다시 시작
                 if isWorkoutPaused {
-                    LiveActivityService.shared.stop()
+                    self.liveActivityService.stop()
                 } else {
-                    LiveActivityService.shared.start(with: liveActivityData)
+                    self.liveActivityService.start(with: liveActivityData)
                 }
             }.disposed(by: disposeBag)
         
@@ -579,9 +580,9 @@ extension HomeViewController {
                 let visibleCardsBeforeHiding = self.pagingCardViewContainer.filter { !$0.isHidden }
                 let maxProgress = reactor.currentState.workoutCardStates[cardToHideIndex].setProgressAmount + 1
                 
-                self.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
+                self.animationService.animateProgressBarCompletion(cardToHide, with: maxProgress) { [weak self] in
                     guard let self else { return }
-                    self.animateCardDeletion(cardToHide) { [weak self] in
+                    self.animationService.animateCardDeletion(cardToHide) { [weak self] in
                         guard let self else { return }
                         // 현재 보이는 카드 중에서의 인덱스 찾기
                         guard let currentVisibleIndex = visibleCardsBeforeHiding.firstIndex(where: { $0.index == currentIndex }) else {
@@ -619,7 +620,7 @@ extension HomeViewController {
                             if let reactor = self.reactor {
                                 self.coordinator?.popUpCompletedWorkoutAlert(onConfirm: {
                                     reactor.action.onNext(.stopButtonClicked)
-                                    LiveActivityService.shared.stop() // 라이브 액티비티 종료
+                                    self.liveActivityService.stop() // 라이브 액티비티 종료
                                     return reactor.currentState.workoutSummary
                                 }, onCancel: { [weak self] in
                                     guard let self else { return }
@@ -665,19 +666,20 @@ extension HomeViewController {
             .distinctUntilChanged { $0.0 == $1.0 }
             .filter { $0.0 }
             .observe(on: MainScheduler.instance)
-            .bind { (state: (Bool, WorkoutDataForLiveActivity)) in
+            .bind { [weak self] (state: (Bool, WorkoutDataForLiveActivity)) in
+                guard let self else { return }
                 let (isWorkingout, data) = state
                 if isWorkingout {
-                    LiveActivityService.shared.start(with: data)
+                    self.liveActivityService.start(with: data)
                     cachedContentState = .init(from: data)
                 } else {
-                    LiveActivityService.shared.stop()
+                    self.liveActivityService.stop()
                     cachedContentState = nil
                 }
             }
             .disposed(by: disposeBag)
         
-        // 운동/휴식시간, Pause 상태 제외 업데이트 (LiveActivity에서의 운동/휴식시간은 독립적으로 구현)
+        // 휴식시간, 휴식시간 Pause 상태 제외 업데이트 (LiveActivity에서의 휴식시간은 독립적으로 구현)
         reactor.state.map { $0.forLiveActivity }
             .distinctUntilChanged { $0.isEqualExcludingTimer(to: $1) }
             .skip(1)
@@ -690,8 +692,8 @@ extension HomeViewController {
                     return newState
                 }
 
-                // Pause 상태가 변경된 경우 nil 반환 (별도 구독에서 처리)
-                if cached.isRestPaused != data.isRestPaused || cached.isWorkoutPaused != data.isWorkoutPaused {
+                // Rest Pause 상태가 변경된 경우 nil 반환 (별도 구독에서 처리)
+                if cached.isRestPaused != data.isRestPaused {
                     return nil
                 }
 
@@ -700,8 +702,9 @@ extension HomeViewController {
                 return updated
             }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { contentState in
-                LiveActivityService.shared.update(state: contentState)
+            .bind(onNext: { [weak self] contentState in
+                guard let self else { return }
+                self.liveActivityService.update(state: contentState)
             })
             .disposed(by: disposeBag)
         
@@ -734,43 +737,10 @@ extension HomeViewController {
             }
             .compactMap { $0 }
             .observe(on: MainScheduler.instance)
-            .bind(onNext: { contentState in
-                LiveActivityService.shared.update(state: contentState)
+            .bind(onNext: { [weak self] contentState in
+                guard let self else { return }
+                self.liveActivityService.update(state: contentState)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-
-// MARK: - 애니메이션 메서드들
-private extension HomeViewController {
-    
-    /// 프로그레스바 완료
-    func animateProgressBarCompletion(
-        _ cardView: HomePagingCardView,
-        with progress: Int,
-        completion: @escaping () -> Void
-    ) {
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
-            // 프로그레스바를 100%로
-            cardView.setProgressBar.updateProgress(currentSet: progress)
-        }, completion: { _ in
-            completion()
-        })
-    }
-    
-    /// 카드 삭제 애니메이션
-    func animateCardDeletion(_ cardView: HomePagingCardView, completion: @escaping () -> Void) {
-        // 카드가 위로 사라지면서 페이드아웃
-        UIView.animate(withDuration: 0.4, delay: 0, options: [.curveEaseInOut], animations: {
-            cardView.transform = CGAffineTransform(translationX: 0, y: -cardView.frame.height)
-                .scaledBy(x: 0.8, y: 0.8)
-            cardView.alpha = 0.1
-        }, completion: { _ in
-            cardView.isHidden = true
-            cardView.transform = .identity
-            cardView.alpha = 1
-            completion()
-        })
     }
 }

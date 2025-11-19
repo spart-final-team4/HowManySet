@@ -13,7 +13,7 @@ extension HomeViewReactor {
     
     // MARK: - 타이머 UI 업데이트
     /// 운동시간 UI 업데이트
-    func makeWorkoutTimer() -> Observable<HomeViewReactor.Mutation> {
+    func makeWorkoutUIUpdateSignal() -> Observable<HomeViewReactor.Mutation> {
         return Observable<Int>.interval(.seconds(1), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .take(until: self.state.map { !$0.isWorkingout }
                 .filter { $0 })
@@ -23,7 +23,7 @@ extension HomeViewReactor {
     }
     
     /// 휴식시간 UI 업데이트
-    func makeRestTimer() -> Observable<HomeViewReactor.Mutation> {
+    func makeRestUIUpdateSignal() -> Observable<HomeViewReactor.Mutation> {
         return Observable<Int>.interval(.milliseconds(50), scheduler: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .take(until: self.state.map {
                 $0.isRestPaused || !$0.isResting || $0.isRestTimerStopped }
@@ -50,7 +50,7 @@ extension HomeViewReactor {
         
         if isResting {
             // 휴식 타이머 UI updating
-            restTimer = makeRestTimer()
+            restTimer = makeRestUIUpdateSignal()
         }
         
         // 다음 세트가 있는 경우 (휴식 시작)
@@ -162,8 +162,14 @@ extension HomeViewReactor.State {
 
         let exercise = workoutCardStates[currentExerciseIndex]
 
+        /// LiveActivity용 workoutStartDate: pause된 시간만큼 workoutsStartDate
+        let adjustedWorkoutStartDate: Date? = {
+            guard let startDate = workoutStartDate else { return nil }
+            return startDate.addingTimeInterval(workoutPausedDuration)
+        }()
+
         return WorkoutDataForLiveActivity(
-            workoutTime: workoutTime,
+            workoutStartDate: adjustedWorkoutStartDate,
             isWorkingout: isWorkingout,
             isWorkoutPaused: isWorkoutPaused,
             exerciseName: exercise.currentExerciseName,
@@ -182,7 +188,6 @@ extension HomeViewReactor.State {
 
     private func createDefaultLiveActivityData() -> WorkoutDataForLiveActivity {
         WorkoutDataForLiveActivity(
-            workoutTime: 0,
             isWorkingout: true,
             isWorkoutPaused: false,
             exerciseName: "",
