@@ -80,9 +80,11 @@ final class EditRoutineViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
         
-        tableView.dragDropRelay
-            .distinctUntilChanged { $0.source == $1.source && $0.destination == $1.destination }
-            .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }
+        tableView.rx.itemMoved
+            .map{ sourceIndex, destinationIndex in
+                Reactor.Action.reorderWorkout(source: sourceIndex, destination: destinationIndex)
+            }
+            .delay(.milliseconds(550), scheduler: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -143,12 +145,6 @@ final class EditRoutineViewController: UIViewController, View {
                 owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
             }
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
-        
-        // TODO: 순서변경 마이너패치때
-//        editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
-//            .map{ Reactor.Action.changeListOrder }
-//            .bind(to: reactor!.action)
-//            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
 
         navigationController?.present(editRoutineBottomSheetViewController, animated: true)
     }

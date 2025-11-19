@@ -121,16 +121,14 @@ final class EditRoutineViewReactor: Reactor {
         case .changeListOrder:
             break
         case .reorderRoutine(let source, let destination):
-            break
-            // TODO: 마이너 패치로 들어감
-//            var newRoutine = state.routine
-//            var sourceItem = newRoutine.workouts[source.row]
-//            var destinationItem = newRoutine.workouts[destination.row]
-//            
-//            newRoutine.workouts[source.row] = destinationItem
-//            newRoutine.workouts[destination.row] = sourceItem
-//            updateRoutineUseCase.execute(item: newRoutine)
-//            newState.routine = newRoutine
+            var newRoutine = state.routine
+            let sourceItem = newRoutine.workouts[source.row]
+            let destinationItem = newRoutine.workouts[destination.row]
+            
+            newRoutine.workouts[source.row] = destinationItem
+            newRoutine.workouts[destination.row] = sourceItem
+            newState.routine = newRoutine
+            updateRoutineUseCase.execute(uid: uid, item: newRoutine)
         }
         return newState
     }
