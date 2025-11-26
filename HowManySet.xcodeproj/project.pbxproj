@@ -11,6 +11,7 @@
 		66189C5F2DEF0E770087F042 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = 66189C5E2DEF0E770087F042 /* ReactorKit */; };
 		66189C622DEF0E8E0087F042 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 6615E9262DED443A00ECF8DB /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		6620C64E2EC1CFF900DAEEC0 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6620C64D2EC1CFF900DAEEC0 /* Secrets.xcconfig */; };
+		663FA52C2ED740DF00996EE4 /* HowManySetWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 663FA5222ED740DD00996EE4 /* HowManySetWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		664F0ECE2DF40EA70086D6F6 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 664F0ECD2DF40EA70086D6F6 /* SnapKit */; };
 		6650044F2E66E20900DBBC0F /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 6650044E2E66E20900DBBC0F /* GoogleMobileAds */; };
 		666D1FC52E03AC540038F553 /* HowManySetIntentExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -33,6 +34,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		663FA52A2ED740DF00996EE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 669358B32DE9AA8C00956214 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 663FA5212ED740DD00996EE4;
+			remoteInfo = "HowManySetWatch Watch App";
+		};
 		666D1FC32E03AC540038F553 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 669358B32DE9AA8C00956214 /* Project object */;
@@ -71,6 +79,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		663FA52D2ED740DF00996EE4 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				663FA52C2ED740DF00996EE4 /* HowManySetWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		666D1FCA2E03AC540038F553 /* Embed ExtensionKit Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -97,6 +116,7 @@
 
 /* Begin PBXFileReference section */
 		6620C64D2EC1CFF900DAEEC0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		663FA5222ED740DD00996EE4 /* HowManySetWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HowManySetWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = HowManySetIntentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HowManySetWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		668CB11C2DE9BE7000924340 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -179,6 +199,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		663FA5232ED740DD00996EE4 /* HowManySetWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "HowManySetWatch Watch App";
+			sourceTree = "<group>";
+		};
 		666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -211,6 +236,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		663FA51F2ED740DD00996EE4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		666D1FB92E03AC540038F553 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -270,6 +302,7 @@
 				669358BD2DE9AA8C00956214 /* HowManySet */,
 				668CB1202DE9BE7000924340 /* HowManySetWidget */,
 				666D1FBD2E03AC540038F553 /* HowManySetIntentExtension */,
+				663FA5232ED740DD00996EE4 /* HowManySetWatch Watch App */,
 				668CB11B2DE9BE7000924340 /* Frameworks */,
 				669358BC2DE9AA8C00956214 /* Products */,
 			);
@@ -281,6 +314,7 @@
 				669358BB2DE9AA8C00956214 /* HowManySet.app */,
 				668CB11A2DE9BE7000924340 /* HowManySetWidgetExtension.appex */,
 				666D1FBC2E03AC540038F553 /* HowManySetIntentExtension.appex */,
+				663FA5222ED740DD00996EE4 /* HowManySetWatch Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -288,6 +322,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		663FA5212ED740DD00996EE4 /* HowManySetWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 663FA5302ED740DF00996EE4 /* Build configuration list for PBXNativeTarget "HowManySetWatch Watch App" */;
+			buildPhases = (
+				663FA51E2ED740DD00996EE4 /* Sources */,
+				663FA51F2ED740DD00996EE4 /* Frameworks */,
+				663FA5202ED740DD00996EE4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				663FA5232ED740DD00996EE4 /* HowManySetWatch Watch App */,
+			);
+			name = "HowManySetWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "HowManySetWatch Watch App";
+			productReference = 663FA5222ED740DD00996EE4 /* HowManySetWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 666D1FC62E03AC540038F553 /* Build configuration list for PBXNativeTarget "HowManySetIntentExtension" */;
@@ -342,12 +398,14 @@
 				668CB1352DE9BE7300924340 /* Embed Foundation Extensions */,
 				66189C612DEF0E860087F042 /* Embed Frameworks */,
 				666D1FCA2E03AC540038F553 /* Embed ExtensionKit Extensions */,
+				663FA52D2ED740DF00996EE4 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				668CB12F2DE9BE7300924340 /* PBXTargetDependency */,
 				666D1FC42E03AC540038F553 /* PBXTargetDependency */,
+				663FA52B2ED740DF00996EE4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				669358BD2DE9AA8C00956214 /* HowManySet */,
@@ -387,6 +445,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					663FA5212ED740DD00996EE4 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					666D1FBB2E03AC540038F553 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -433,11 +494,19 @@
 				669358BA2DE9AA8C00956214 /* HowManySet */,
 				668CB1192DE9BE7000924340 /* HowManySetWidgetExtension */,
 				666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */,
+				663FA5212ED740DD00996EE4 /* HowManySetWatch Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		663FA5202ED740DD00996EE4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		666D1FBA2E03AC540038F553 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -463,6 +532,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		663FA51E2ED740DD00996EE4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		666D1FB82E03AC540038F553 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -487,6 +563,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		663FA52B2ED740DF00996EE4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 663FA5212ED740DD00996EE4 /* HowManySetWatch Watch App */;
+			targetProxy = 663FA52A2ED740DF00996EE4 /* PBXContainerItemProxy */;
+		};
 		666D1FC42E03AC540038F553 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 666D1FBB2E03AC540038F553 /* HowManySetIntentExtension */;
@@ -500,6 +581,66 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		663FA52E2ED740DF00996EE4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U54KVZDT39;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.geunho.howmanyset;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Debug;
+		};
+		663FA52F2ED740DF00996EE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U54KVZDT39;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HowManySetWatch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.geunho.howmanyset;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geunho.howmanyset.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.5;
+			};
+			name = Release;
+		};
 		666D1FC72E03AC540038F553 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -840,6 +981,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		663FA5302ED740DF00996EE4 /* Build configuration list for PBXNativeTarget "HowManySetWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				663FA52E2ED740DF00996EE4 /* Debug */,
+				663FA52F2ED740DF00996EE4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		666D1FC62E03AC540038F553 /* Build configuration list for PBXNativeTarget "HowManySetIntentExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
