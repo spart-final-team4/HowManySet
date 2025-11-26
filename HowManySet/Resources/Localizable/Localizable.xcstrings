@@ -506,6 +506,90 @@
         }
       }
     },
+    "HowManySet이 개선되었어요!\n 바로 마이너 업데이트해 보세요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySet has been improved!\nPlease update to the minor version"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡HowManySet ha sido mejorado!\nActualiza a la versión menor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySetが改善されました！\nマイナーアップデートを行ってください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySet이 개선되었어요!\n 바로 마이너 업데이트해 보세요"
+          }
+        }
+      }
+    },
+    "HowManySet이 개선되었어요!\n 바로 메이저 업데이트해 보세요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySet has been improved!\nPlease update to the major version"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡HowManySet ha sido mejorado!\nActualiza a la versión mayor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySetが改善されました！\nメジャーアップデートを行ってください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySet이 개선되었어요!\n 바로 메이저 업데이트해 보세요"
+          }
+        }
+      }
+    },
+    "HowManySet이 개선되었어요!\n 바로 패치 업데이트해 보세요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySet has been improved!\nPlease update to the patch version"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡HowManySet ha sido mejorado!\nActualiza a la versión de parche"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySetが改善されました！\nパッチアップデートを行ってください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HowManySet이 개선되었어요!\n 바로 패치 업데이트해 보세요"
+          }
+        }
+      }
+    },
     "Kakao로 시작하기" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1124,6 +1208,34 @@
         }
       }
     },
+    "마이너 업데이트 알림" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minor Update Notice"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso de actualización menor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイナーアップデートのお知らせ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이너 업데이트 알림"
+          }
+        }
+      }
+    },
     "메모" : {
       "localizations" : {
         "en" : {
@@ -1232,6 +1344,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "메인"
+          }
+        }
+      }
+    },
+    "메이저 업데이트 알림" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Major Update Notice"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso de actualización mayor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メジャーアップデートのお知らせ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메이저 업데이트 알림"
           }
         }
       }
@@ -3788,6 +3928,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "탈퇴 시 모든 운동 기록과 데이터가 삭제되며, 복구할 수 없습니다."
+          }
+        }
+      }
+    },
+    "패치 업데이트 알림" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Patch Update Notice"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso de actualización de parche"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パッチアップデートのお知らせ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "패치 업데이트 알림"
           }
         }
       }
