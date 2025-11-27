@@ -95,6 +95,11 @@ final class EditRoutineTableViewCell: UITableViewCell {
         super.touchesEnded(touches, with: event)
         setDeselected()
     }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        setDeselected()
+    }
 }
 
 // MARK: - Private UI Setup

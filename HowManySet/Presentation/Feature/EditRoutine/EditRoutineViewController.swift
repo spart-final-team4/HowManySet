@@ -84,7 +84,7 @@ final class EditRoutineViewController: UIViewController, View {
             .map{ sourceIndex, destinationIndex in
                 Reactor.Action.reorderWorkout(source: sourceIndex, destination: destinationIndex)
             }
-            .delay(.milliseconds(550), scheduler: MainScheduler.instance)
+            .delay(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
