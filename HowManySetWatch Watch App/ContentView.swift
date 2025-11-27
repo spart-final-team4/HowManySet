@@ -75,8 +75,8 @@ struct ContentView: View {
                             .foregroundStyle(.grey2)
                         
                         SetProgressBarForWatch(totalSets: totalSet, currentSet: currentSet)
-                        
                     }
+                    .frame(minHeight: 100)
                     .scenePadding()
                 } else {
                     VStack(spacing: 8) {
@@ -92,8 +92,8 @@ struct ContentView: View {
                                 .monospacedDigit()
                         }
                     }
+                    .frame(minHeight: 100)
                     .scenePadding()
-
                 }
                 
                 Spacer()
