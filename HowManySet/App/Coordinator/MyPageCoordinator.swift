@@ -7,7 +7,6 @@
 
 import UIKit
 import SafariServices
-import MessageUI
 import AcknowList
 
 protocol MyPageCoordinatorProtocol: Coordinator {
@@ -16,11 +15,12 @@ protocol MyPageCoordinatorProtocol: Coordinator {
     func showVersionInfo()
     func openAppStoreReviewPage()
     func presentPrivacyPolicyView()
-    func presentReportProblemView()
     func alertLogout()
     func pushAccountWithdrawalView()
     func navigateToAuth()
     func presentLicenseView()
+    
+    var modelName: String { get }
 }
 
 /// 마이페이지 흐름 담당 coordinator
@@ -141,33 +141,10 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         navigationController.present(webVC, animated: true)
     }
     
-    /// 문제제보 링크로 이동
-    func presentReportProblemView() {
-        if MFMailComposeViewController.canSendMail() {
-            let vc = MFMailComposeViewController()
-            
-            let mailBodyString = """
-                                \(String(localized: "문제 또는 건의사항을 여기에 작성해주세요."))
-                                
-                                Device Model : \(self.getModelName())
-                                Device OS : \(UIDevice.current.systemVersion)
-                                App Version : \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? String(localized: "알 수 없음"))
-                                """
-            
-            vc.setToRecipients(["HowManySet@gmail.com"])
-            vc.setSubject(String(localized: "HowManySet문제 제보하기"))
-            
-            navigationController.present(vc, animated: true)
-        } else {
-            print("MFMailComposeViewController.canSendMail() is false")
-            let alert = UIAlertController(title: String(localized: "오류"),
-                                          message: String(localized: "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요."),
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: String(localized: "확인"), style: .default))
-            navigationController.present(alert, animated: true)
-        }
+    /// 버전정보
+    var modelName: String {
+        return self.getModelName()
     }
-    
     /// 로그아웃 팝업 표시 및 Reactor 액션 연결
     func alertLogout() {
         // MyPageViewController에서 Reactor를 통해 로그아웃 처리하도록 수정

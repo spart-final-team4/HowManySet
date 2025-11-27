@@ -10,6 +10,7 @@ import ReactorKit
 import SnapKit
 import RxCocoa
 import RxSwift
+import MessageUI
 
 /// 마이페이지 화면을 담당하는 ViewController
 /// - `ReactorKit`을 통해 상태 관리를 하고, `coordinator` 패턴을 통해 화면 전환을 담당함
@@ -125,7 +126,7 @@ final class MyPageViewController: UIViewController, View {
         case .appReview:
             coordinator?.openAppStoreReviewPage()
         case .reportProblem:
-            coordinator?.presentReportProblemView()
+            presentReportProblemView(modelName: coordinator?.modelName ?? "알수없음")
         case .privacyPolicy:
             coordinator?.presentPrivacyPolicyView()
         case .logout:
@@ -135,6 +136,41 @@ final class MyPageViewController: UIViewController, View {
         case .none:
             print("none case tapped")
         }
+    }
+    
+    func presentReportProblemView(modelName: String) {
+        if MFMailComposeViewController.canSendMail() {
+            let vc = MFMailComposeViewController()
+            
+            let mailBodyString = """
+                                \(String(localized: "문제 또는 건의사항을 여기에 작성해주세요."))
+                                
+                                Device Model : \(modelName)
+                                Device OS : \(UIDevice.current.systemVersion)
+                                App Version : \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? String(localized: "알 수 없음"))
+                                """
+            
+            vc.setToRecipients(["HowManySet@gmail.com"])
+            vc.setSubject(String(localized: "HowManySet문제 제보하기"))
+            vc.setMessageBody(mailBodyString, isHTML: true)
+            vc.mailComposeDelegate = self
+            
+            present(vc, animated: true)
+        } else {
+            print("MFMailComposeViewController.canSendMail() is false")
+            let alert = UIAlertController(title: String(localized: "오류"),
+                                          message: String(localized: "메일 앱이 설치되어 있지 않습니다.\n앱 설치 후 재시도 해주세요."),
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: String(localized: "확인"), style: .default))
+            present(alert, animated: true)
+        }
+    }
+}
+
+extension MyPageViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(controller: MFMailComposeViewController,
+                               didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+        controller.dismiss(animated: true, completion: nil)
     }
 }
 
