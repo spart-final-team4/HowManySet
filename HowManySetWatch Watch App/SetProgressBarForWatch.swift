@@ -15,7 +15,7 @@ struct SetProgressBarForWatch: View {
         HStack(spacing: 2) {
             ForEach(0..<totalSets, id: \.self) { index in
                 Rectangle()
-                    .fill(index < currentSet ? Color.brand : Color.gray)
+                    .fill(index < currentSet ? Color.green6 : Color.gray)
                     .frame(height: 12)
             }
             .background(Color("Background"))
