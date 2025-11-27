@@ -72,7 +72,7 @@ final class EditRoutineViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        tableView.footerViewTapped
+        tableView.addExerciseButtonTapped
             .observe(on: MainScheduler.instance)
             .subscribe(with: self,
                        onNext: { owner, _ in
@@ -80,9 +80,11 @@ final class EditRoutineViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
         
-        tableView.dragDropRelay
-            .distinctUntilChanged { $0.source == $1.source && $0.destination == $1.destination }
-            .map{ Reactor.Action.reorderWorkout(source: $0, destination: $1) }
+        tableView.rx.itemMoved
+            .map{ sourceIndex, destinationIndex in
+                Reactor.Action.reorderWorkout(source: sourceIndex, destination: destinationIndex)
+            }
+            .delay(.milliseconds(300), scheduler: MainScheduler.instance)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -93,7 +95,6 @@ final class EditRoutineViewController: UIViewController, View {
                     if let updatedRoutine = owner.reactor?.currentState.routine {
                         owner.coordinator.navigateToHomeViewWithWorkoutStarted(updateRoutine: updatedRoutine)
                     }
-                    owner.dismiss(animated: true)
                 }
             }
             .disposed(by: disposeBag)
@@ -131,8 +132,9 @@ final class EditRoutineViewController: UIViewController, View {
         changeExcerciseTapped
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { owner, _ in
-                owner.dismiss(animated: true)
-                owner.presentEditExcerciseVC()
+                owner.dismiss(animated: true) {
+                    owner.presentEditExcerciseVC()
+                }
             }.disposed(by: editRoutineBottomSheetViewController.disposeBag)
         
         editRoutineBottomSheetViewController.removeExcerciseButtonSubject
@@ -144,14 +146,7 @@ final class EditRoutineViewController: UIViewController, View {
                 owner.reactor?.action.onNext(.removeSelectedWorkout) // 삭제 액션 전달
             }
             .disposed(by: editRoutineBottomSheetViewController.disposeBag)
-        
-        // TODO: 순서변경 마이너패치때
-//        editRoutineBottomSheetViewController.changeExcerciseListButtonSubject
-//            .map{ Reactor.Action.changeListOrder }
-//            .bind(to: reactor!.action)
-//            .disposed(by: editRoutineBottomSheetViewController.disposeBag)
-
-        navigationController?.present(editRoutineBottomSheetViewController, animated: true)
+        coordinator.presentModal(editRoutineBottomSheetViewController, animated: true)
     }
     
     func presentAddExerciseVC(routine: WorkoutRoutine) {

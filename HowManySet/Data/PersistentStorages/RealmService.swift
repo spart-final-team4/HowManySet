@@ -67,11 +67,6 @@ final class RealmService: RealmServiceProtocol {
         do {
             let realm = try Realm()
             try realm.write {
-                if let data = item as? RMWorkoutRoutine {
-                    data.workouts.forEach { workout in
-                        realm.add(workout, update: .modified)
-                    }
-                }
                 completion(item)
                 realm.add(item, update: .modified)
             }

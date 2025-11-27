@@ -389,9 +389,3 @@ private extension AddExerciseViewController {
         }
     }
 }
-
-extension AddExerciseViewController {
-    func setInitialUIState() {
-        contentView.setInitialState()
-    }
-}

@@ -175,6 +175,7 @@ private extension EditExerciseContentView {
         setConstraints()
         setAppearance()
         bind()
+        setInitialState()
     }
     func bind() {
         // "+ 세트 추가하기" 버튼 탭 시 새 세트 추가

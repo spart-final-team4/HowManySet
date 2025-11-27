@@ -46,12 +46,6 @@ final class EditRoutineTableViewCell: UITableViewCell {
         $0.textColor = .systemGray2
     }
     
-    /// 더보기 버튼 (ellipsis 아이콘)
-    private let moreButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        $0.tintColor = .systemGray3
-    }
-    
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -77,14 +71,34 @@ final class EditRoutineTableViewCell: UITableViewCell {
         self.setTextLabel.text = model.setText
         self.weightTextLabel.text = model.weightText
         self.repsTextLabel.text = model.repsText
-        
-        self.moreButton.isHidden = caller == .fromHome ? true : false
     }
-    func bind(indexPath: IndexPath, relay: PublishRelay<IndexPath>) {
-        moreButton.rx.tap
-            .map{ indexPath }
-            .bind(to: relay)
-            .disposed(by: disposeBag)
+    
+    func setSelected() {
+        UIView.animate(withDuration: 0.4) { [weak self] in
+            self?.backgroundColor = .grey5
+            self?.contentView.backgroundColor = .grey5
+        }
+    }
+    func setDeselected() {
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.contentView.backgroundColor = .background
+            self?.backgroundColor = .background
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        setSelected()
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        setDeselected()
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        setDeselected()
     }
 }
 
@@ -101,11 +115,12 @@ private extension EditRoutineTableViewCell {
     /// 셀 배경색 및 기본 속성 설정
     func setAppearance() {
         contentView.backgroundColor = .background
+        self.backgroundColor = .background
     }
     
     /// 서브뷰 계층에 추가
     func setViewHierarchy() {
-        contentView.addSubviews(titleLabel, setTextLabel, weightTextLabel, repsTextLabel, moreButton)
+        contentView.addSubviews(titleLabel, setTextLabel, weightTextLabel, repsTextLabel)
     }
     
     /// SnapKit을 이용한 오토레이아웃 제약 설정
@@ -126,9 +141,6 @@ private extension EditRoutineTableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(8)
             $0.leading.equalTo(weightTextLabel.snp.trailing).offset(16)
         }
-        moreButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(20)
-        }
+
     }
 }

@@ -16,14 +16,14 @@ final class EditRoutineTableView: UITableView {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private(set) var cellMoreButtonTapped = PublishRelay<IndexPath>()
-    private(set) var footerViewTapped = PublishRelay<Void>()
     private(set) var dragDropRelay = PublishRelay<(source: IndexPath, destination: IndexPath)>()
+    private(set) var addExerciseButtonTapped = PublishRelay<Void>()
+    private let itemsRelay = BehaviorRelay<[EditRoutineSection]>(value: [])
     
     private var caller: ViewCaller
     
     /// RxDataSources를 위한 DataSource 타입 별칭
     typealias DataSource = RxTableViewSectionedReloadDataSource<EditRoutineSection>
-
     /// 외부에서 바인딩 가능하도록 노출된 RxDataSource
     var rxDataSource: DataSource?
 
@@ -32,10 +32,7 @@ final class EditRoutineTableView: UITableView {
         self.caller = caller
         super.init(frame: frame, style: style)
         delegate = self
-        // TODO: 마이너 패치때 도입
-//        dragInteractionEnabled = true
-//        dragDelegate = self
-//        dropDelegate = self
+        self.setEditing(true, animated: false)
         bind()
         backgroundColor = .background
     }
@@ -54,8 +51,6 @@ final class EditRoutineTableView: UITableView {
                 // 셀, 헤더, 푸터 등록
                 tableView.register(EditRoutineTableHeaderView.self,
                                    forHeaderFooterViewReuseIdentifier: EditRoutineTableHeaderView.identifier)
-                tableView.register(EditRoutineTableFooterView.self,
-                                   forHeaderFooterViewReuseIdentifier: EditRoutineTableFooterView.identifier)
                 tableView.register(EditRoutineTableViewCell.self,
                                    forCellReuseIdentifier: EditRoutineTableViewCell.identifier)
                 
@@ -67,16 +62,34 @@ final class EditRoutineTableView: UITableView {
                     return UITableViewCell()
                 }
                 
-                
                 cell.configure(indexPath: indexPath,
                                model: item,
                                caller: self.caller)
-                cell.bind(indexPath: indexPath,
-                          relay: self.cellMoreButtonTapped)
-                cell.selectionStyle = .none
+                
+                let longPressGesture = UILongPressGestureRecognizer()
+                longPressGesture.minimumPressDuration = 0.5
+                longPressGesture.rx.event
+                    .compactMap{ $0 }
+                    .filter{ $0.state == .began }
+                    .filter{ gesture in
+                        let location = gesture.location(in: cell)
+                        if cell.contentView.frame.contains(location) { return true }
+                        return false
+                    }
+                    .subscribe(onNext: { [weak self] _ in
+                        self?.cellMoreButtonTapped.accept(indexPath)
+                        cell.setDeselected()
+                    })
+                    .disposed(by: cell.disposeBag)
+                cell.addGestureRecognizer(longPressGesture)
                 return cell
             })
-        rxDataSource?.canMoveRowAtIndexPath = { _, _ in return true }
+        guard let rxDataSource else { return }
+        
+        itemsRelay
+            .bind(to: rx.items(dataSource: rxDataSource))
+            .disposed(by: disposeBag)
+        
     }
 
     // MARK: - Public Method
@@ -89,12 +102,7 @@ final class EditRoutineTableView: UITableView {
         }
 
         let model = [EditRoutineSection(headerTitle: routine.name, items: items)]
-
-        guard let rxDataSource = rxDataSource else { return }
-        dataSource = nil
-        Observable.just(model)
-            .bind(to: self.rx.items(dataSource: rxDataSource))
-            .disposed(by: disposeBag)
+        itemsRelay.accept(model)
     }
     
     func mappingRoutineToCellModel(workout: Workout) -> EditRoutioneCellModel {
@@ -119,87 +127,26 @@ extension EditRoutineTableView: UITableViewDelegate {
             return nil
         }
         headerView.configure(with: sectionModel.headerTitle)
-        return headerView
-    }
-
-    /// 섹션 푸터 뷰 구성 (ex: + 운동 추가 버튼 등)
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        guard let footerView = tableView.dequeueReusableHeaderFooterView(
-            withIdentifier: EditRoutineTableFooterView.identifier
-        ) as? EditRoutineTableFooterView else {
-            return nil
-        }
-        footerView.configure(viewCaller: self.caller)
-        footerView.plusExcerciseButtonTapped
-            .subscribe(onNext: { [weak self] in // UI가 변하는 애니메이션을 처리하기 위해 .subscribe(onNext: 사용
-                footerView.animateTap { // 애니메이션 후에 바인딩 이벤트 전달
-                    self?.footerViewTapped.accept(())
-                }
-            })
-            .disposed(by: footerView.disposeBag)
+        headerView.bind(publishRelay: addExerciseButtonTapped)
         
-        return footerView
+        return headerView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 70
     }
 
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 70
-    }
-
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 90
     }
-}
-
-
-extension EditRoutineTableView: UITableViewDragDelegate {
-    func tableView(
-        _ tableView: UITableView,
-        itemsForBeginning session: any UIDragSession,
-        at indexPath: IndexPath
-    ) -> [UIDragItem]  {
-        session.localContext = indexPath
-        guard let item = rxDataSource?[indexPath] else {
-            return []
-        }
-        print(item)
-        // 실제 데이터 전달
-        let itemProvider = NSItemProvider(object: item.name as NSString)
-        let dragItem = UIDragItem(itemProvider: itemProvider)
-        dragItem.localObject = item // Drop 시 직접 사용 가능
-        return [dragItem]
+    
+    func tableView(_ tableView: UITableView,
+                   editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
     }
     
-}
-extension EditRoutineTableView: UITableViewDropDelegate {
-    func tableView(
-        _ tableView: UITableView,
-        dropSessionDidUpdate session: UIDropSession,
-        withDestinationIndexPath destinationIndexPath: IndexPath?
-    ) -> UITableViewDropProposal {
-        guard
-            let sourceIndexPath = session.localDragSession?.localContext as? IndexPath,
-            let destinationIndexPath = destinationIndexPath,
-            sourceIndexPath != destinationIndexPath
-        else {
-            return UITableViewDropProposal(operation: .cancel)
-        }
-        dragDropRelay.accept((source: sourceIndexPath, destination: destinationIndexPath))
-        return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    func tableView(_ tableView: UITableView,
+                   shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
-    
-    func tableView(
-        _ tableView: UITableView,
-        performDropWith coordinator: UITableViewDropCoordinator
-    ) {
-        guard
-            let sourceIndexPath = coordinator.items.first?.sourceIndexPath,
-            let destinationIndexPath = coordinator.destinationIndexPath
-        else { return }
-        dragDropRelay.accept((source: sourceIndexPath, destination: destinationIndexPath))
-    }
-    
 }
