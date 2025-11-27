@@ -65,9 +65,9 @@ final class EditRoutineTableView: UITableView {
                 cell.configure(indexPath: indexPath,
                                model: item,
                                caller: self.caller)
-                cell.selectionStyle = .none
                 
                 let longPressGesture = UILongPressGestureRecognizer()
+                longPressGesture.minimumPressDuration = 0.5
                 longPressGesture.rx.event
                     .compactMap{ $0 }
                     .filter{ $0.state == .began }
@@ -78,9 +78,9 @@ final class EditRoutineTableView: UITableView {
                     }
                     .subscribe(onNext: { [weak self] _ in
                         self?.cellMoreButtonTapped.accept(indexPath)
+                        cell.setDeselected()
                     })
                     .disposed(by: cell.disposeBag)
-                
                 cell.addGestureRecognizer(longPressGesture)
                 return cell
             })

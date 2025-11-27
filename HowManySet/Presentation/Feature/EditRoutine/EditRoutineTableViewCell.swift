@@ -72,6 +72,25 @@ final class EditRoutineTableViewCell: UITableViewCell {
         self.weightTextLabel.text = model.weightText
         self.repsTextLabel.text = model.repsText
     }
+    
+    func setSelected() {
+        UIView.animate(withDuration: 0.4) { [weak self] in
+            self?.backgroundColor = .grey5
+            self?.contentView.backgroundColor = .grey5
+        }
+    }
+    
+    func setDeselected() {
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.contentView.backgroundColor = .background
+            self?.backgroundColor = .background
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        setSelected()
+    }
 }
 
 // MARK: - Private UI Setup
