@@ -79,7 +79,6 @@ final class EditRoutineTableViewCell: UITableViewCell {
             self?.contentView.backgroundColor = .grey5
         }
     }
-    
     func setDeselected() {
         UIView.animate(withDuration: 0.2) { [weak self] in
             self?.contentView.backgroundColor = .background
@@ -90,6 +89,11 @@ final class EditRoutineTableViewCell: UITableViewCell {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         setSelected()
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        setDeselected()
     }
 }
 
