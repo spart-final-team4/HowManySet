@@ -36,10 +36,8 @@ struct WorkoutView: View {
     private let restText = String(localized: "휴식중")
     
     private let restSecondsLabelSize: CGFloat = 46
-    private let pretendardBold = "Pretendard-Bold"
-    private let pretendardSemiBold = "Pretendard-SemiBold"
-    private let pretendardRegular = "Pretendard-Regular"
     private let buttonSize: CGFloat = 44
+    private let pretendard = Pretendard()
     
     var body: some View {
         TabView {
@@ -48,14 +46,14 @@ struct WorkoutView: View {
                 HStack {
                     Text(timerInterval: Date.now...Date.distantFuture,
                          countsDown: false)
-                    .font(.custom(pretendardRegular, size: 14))
+                    .font(.custom(pretendard.pretendardRegular, size: 14))
                     .foregroundStyle(.grey3)
                     .monospacedDigit()
                     
                     Spacer()
                     
                     Text(Date.now, style: .time)
-                        .font(.custom(pretendardRegular, size: 12))
+                        .font(.custom(pretendard.pretendardRegular, size: 12))
                         .foregroundStyle(.white)
                         .monospacedDigit()
                 }
@@ -67,11 +65,11 @@ struct WorkoutView: View {
                 if !isResting { // 운동 중
                     VStack(spacing: 8) {
                         Text(exerciseName)
-                            .font(.custom(pretendardSemiBold, size: 16))
+                            .font(.custom(pretendard.pretendardSemiBold, size: 16))
                             .foregroundStyle(.white)
                         
                         Text(exerciseInfo)
-                            .font(.custom(pretendardRegular, size: 14))
+                            .font(.custom(pretendard.pretendardRegular, size: 14))
                             .foregroundStyle(.grey2)
                         
                         SetProgressBarForWatch(totalSets: totalSet, currentSet: currentSet)
@@ -81,7 +79,7 @@ struct WorkoutView: View {
                 } else {
                     VStack(spacing: 8) {
                         Text(restText)
-                            .font(.custom(pretendardRegular, size: 14))
+                            .font(.custom(pretendard.pretendardRegular, size: 14))
                             .foregroundStyle(.grey2)
                         
                         if let restStartDate, let restEndDate {
