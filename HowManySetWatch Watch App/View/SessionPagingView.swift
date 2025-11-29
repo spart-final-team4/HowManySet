@@ -20,7 +20,7 @@ struct SessionPagingView: View {
     var body: some View {
         TabView(selection: $selection) {
             RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
-            WorkoutView().tag(Tab.workout)
+            WorkoutView(workout: Workout.mockData[0]).tag(Tab.workout)
             RestSettingView().tag(Tab.restSetting)
         }
     }

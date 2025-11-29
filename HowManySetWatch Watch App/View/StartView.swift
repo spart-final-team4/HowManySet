@@ -10,7 +10,7 @@ import SwiftUI
 struct StartView: View {
    
     var body: some View {
-        WorkoutView()
+        WorkoutView(workout: Workout.mockData[0])
             .scenePadding()
     }
 }
