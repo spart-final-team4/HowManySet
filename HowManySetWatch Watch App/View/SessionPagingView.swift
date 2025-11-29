@@ -7,9 +7,22 @@
 
 import SwiftUI
 
+enum Tab {
+    case routineInfo
+    case workout
+    case restSetting
+}
+
 struct SessionPagingView: View {
+    
+    @State private var selection: Tab = .workout
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        TabView(selection: $selection) {
+            RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
+            WorkoutView().tag(Tab.workout)
+            RestSettingView().tag(Tab.restSetting)
+        }
     }
 }
 

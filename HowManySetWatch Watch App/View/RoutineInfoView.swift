@@ -8,11 +8,33 @@
 import SwiftUI
 
 struct RoutineInfoView: View {
+    
+    private let pretendard = Pretendard()
+    @State var routine: WorkoutRoutine
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List {
+            ForEach(routine.workouts) { workout in
+                HStack {
+                    Text(workout.name)
+                        .font(.custom(pretendard.pretendardRegular, size: 12))
+                        .foregroundStyle(.white)
+                    Spacer()
+                    Text("\(workout.sets.count)set")
+                        .font(.custom(pretendard.pretendardRegular, size: 12))
+                        .foregroundStyle(.white)
+                }
+                .padding(.horizontal, 2)
+            }
+        }
+        .listStyle(.carousel)
+        .navigationTitle(routine.name)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    RoutineInfoView()
+    NavigationView {
+        RoutineInfoView(routine: WorkoutRoutine.mockData[0])
+    }
 }
