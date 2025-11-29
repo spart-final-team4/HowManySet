@@ -53,6 +53,8 @@ struct RestSettingView: View {
             .buttonStyle(.plain) // 기본 스타일 사용하지 않겠다고 명시 -> 커스텀 가능
         }
         .scenePadding()
+        .navigationTitle(Text(timerInterval: Date.now...Date.distantFuture, countsDown: false))
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

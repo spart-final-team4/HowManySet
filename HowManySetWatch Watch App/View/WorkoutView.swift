@@ -15,7 +15,7 @@ struct WorkoutView: View {
     @State private var workoutStartDate: Date? = Date.now
     @State private var isWorkingout: Bool = true
     @State private var isWorkoutPaused: Bool = false
-    @State private var currentSet = 1
+    @State private var currentSet = 0
     @State private var restStartDate: Date?
     @State private var restTime: Float = 60
     @State private var isResting: Bool = false
@@ -28,11 +28,11 @@ struct WorkoutView: View {
     }
     
     private var currentSetInfoText: String {
-        guard !workout.sets.isEmpty, currentSet > 0, currentSet <=
+        guard !workout.sets.isEmpty, currentSet >= 0, currentSet <=
                 workout.sets.count else {
             return "세트 정보 없음"
         }
-        let set = workout.sets[currentSet - 1]
+        let set = workout.sets[currentSet]
         return "\(set.weight)kg x \(set.reps)회"
     }
     
