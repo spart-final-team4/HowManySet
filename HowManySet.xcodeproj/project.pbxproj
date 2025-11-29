@@ -135,6 +135,21 @@
 			);
 			target = 669358BA2DE9AA8C00956214 /* HowManySet */;
 		};
+		664126B02EDAC51F00BB3B62 /* Exceptions for "HowManySet" folder in "HowManySetWatch Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Domain/Entity/HomeEntity/WorkoutCardState.swift,
+				Domain/Entity/HomeEntity/WorkoutStateForEdit.swift,
+				Domain/Entity/HomeEntity/WorkoutSummary.swift,
+				Domain/Entity/UserSetting.swift,
+				Domain/Entity/Workout.swift,
+				Domain/Entity/WorkoutRecord.swift,
+				Domain/Entity/WorkoutRoutine.swift,
+				Domain/Entity/WorkoutSession.swift,
+				Domain/Entity/WorkoutSet.swift,
+			);
+			target = 663FA5212ED740DD00996EE4 /* HowManySetWatch Watch App */;
+		};
 		666D1FC92E03AC540038F553 /* Exceptions for "HowManySetIntentExtension" folder in "HowManySetIntentExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -229,6 +244,7 @@
 				669358E32DE9AA8E00956214 /* Exceptions for "HowManySet" folder in "HowManySet" target */,
 				667A8E412DF27B2200BFDC86 /* Exceptions for "HowManySet" folder in "HowManySetWidgetExtension" target */,
 				66CA11C62E7D45970004CA80 /* Exceptions for "HowManySet" folder in "HowManySetIntentExtension" target */,
+				664126B02EDAC51F00BB3B62 /* Exceptions for "HowManySet" folder in "HowManySetWatch Watch App" target */,
 			);
 			path = HowManySet;
 			sourceTree = "<group>";
