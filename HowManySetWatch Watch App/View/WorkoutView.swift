@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  WorkoutView.swift
 //  HowManySetWatch Watch App
 //
-//  Created by 정근호 on 11/26/25.
+//  Created by 정근호 on 11/29/25.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct WorkoutView: View {
     
     // 운동 중 관련
     @State private var workoutStartDate: Date? = Date.now
@@ -150,8 +150,4 @@ struct ContentView: View {
         }//TabView
         .tabViewStyle(.page)
     }
-}
-
-#Preview {
-    ContentView()
 }
