@@ -54,3 +54,25 @@ class WatchConnectivityProvider: NSObject, WCSessionDelegate {
         // TODO: 데이터 처리 로직 추가
     }
 }
+
+extension WatchConnectivityProvider {
+    
+    // MARK: Data Sending
+    func sendRoutines(_ routines: [WorkoutRoutine]) {
+        guard WCSession.default.isReachable else {
+            print("WCSession is not reachable")
+            return
+        }
+        
+        do {
+            let encodedRoutines = try JSONEncoder().encode(routines)
+            let context = ["workoutRoutines": encodedRoutines]
+            try WCSession.default.updateApplicationContext(context)
+            
+            print("Successfully sent \(routines.count) routines to the Watch app.")
+        } catch {
+            print("Failed to encode or send routines: \(error.localizedDescription)")
+        }
+    }
+    
+}
