@@ -73,5 +73,5 @@ struct RestView: View {
 }
 
 #Preview {
-//    RestView(restStartDate: .constant(Date.now), isResting: .constant(false))
+    RestView(restStartDate: .constant(Date.now), isResting: .constant(false))
 }

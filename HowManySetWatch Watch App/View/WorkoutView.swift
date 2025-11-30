@@ -75,5 +75,5 @@ struct WorkoutView: View {
 
 
 #Preview {
-//    WorkoutView(workout: Workout.mockData[0], isResting: false, restStartDate: Date.now)
+    WorkoutView(workout: Workout.mockData[0], isResting: .constant(false), restStartDate: .constant(Date.now))
 }
