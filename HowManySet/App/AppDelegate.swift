@@ -74,6 +74,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Check Your AppKey")
             }
             
+            // WatchConnectivity 활성화
+            _ = WatchConnectivityProvider.shared
+            
             return true
         }
     

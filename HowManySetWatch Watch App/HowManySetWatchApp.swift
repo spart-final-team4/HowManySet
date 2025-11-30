@@ -9,6 +9,12 @@ import SwiftUI
 
 @main
 struct HowManySetWatch_Watch_AppApp: App {
+    
+    init() {
+        // WatchConnectivity 활성화
+        _ = WatchConnectivityProvider.shared
+    }
+    
     var body: some Scene {
         WindowGroup {
             StartView()
