@@ -16,16 +16,25 @@ enum Tab {
 struct SessionPagingView: View {
     
     @State private var selection: Tab = .workout
+    @State private var isResting = false
+    @State var routine: WorkoutRoutine
     
     var body: some View {
         TabView(selection: $selection) {
-            RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
-            WorkoutView(workout: Workout.mockData[0]).tag(Tab.workout)
-            RestSettingView().tag(Tab.restSetting)
+            if !isResting {
+                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
+                ForEach(routine.workouts) { workout in
+                    WorkoutView(workout: workout).tag(Tab.workout)
+                }
+            } else {
+                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
+                RestView()
+                RestSettingView()
+            }
         }
     }
 }
 
 #Preview {
-    SessionPagingView()
+    SessionPagingView(routine: WorkoutRoutine.mockData[0])
 }

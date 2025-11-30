@@ -15,18 +15,16 @@ struct RoutineInfoView: View {
     var body: some View {
         List {
             ForEach(routine.workouts) { workout in
-                NavigationLink(destination: WorkoutView(workout: workout)) {
-                    HStack {
-                        Text(workout.name)
-                            .font(.custom(pretendard.pretendardRegular, size: 12))
-                            .foregroundStyle(.white)
-                        Spacer()
-                        Text("\(workout.sets.count)set")
-                            .font(.custom(pretendard.pretendardRegular, size: 12))
-                            .foregroundStyle(.white)
-                    }
-                    .padding(.horizontal, 2)
+                HStack {
+                    Text(workout.name)
+                        .font(.custom(pretendard.pretendardRegular, size: 12))
+                        .foregroundStyle(.white)
+                    Spacer()
+                    Text("\(workout.sets.count)set")
+                        .font(.custom(pretendard.pretendardRegular, size: 12))
+                        .foregroundStyle(.white)
                 }
+                .padding(.horizontal, 2)
             }
         }
         .listStyle(.carousel)

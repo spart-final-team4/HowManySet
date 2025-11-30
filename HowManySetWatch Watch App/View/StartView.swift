@@ -10,8 +10,11 @@ import SwiftUI
 struct StartView: View {
    
     var body: some View {
+        
+        @State var routine = WorkoutRoutine.mockData[0]
+        
         NavigationView {
-            SessionPagingView()
+            SessionPagingView(routine: routine)
         }
     }
 }
