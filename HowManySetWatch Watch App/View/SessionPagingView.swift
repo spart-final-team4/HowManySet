@@ -24,7 +24,7 @@ struct SessionPagingView: View {
     var body: some View {
         if !isResting {
             TabView(selection: $workoutPageIndex) {
-                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(0)
+                RoutineInfoView(routine: routine).tag(0)
                 
                 ForEach(Array(routine.workouts.enumerated()), id: \.element.id) { index, workout in
                     WorkoutView(workout: workout, isResting: $isResting, restStartDate: $restStartDate).tag(index+1)
@@ -33,7 +33,7 @@ struct SessionPagingView: View {
             .tabViewStyle(.page)
         } else {
             TabView(selection: $restPageIndex) {
-                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(RestTabs.routineInfo)
+                RoutineInfoView(routine: routine).tag(RestTabs.routineInfo)
                 
                 RestView(restStartDate: $restStartDate, isResting: $isResting).tag(RestTabs.rest)
                 
