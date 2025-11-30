@@ -7,34 +7,43 @@
 
 import SwiftUI
 
-enum Tab {
-    case routineInfo
-    case workout
-    case restSetting
+enum RestTabs {
+    case routineInfo, rest, restSetting
 }
 
 struct SessionPagingView: View {
     
-    @State private var selection: Tab = .workout
-    @State private var isResting = false
     @State var routine: WorkoutRoutine
+    @State var isResting = false
     
+    @State private var workoutPageIndex: Int = 1
+    @State private var restPageIndex: RestTabs = .rest
+    
+    @State private var restStartDate: Date? = Date.now
+
     var body: some View {
-        TabView(selection: $selection) {
-            if !isResting {
-                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
-                ForEach(routine.workouts) { workout in
-                    WorkoutView(workout: workout).tag(Tab.workout)
+        if !isResting {
+            TabView(selection: $workoutPageIndex) {
+                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(0)
+                
+                ForEach(Array(routine.workouts.enumerated()), id: \.element.id) { index, workout in
+                    WorkoutView(workout: workout, isResting: $isResting, restStartDate: $restStartDate).tag(index+1)
                 }
-            } else {
-                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(Tab.routineInfo)
-                RestView()
-                RestSettingView()
             }
+            .tabViewStyle(.page)
+        } else {
+            TabView(selection: $restPageIndex) {
+                RoutineInfoView(routine: WorkoutRoutine.mockData[0]).tag(RestTabs.routineInfo)
+                
+                RestView(restStartDate: $restStartDate, isResting: $isResting).tag(RestTabs.rest)
+                
+                RestSettingView().tag(RestTabs.restSetting)
+            }
+            .tabViewStyle(.page)
         }
     }
 }
 
 #Preview {
-    SessionPagingView(routine: WorkoutRoutine.mockData[0])
+    SessionPagingView(routine: WorkoutRoutine.mockData[0], isResting: false)
 }

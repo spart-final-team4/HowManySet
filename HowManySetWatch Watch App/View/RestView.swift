@@ -9,10 +9,11 @@ import SwiftUI
 
 struct RestView: View {
     
-    @State var restStartDate: Date?
     @State private var restTime: Float = 60
-    @State private var isResting: Bool = false
     @State private var isRestPaused: Bool = false
+    
+    @Binding var restStartDate: Date?
+    @Binding var isResting: Bool
     
     private let restText = String(localized: "휴식중")
     private let restSecondsLabelSize: CGFloat = 46
@@ -72,5 +73,5 @@ struct RestView: View {
 }
 
 #Preview {
-    RestView(restStartDate: Date.now)
+//    RestView(restStartDate: .constant(Date.now), isResting: .constant(false))
 }
