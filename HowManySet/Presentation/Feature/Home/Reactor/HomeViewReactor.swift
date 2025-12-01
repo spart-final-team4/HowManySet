@@ -164,6 +164,7 @@ final class HomeViewReactor: Reactor {
     private let uid = FirebaseAuthService().fetchCurrentUser()?.uid
     
     private let notificationService: NotificationServiceProtocol
+    private let watchConnector: WatchConnector
 
     
     init(
@@ -172,7 +173,8 @@ final class HomeViewReactor: Reactor {
         updateWorkoutUseCase: UpdateWorkoutUseCase,
         updateRecordUseCase: UpdateRecordUseCase,
         initialState: State,
-        notificationService: NotificationServiceProtocol
+        notificationService: NotificationServiceProtocol,
+        watchConnector: WatchConnector
     ) {
         self.saveRecordUseCase = saveRecordUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
@@ -180,6 +182,7 @@ final class HomeViewReactor: Reactor {
         self.updateRecordUseCase = updateRecordUseCase
         self.initialState = initialState
         self.notificationService = notificationService
+        self.watchConnector = watchConnector
     }//init
     
     // MARK: - Mutate(실제로 일어날 변화 구현) Action -> Mutation
@@ -191,6 +194,9 @@ final class HomeViewReactor: Reactor {
         case .routineSelected:
             // 운동 타이머 UI updating
             let workoutUpdating = makeWorkoutUIUpdateSignal()
+            
+            // Watch 앱으로 현재 루틴 정보 전송
+            watchConnector.startWorkoutSessionOnWatch(with: currentState.workoutRoutine)
             
             return .concat([
                 .just(.setWorkingout(true)),
