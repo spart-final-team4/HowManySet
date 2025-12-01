@@ -138,7 +138,6 @@
 		664126B02EDAC51F00BB3B62 /* Exceptions for "HowManySet" folder in "HowManySetWatch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Data/Watch/WatchConnectivityProvider.swift,
 				Domain/Entity/HomeEntity/WorkoutCardState.swift,
 				Domain/Entity/HomeEntity/WorkoutStateForEdit.swift,
 				Domain/Entity/HomeEntity/WorkoutSummary.swift,
