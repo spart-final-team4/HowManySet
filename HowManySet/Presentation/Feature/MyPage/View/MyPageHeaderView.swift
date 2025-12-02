@@ -56,6 +56,7 @@ private extension MyPageHeaderView {
         setViewHierarchy()
         setConstraints()
         bind()
+        checkMembership()
     }
     
     func bind() {
@@ -87,5 +88,10 @@ private extension MyPageHeaderView {
             $0.width.equalTo(80)
             $0.height.equalTo(30)
         }
+    }
+    
+    func checkMembership() {
+        let uid = UserDefaults.standard.string(forKey: "userUID")
+        if uid != nil { membershipButton.isHidden = true }
     }
 }
