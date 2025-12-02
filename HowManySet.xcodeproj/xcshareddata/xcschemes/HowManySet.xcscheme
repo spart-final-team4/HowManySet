@@ -21,6 +21,20 @@
                ReferencedContainer = "container:HowManySet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "663FA5212ED740DD00996EE4"
+               BuildableName = "HowManySetWatch Watch App.app"
+               BlueprintName = "HowManySetWatch Watch App"
+               ReferencedContainer = "container:HowManySet.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
