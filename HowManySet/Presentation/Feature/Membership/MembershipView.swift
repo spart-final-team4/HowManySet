@@ -9,39 +9,68 @@ import SwiftUI
 import UIKit
 
 class MembershipViewHostingController: UIHostingController<MembershipView> {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        bind()
     }
+    
+    private func bind() {
+        rootView.dismiss = { [weak self] in
+            self?.dismiss(animated: true)
+        }
+    }
+    
 }
 
 struct MembershipView: View {
     
-    private let membershipDescription: String = """
-        
+    private let membershipDescription: String =
+        """
         HowManySet 회원전환 페이지입니다.
+        아래 주의사항을 읽고 회원전환을 진행해주세요.
+        
+        1. 비회원 전환 시 저장된 정보가 로그인된 회원 정보로 이전됩니다.
+        2. 회원 정보가 이전되면서 기존의 비회원 정보들이 일괄 삭제됩니다.
+        3. 회원으로 전환하여도 비회원으로 앱을 이용할 수 있습니다.
         
         """
+    
+    var dismiss: (() -> Void)?
+    var signUpWithKakao: (() -> Void)?
+    var signUpWithGoogle: (() -> Void)?
+    var signUpWithApple: (() -> Void)?
     
     var body: some View {
         ZStack {
             Color.background
                 .ignoresSafeArea()
             VStack {
+                Button {
+                    dismiss?()
+                } label: {
+                    Image(.iconX)
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                }
+                .padding(EdgeInsets(top: 40, leading: 0, bottom: 20, trailing: 0))
+                
+                
                 Text("HowManySet 회원전환")
+                    .foregroundStyle(.white)
                     .font(.largeTitle)
                     .bold()
                 Text(membershipDescription)
-                signUpWithSocial(.kakao) {
-                    
+                    .foregroundStyle(.white)
+                    .padding()
+                Spacer()
+                
+                VStack(spacing: 10) {
+                    signUpWithSocial(.kakao) { signUpWithKakao?() }
+                    signUpWithSocial(.google) { signUpWithGoogle?() }
+                    signUpWithSocial(.apple) { signUpWithApple?() }
                 }
-                signUpWithSocial(.google) {
-                    
-                }
-                signUpWithSocial(.apple) {
-                    
-                }
-
-                    
+                .padding()      
             }
         }
     }
