@@ -21,6 +21,15 @@ final class MyPageHeaderView: UIView {
         $0.textColor = .white
     }
     
+    private let membershipButton = UIButton().then {
+        $0.setTitle("회원전환", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        $0.backgroundColor = .brand
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 12
+    }
+    
     /// 코드 기반 초기화 메서드
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,7 +59,7 @@ private extension MyPageHeaderView {
     
     /// 서브뷰(요소) 계층 구성
     func setViewHierarchy() {
-        self.addSubviews(usernameLabel)
+        self.addSubviews(usernameLabel, membershipButton)
     }
     
     /// 오토레이아웃 제약 설정
@@ -58,6 +67,13 @@ private extension MyPageHeaderView {
         usernameLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(20)
+        }
+        
+        membershipButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(15)
+            $0.width.equalTo(80)
+            $0.height.equalTo(30)
         }
     }
 }
