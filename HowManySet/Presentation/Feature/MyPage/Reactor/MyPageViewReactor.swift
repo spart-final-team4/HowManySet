@@ -170,15 +170,3 @@ final class MyPageViewReactor: Reactor {
         }
     }
 }
-
-
-extension MyPageViewReactor {
-    
-    func getLocalDatas() {
-        
-    }
-    
-    func migration() {
-        
-    }
-}
