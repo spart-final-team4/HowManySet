@@ -8,10 +8,15 @@
 import UIKit
 import SnapKit
 import Then
+import RxCocoa
+import RxSwift
 
 /// 마이페이지 상단에 사용자 이름(또는 비회원)을 표시하는 헤더 뷰
 /// - 사용자 식별 또는 상태 표시 용도로 사용됩니다.
 final class MyPageHeaderView: UIView {
+    
+    private(set) var membershipButtonTapped = PublishSubject<Void>()
+    private let disposeBag = DisposeBag()
     
     /// 사용자 이름 또는 상태(예: 비회원)를 표시하는 레이블
     let usernameLabel = UILabel().then {
@@ -50,6 +55,13 @@ private extension MyPageHeaderView {
         setAppearance()
         setViewHierarchy()
         setConstraints()
+        bind()
+    }
+    
+    func bind() {
+        membershipButton.rx.tap
+            .bind(to: membershipButtonTapped)
+            .disposed(by: disposeBag)
     }
     
     /// 배경색 등 뷰의 외형 설정
