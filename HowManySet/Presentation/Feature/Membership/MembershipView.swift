@@ -31,13 +31,13 @@ struct MembershipView: View {
                     .font(.largeTitle)
                     .bold()
                 Text(membershipDescription)
-                signInWithSocial(.kakao) {
+                signUpWithSocial(.kakao) {
                     
                 }
-                signInWithSocial(.google) {
+                signUpWithSocial(.google) {
                     
                 }
-                signInWithSocial(.apple) {
+                signUpWithSocial(.apple) {
                     
                 }
 
@@ -46,7 +46,7 @@ struct MembershipView: View {
         }
     }
     
-    private func signInWithSocial(_ type: SocialType,
+    private func signUpWithSocial(_ type: SocialType,
                                   action: @escaping () -> Void) -> some View {
         Button {
             action()
