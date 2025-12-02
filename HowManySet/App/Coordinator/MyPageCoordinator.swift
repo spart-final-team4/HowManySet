@@ -19,6 +19,7 @@ protocol MyPageCoordinatorProtocol: Coordinator {
     func pushAccountWithdrawalView()
     func navigateToAuth()
     func presentLicenseView()
+    func presentMembershipView()
     
     var modelName: String { get }
 }
@@ -199,6 +200,12 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
         let licenseView = AcknowListViewController()
         licenseView.title = String(localized: "라이센스 정보")
         navigationController.pushViewController(licenseView, animated: true)
+    }
+    
+    func presentMembershipView() {
+        let membershipView = MembershipViewHostingController(rootView: MembershipView())
+        
+        navigationController.pushViewController(membershipView, animated: true)
     }
 }
 

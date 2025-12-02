@@ -28,6 +28,8 @@ final class MyPageViewReactor: Reactor {
         case confirmDeleteAccount
         /// 사용자 이름 로드 (Firestore에서 fetch)
         case loadUserName
+        case membershipButtonTapped
+        case resetMembershipMoved
     }
     
     /// 상태 변화를 나타내는 Mutation (내부 상태 조작용)
@@ -42,6 +44,7 @@ final class MyPageViewReactor: Reactor {
         case setError(Error)
         /// 사용자 이름 설정
         case setUserName(String)
+        case presentMembershipView(Bool)
     }
     
     /// 현재 뷰 상태를 담는 구조체
@@ -54,6 +57,7 @@ final class MyPageViewReactor: Reactor {
         var error: Error?
         /// 사용자 이름 (Firestore에서 fetch)
         var userName: String? = nil
+        var membershipMoved: Bool = false
     }
     
     /// 초기 상태
@@ -98,6 +102,10 @@ final class MyPageViewReactor: Reactor {
             return authUseCase.deleteAccount()
                 .map { _ in .deleteAccountSuccess }
                 .catch { error in .just(.setError(error)) }
+        case .membershipButtonTapped:
+            return .just(.presentMembershipView(true))
+        case .resetMembershipMoved:
+            return .just(.presentMembershipView(false))
         }
     }
     
@@ -117,6 +125,8 @@ final class MyPageViewReactor: Reactor {
             newState.error = error
         case .setUserName(let name):
             newState.userName = name
+        case .presentMembershipView(let value):
+            newState.membershipMoved = value
         }
         return newState
     }
@@ -158,5 +168,17 @@ final class MyPageViewReactor: Reactor {
             
             return Disposables.create()
         }
+    }
+}
+
+
+extension MyPageViewReactor {
+    
+    func getLocalDatas() {
+        
+    }
+    
+    func migration() {
+        
     }
 }

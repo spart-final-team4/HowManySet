@@ -110,6 +110,24 @@ final class MyPageViewController: UIViewController, View {
                 }
             }
             .disposed(by: disposeBag)
+        
+        mypageView.headerView.membershipButtonTapped
+            .map { Reactor.Action.membershipButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map{ $0.membershipMoved }
+            .distinctUntilChanged()
+            .filter{ $0 == true }
+            .observe(on: MainScheduler.instance)
+            .bind { [weak self] state in
+                self?.coordinator?.presentMembershipView()
+                reactor.action.onNext(.resetMembershipMoved)
+            }
+            .disposed(by: disposeBag)
+        
+        
     }
 
     /// 선택된 셀에 따라 코디네이터로 화면 이동 처리
