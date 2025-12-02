@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 import FirebaseFirestore
 
 /// 의존성 주입 컨테이너
@@ -78,6 +79,34 @@ final class DIContainer {
         let reactor = MyPageViewReactor(authUseCase: authUseCase)
         
         return MyPageViewController(reactor: reactor, coordinator: coordinator)
+    }
+    
+    func makeMembershipView() -> UIHostingController<MembershipView> {
+        
+        let firestoreService: FirestoreServiceProtocol = FirestoreService()
+        let realmService = RealmService()
+        let recordRepository = RecordRepositoryImpl(firestoreService: firestoreService,
+                                                    realmService: realmService)
+        let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
+        let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
+        let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        
+        
+        let firebaseAuthService = FirebaseAuthService()
+        let authRepository = AuthRepositoryImpl(firebaseAuthService: firebaseAuthService)
+        let authUseCase = AuthUseCase(repository: authRepository)
+        
+        let reactor = MembershipViewReactor(fetchRecordUseCase: fetchRecordUseCase,
+                                            deleteRecordUseCase: deleteRecordUseCase,
+                                            fetchRoutineUseCase: fetchRoutineUseCase,
+                                            deleteRoutineUseCase: deleteRoutineUseCase,
+                                            authUseCase: authUseCase)
+        
+        return MembershipViewHostingController(reactor: reactor,
+                                               rootView: MembershipView())
     }
     
     /// 루틴 완료 화면을 생성하여 반환
