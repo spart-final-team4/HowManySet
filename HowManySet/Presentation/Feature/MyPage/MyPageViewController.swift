@@ -123,7 +123,9 @@ final class MyPageViewController: UIViewController, View {
             .observe(on: MainScheduler.instance)
             .bind { [weak self] state in
                 self?.coordinator?.presentMembershipView()
-                reactor.action.onNext(.resetMembershipMoved)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self?.reactor?.action.onNext(.resetMembershipMoved)
+                }
             }
             .disposed(by: disposeBag)
         

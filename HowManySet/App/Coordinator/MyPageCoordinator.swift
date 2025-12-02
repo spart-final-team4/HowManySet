@@ -205,7 +205,7 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     func presentMembershipView() {
         let membershipView = MembershipViewHostingController(rootView: MembershipView())
         
-        navigationController.pushViewController(membershipView, animated: true)
+        topViewController()?.present(membershipView, animated: true)
     }
 }
 
