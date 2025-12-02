@@ -121,7 +121,7 @@ final class MyPageViewController: UIViewController, View {
             .distinctUntilChanged()
             .filter{ $0 == true }
             .observe(on: MainScheduler.instance)
-            .bind { [weak self] state in
+            .bind { [weak self] _ in
                 self?.coordinator?.presentMembershipView()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self?.reactor?.action.onNext(.resetMembershipMoved)
