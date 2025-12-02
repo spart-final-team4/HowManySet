@@ -6,22 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
-
-class MembershipViewHostingController: UIHostingController<MembershipView> {
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        bind()
-    }
-    
-    private func bind() {
-        rootView.dismiss = { [weak self] in
-            self?.dismiss(animated: true)
-        }
-    }
-    
-}
 
 struct MembershipView: View {
     
@@ -70,7 +54,7 @@ struct MembershipView: View {
                     signUpWithSocial(.google) { signUpWithGoogle?() }
                     signUpWithSocial(.apple) { signUpWithApple?() }
                 }
-                .padding()      
+                .padding()
             }
         }
     }
