@@ -89,10 +89,13 @@ final class DIContainer {
                                                     realmService: realmService)
         let fetchRecordUseCase = FetchRecordUseCase(repository: recordRepository)
         let deleteRecordUseCase = DeleteRecordUseCase(repository: recordRepository)
+        let saveRecordUseCase = SaveRecordUseCase(repository: recordRepository)
+        
         let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
                                                       realmService: realmService)
         let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
         let deleteRoutineUseCase = DeleteRoutineUseCase(repository: routineRepository)
+        let saveRoutineUseCase = SaveRoutineUseCase(repository: routineRepository)
         
         
         let firebaseAuthService = FirebaseAuthService()
@@ -101,8 +104,10 @@ final class DIContainer {
         
         let reactor = MembershipViewReactor(fetchRecordUseCase: fetchRecordUseCase,
                                             deleteRecordUseCase: deleteRecordUseCase,
+                                            saveRecordUseCase: saveRecordUseCase,
                                             fetchRoutineUseCase: fetchRoutineUseCase,
                                             deleteRoutineUseCase: deleteRoutineUseCase,
+                                            saveRoutineUseCase: saveRoutineUseCase,
                                             authUseCase: authUseCase)
         
         return MembershipViewHostingController(reactor: reactor,

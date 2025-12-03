@@ -11,12 +11,15 @@ import RxSwift
 
 final class MembershipViewReactor: Reactor {
     
-    let initialState: State
     private let fetchRecordUseCase: FetchRecordUseCaseProtocol
+    private let saveRecordUseCase: SaveRecordUseCaseProtocol
     private let deleteRecordUseCase: DeleteRecordUseCaseProtocol
     private let fetchRoutineUseCase: FetchRoutineUseCaseProtocol
+    private let saveRoutineUseCase: SaveRoutineUseCaseProtocol
     private let deleteRoutineUseCase: DeleteRoutineUseCaseProtocol
     private let authUseCase: AuthUseCaseProtocol
+    
+    let initialState: State
     
     enum Action {
         case dismiss
@@ -32,14 +35,18 @@ final class MembershipViewReactor: Reactor {
     
     init(fetchRecordUseCase: FetchRecordUseCaseProtocol,
          deleteRecordUseCase: DeleteRecordUseCaseProtocol,
+         saveRecordUseCase: SaveRecordUseCaseProtocol,
          fetchRoutineUseCase: FetchRoutineUseCaseProtocol,
          deleteRoutineUseCase: DeleteRoutineUseCaseProtocol,
+         saveRoutineUseCase: SaveRoutineUseCaseProtocol,
          authUseCase: AuthUseCaseProtocol
     ) {
         self.fetchRecordUseCase = fetchRecordUseCase
         self.deleteRecordUseCase = deleteRecordUseCase
+        self.saveRecordUseCase = saveRecordUseCase
         self.fetchRoutineUseCase = fetchRoutineUseCase
         self.deleteRoutineUseCase = deleteRoutineUseCase
+        self.saveRoutineUseCase = saveRoutineUseCase
         self.authUseCase = authUseCase
         self.initialState = State()
     }
