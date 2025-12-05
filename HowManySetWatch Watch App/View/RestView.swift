@@ -11,19 +11,22 @@ struct RestView: View {
     
     @State private var restTime: Float = 60
     @State private var isRestPaused: Bool = false
+    @State private var remainingTime: TimeInterval = 60
     
     @Binding var restStartDate: Date?
     @Binding var isResting: Bool
+    
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     private let restText = String(localized: "휴식중")
     private let restSecondsLabelSize: CGFloat = 46
     private let buttonSize: CGFloat = 44
     private let pretendard = Pretendard()
     
-    /// 휴식 종료 시간
-    private var restEndDate: Date? {
-        guard let restStartDate else { return nil }
-        return restStartDate.addingTimeInterval(TimeInterval(restTime))
+    private func formatTime(_ seconds: TimeInterval) -> String {
+        let minutes = Int(seconds) / 60
+        let seconds = Int(seconds) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
     
     var body: some View {
@@ -32,13 +35,11 @@ struct RestView: View {
                 .font(.custom(pretendard.pretendardRegular, size: 14))
                 .foregroundStyle(.grey2)
             
-            if let restStartDate, let restEndDate {
-                Text(timerInterval: restStartDate...restEndDate, countsDown: true)
-                    .font(.system(size: restSecondsLabelSize))
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .monospacedDigit()
-            }
+            Text(formatTime(remainingTime))
+                .font(.system(size: restSecondsLabelSize))
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .monospacedDigit()
             
             HStack(spacing: 30) {
                 Button {
@@ -69,6 +70,18 @@ struct RestView: View {
             }
         }
         .frame(minHeight: 100)
+        .onAppear {
+            self.remainingTime = TimeInterval(restTime)
+        }
+        .onReceive(timer) { _ in
+            guard isResting, !isRestPaused else { return }
+            
+            if remainingTime > 0 {
+                remainingTime -= 1
+            } else {
+                isResting = false
+            }
+        }
     }
 }
 
