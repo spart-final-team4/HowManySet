@@ -11,30 +11,51 @@ struct RoutineInfoView: View {
     
     private let pretendard = Pretendard()
     @State var routine: WorkoutRoutine
+    @State var showStartsButton = false
+    private let startBtnText = "운동시작"
     
     var body: some View {
-        List {
-            ForEach(routine.workouts) { workout in
-                HStack {
-                    Text(workout.name)
-                        .font(.custom(pretendard.pretendardRegular, size: 12))
-                        .foregroundStyle(.white)
-                    Spacer()
-                    Text("\(workout.sets.count)set")
-                        .font(.custom(pretendard.pretendardRegular, size: 12))
-                        .foregroundStyle(.white)
+        VStack(spacing: 8) {
+            // 운동 리스트
+            List {
+                ForEach(routine.workouts) { workout in
+                    HStack {
+                        Text(workout.name)
+                            .font(.custom(pretendard.pretendardRegular, size: 12))
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Text("\(workout.sets.count)set")
+                            .font(.custom(pretendard.pretendardRegular, size: 12))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 2)
                 }
-                .padding(.horizontal, 2)
+            }
+            .listStyle(.carousel)
+            .navigationTitle(routine.name)
+            .navigationBarTitleDisplayMode(.inline)
+            
+            if showStartsButton {
+                Button {
+                    // TODO: 운동 시작 액션
+                } label: {
+                    Text(startBtnText)
+                        .font(.custom(pretendard.pretendardMedium, size: 14))
+                        .foregroundColor(.background)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
+                        .background(Color.green6)
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal, 8)
+                .buttonStyle(.plain)
             }
         }
-        .listStyle(.carousel)
-        .navigationTitle(routine.name)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
     NavigationView {
-        RoutineInfoView(routine: WorkoutRoutine.mockData[0])
+        RoutineInfoView(routine: WorkoutRoutine.mockData[0], showStartsButton: true)
     }
 }

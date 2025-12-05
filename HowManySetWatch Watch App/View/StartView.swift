@@ -34,7 +34,7 @@ struct StartView: View {
                 TabView(selection: $currentPage) {
                     ForEach(Array(routineList.enumerated()), id: \.offset) { index, routine in
                         NavigationLink {
-                            RoutineInfoView(routine: routine)
+                            RoutineInfoView(routine: routine, showStartsButton: true)
                         } label: {
                             RoutineCardView(
                                 routine: routine,

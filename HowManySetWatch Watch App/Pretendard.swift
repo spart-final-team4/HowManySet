@@ -10,5 +10,6 @@ import Foundation
 struct Pretendard {
     let pretendardBold = "Pretendard-Bold"
     let pretendardSemiBold = "Pretendard-SemiBold"
+    let pretendardMedium = "Pretendard-Medium"
     let pretendardRegular = "Pretendard-Regular"
 }
