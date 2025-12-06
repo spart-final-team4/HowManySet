@@ -46,6 +46,7 @@ struct SessionPagingView: View {
         .onAppear(perform: setupView)
         .onReceive(timer, perform: onTimerTick)
         .onChange(of: isResting, perform: onRestingChange)
+        .navigationBarBackButtonHidden()
     }
 }
 
