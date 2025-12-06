@@ -12,6 +12,7 @@ struct RoutineInfoView: View {
     private let pretendard = Pretendard()
     @State var routine: WorkoutRoutine
     @State var showStartsButton = false
+//    @State private var isWorkoutActive = false
     private let startBtnText = "운동시작"
     
     var body: some View {
@@ -36,8 +37,8 @@ struct RoutineInfoView: View {
             .navigationBarTitleDisplayMode(.inline)
             
             if showStartsButton {
-                Button {
-                    // TODO: 운동 시작 액션
+                NavigationLink {
+                    SessionPagingView(routine: routine)
                 } label: {
                     Text(startBtnText)
                         .font(.custom(pretendard.pretendardMedium, size: 14))

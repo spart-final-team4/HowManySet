@@ -9,14 +9,9 @@ import SwiftUI
 
 struct RestView: View {
     
-    @State private var restTime: Float = 60
-    @State private var isRestPaused: Bool = false
-    @State private var remainingTime: TimeInterval = 60
-    
-    @Binding var restStartDate: Date?
+    @Binding var remainingTime: TimeInterval
     @Binding var isResting: Bool
-    
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @Binding var isPaused: Bool
     
     private let restText = String(localized: "휴식중")
     private let restSecondsLabelSize: CGFloat = 46
@@ -43,7 +38,6 @@ struct RestView: View {
             
             HStack(spacing: 30) {
                 Button {
-                    print("휴식 스킵")
                     isResting = false
                 } label: {
                     Image(systemName: "forward.end.fill")
@@ -56,10 +50,9 @@ struct RestView: View {
                 .buttonStyle(.borderless)
                 
                 Button {
-                    print("휴식 정지/재생")
-                    isRestPaused.toggle()
+                    isPaused.toggle()
                 } label: {
-                    Image(systemName: isRestPaused ? "play.fill" : "pause.fill")
+                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
                         .foregroundStyle(.white)
                         .fontWeight(.semibold)
                         .font(.system(size: 20))
@@ -70,21 +63,13 @@ struct RestView: View {
             }
         }
         .frame(minHeight: 100)
-        .onAppear {
-            self.remainingTime = TimeInterval(restTime)
-        }
-        .onReceive(timer) { _ in
-            guard isResting, !isRestPaused else { return }
-            
-            if remainingTime > 0 {
-                remainingTime -= 1
-            } else {
-                isResting = false
-            }
-        }
     }
 }
 
 #Preview {
-    RestView(restStartDate: .constant(Date.now), isResting: .constant(false))
+    RestView(
+        remainingTime: .constant(60),
+        isResting: .constant(true),
+        isPaused: .constant(false)
+    )
 }

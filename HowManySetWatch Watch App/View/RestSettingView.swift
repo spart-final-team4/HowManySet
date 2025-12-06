@@ -6,7 +6,7 @@ struct RestSettingView: View {
     private let restSetText = String(localized: "휴식 시간 설정")
     private let restSecondsLabelSize: CGFloat = 46
 
-    @State private var restTime: Float = 60
+    @Binding var restTime: TimeInterval
 
     /// MM:SS 형태로 포맷팅된 휴식시간
     private var formattedRestTime: String {
@@ -29,7 +29,7 @@ struct RestSettingView: View {
 
             HStack(spacing: 20) {
                 Button {
-                    restTime = max(0, restTime - 30)
+                    restTime = max(30, restTime - 30)
                 } label: {
                     Text("-30")
                         .font(.custom(pretendard.pretendardRegular, size: 20))
@@ -50,7 +50,7 @@ struct RestSettingView: View {
                 .background(.disabledButton)
                 .clipShape(Circle())
             }
-            .buttonStyle(.plain) // 기본 스타일 사용하지 않겠다고 명시 -> 커스텀 가능
+            .buttonStyle(.plain)
         }
         .navigationTitle(Text(timerInterval: Date.now...Date.distantFuture, countsDown: false))
         .navigationBarTitleDisplayMode(.inline)
@@ -58,5 +58,5 @@ struct RestSettingView: View {
 }
 
 #Preview {
-    RestSettingView()
+    RestSettingView(restTime: .constant(60))
 }
