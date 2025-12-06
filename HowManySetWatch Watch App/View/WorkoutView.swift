@@ -22,7 +22,8 @@ struct WorkoutView: View {
             return ""
         }
         let set = workout.sets[currentSet]
-        return "\(set.weight)kg x \(set.reps)회"
+        let setWeight = set.weight.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", set.weight) : String(set.weight)
+        return "\(setWeight)kg x \(set.reps)회"
     }
     
     private let buttonSize: CGFloat = 44
@@ -41,6 +42,7 @@ struct WorkoutView: View {
                         .foregroundStyle(isWorkoutFinished ? .green5 : .grey2)
                     
                     SetProgressBarForWatch(totalSets: workout.sets.count, currentSet: currentSet)
+                        .padding(.horizontal, 8)
                 }
                 .frame(minHeight: 100)
             }
