@@ -51,21 +51,13 @@ struct WorkoutView: View {
             
             VStack {
                 Button(action: handleSetComplete) {
-                    if isWorkoutFinished {
-                        // TODO: 마지막 운동까지 끝나면 전체 운동 완료 화면으로 전환 필요
-                        Image(systemName: "flag.checkered")
-                            .foregroundStyle(.white)
-                            .fontWeight(.bold)
-                            .font(.system(size: 20))
-                    } else {
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(.white)
-                            .fontWeight(.bold)
-                            .font(.system(size: 20))
-                    }
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(.white)
+                        .fontWeight(.bold)
+                        .font(.system(size: 20))
                 }
                 .frame(width: buttonSize, height: buttonSize)
-                .background(Circle().fill(isWorkoutFinished ? .blue : .green6))
+                .background(Circle().fill(isWorkoutFinished ? .disabledButton : .green6))
                 .buttonStyle(.borderless)
                 .disabled(isWorkoutFinished)
             }

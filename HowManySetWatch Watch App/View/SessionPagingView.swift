@@ -46,13 +46,12 @@ struct SessionPagingView: View {
         .onAppear(perform: setupView)
         .onReceive(timer, perform: onTimerTick)
         .onChange(of: isResting, perform: onRestingChange)
-        .navigationBarBackButtonHidden()
+        .onChange(of: currentSets, perform: onSetsChange)
     }
 }
 
 // MARK: - Views
 extension SessionPagingView {
-    /// 운동 중 View
     private var workoutTabView: some View {
         TabView(selection: $workoutPageIndex) {
             RoutineInfoView(routine: routine, showStartsButton: false).tag(0)
@@ -74,7 +73,6 @@ extension SessionPagingView {
         }
         .tabViewStyle(.page)
     }
-    
     
     private var restTabView: some View {
         TabView(selection: $restPageIndex) {
@@ -124,6 +122,26 @@ extension SessionPagingView {
         } else {
             // 휴식이 끝나면 일시정지 상태 해제
             isRestPaused = false
+        }
+    }
+    
+    private func onSetsChange(to newSets: [String: Int]) {
+        // 실제 운동 화면일 때
+        guard workoutPageIndex > 0 && workoutPageIndex <= routine.workouts.count else { return }
+        
+        let currentWorkout = routine.workouts[workoutPageIndex - 1]
+        
+        // 운동 완료 시
+        if let setsDone = newSets[currentWorkout.id], setsDone >= currentWorkout.sets.count {
+            // 마지막 운동이 아니라면 다음 페이지로 이동
+            if workoutPageIndex < routine.workouts.count {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    workoutPageIndex += 1
+                }
+            } else {
+                // TODO: 모든 운동이 완료 시 운동 완료페이지
+                
+            }
         }
     }
 }
