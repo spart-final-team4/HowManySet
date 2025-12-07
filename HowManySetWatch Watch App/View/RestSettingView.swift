@@ -52,8 +52,6 @@ struct RestSettingView: View {
             }
             .buttonStyle(.plain)
         }
-        .navigationTitle(Text(timerInterval: Date.now...Date.distantFuture, countsDown: false))
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

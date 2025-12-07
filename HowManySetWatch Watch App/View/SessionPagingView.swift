@@ -15,10 +15,11 @@ struct SessionPagingView: View {
     
     // MARK: - Properties
     @State var routine: WorkoutRoutine
-    // Tab
+    
     @State private var workoutPageIndex: Int = 1
+    @State private var workoutStartDate: Date = Date.now
+    
     @State private var restPageIndex: RestTabs = .rest
-    // State
     @State private var isResting = false
     @State private var isRestPaused = false
     /// 전체 운동의 현재 세트 수 딕셔너리 [운동ID: 현재 세트]
@@ -41,6 +42,7 @@ struct SessionPagingView: View {
                 restTabView
             }
         }
+        .navigationBarBackButtonHidden()
         .onAppear(perform: setupView)
         .onReceive(timer, perform: onTimerTick)
         .onChange(of: isResting, perform: onRestingChange)
@@ -63,8 +65,9 @@ extension SessionPagingView {
                 
                 WorkoutView(
                     workout: workout,
+                    workoutStartDate: workoutStartDate,
                     currentSet: currentSetBinding,
-                    isResting: $isResting
+                    isResting: $isResting,
                 )
                 .tag(index + 1)
             }
@@ -99,6 +102,8 @@ extension SessionPagingView {
         }
         // 남은 휴식 시간 초기화
         remainingRestTime = restDuration
+        // 운동 시간 설정
+        workoutStartDate = Date.now
     }
     
     private func onTimerTick(_ : Date) {

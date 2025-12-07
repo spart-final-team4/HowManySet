@@ -10,6 +10,8 @@ import SwiftUI
 struct WorkoutView: View {
     
     let workout: Workout
+    let workoutStartDate: Date
+    
     @Binding var currentSet: Int
     @Binding var isResting: Bool
     
@@ -30,7 +32,20 @@ struct WorkoutView: View {
     private let pretendard = Pretendard()
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 8) {
+            // 운동 시간 타이머
+            HStack(spacing: 6) {
+                Image(systemName: "timer")
+                    .foregroundStyle(.brand)
+                Text(timerInterval: workoutStartDate...Date.distantFuture, countsDown: false)
+                    .foregroundStyle(.white)
+                    .font(.system(size: 14))
+                    .fontWeight(.semibold)
+                    .monospacedDigit()
+                Spacer()
+            }
+            .padding(.horizontal, 8)
+            
             VStack {
                 VStack(spacing: 8) {
                     Text(workout.name)
@@ -62,7 +77,6 @@ struct WorkoutView: View {
                 .disabled(isWorkoutFinished)
             }
         }
-        .navigationTitle(Text(timerInterval: Date.now...Date.distantFuture, countsDown: false))
         .navigationBarTitleDisplayMode(.inline)
     }
     
@@ -82,6 +96,7 @@ struct WorkoutView: View {
 #Preview {
     WorkoutView(
         workout: Workout.mockData[0],
+        workoutStartDate: Date.now,
         currentSet: .constant(4),
         isResting: .constant(false)
     )
