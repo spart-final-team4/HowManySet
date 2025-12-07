@@ -15,24 +15,22 @@ struct SessionPagingView: View {
     
     // MARK: - Properties
     @State var routine: WorkoutRoutine
-    
     // Tab
     @State private var workoutPageIndex: Int = 1
     @State private var restPageIndex: RestTabs = .rest
-    
     // State
     @State private var isResting = false
     @State private var isRestPaused = false
-    
     /// 전체 운동의 현재 세트 수 딕셔너리 [운동ID: 현재 세트]
     @State private var currentSets: [String: Int] = [:]
-    
     /// 설정된 휴식 시간
     @State private var restDuration: TimeInterval = 60
     /// 남은 휴식 시간
     @State private var remainingRestTime: TimeInterval = 60
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    var path: Binding<NavigationPath>
 
     // MARK: - Body
     var body: some View {
@@ -54,7 +52,7 @@ struct SessionPagingView: View {
 extension SessionPagingView {
     private var workoutTabView: some View {
         TabView(selection: $workoutPageIndex) {
-            RoutineInfoView(routine: routine, showStartsButton: false).tag(0)
+            RoutineInfoView(routine: routine, showStartsButton: false, path: path).tag(0)
             
             ForEach(Array(routine.workouts.enumerated()), id: \.element.id) { index, workout in
                 // 각 WorkoutView에 대한 커스텀 바인딩 생성
@@ -76,7 +74,7 @@ extension SessionPagingView {
     
     private var restTabView: some View {
         TabView(selection: $restPageIndex) {
-            RoutineInfoView(routine: routine, showStartsButton: false).tag(RestTabs.routineInfo)
+            RoutineInfoView(routine: routine, showStartsButton: false, path: path).tag(RestTabs.routineInfo)
             
             RestView(
                 remainingTime: $remainingRestTime,
@@ -139,8 +137,8 @@ extension SessionPagingView {
                     workoutPageIndex += 1
                 }
             } else {
-                // TODO: 모든 운동이 완료 시 운동 완료페이지
-                
+                // 모든 운동 완료 시 운동 완료 페이지로 이동
+                path.wrappedValue.append(Route.workoutComplete)
             }
         }
     }
@@ -148,5 +146,5 @@ extension SessionPagingView {
 
 
 #Preview {
-    SessionPagingView(routine: WorkoutRoutine.mockData[0])
+    SessionPagingView(routine: WorkoutRoutine.mockData[0], path: .constant(NavigationPath()))
 }

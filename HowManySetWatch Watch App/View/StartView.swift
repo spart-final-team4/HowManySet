@@ -7,9 +7,16 @@
 
 import SwiftUI
 
+// 네비게이션 경로에 넣을 라우트 식별자
+enum Route: Hashable {
+    case workoutComplete
+}
+
 struct StartView: View {
     @State private var routineList = WorkoutRoutine.mockData
     @State private var currentPage: Int = 0
+    @State private var path = NavigationPath()
+    
     private let pretendard = Pretendard()
     private let todayExerciseText = "오늘 운동"
     
@@ -21,7 +28,7 @@ struct StartView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(alignment: .leading) {
                 
                 Text(todayTitle)
@@ -34,7 +41,8 @@ struct StartView: View {
                 TabView(selection: $currentPage) {
                     ForEach(Array(routineList.enumerated()), id: \.offset) { index, routine in
                         NavigationLink {
-                            RoutineInfoView(routine: routine, showStartsButton: true)
+                            // path를 RoutineInfoView로 전달
+                            RoutineInfoView(routine: routine, showStartsButton: true, path: $path)
                         } label: {
                             RoutineCardView(
                                 routine: routine,
@@ -48,6 +56,13 @@ struct StartView: View {
                 .tabViewStyle(.page)
             }
             .navigationTitle(todayExerciseText)
+            // Route 타입을 경로에 append했을 때 목적지 매핑
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .workoutComplete:
+                    WorkoutCompleteView(path: $path)
+                }
+            }
         }
     }
 }

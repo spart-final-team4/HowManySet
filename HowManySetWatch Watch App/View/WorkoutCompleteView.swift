@@ -13,6 +13,8 @@ struct WorkoutCompleteView: View {
     private let pretendard = Pretendard()
     private let buttonSize: CGFloat = 44
     
+    var path: Binding<NavigationPath>
+    
     var body: some View {
         VStack(spacing: 20) {
             Text(exerciseCompletedText)
@@ -21,7 +23,8 @@ struct WorkoutCompleteView: View {
                 .foregroundStyle(.white)
             
             Button {
-                
+                // 루트로 복귀
+                path.wrappedValue = NavigationPath()
             } label: {
                 Image(systemName: "checkmark")
                     .foregroundStyle(.white)
@@ -37,5 +40,5 @@ struct WorkoutCompleteView: View {
 }
 
 #Preview {
-    WorkoutCompleteView()
+    WorkoutCompleteView(path: .constant(NavigationPath()))
 }

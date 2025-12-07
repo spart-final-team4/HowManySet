@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct RoutineInfoView: View {
-    
-    private let pretendard = Pretendard()
+
     @State var routine: WorkoutRoutine
     @State var showStartsButton = false
-//    @State private var isWorkoutActive = false
+    
     private let startBtnText = "운동시작"
+    private let pretendard = Pretendard()
+    
+    var path: Binding<NavigationPath>
     
     var body: some View {
         VStack(spacing: 8) {
@@ -38,7 +40,8 @@ struct RoutineInfoView: View {
             
             if showStartsButton {
                 NavigationLink {
-                    SessionPagingView(routine: routine)
+                    // SessionPagingView에도 path 전달
+                    SessionPagingView(routine: routine, path: path)
                 } label: {
                     Text(startBtnText)
                         .font(.custom(pretendard.pretendardMedium, size: 14))
@@ -57,6 +60,6 @@ struct RoutineInfoView: View {
 
 #Preview {
     NavigationView {
-        RoutineInfoView(routine: WorkoutRoutine.mockData[0], showStartsButton: true)
+        RoutineInfoView(routine: WorkoutRoutine.mockData[0], showStartsButton: true, path: .constant(NavigationPath()))
     }
 }
