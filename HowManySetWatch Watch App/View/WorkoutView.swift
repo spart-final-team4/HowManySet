@@ -14,6 +14,8 @@ struct WorkoutView: View {
     
     @Binding var currentSet: Int
     @Binding var isResting: Bool
+    /// 운동 완료 시 클로저
+    var onWorkoutComplete: (String) -> Void
     
     private var isWorkoutFinished: Bool {
         currentSet >= workout.sets.count
@@ -32,14 +34,14 @@ struct WorkoutView: View {
     private let pretendard = Pretendard()
     
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .center) {
             // 운동 시간 타이머
             HStack(spacing: 6) {
-                Image(systemName: "timer")
-                    .foregroundStyle(.brand)
+//                Image(systemName: "timer")
+//                    .foregroundStyle(.brand)
                 Text(timerInterval: workoutStartDate...Date.distantFuture, countsDown: false)
-                    .foregroundStyle(.white)
-                    .font(.system(size: 14))
+                    .foregroundStyle(.grey3)
+                    .font(.custom(pretendard.pretendardRegular, size: 14))
                     .fontWeight(.semibold)
                     .monospacedDigit()
                 Spacer()
@@ -61,9 +63,7 @@ struct WorkoutView: View {
                 }
                 .frame(minHeight: 100)
             }
-            
-            Spacer()
-            
+                    
             VStack {
                 Button(action: handleSetComplete) {
                     Image(systemName: "checkmark")
@@ -77,15 +77,20 @@ struct WorkoutView: View {
                 .disabled(isWorkoutFinished)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .scenePadding()
     }
     
     private func handleSetComplete() {
         guard !isWorkoutFinished else { return }
-
+        
         // 마지막 세트가 아닌 경우에만 휴식
         if currentSet < workout.sets.count - 1 {
             isResting = true
+        } else {
+            // 마지막 세트가 완료되면 부모에게 알림
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                onWorkoutComplete(workout.id)
+            }
         }
         
         // 세트 수 증가
@@ -98,6 +103,7 @@ struct WorkoutView: View {
         workout: Workout.mockData[0],
         workoutStartDate: Date.now,
         currentSet: .constant(4),
-        isResting: .constant(false)
+        isResting: .constant(false),
+        onWorkoutComplete: { _ in }
     )
 }

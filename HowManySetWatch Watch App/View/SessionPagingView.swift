@@ -47,7 +47,6 @@ struct SessionPagingView: View {
         .onAppear(perform: setupView)
         .onReceive(timer, perform: onTimerTick)
         .onChange(of: isResting, perform: onRestingChange)
-        .onChange(of: currentSets, perform: onSetsChange)
     }
 }
 
@@ -73,6 +72,9 @@ extension SessionPagingView {
                     workoutStartDate: workoutStartDate,
                     currentSet: currentSetBinding,
                     isResting: $isResting,
+                    onWorkoutComplete: { completedWorkoutId in
+                        handleWorkoutComplete(completedWorkoutId: completedWorkoutId)
+                    }
                 )
                 .tag(index + 1)
             }
@@ -137,23 +139,27 @@ extension SessionPagingView {
         }
     }
     
-    private func onSetsChange(to newSets: [String: Int]) {
-        // 실제 운동 화면일 때
-        guard workoutPageIndex > 0 && workoutPageIndex <= routine.workouts.count else { return }
-        
-        let currentWorkout = routine.workouts[workoutPageIndex - 1]
-        
-        // 운동 완료 시
-        if let setsDone = newSets[currentWorkout.id], setsDone >= currentWorkout.sets.count {
-            // 마지막 운동이 아니라면 다음 페이지로 이동
-            if workoutPageIndex < routine.workouts.count {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    workoutPageIndex += 1
+    // 운동 완료 시 호출
+    private func handleWorkoutComplete(completedWorkoutId: String) {
+        // 해당 운동을 루틴에서 제거
+        if let index = routine.workouts.firstIndex(where: { $0.id == completedWorkoutId }) {
+            routine.workouts.remove(at: index)
+            
+            if workoutPageIndex > index + 1 { // 제거된 운동보다 뒤에 있는 경우
+                workoutPageIndex -= 1
+            } else if workoutPageIndex == index + 1 { // 제거된 운동이 현재 표시 중인 경우
+                if routine.workouts.isEmpty {
+                    workoutPageIndex = 0 // 모든 운동 완료 시
+                } else {
+                    // 다음 운동으로 자동으로 넘어가지 않고, 현재 인덱스가 다음 운동을 가리키도록 (
+                    workoutPageIndex = min(workoutPageIndex, routine.workouts.count)
                 }
-            } else {
-                // 모든 운동 완료 시 운동 완료 페이지로 이동
-                path.wrappedValue.append(Route.workoutComplete)
             }
+        }
+        
+        // 모든 운동이 완료되었는지 확인
+        if routine.workouts.isEmpty {
+            path.wrappedValue.append(Route.workoutComplete)
         }
     }
 }

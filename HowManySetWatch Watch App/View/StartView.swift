@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-// 네비게이션 경로에 넣을 라우트 식별자
-enum Route: Hashable {
-    case workoutComplete
-}
-
 struct StartView: View {
     @State private var routineList = WorkoutRoutine.mockData
     @State private var currentPage: Int = 0
@@ -41,7 +36,6 @@ struct StartView: View {
                 TabView(selection: $currentPage) {
                     ForEach(Array(routineList.enumerated()), id: \.offset) { index, routine in
                         NavigationLink {
-                            // path를 RoutineInfoView로 전달
                             RoutineInfoView(routine: routine, showStartsButton: true, path: $path)
                         } label: {
                             RoutineCardView(
