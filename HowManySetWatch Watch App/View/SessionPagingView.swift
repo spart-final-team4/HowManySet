@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WatchKit
 
 enum RestTabs {
     case routineInfo, rest, restSetting
@@ -54,6 +55,10 @@ struct SessionPagingView: View {
 extension SessionPagingView {
     private var workoutTabView: some View {
         TabView(selection: $workoutPageIndex) {
+            
+            NowPlayingView()
+                .toolbar(.hidden, for: .navigationBar)
+            
             RoutineInfoView(routine: routine, showStartsButton: false, path: path).tag(0)
             
             ForEach(Array(routine.workouts.enumerated()), id: \.element.id) { index, workout in
@@ -77,6 +82,10 @@ extension SessionPagingView {
     
     private var restTabView: some View {
         TabView(selection: $restPageIndex) {
+            
+            NowPlayingView()
+                .toolbar(.hidden, for: .navigationBar)
+            
             RoutineInfoView(routine: routine, showStartsButton: false, path: path).tag(RestTabs.routineInfo)
             
             RestView(
