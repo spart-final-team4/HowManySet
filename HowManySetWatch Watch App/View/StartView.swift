@@ -11,7 +11,7 @@ struct StartView: View {
     @StateObject private var routineStore = WatchRoutineStore.shared
     @State private var currentPage: Int = 0
     @State private var path = NavigationPath()
-    
+    private let doSyncText = String(localized: "iOS 앱의 '마이페이지 > Apple Watch 연동'에서\n데이터를 동기화해주세요.")
     private let pretendard = Pretendard()
     private let initialText = String(localized: "오늘도 득근해요")
     private var todayTitle: String {
@@ -23,33 +23,50 @@ struct StartView: View {
     var body: some View {
         NavigationStack(path: $path) {
             VStack(alignment: .leading) {
-                
-                Text(initialText)
-                    .font(.custom(pretendard.pretendardSemiBold, size: 14))
-                    .foregroundColor(.grey2)
-                    .padding(.horizontal, 6)
-                
-                Spacer()
-                
-                TabView(selection: $currentPage) {
-                    ForEach(Array(routineStore.routines.enumerated()), id: \.offset) { index, routine in
-                        NavigationLink {
-                            // path를 RoutineInfoView로 전달
-                            RoutineInfoView(routine: routine, showStartsButton: true, path: $path)
-                        } label: {
-                            RoutineCardView(
-                                routine: routine,
-                                isActive: currentPage == index
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .tag(index)
+                if (routineStore.routines).isEmpty {
+                    VStack(spacing: 16) {
+                        Image("AppIconImage")
+                            .resizable()
+                            .clipShape(.circle)
+                            .scaledToFit()
+                            .overlay(Circle().stroke(Color.brand, lineWidth: 0.5))
+                            .frame(width: 44, height: 44)
+                            .padding(.top, 10)
+                        
+                        Text(doSyncText)
+                            .font(.custom(pretendard.pretendardRegular, size: 14))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.grey2)
+                        
+                        Spacer()
                     }
+                } else {
+                    Text(initialText)
+                        .font(.custom(pretendard.pretendardSemiBold, size: 14))
+                        .foregroundColor(.grey2)
+                        .padding(.horizontal, 6)
+                    
+                    Spacer()
+                    
+                    TabView(selection: $currentPage) {
+                        ForEach(Array((routineStore.routines ?? []).enumerated()), id: \.offset) { index, routine in
+                            NavigationLink {
+                                RoutineInfoView(routine: routine, showStartsButton: true, path: $path)
+                            } label: {
+                                RoutineCardView(
+                                    routine: routine,
+                                    isActive: currentPage == index
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .tag(index)
+                        }
+                    }
+                    .tabViewStyle(.page)
                 }
-                .tabViewStyle(.page)
             }
-            .navigationTitle(todayTitle)
-            // Route 타입을 경로에 append했을 때 목적지 매핑
+            .navigationTitle("HowManySet")
+            .toolbarTitleDisplayMode(.inline)
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .workoutComplete:

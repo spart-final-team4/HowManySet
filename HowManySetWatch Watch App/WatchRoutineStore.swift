@@ -35,7 +35,7 @@ class WatchRoutineStore: ObservableObject {
     private func loadRoutines() -> [WorkoutRoutine] {
         guard let data = UserDefaults.standard.data(forKey: userDefaultsKey) else {
             print("WatchRoutineStore: 루틴 데이터 없음!")
-            return WorkoutRoutine.mockData
+            return []
         }
         
         do {
@@ -43,8 +43,8 @@ class WatchRoutineStore: ObservableObject {
             print("WatchRoutineStore:\(decodedRoutines.count)개 루틴 정보 디코딩, 로드 성공")
             return decodedRoutines
         } catch {
-            print("WatchRoutineStore: 로드된 투친 디코딩 실패 \(error.localizedDescription)")
-            return WorkoutRoutine.mockData
+            print("WatchRoutineStore: 로드된 루틴 디코딩 실패 \(error.localizedDescription)")
+            return []
         }
     }
 }
