@@ -33,7 +33,8 @@ enum MyPageCollectionViewModel {
         MyPageSectionModel(title: String(localized: "앱 설정"),
                            cellModel: [
                             MyPageCellModel(title: String(localized: "알림 설정")),
-                            MyPageCellModel(title: String(localized: "언어 변경"))
+                            MyPageCellModel(title: String(localized: "언어 변경")),
+                            MyPageCellModel(title: String(localized: "Apple Watch 연동"))
                            ]),
         MyPageSectionModel(title: String(localized: "도움말 및 정보"),
                            cellModel: [
@@ -56,6 +57,7 @@ enum MyPageCollectionViewModel {
 enum MyPageCellType {
     case setNotification        // 알림 설정
     case setLanguage            // 언어 변경
+    case appleWatchSync         // Apple Watch 연동
     case showVersion            // 버전 정보 표시
     case showLicense            // 오픈소스 라이센스 표시
     case appReview              // 앱 평가
@@ -77,6 +79,8 @@ extension MyPageCellType {
             self = .setNotification
         case [0,1]:
             self = .setLanguage
+        case [0,2]:
+            self = .appleWatchSync
         case [1,0]:
             self = .showVersion
         case [1,1]:

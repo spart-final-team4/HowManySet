@@ -119,6 +119,8 @@ final class MyPageViewController: UIViewController, View {
             coordinator?.pushAlarmSettingView()
         case .setLanguage:
             coordinator?.presentLanguageSettingAlert()
+        case .appleWatchSync:
+            coordinator?.pushAppleWatchSyncView()
         case .showVersion:
             coordinator?.showVersionInfo()
         case .showLicense:

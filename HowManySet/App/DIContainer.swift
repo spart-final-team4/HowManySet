@@ -153,4 +153,18 @@ final class DIContainer {
     func makeHomeStartViewController(coordinator: HomeCoordinator) -> UIViewController {
         return HomeStartViewController(coordinator: coordinator)
     }
+    
+    func makeAppleWatchSyncViewController() -> UIViewController {
+        let firestoreService = FirestoreService()
+        let realmService = RealmService()
+        let routineRepository = RoutineRepositoryImpl(firestoreService: firestoreService,
+                                                      realmService: realmService)
+        let fetchRoutineUseCase = FetchRoutineUseCase(repository: routineRepository)
+        let watchConnector = WatchConnector.shared
+        
+        let reactor = AppleWatchSyncViewReactor(fetchRoutineUseCase: fetchRoutineUseCase,
+                                                watchConnector: watchConnector)
+        
+        return AppleWatchSyncViewController(reactor: reactor)
+    }
 }

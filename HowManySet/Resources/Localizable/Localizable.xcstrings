@@ -449,6 +449,9 @@
         }
       }
     },
+    "Apple Watch 연동" : {
+
+    },
     "Google로 로그인" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -955,6 +958,9 @@
         }
       }
     },
+    "동기화 중..." : {
+
+    },
     "라이센스 정보" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1123,6 +1129,9 @@
           }
         }
       }
+    },
+    "루틴 목록 동기화" : {
+
     },
     "루틴 저장" : {
       "localizations" : {
@@ -1655,6 +1664,9 @@
           }
         }
       }
+    },
+    "버튼을 눌러 동기화를 시작하세요" : {
+
     },
     "분" : {
       "extractionState" : "manual",

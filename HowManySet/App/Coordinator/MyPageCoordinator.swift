@@ -19,6 +19,7 @@ protocol MyPageCoordinatorProtocol: Coordinator {
     func pushAccountWithdrawalView()
     func navigateToAuth()
     func presentLicenseView()
+    func pushAppleWatchSyncView()
     
     var modelName: String { get }
 }
@@ -51,6 +52,11 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     func start() {
         let myPageVC = container.makeMyPageViewController(coordinator: self)
         navigationController.pushViewController(myPageVC, animated: true)
+    }
+    
+    func pushAppleWatchSyncView() {
+        let vc = container.makeAppleWatchSyncViewController()
+        navigationController.pushViewController(vc, animated: true)
     }
     
     /// 언어 변경 처리 (설정 앱 이동 알림)
