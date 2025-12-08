@@ -15,6 +15,8 @@ final class RoutineRepositoryImpl: RoutineRepository {
     
     private let firestoreService: FirestoreServiceProtocol
     private let realmService: RealmServiceProtocol
+    private let watchConnector = WatchConnector.shared
+    private let disposeBag = DisposeBag()
     
     init(
         firestoreService: FirestoreServiceProtocol,
@@ -34,6 +36,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
         } else {
             createRoutineToRealm(to: item)
         }
+        syncRoutinesToWatch(uid: uid)
     }
     
     /// 주어진 사용자 ID에 해당하는 운동 루틴 리스트를 비동기적으로 조회합니다.
@@ -57,6 +60,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
         } else {
             updateRoutineWithRelam(item: item)
         }
+        syncRoutinesToWatch(uid: uid)
     }
     
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 삭제합니다.
@@ -69,6 +73,7 @@ final class RoutineRepositoryImpl: RoutineRepository {
         } else {
             deleteRoutineFromRealm(item: item)
         }
+        syncRoutinesToWatch(uid: uid)
     }
 }
 
@@ -198,5 +203,17 @@ private extension RoutineRepositoryImpl {
             print(error.localizedDescription)
         }
         
+    }
+    
+    // MARK: - Watch Sync
+    func syncRoutinesToWatch(uid: String?) {
+        fetchRoutine(uid: uid)
+            .subscribe(onSuccess: { [weak self] routines in
+                self?.watchConnector.sendRoutinesToWatch(routines)
+                print("Watch Sync: Watch로 루틴 전송 성공")
+            }, onFailure: { error in
+                print("Watch Sync: Watch로 루틴 전송 실패 - \(error.localizedDescription)")
+            })
+            .disposed(by: disposeBag)
     }
 }
