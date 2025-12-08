@@ -40,7 +40,7 @@ struct WorkoutView: View {
 //                Image(systemName: "timer")
 //                    .foregroundStyle(.brand)
                 Text(timerInterval: workoutStartDate...Date.distantFuture, countsDown: false)
-                    .foregroundStyle(.grey3)
+                    .foregroundStyle(.grey2)
                     .font(.custom(pretendard.pretendardRegular, size: 14))
                     .fontWeight(.semibold)
                     .monospacedDigit()

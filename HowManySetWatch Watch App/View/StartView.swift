@@ -13,12 +13,10 @@ struct StartView: View {
     @State private var path = NavigationPath()
     
     private let pretendard = Pretendard()
-    private let todayExerciseText = "오늘 운동"
-    
+    private let initialText = String(localized: "오늘도 득근해요")
     private var todayTitle: String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "ko_KR")
-        f.dateFormat = "M월d일"
+        f.dateFormat = "MM.dd"
         return f.string(from: Date())
     }
     
@@ -26,9 +24,9 @@ struct StartView: View {
         NavigationStack(path: $path) {
             VStack(alignment: .leading) {
                 
-                Text(todayTitle)
-                    .font(.custom(pretendard.pretendardSemiBold, size: 20))
-                    .foregroundColor(.white)
+                Text(initialText)
+                    .font(.custom(pretendard.pretendardSemiBold, size: 14))
+                    .foregroundColor(.grey2)
                     .padding(.horizontal, 6)
                 
                 Spacer()
@@ -49,7 +47,7 @@ struct StartView: View {
                 }
                 .tabViewStyle(.page)
             }
-            .navigationTitle(todayExerciseText)
+            .navigationTitle(todayTitle)
             // Route 타입을 경로에 append했을 때 목적지 매핑
             .navigationDestination(for: Route.self) { route in
                 switch route {
