@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StartView: View {
-    @State private var routineList = WorkoutRoutine.mockData
+    @StateObject private var routineStore = WatchRoutineStore.shared
     @State private var currentPage: Int = 0
     @State private var path = NavigationPath()
     
@@ -32,8 +32,9 @@ struct StartView: View {
                 Spacer()
                 
                 TabView(selection: $currentPage) {
-                    ForEach(Array(routineList.enumerated()), id: \.offset) { index, routine in
+                    ForEach(Array(routineStore.routines.enumerated()), id: \.offset) { index, routine in
                         NavigationLink {
+                            // path를 RoutineInfoView로 전달
                             RoutineInfoView(routine: routine, showStartsButton: true, path: $path)
                         } label: {
                             RoutineCardView(
