@@ -30,11 +30,11 @@ struct StartView: View {
                             .clipShape(.circle)
                             .scaledToFit()
                             .overlay(Circle().stroke(Color.brand, lineWidth: 0.5))
-                            .frame(width: 44, height: 44)
+                            .frame(width: 40, height: 40)
                             .padding(.top, 10)
                         
                         Text(doSyncText)
-                            .font(.custom(pretendard.pretendardRegular, size: 14))
+                            .font(.custom(pretendard.pretendardRegular, size: 12))
                             .multilineTextAlignment(.center)
                             .foregroundColor(.grey2)
                         
