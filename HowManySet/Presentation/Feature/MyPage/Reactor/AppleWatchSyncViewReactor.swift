@@ -45,6 +45,7 @@ final class AppleWatchSyncViewReactor: Reactor {
             
             let syncProcess = fetchRoutineUseCase.execute(uid: Auth.auth().currentUser?.uid)
                 .asObservable()
+                .observe(on: MainScheduler.instance)
                 .flatMapLatest { [weak self] routines -> Observable<Mutation> in
                     guard let self = self else { return .empty() }
                     self.watchConnector.sendRoutinesToWatch(routines)
