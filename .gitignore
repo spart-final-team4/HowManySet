@@ -141,3 +141,5 @@ Secrets.xcconfig
 Package.resolved
 
 .claude/settings.local.json
+
+HowManySet/Resources/GoogleService-Info.plist

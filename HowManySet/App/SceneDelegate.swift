@@ -13,6 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
+    private let updateManager = UpdateAlertManager()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -23,6 +24,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let coordinator = AppCoordinator(window: window, container: container)
         self.appCoordinator = coordinator
         coordinator.start()
+
+        // 앱 시작 후, 업데이트 필요 여부 체크
+        Task { [weak self] in
+            guard let self else { return }
+
+            if let type = await self.updateManager.checkUpdateAlertNeeded() {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, let rootVC = self.window?.rootViewController else { return }
+                    self.updateManager.showUpdateAlert(type: type, on: rootVC)
+                }
+            }
+        }
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
