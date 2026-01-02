@@ -29,6 +29,10 @@
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
 	</array>
+    
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Black.otf</string>

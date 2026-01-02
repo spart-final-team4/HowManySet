@@ -22,8 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
             
-            Thread.sleep(forTimeInterval: 2.0)
-            
             // Firebase 초기화
             FirebaseApp.configure()
             // Google AdMob 초기화
