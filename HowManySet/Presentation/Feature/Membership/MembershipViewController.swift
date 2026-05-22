@@ -36,6 +36,12 @@ final class MembershipViewHostingController: UIHostingController<MembershipView>
         rootView.dismiss = { [weak self] in
             self?.reactor?.action.onNext(.dismiss)
         }
+        rootView.signUpWithKakao = { [weak self] in
+            self?.reactor?.action.onNext(.signUpWithKakao)
+        }
+        rootView.signUpWithGoogle = { [weak self] in
+            self?.reactor?.action.onNext(.signUpWithGoogle)
+        }
     }
     
     func bind(reactor: MembershipViewReactor) {

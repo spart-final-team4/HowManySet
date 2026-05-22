@@ -29,4 +29,9 @@ final class SaveRecordUseCase: SaveRecordUseCaseProtocol {
     func execute(uid: String?, item: WorkoutRecord) {
         repository.saveRecord(uid: uid, item: item)
     }
+
+    /// Firestore 저장 완료를 보장하는 async 실행 (migration 전용)
+    func executeAsync(uid: String, item: WorkoutRecord) async throws {
+        try await repository.saveRecordAsync(uid: uid, item: item)
+    }
 }

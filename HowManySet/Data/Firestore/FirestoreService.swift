@@ -32,6 +32,27 @@ final class FirestoreService: FirestoreServiceProtocol {
         }
     }
 
+    /// Firestore에 문서를 저장하고 완료(로컬 커밋)를 보장합니다. (migration 전용)
+    /// - Parameters:
+    ///   - item: 저장할 Firestore 문서 객체
+    ///   - type: 저장할 Firestore 문서 타입
+    func createAsync<T: Codable>(item: T, type: FirestoreDataType<T>) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            do {
+                try db.collection(type.collectionName).addDocument(from: item) { error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            } catch {
+                // 인코딩 실패
+                continuation.resume(throwing: FirestoreErrorType.networkError)
+            }
+        }
+    }
+
     /// 사용자별 문서를 조회합니다.
     /// - Parameters:
     ///   - userId: 사용자 ID

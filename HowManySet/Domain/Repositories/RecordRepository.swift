@@ -15,4 +15,7 @@ protocol RecordRepository {
     func updateRecord(uid: String?, item: WorkoutRecord)
     func deleteRecord(uid: String?, item: WorkoutRecord)
     func deleteAllRecord(uid: String?)
+
+    /// Firestore 저장 완료를 보장하는 async 저장 메서드 (migration 전용)
+    func saveRecordAsync(uid: String, item: WorkoutRecord) async throws
 }

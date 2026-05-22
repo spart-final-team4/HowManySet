@@ -39,4 +39,7 @@ protocol RoutineRepository {
     ///   - uid: 운동 루틴을 수정할 사용자의 고유 식별자
     ///   - item: 수정할 `WorkoutRoutine` 객체
     func updateRoutine(uid: String?, item: WorkoutRoutine)
+
+    /// Firestore 저장 완료를 보장하는 async 저장 메서드 (migration 전용)
+    func saveRoutineAsync(uid: String, item: WorkoutRoutine) async throws
 }

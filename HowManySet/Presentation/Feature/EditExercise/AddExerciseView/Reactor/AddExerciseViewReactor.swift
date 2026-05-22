@@ -108,38 +108,47 @@ final class AddExerciseViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .addExcerciseButtonTapped:
-            return Observable<Mutation>.create { [unowned self] observer in
+            return Observable<Mutation>.create { [weak self] observer in
+                guard let self else {
+                    observer.onCompleted()
+                    return Disposables.create()
+                }
                 var currentWeightSet = self.currentState.currentWeightSet
                 currentWeightSet.removeFirst() // 첫 행은 빈 값이므로 제거
-                
+
                 let sets = currentWeightSet.map {
                     WorkoutSet(
                         weight: Double($0[0]) ?? 0.0,
                         unit: self.currentState.currentUnit,
                         reps: Int($0[1]) ?? 0)
                 }
-                
+
                 let newWorkout = Workout(
                     id: UUID().uuidString,
                     name: self.currentState.currentExcerciseName,
                     sets: sets,
                     comment: nil
                 )
-                
+
                 if case .success = self.validationWorkout(workout: newWorkout) {
                     observer.onNext(.addExcercise(newWorkout))
                 }
                 observer.onCompleted()
-                
-                DispatchQueue.main.async {
+
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     self.alertRelay.accept(self.validationWorkout(workout: newWorkout))
                 }
-                
+
                 return Disposables.create()
             }
-            
+
         case .saveRoutineButtonTapped:
-            return Observable.create { [unowned self] observer in
+            return Observable.create { [weak self] observer in
+                guard let self else {
+                    observer.onCompleted()
+                    return Disposables.create()
+                }
                 let routine = self.currentState.currentRoutine
                 if routine.workouts.isEmpty {
                     self.alertRelay.accept(.workoutEmpty)

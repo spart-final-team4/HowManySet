@@ -17,4 +17,7 @@ protocol SaveRoutineUseCaseProtocol {
     /// - Parameters:
     ///   - item: 저장할 `WorkoutRoutine` 객체
     func execute(uid: String?, item: WorkoutRoutine)
+
+    /// Firestore 저장 완료를 보장하는 async 실행 (migration 전용)
+    func executeAsync(uid: String, item: WorkoutRoutine) async throws
 }

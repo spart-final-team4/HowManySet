@@ -62,6 +62,13 @@ final class RecordRepositoryImpl: RecordRepository {
             deleteAllRecordRealm()
         }
     }
+
+    /// Firestore 저장 완료를 보장하는 async 저장 (migration 전용)
+    func saveRecordAsync(uid: String, item: WorkoutRecord) async throws {
+        let dto = WorkoutRecordDTO(entity: item)
+        let fsRecord = dto.toFSModel(userId: uid)
+        try await firestoreService.createAsync(item: fsRecord, type: FirestoreDataType<FSWorkoutRecord>.workoutRecord)
+    }
 }
 
 private extension RecordRepositoryImpl {
@@ -110,7 +117,11 @@ private extension RecordRepositoryImpl {
     }
     
     func readRecordFromRealm() -> Single<[WorkoutRecord]> {
-        return Single.create {[unowned self] observer in
+        return Single.create { [weak self] observer in
+            guard let self else {
+                observer(.failure(RealmErrorType.objectBindingFailed))
+                return Disposables.create()
+            }
             do {
                 let records = try self.realmService.read(type: .workoutRecord)
                 let recordDTO = records.map{ ($0 as! RMWorkoutRecord).toDTO() }

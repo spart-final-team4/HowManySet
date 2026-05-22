@@ -18,4 +18,7 @@ protocol SaveRecordUseCaseProtocol {
     ///   - uid: 운동 기록을 저장할 사용자의 고유 식별자
     ///   - item: 저장할 `WorkoutRecord` 객체
     func execute(uid: String?, item: WorkoutRecord)
+
+    /// Firestore 저장 완료를 보장하는 async 실행 (migration 전용)
+    func executeAsync(uid: String, item: WorkoutRecord) async throws
 }

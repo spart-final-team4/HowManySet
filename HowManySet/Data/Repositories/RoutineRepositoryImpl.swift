@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RealmSwift
 
 /// `RoutineRepository` 프로토콜을 구현한 운동 루틴 저장소 클래스입니다.
 ///
@@ -47,6 +48,13 @@ final class RoutineRepositoryImpl: RoutineRepository {
         }
     }
     
+    /// Firestore 저장 완료를 보장하는 async 저장 (migration 전용)
+    func saveRoutineAsync(uid: String, item: WorkoutRoutine) async throws {
+        let dto = WorkoutRoutineDTO(entity: item)
+        let fsRoutine = dto.toFSModel(userId: uid)
+        try await firestoreService.createAsync(item: fsRoutine, type: FirestoreDataType<FSWorkoutRoutine>.workoutRoutine)
+    }
+
     /// 주어진 사용자 ID에 해당하는 운동 루틴을 수정합니다.
     ///
     /// - Parameters:
@@ -191,12 +199,22 @@ private extension RoutineRepositoryImpl {
     }
     
     func deleteRoutineFromRealm(item: WorkoutRoutine) {
-        let routine = RMWorkoutRoutine(dto: WorkoutRoutineDTO(entity: item))
         do {
-            try realmService.delete(item: routine)
+            let realm = try Realm()
+            guard let routine = realm.object(ofType: RMWorkoutRoutine.self, forPrimaryKey: item.rmID) else {
+                print("❌ Realm에 해당 루틴이 존재하지 않습니다.")
+                return
+            }
+            try realm.write {
+                // RMWorkout 하위 RMWorkoutSet 먼저 삭제 (고아 객체 방지)
+                routine.workouts.forEach { realm.delete($0.sets) }
+                // RMWorkout 삭제
+                realm.delete(routine.workouts)
+                // RMWorkoutRoutine 삭제
+                realm.delete(routine)
+            }
         } catch {
             print(error.localizedDescription)
         }
-        
     }
 }

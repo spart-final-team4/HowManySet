@@ -37,7 +37,8 @@ struct MembershipView: View {
                         .resizable()
                         .frame(width: 25, height: 25)
                 }
-                .padding(EdgeInsets(top: 40, leading: 0, bottom: 20, trailing: 0))
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(EdgeInsets(top: 40, leading: 0, bottom: 20, trailing: 20))
                 
                 
                 Text("HowManySet 회원전환")
@@ -53,6 +54,7 @@ struct MembershipView: View {
                     signUpWithSocial(.kakao) { signUpWithKakao?() }
                     signUpWithSocial(.google) { signUpWithGoogle?() }
                     signUpWithSocial(.apple) { signUpWithApple?() }
+
                 }
                 .padding()
             }
